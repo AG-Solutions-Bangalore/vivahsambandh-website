@@ -34,7 +34,7 @@ export default function ContactSection() {
   return (
     <section className="relative overflow-hidden py-16 lg:py-24">
       {/* Background Architectural Temple Arch Artwork */}
-      <div className="pointer-events-none absolute inset-0 opacity-85">
+      <div className="pointer-events-none absolute inset-0">
         <img
           src="/images/home/Elegant Temple Wedding Banner.webp"
           alt=""
