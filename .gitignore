@@ -22,3 +22,15 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+
+.claud/
+.antigravity/
+.claude/
+.gemini/
+.cursor/
+.agent/
+.agents/
+.codex/
+.figma/
+.notion/
