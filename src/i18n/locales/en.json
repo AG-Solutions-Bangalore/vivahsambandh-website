@@ -28,7 +28,8 @@
     "privacy": "100% Privacy",
     "community": "Agarwal Community",
     "familySupport": "Family Support",
-    "sideNote": "Same Values Brighter Futures"
+    "sideNote": "Same Values Brighter Futures",
+    "sideBadge": ["Same", "Values", "Brighter", "Futures"]
   },
   "matchCards": {
     "bride": "Looking for a",

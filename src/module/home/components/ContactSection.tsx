@@ -5,14 +5,14 @@ import {
   getCompanyAddress,
   getCompanyHours,
 } from "../../../constants/company";
-import { getAppLanguage } from "../../../i18n";
+import { useAppLanguage } from "../../../i18n/useAppLanguage";
 import type { ContactFormData } from "../types";
 import Reveal, { RevealGroup } from "../../../components/motion/Reveal";
 import { refreshScrollTriggers } from "../../../lib/gsap-setup";
 
 export default function ContactSection() {
   const { t } = useTranslation();
-  const lang = getAppLanguage();
+  const { lang } = useAppLanguage();
   const [submitted, setSubmitted] = useState(false);
   const [formData, setFormData] = useState<ContactFormData>({
     name: "",

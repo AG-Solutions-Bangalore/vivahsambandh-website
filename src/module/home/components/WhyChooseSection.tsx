@@ -136,11 +136,6 @@ export default function WhyChooseSection() {
           <div className="lg:col-span-8 xl:col-span-8">
             <RevealGroup className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5 sm:gap-4">
               {rawFeatures.map((f, i) => {
-                // Break title into main line and final word + inline arrow
-                const words = f.title.trim().split(/\s+/)
-                const lastWord = words.pop() || ''
-                const firstWords = words.join(' ')
-
                 return (
                   <div
                     key={f.title}
@@ -150,18 +145,16 @@ export default function WhyChooseSection() {
                     {/* Bespoke Arched Icon */}
                     <FeatureArchedIcon index={i} />
 
-                    {/* Feature Title with inline gold arrow matching design */}
+                    {/* Title flows on ONE line when space allows (no forced
+                        break) — wraps naturally only on narrow cards */}
                     <div className="flex-1 min-w-0 py-1.5">
                       <h3 className="font-sans text-xs sm:text-[13px] lg:text-[13.5px] font-bold text-navy-950 leading-snug transition-colors group-hover:text-maroon-700">
-                        {firstWords && <span className="block">{firstWords}</span>}
-                        <span className="inline-flex items-center gap-1">
-                          <span>{lastWord}</span>
-                          <span
-                            className="text-gold-600 font-bold transition-transform duration-300 group-hover:translate-x-1"
-                            aria-hidden="true"
-                          >
-                            →
-                          </span>
+                        {f.title}{' '}
+                        <span
+                          className="inline-block text-gold-600 font-bold transition-transform duration-300 group-hover:translate-x-1"
+                          aria-hidden="true"
+                        >
+                          →
                         </span>
                       </h3>
                     </div>

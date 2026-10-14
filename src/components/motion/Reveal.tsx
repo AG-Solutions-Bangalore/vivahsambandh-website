@@ -83,6 +83,9 @@ export default function Reveal({
           delay,
           ease: 'power3.out',
           overwrite: 'auto',
+          // Release the will-change compositor layer after playing —
+          // keeping it forever pins GPU memory on low-end phones.
+          clearProps: 'willChange',
           scrollTrigger: {
             trigger: el,
             start,
@@ -149,6 +152,8 @@ export function RevealGroup({
           ease: 'power3.out',
           stagger,
           overwrite: 'auto',
+          // Release the will-change compositor layers after playing.
+          clearProps: 'willChange',
           scrollTrigger: {
             trigger: root,
             start,

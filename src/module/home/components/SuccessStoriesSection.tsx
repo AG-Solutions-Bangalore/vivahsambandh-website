@@ -3,6 +3,7 @@ import { Swiper, SwiperSlide } from 'swiper/react'
 import { Pagination, Autoplay, A11y } from 'swiper/modules'
 import type { SuccessStory } from '../types'
 import Reveal from '../../../components/motion/Reveal'
+import { prefersReducedMotion } from '../../../lib/gsap-setup'
 
 import 'swiper/css'
 import 'swiper/css/pagination'
@@ -24,6 +25,12 @@ export default function SuccessStoriesSection() {
 
   // Duplicate so the 3-card loop slider always has slides to advance to
   const slides = items.length > 3 ? items : [...items, ...items]
+
+  // Autoplay is motion: freeze the carousel for reduced-motion users
+  // (static slider remains fully swipeable).
+  const autoplay = prefersReducedMotion()
+    ? false
+    : { delay: 4000, disableOnInteraction: false, pauseOnMouseEnter: true }
 
   // "Real Happiness." → Real (navy) + Happiness. (maroon); locale-safe
   const titleB = t('stories.titleB')
@@ -96,7 +103,7 @@ export default function SuccessStoriesSection() {
                 speed={600}
                 watchOverflow={true}
                 grabCursor={true}
-                autoplay={{ delay: 4000, disableOnInteraction: false, pauseOnMouseEnter: true }}
+                autoplay={autoplay}
                 spaceBetween={16}
                 slidesPerView={1.15}
                 slidesPerGroup={1}

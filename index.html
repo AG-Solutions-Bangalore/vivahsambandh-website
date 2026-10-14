@@ -1,7 +1,18 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" translate="no">
   <head>
     <meta charset="UTF-8" />
+    <!-- Pre-paint language sync: set <html lang> from the saved choice before
+         i18n boots, so the browser never sees a lang/content mismatch.
+         translate="no" + notranslate keep browser auto-translate off —
+         this site ships its own English/हिन्दी switcher. -->
+    <script>
+      try {
+        var __vl = localStorage.getItem('vivah-lang');
+        if (__vl === 'hi' || __vl === 'en') document.documentElement.lang = __vl;
+      } catch (e) { /* storage unavailable — default lang="en" stands */ }
+    </script>
+    <meta name="google" content="notranslate" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta

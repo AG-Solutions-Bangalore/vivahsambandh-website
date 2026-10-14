@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { COMPANY, getCompanyAddress } from "../constants/company";
-import { getAppLanguage } from "../i18n";
+import { useAppLanguage } from "../i18n/useAppLanguage";
 import Reveal from "./motion/Reveal";
 
 function LotusMark() {
@@ -28,7 +28,7 @@ function LotusMark() {
 
 export default function Footer() {
   const { t } = useTranslation();
-  const lang = getAppLanguage();
+  const { lang } = useAppLanguage();
 
   const quickLinks = [
     { label: t("header.home"), href: "#" },

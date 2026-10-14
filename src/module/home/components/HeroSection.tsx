@@ -99,19 +99,65 @@ export default function HeroSection() {
 
       // ——— Intro timeline (above the fold → play on mount, not on scroll) ———
       const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
-      tl.from('[data-hero="eyebrow"]', { autoAlpha: 0, y: 18, duration: 0.6 }, 0.1)
-        // Line-mask reveal: each headline line slides up from inside its
-        // overflow-hidden mask (yPercent, transform-only). Masks carry
-        // pb/-mb compensation so Devanagari descenders never clip.
-        .from(
+      tl.fromTo(
+        '[data-hero="eyebrow"]',
+        { opacity: 0, y: 12 },
+        { opacity: 1, y: 0, duration: 0.45, clearProps: "all" },
+        0.05,
+      )
+        // Line-mask reveal: each headline line slides up from inside its overflow-hidden mask
+        .fromTo(
           '[data-hero-line]',
-          { yPercent: 115, autoAlpha: 0, duration: 0.9, ease: "power4.out", stagger: 0.12 },
-          0.2,
+          { yPercent: 110 },
+          {
+            yPercent: 0,
+            duration: 0.75,
+            ease: "power4.out",
+            stagger: 0.09,
+            clearProps: "all",
+          },
+          0.1,
         )
-        .from('[data-hero="subtitle"]', { autoAlpha: 0, y: 20, duration: 0.7 }, 0.45)
-        .from('[data-hero="cta"] > *', { autoAlpha: 0, y: 18, duration: 0.6, stagger: 0.1 }, 0.55)
-        .from('[data-hero="badges"] > li', { autoAlpha: 0, y: 14, duration: 0.5, stagger: 0.07 }, 0.7)
-        .from('[data-hero="badge-side"]', { autoAlpha: 0, x: 24, duration: 0.8 }, 0.6);
+        .fromTo(
+          '[data-hero="subtitle"]',
+          { opacity: 0, y: 14 },
+          { opacity: 1, y: 0, duration: 0.5, clearProps: "all" },
+          0.28,
+        )
+        // CTA Buttons: smooth spring bounce entrance without hard hiding
+        .fromTo(
+          '[data-hero="cta"] > *',
+          { opacity: 0, y: 16, scale: 0.95 },
+          {
+            opacity: 1,
+            y: 0,
+            scale: 1,
+            duration: 0.55,
+            stagger: 0.09,
+            ease: "back.out(1.4)",
+            clearProps: "all",
+          },
+          0.38,
+        )
+        // Trust Badges: staggered fade and lift
+        .fromTo(
+          '[data-hero="badges"] li',
+          { opacity: 0, y: 10 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.45,
+            stagger: 0.05,
+            clearProps: "all",
+          },
+          0.5,
+        )
+        .fromTo(
+          '[data-hero="badge-side"]',
+          { opacity: 0, x: 20 },
+          { opacity: 1, x: 0, duration: 0.6, clearProps: "all" },
+          0.35,
+        );
 
       // ——— Banner parallax (scrub, desktop only — mobile keeps static image) ———
       const mm = gsap.matchMedia();
@@ -267,26 +313,39 @@ export default function HeroSection() {
                 {t("hero.subtitle")}
               </p>
 
-              {/* Buttons */}
-              <div data-hero="cta" className="mt-6 flex flex-wrap items-center gap-3.5">
+              {/* Buttons: styled exactly to design reference pill buttons with rich micro-animations */}
+              <div data-hero="cta" className="mt-6 sm:mt-7 flex flex-wrap items-center gap-3.5 sm:gap-4 relative z-20">
                 <a
                   href="#register"
-                  className="inline-flex items-center justify-center gap-2 rounded-full bg-navy-900 px-6 py-2.5 text-xs sm:text-sm font-semibold text-white shadow-md transition hover:bg-navy-800 active:scale-[0.98]"
+                  className="group relative inline-flex items-center justify-center gap-2 sm:gap-2.5 overflow-hidden rounded-full bg-navy-900 px-6 py-2.5 sm:px-7 sm:py-3 text-xs sm:text-sm font-semibold text-white shadow-md shadow-navy-950/20 transition-all duration-300 hover:-translate-y-0.5 hover:bg-navy-800 hover:shadow-lg hover:shadow-navy-950/30 active:scale-[0.97]"
                 >
-                  <span>{t("hero.createProfile")}</span>
+                  {/* Subtle shine sweep on hover */}
                   <span
                     aria-hidden="true"
-                    className="text-xs transition-transform group-hover:translate-x-0.5"
+                    className="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/20 to-transparent transition-transform duration-700 ease-out group-hover:translate-x-full"
+                  />
+                  <span className="relative z-10">{t("hero.createProfile")}</span>
+                  <span
+                    aria-hidden="true"
+                    className="relative z-10 text-xs sm:text-sm transition-transform duration-300 group-hover:translate-x-1.5"
                   >
                     →
                   </span>
                 </a>
                 <a
                   href="#search"
-                  className="inline-flex items-center justify-center gap-2 rounded-full border border-gold-500/70 bg-white/90 px-6 py-2.5 text-xs sm:text-sm font-semibold text-navy-900 shadow-xs backdrop-blur-xs transition hover:bg-gold-50 hover:border-gold-600 active:scale-[0.98]"
+                  className="group relative inline-flex items-center justify-center gap-2 sm:gap-2.5 overflow-hidden rounded-full border border-gold-500/80 bg-white/95 px-6 py-2.5 sm:px-7 sm:py-3 text-xs sm:text-sm font-semibold text-navy-900 shadow-xs backdrop-blur-xs transition-all duration-300 hover:-translate-y-0.5 hover:border-gold-600 hover:bg-gold-50/80 hover:shadow-md hover:shadow-gold-500/15 active:scale-[0.97]"
                 >
-                  <span>{t("hero.findMatch")}</span>
-                  <span className="text-gold-600" aria-hidden="true">
+                  {/* Subtle gold sheen sweep on hover */}
+                  <span
+                    aria-hidden="true"
+                    className="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-gold-400/20 to-transparent transition-transform duration-700 ease-out group-hover:translate-x-full"
+                  />
+                  <span className="relative z-10">{t("hero.findMatch")}</span>
+                  <span
+                    aria-hidden="true"
+                    className="relative z-10 text-gold-600 text-xs sm:text-sm transition-transform duration-300 group-hover:translate-x-1.5"
+                  >
                     →
                   </span>
                 </a>

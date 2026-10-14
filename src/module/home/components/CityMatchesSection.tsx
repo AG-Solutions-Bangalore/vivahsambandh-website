@@ -2,6 +2,7 @@ import { useTranslation } from 'react-i18next'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import { Navigation, Autoplay, A11y } from 'swiper/modules'
 import Reveal from '../../../components/motion/Reveal'
+import { prefersReducedMotion } from '../../../lib/gsap-setup'
 
 import 'swiper/css'
 import 'swiper/css/navigation'
@@ -75,6 +76,15 @@ const CITIES: readonly CityItem[] = [
 
 export default function CityMatchesSection() {
   const { t } = useTranslation()
+  // Autoplay is motion: freeze the carousel for reduced-motion users
+  // (static slider remains fully swipeable).
+  const autoplay = prefersReducedMotion()
+    ? false
+    : {
+        delay: 3500,
+        disableOnInteraction: false,
+        pauseOnMouseEnter: true,
+      }
 
   return (
     <section id="search" className="relative overflow-hidden bg-cream-50 py-12 sm:py-16">
@@ -187,11 +197,7 @@ export default function CityMatchesSection() {
             speed={600}
             watchOverflow={true}
             grabCursor={true}
-            autoplay={{
-              delay: 3500,
-              disableOnInteraction: false,
-              pauseOnMouseEnter: true,
-            }}
+            autoplay={autoplay}
             spaceBetween={14}
             slidesPerView={1.2}
             slidesPerGroup={1}

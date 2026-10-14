@@ -2,7 +2,6 @@ import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import Footer from './components/Footer'
 import Header from './components/Header'
-import ScrollProgress from './components/motion/ScrollProgress'
 import SmoothScroll from './components/motion/SmoothScroll'
 import { refreshScrollTriggers } from './lib/gsap-setup'
 import { HomePage } from './module/home'
@@ -21,7 +20,6 @@ export default function App() {
 
   return (
     <SmoothScroll>
-      <ScrollProgress />
       <div className="min-h-screen bg-cream-50">
         <Header />
         <main>
