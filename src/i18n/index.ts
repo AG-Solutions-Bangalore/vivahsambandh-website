@@ -11,6 +11,8 @@ export const DEFAULT_LANG: AppLang = 'en'
 export const LANG_STORAGE_KEY = 'vivah-lang'
 
 function syncDocumentLang(lng: string) {
+  // SSR/prerender has no DOM — skip (prerender sets <html lang> itself).
+  if (typeof document === 'undefined') return
   const lang: AppLang = lng === 'hi' ? 'hi' : 'en'
   document.documentElement.lang = lang
   document.title =
