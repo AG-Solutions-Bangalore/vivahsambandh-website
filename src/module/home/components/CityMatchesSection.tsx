@@ -76,7 +76,7 @@ export default function CityMatchesSection() {
   const { t } = useTranslation()
 
   return (
-    <section className="relative overflow-hidden bg-cream-50 py-12 sm:py-16 lg:py-20">
+    <section className="relative overflow-hidden bg-cream-50 py-12 sm:py-16">
       <div className="section-pad relative z-10">
         {/* ============================================================== */}
         {/* Section Header: Eyebrow, Title, Subtitle, and View All link    */}
