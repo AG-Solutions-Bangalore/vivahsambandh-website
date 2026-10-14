@@ -1,0 +1,139 @@
+@import "tailwindcss";
+
+@theme {
+  /* ————— VivahSambandh brand palette (extracted from Home EN/HI designs) ————— */
+
+  /* Deep navy — header, dark sections, footer, primary buttons */
+  --color-navy-50: #eef2f9;
+  --color-navy-100: #d7e0f0;
+  --color-navy-200: #aebfde;
+  --color-navy-300: #829dda;
+  --color-navy-400: #4a6ea3;
+  --color-navy-500: #2a4d80;
+  --color-navy-600: #1d3f6e;
+  --color-navy-700: #132e57;
+  --color-navy-800: #0d2242;
+  --color-navy-900: #0a1c38;
+  --color-navy-950: #060f22;
+
+  /* Maroon / sindoor red — accents, icon chips, hearts, Hindi headings */
+  --color-maroon-50: #fdf0f2;
+  --color-maroon-100: #f9d9de;
+  --color-maroon-200: #efaebb;
+  --color-maroon-300: #e27e92;
+  --color-maroon-400: #d14e68;
+  --color-maroon-500: #c1273f;
+  --color-maroon-600: #9e1b32;
+  --color-maroon-700: #7f1d2b;
+  --color-maroon-800: #5c1420;
+  --color-maroon-900: #3f0d16;
+
+  /* Gold — headings, borders, badges, dividers */
+  --color-gold-50: #fdf4de;
+  --color-gold-100: #faeac6;
+  --color-gold-200: #f4d894;
+  --color-gold-300: #f0d08a;
+  --color-gold-400: #e3b85a;
+  --color-gold-500: #d19a2b;
+  --color-gold-600: #b7791f;
+  --color-gold-700: #8a5a12;
+  --color-gold-800: #5f3e0c;
+  --color-gold-900: #3d2808;
+
+  /* Warm ivory cream — page background */
+  --color-cream-50: #fffbf2;
+  --color-cream-100: #fff6e5;
+  --color-cream-200: #fbeed3;
+  --color-cream-300: #f3dfb8;
+  --color-cream-400: #e6c88e;
+
+  /* Ink — body copy */
+  --color-ink-400: #9a8a76;
+  --color-ink-500: #6b5d4f;
+  --color-ink-600: #4a3f33;
+  --color-ink-700: #2a2118;
+  --color-ink-900: #180f08;
+
+  /* ————— Typography ————— */
+  --font-display: "Playfair Display", "Tiro Devanagari Hindi", "Georgia", serif;
+  --font-devanagari: "Tiro Devanagari Hindi", "Playfair Display", "Georgia", serif;
+  --font-sans: "Mukta", "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  /* ————— Shape & elevation ————— */
+  --radius-card: 1.25rem;
+  --radius-pill: 999px;
+
+  --shadow-card: 0 10px 30px -12px rgb(10 28 56 / 0.18);
+  --shadow-lift: 0 18px 45px -15px rgb(10 28 56 / 0.28);
+  --shadow-gold: 0 8px 24px -8px rgb(183 121 31 / 0.45);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  @apply bg-cream-50 text-ink-600 font-sans antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Hindi locale gets Devanagari-first stacks for correct matra rendering */
+html[lang="hi"] body {
+  font-family: "Mukta", "Tiro Devanagari Hindi", system-ui, sans-serif;
+}
+html[lang="hi"] .font-display {
+  font-family: var(--font-devanagari);
+}
+
+::selection {
+  background: var(--color-gold-100);
+  color: var(--color-navy-900);
+}
+
+/* ————— Reusable brand components ————— */
+@utility eyebrow {
+  @apply inline-flex items-center gap-2 text-[11px] font-bold tracking-[0.22em] uppercase text-gold-600;
+}
+
+@utility btn-primary {
+  @apply inline-flex items-center justify-center gap-2 rounded-full bg-navy-900 px-6 py-3 text-sm font-semibold text-white shadow-lift transition hover:bg-navy-700 active:scale-[0.98];
+}
+
+@utility btn-gold {
+  @apply inline-flex items-center justify-center gap-2 rounded-full border border-gold-500/60 bg-white/70 px-6 py-3 text-sm font-semibold text-navy-900 transition hover:border-gold-500 hover:bg-gold-50 active:scale-[0.98];
+}
+
+@utility card-ring {
+  @apply rounded-[1.25rem] border border-gold-500/30 bg-white shadow-card;
+}
+
+@utility section-pad {
+  @apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8;
+}
+
+/* Subtle mandala / jaali texture used behind cream sections in the design */
+@utility bg-jaali {
+  background-image: radial-gradient(
+    rgb(183 121 31 / 0.08) 1px,
+    transparent 1px
+  );
+  background-size: 22px 22px;
+}
+
+@utility bg-navy-pattern {
+  background-image:
+    radial-gradient(rgb(255 255 255 / 0.06) 1px, transparent 1px),
+    linear-gradient(135deg, var(--color-navy-900), var(--color-navy-700));
+  background-size:
+    22px 22px,
+    cover;
+}
+
+@utility no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+

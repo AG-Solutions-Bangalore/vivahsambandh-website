@@ -1,0 +1,168 @@
+{
+  "meta": {
+    "siteName": "VivahSambandh",
+    "tagline": "Agarwal Matrimony",
+    "title": "VivahSambandh — Premium Agarwal Matrimony | Tradition Meets New Beginnings",
+    "description": "VivahSambandh connects Agarwal families with shared values, traditions and aspirations to create meaningful and lasting relationships."
+  },
+  "header": {
+    "home": "Home",
+    "about": "About Us",
+    "search": "Search",
+    "successStories": "Success Stories",
+    "membership": "Membership",
+    "faq": "FAQ",
+    "contact": "Contact Us",
+    "login": "Login",
+    "createProfile": "Create Profile",
+    "language": "Language"
+  },
+  "hero": {
+    "eyebrow": "A Premium Agarwal Matrimonial Platform",
+    "titleA": "Tradition Meets",
+    "titleB": "New Beginnings",
+    "subtitle": "VivahSambandh connects Agarwal families with shared values, traditions and aspirations to create meaningful and lasting relationships.",
+    "createProfile": "Create Your Profile",
+    "findMatch": "Find Your Match",
+    "verified": "Verified Profiles",
+    "privacy": "100% Privacy",
+    "community": "Agarwal Community",
+    "familySupport": "Family Support",
+    "sideNote": "Same Values Brighter Futures"
+  },
+  "matchCards": {
+    "bride": "Looking for a",
+    "brideAccent": "Bride",
+    "groom": "Looking for a",
+    "groomAccent": "Groom"
+  },
+  "about": {
+    "eyebrow": "About VivahSambandh",
+    "titleA": "More Than",
+    "titleB": "a Matrimonial Platform",
+    "body": "VivahSambandh is dedicated to bringing Agarwal families together through a trusted and modern platform. We respect our traditions, values and cultural heritage while embracing technology to make your search for a life partner simple, secure and meaningful.",
+    "cta": "Know More About Us",
+    "community": "Our Community",
+    "members": "50K+ Happy Members"
+  },
+  "cities": {
+    "eyebrow": "Browse by community",
+    "title": "Find Matches in Your City",
+    "subtitle": "Explore profiles from Agarwal communities across India and worldwide.",
+    "viewAll": "View All Cities",
+    "profiles": "Profiles",
+    "list": [
+      { "name": "Delhi", "count": "8,500+" },
+      { "name": "Mumbai", "count": "6,200+" },
+      { "name": "Kolkata", "count": "4,800+" },
+      { "name": "Bengaluru", "count": "3,600+" },
+      { "name": "Hyderabad", "count": "3,500+" },
+      { "name": "Pune", "count": "2,900+" },
+      { "name": "Ahmedabad", "count": "2,200+" },
+      { "name": "Others", "count": "10,000+" }
+    ]
+  },
+  "why": {
+    "eyebrow": "Why choose VivahSambandh",
+    "title": "Designed for Agarwal Families",
+    "subtitle": "A perfect blend of tradition, trust and technology to help you find a compatible life partner.",
+    "cta": "Explore Features",
+    "features": [
+      { "title": "Verified & Genuine Profiles" },
+      { "title": "Community Based Matching" },
+      { "title": "Advanced Search Filters" },
+      { "title": "Personalized Match Suggestions" },
+      { "title": "Family Involvement Options" },
+      { "title": "Safe & Secure Communication" }
+    ]
+  },
+  "stories": {
+    "eyebrow": "Success stories",
+    "titleA": "Real People.",
+    "titleB": "Real Happiness.",
+    "subtitle": "Thousands of Agarwal families found their perfect match through VivahSambandh. Their stories inspire us to create more beautiful beginnings.",
+    "cta": "Read Success Stories",
+    "items": [
+      {
+        "quote": "VivahSambandh made our journey simple and comfortable. We are grateful to find the perfect match within our community.",
+        "name": "Rohan & Ananya",
+        "city": "Delhi"
+      },
+      {
+        "quote": "The platform is genuine and trustworthy. We highly recommend VivahSambandh to all Agarwal families.",
+        "name": "Vikas & Riya",
+        "city": "Bengaluru"
+      },
+      {
+        "quote": "Our families connected easily, and everything felt right from the start.",
+        "name": "Amit & Pooja",
+        "city": "Kolkata"
+      }
+    ]
+  },
+  "app": {
+    "eyebrow": "VivahSambandh App",
+    "title": "Your Match, Always With You",
+    "body": "Download the VivahSambandh app and explore verified profiles, get instant notifications and stay connected with your potential life partner.",
+    "googlePlay": "Get it on Google Play",
+    "appStore": "Download on the App Store",
+    "features": [
+      { "title": "Instant Notifications", "desc": "Get notified about new matches" },
+      { "title": "Smart Search Filters", "desc": "Find matches as per your preferences" },
+      { "title": "Profile Management", "desc": "Easily manage your profile" },
+      { "title": "Secure Communication", "desc": "Chat safely and privately" },
+      { "title": "User Friendly Interface", "desc": "Simple and easy to use" }
+    ]
+  },
+  "faq": {
+    "eyebrow": "Frequently asked",
+    "title": "Questions",
+    "subtitle": "Get answers to common questions about VivahSambandh and our services.",
+    "cta": "View All FAQ",
+    "items": [
+      { "q": "What is VivahSambandh?", "a": "VivahSambandh is a premium matrimonial platform exclusively for the Agarwal community, blending tradition with modern matchmaking." },
+      { "q": "Is my information secure?", "a": "Yes. We use strict verification, privacy controls and secure communication to protect every member." },
+      { "q": "Can I search by community or city?", "a": "Yes. Browse matches by city, gotra, profession, education and many more filters." },
+      { "q": "Are profiles verified?", "a": "Every profile passes manual screening plus optional ID verification before going live." },
+      { "q": "How does the matching process work?", "a": "Create a profile, set preferences, receive curated matches, and connect with families directly." }
+    ]
+  },
+  "contact": {
+    "eyebrow": "Get in touch",
+    "title": "Contact Us",
+    "subtitle": "We are here to help you. Feel free to reach out to us for any queries, suggestions or support. Our team will get back to you as soon as possible.",
+    "callTitle": "Call Us",
+    "callValue": "+91 98765 43210",
+    "callHours": "(Mon – Sat, 10 AM – 6 PM)",
+    "emailTitle": "Email Us",
+    "emailValue": "support@vivahsambandh.com",
+    "emailNote": "We reply within 24 hours.",
+    "addressTitle": "Our Address",
+    "addressValue": "Bengaluru, Karnataka, India 560001",
+    "formTitle": "Send Us a Message",
+    "formSubtitle": "Fill in the details below and our team will get back to you.",
+    "name": "Your Name",
+    "email": "Email Address",
+    "phone": "Phone Number",
+    "message": "Your Message",
+    "send": "Send Message"
+  },
+  "footer": {
+    "about": "A trusted matrimonial platform connecting Agarwal individuals and families through shared values, traditions and meaningful relationships.",
+    "quickLinks": "Quick Links",
+    "support": "Support",
+    "contactUs": "Contact Us",
+    "helpCenter": "Help Center",
+    "privacy": "Privacy Policy",
+    "terms": "Terms & Conditions",
+    "guidelines": "Community Guidelines",
+    "sitemap": "Sitemap",
+    "rights": "© 2026 VivahSambandh. All rights reserved.",
+    "madeWith": "Traditions Connect Hearts"
+  },
+  "lang": {
+    "en": "English",
+    "hi": "हिन्दी",
+    "switchTo": "Switch to Hindi"
+  }
+}
