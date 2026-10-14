@@ -1,6 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { COMPANY } from "../../../constants/company";
 import type { AppFeature } from "../types";
+import Reveal, { RevealGroup } from "../../../components/motion/Reveal";
 
 function AppFeatureIcon({ index }: { index: number }) {
   switch (index) {
@@ -102,7 +103,7 @@ export default function AppDownloadSection() {
       <div className="section-pad">
         <div className="grid items-center gap-12 lg:grid-cols-12 lg:gap-8">
           {/* Left Column: Heading, Copy & App Store Buttons */}
-          <div className="lg:col-span-4">
+          <Reveal variant="left" className="lg:col-span-4">
             <div className="eyebrow">
               <span className="text-gold-500">✦</span>
               <span>{t("app.eyebrow")}</span>
@@ -164,10 +165,10 @@ export default function AppDownloadSection() {
                 </div>
               </a>
             </div>
-          </div>
+          </Reveal>
 
           {/* Center Column: Mobile App Showcase Mockup */}
-          <div className="flex justify-center lg:col-span-5">
+          <Reveal variant="scale" delay={0.1} className="flex justify-center lg:col-span-5">
             <div className="relative mx-auto max-w-[440px] drop-shadow-2xl transition-transform duration-700 hover:scale-105 sm:max-w-[520px]">
               <img
                 src="/images/home/VivahSambandhApp_image.webp"
@@ -176,13 +177,14 @@ export default function AppDownloadSection() {
                 loading="lazy"
               />
             </div>
-          </div>
+          </Reveal>
 
           {/* Right Column: 5 Features List with Maroon Circular Badges */}
-          <div className="space-y-1 lg:col-span-3">
+          <RevealGroup className="space-y-1 lg:col-span-3">
             {rawFeatures.map((f, i) => (
               <div
                 key={f.title}
+                data-reveal-item
                 className="flex items-center gap-3.5 p-3.5 bg-white/60 transition-all duration-300 hover:border-gold-500"
               >
                 <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-maroon-600 text-white shadow-xs">
@@ -196,7 +198,7 @@ export default function AppDownloadSection() {
                 </div>
               </div>
             ))}
-          </div>
+          </RevealGroup>
         </div>
       </div>
     </section>

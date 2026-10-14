@@ -1,18 +1,28 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import type { FaqItem } from '../types'
+import Reveal from '../../../components/motion/Reveal'
+import { refreshScrollTriggers } from '../../../lib/gsap-setup'
 
 export default function FaqSection() {
   const { t } = useTranslation()
   const rawItems = (t('faq.items', { returnObjects: true }) as FaqItem[]) || []
   const [openIndex, setOpenIndex] = useState<number | null>(0)
 
+  // Accordion height animates over 300ms (CSS grid-rows transition).
+  // Measuring mid-transition records wrong positions for every trigger
+  // below, so refresh AFTER the animation completes — not on toggle.
+  useEffect(() => {
+    const cancel = refreshScrollTriggers(350)
+    return cancel
+  }, [openIndex])
+
   const toggle = (i: number) => {
     setOpenIndex((curr) => (curr === i ? null : i))
   }
 
   return (
-    <section className="relative overflow-hidden bg-[#FFFBF2] py-12">
+    <section id="faq" className="relative overflow-hidden bg-[#FFFBF2] py-12">
       {/* Background Architectural Temple Arch Artwork — soft, visible, text stays readable */}
       <div className="pointer-events-none absolute inset-0 opacity-[0.16]">
         <img
@@ -26,7 +36,7 @@ export default function FaqSection() {
       <div className="section-pad relative">
         <div className="grid items-start gap-12 lg:grid-cols-12 lg:gap-16">
           {/* Left Column: Heading & CTA */}
-          <div className="lg:col-span-5">
+          <Reveal variant="left" className="lg:col-span-5">
             <div className="eyebrow">
               <span className="text-gold-500">✦</span>
               <span>{t('faq.eyebrow')}</span>
@@ -48,10 +58,10 @@ export default function FaqSection() {
                 </span>
               </a>
             </div>
-          </div>
+          </Reveal>
 
           {/* Right Column: Accordion Questions */}
-          <div className="space-y-3 lg:col-span-7">
+          <Reveal variant="right" delay={0.1} className="space-y-3 lg:col-span-7">
             {rawItems.map((item, i) => {
               const isOpen = openIndex === i
               return (
@@ -94,7 +104,7 @@ export default function FaqSection() {
                 </div>
               )
             })}
-          </div>
+          </Reveal>
         </div>
       </div>
     </section>

@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next'
 import type { WhyFeature } from '../types'
+import Reveal, { RevealGroup } from '../../../components/motion/Reveal'
 
 // Bespoke golden Mughal/Indian arched icons matching the design screenshot
 function FeatureArchedIcon({ index }: { index: number }) {
@@ -68,7 +69,7 @@ export default function WhyChooseSection() {
   const rawFeatures = (t('why.features', { returnObjects: true }) as WhyFeature[]) || []
 
   return (
-    <section className="relative overflow-hidden bg-[#071833] py-14 sm:py-16 lg:py-20">
+    <section id="explore-features" className="relative overflow-hidden bg-[#071833] py-14 sm:py-16 lg:py-20">
       {/* ============================================================== */}
       {/* Ornate Corner Filigree on Left & Right Edges                */}
       {/* ============================================================== */}
@@ -91,7 +92,7 @@ export default function WhyChooseSection() {
           {/* ========================================================== */}
           {/* Left Column: Eyebrow, Heading, Subtitle, and Gold CTA Button*/}
           {/* ========================================================== */}
-          <div className="lg:col-span-4 xl:col-span-4">
+          <Reveal variant="left" className="lg:col-span-4 xl:col-span-4">
             {/* Eyebrow */}
             <div className="inline-flex items-center gap-2">
               <span className="text-gold-400 text-sm font-bold" aria-hidden="true">
@@ -127,13 +128,13 @@ export default function WhyChooseSection() {
                 </span>
               </a>
             </div>
-          </div>
+          </Reveal>
 
           {/* ========================================================== */}
           {/* Right Column: 3-column x 2-row Grid of Feature Cards       */}
           {/* ========================================================== */}
           <div className="lg:col-span-8 xl:col-span-8">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5 sm:gap-4">
+            <RevealGroup className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5 sm:gap-4">
               {rawFeatures.map((f, i) => {
                 // Break title into main line and final word + inline arrow
                 const words = f.title.trim().split(/\s+/)
@@ -143,6 +144,7 @@ export default function WhyChooseSection() {
                 return (
                   <div
                     key={f.title}
+                    data-reveal-item
                     className="group relative overflow-hidden flex items-center gap-3 sm:gap-3.5 rounded-2xl border border-gold-500/25 bg-white p-3.5 sm:p-4 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-gold-500 hover:shadow-md"
                   >
                     {/* Bespoke Arched Icon */}
@@ -166,7 +168,7 @@ export default function WhyChooseSection() {
                   </div>
                 )
               })}
-            </div>
+            </RevealGroup>
           </div>
         </div>
       </div>

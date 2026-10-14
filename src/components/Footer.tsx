@@ -1,6 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { COMPANY, getCompanyAddress } from "../constants/company";
 import { getAppLanguage } from "../i18n";
+import Reveal from "./motion/Reveal";
 
 function LotusMark() {
   return (
@@ -64,6 +65,7 @@ export default function Footer() {
 
       <div className="section-pad overflow-hidden relative z-10 grid gap-10 pt-24 pb-10 md:grid-cols-[1.4fr_1fr_1fr_1.2fr]">
         {/* Brand & Socials Column */}
+        <Reveal variant="up">
         <div>
           <div className="flex items-center gap-2.5">
             <LotusMark />
@@ -132,8 +134,10 @@ export default function Footer() {
             </a>
           </div>
         </div>
+        </Reveal>
 
         {/* Quick Links Column */}
+        <Reveal variant="up" delay={0.08}>
         <nav aria-label="Quick links">
           <p className="text-[15px] font-bold text-white">
             {t("footer.quickLinks")}
@@ -148,8 +152,10 @@ export default function Footer() {
             ))}
           </ul>
         </nav>
+        </Reveal>
 
         {/* Support Column */}
+        <Reveal variant="up" delay={0.14}>
         <nav aria-label="Support">
           <p className="text-[15px] font-bold text-white">
             {t("footer.support")}
@@ -164,8 +170,10 @@ export default function Footer() {
             ))}
           </ul>
         </nav>
+        </Reveal>
 
         {/* Contact Info Column (Directly from COMPANY constants) */}
+        <Reveal variant="up" delay={0.2}>
         <div>
           <p className="text-[15px] font-bold text-white">
             {t("footer.contactUs")}
@@ -195,6 +203,7 @@ export default function Footer() {
             </li>
           </ul>
         </div>
+        </Reveal>
       </div>
 
       {/* Bottom Copyright Bar */}

@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import { Navigation, Autoplay, A11y } from 'swiper/modules'
+import Reveal from '../../../components/motion/Reveal'
 
 import 'swiper/css'
 import 'swiper/css/navigation'
@@ -76,11 +77,12 @@ export default function CityMatchesSection() {
   const { t } = useTranslation()
 
   return (
-    <section className="relative overflow-hidden bg-cream-50 py-12 sm:py-16">
+    <section id="search" className="relative overflow-hidden bg-cream-50 py-12 sm:py-16">
       <div className="section-pad relative z-10">
         {/* ============================================================== */}
         {/* Section Header: Eyebrow, Title, Subtitle, and View All link    */}
         {/* ============================================================== */}
+        <Reveal variant="up">
         <div className="flex flex-col justify-between gap-4 md:flex-row md:items-end">
           <div>
             {/* Eyebrow */}
@@ -120,10 +122,19 @@ export default function CityMatchesSection() {
             </a>
           </div>
         </div>
+        </Reveal>
 
         {/* ============================================================== */}
         {/* Swiper.js Slider: strictly 4 cards at a time on desktop       */}
+        {/* NOTE: intentionally NOT wrapped in a GSAP Reveal. Swiper runs */}
+        {/* its own transform loop; a GSAP-animated ancestor causes       */}
+        {/* glitches (init measuring + per-frame style writes + autoplay  */}
+        {/* motion stacking). Header above still reveals.                 */}
         {/* ============================================================== */}
+        {/* data-lenis-prevent REMOVED here on purpose: it is only for nested
+            scroll containers. On a flat Swiper wrapper it makes Lenis skip
+            smoothing wheel events → instant unsmoothed jumps exactly over
+            the carousel. Swiper drag works natively (syncTouch: false). */}
         <div className="group/cities relative mt-8 px-10 sm:mt-10 sm:px-12">
           {/* Custom Navigation Button: Prev (Left) — shows on hover */}
           <button
@@ -166,6 +177,12 @@ export default function CityMatchesSection() {
               prevEl: '.city-prev',
               nextEl: '.city-next',
             }}
+            // Self-correct when slide content mutates after init (locale
+            // switch EN↔HI, lazy images, GSAP reveal transforms above).
+            // Without this Swiper keeps stale measurements → visual glitches.
+            observer={true}
+            observeParents={true}
+            observeSlideChildren={true}
             loop={CITIES.length > 4}
             speed={600}
             watchOverflow={true}

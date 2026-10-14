@@ -1,13 +1,29 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { COMPANY } from '../../../constants/company'
+import Reveal from '../../../components/motion/Reveal'
+import { lockPageScroll, unlockPageScroll } from '../../../lib/scroll'
 
 export default function AboutSection() {
   const { t } = useTranslation()
   const [isVideoOpen, setIsVideoOpen] = useState(false)
 
+  // Modal open → stop Lenis + lock background scroll (restored on close).
+  useEffect(() => {
+    if (!isVideoOpen) return
+    lockPageScroll()
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setIsVideoOpen(false)
+    }
+    document.addEventListener('keydown', onKey)
+    return () => {
+      document.removeEventListener('keydown', onKey)
+      unlockPageScroll()
+    }
+  }, [isVideoOpen])
+
   return (
-    <section className="relative isolate overflow-hidden bg-cream-50 pt-4 sm:pt-6 lg:pt-8 pb-16 sm:pb-20 lg:pb-24">
+    <section id="about" className="relative isolate overflow-hidden bg-cream-50 pt-4 sm:pt-6 lg:pt-8 pb-16 sm:pb-20 lg:pb-24">
       {/* ============================================================== */}
       {/* Decorative Floral Vines: small, behind content, edge-anchored   */}
       {/* ============================================================== */}
@@ -34,7 +50,7 @@ export default function AboutSection() {
           {/* ========================================================== */}
           {/* Left Column: Ornate Mandap Visual with Play & Community   */}
           {/* ========================================================== */}
-          <div className="relative lg:col-span-6 flex justify-center">
+          <Reveal variant="scale" className="relative lg:col-span-6 flex justify-center">
             <div className="relative w-full max-w-lg lg:max-w-none">
               {/* Ornate Mandap Arch PNG */}
               <div className="relative overflow-visible">
@@ -97,12 +113,12 @@ export default function AboutSection() {
                 </div>
               </div>
             </div>
-          </div>
+          </Reveal>
 
           {/* ========================================================== */}
           {/* Right Column: Text Content Exactly Matching Design         */}
           {/* ========================================================== */}
-          <div className="lg:col-span-6">
+          <Reveal variant="up" delay={0.12} className="lg:col-span-6">
             {/* Eyebrow with gold wheel icon and ornate divider */}
             <div className="inline-flex items-center gap-2">
               <span className="text-gold-600 text-sm font-bold" aria-hidden="true">
@@ -140,7 +156,7 @@ export default function AboutSection() {
                 </span>
               </a>
             </div>
-          </div>
+          </Reveal>
         </div>
       </div>
 

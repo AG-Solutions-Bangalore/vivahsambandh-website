@@ -2,6 +2,7 @@ import { useTranslation } from 'react-i18next'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import { Pagination, Autoplay, A11y } from 'swiper/modules'
 import type { SuccessStory } from '../types'
+import Reveal from '../../../components/motion/Reveal'
 
 import 'swiper/css'
 import 'swiper/css/pagination'
@@ -47,7 +48,7 @@ export default function SuccessStoriesSection() {
           {/* ========================================================== */}
           {/* Left Column: Eyebrow, Heading, Subtitle, CTA               */}
           {/* ========================================================== */}
-          <div className="lg:col-span-5 xl:col-span-4">
+          <Reveal variant="left" className="lg:col-span-5 xl:col-span-4">
             <div className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-[0.2em] text-gold-600">
               <span aria-hidden="true" className="text-sm leading-none">✦</span>
               <span>{t('stories.eyebrow')}</span>
@@ -73,16 +74,24 @@ export default function SuccessStoriesSection() {
                 <span aria-hidden="true" className="transition-transform duration-300 group-hover:translate-x-1">→</span>
               </a>
             </div>
-          </div>
+          </Reveal>
 
           {/* ========================================================== */}
           {/* Right Column: Swiper.js 3-card slider                      */}
+          {/* NOTE: intentionally NOT wrapped in a GSAP Reveal — same    */}
+          {/* reason as CityMatches: Swiper owns its transform loop.    */}
           {/* ========================================================== */}
           <div className="lg:col-span-7 xl:col-span-8">
+            {/* No data-lenis-prevent: flat Swiper wrapper, see CityMatches. */}
             <div className="group/stories relative" id="stories">
               <Swiper
                 modules={[Pagination, Autoplay, A11y]}
                 pagination={{ el: '.stories-pagination', clickable: true }}
+                // Self-correct when slide content mutates after init (locale
+                // switch EN↔HI, lazy images, GSAP reveal transforms above).
+                observer={true}
+                observeParents={true}
+                observeSlideChildren={true}
                 loop={slides.length > 3}
                 speed={600}
                 watchOverflow={true}

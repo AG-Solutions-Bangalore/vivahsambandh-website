@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
   COMPANY,
@@ -7,6 +7,8 @@ import {
 } from "../../../constants/company";
 import { getAppLanguage } from "../../../i18n";
 import type { ContactFormData } from "../types";
+import Reveal, { RevealGroup } from "../../../components/motion/Reveal";
+import { refreshScrollTriggers } from "../../../lib/gsap-setup";
 
 export default function ContactSection() {
   const { t } = useTranslation();
@@ -26,6 +28,11 @@ export default function ContactSection() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  // Success card swaps form height → re-measure triggers below/above.
+  useEffect(() => {
+    refreshScrollTriggers();
+  }, [submitted]);
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitted(true);
@@ -36,7 +43,7 @@ export default function ContactSection() {
   };
 
   return (
-    <section className="relative overflow-hidden bg-[#FFFBF2] py-16">
+    <section id="contact" className="relative overflow-hidden bg-[#FFFBF2] py-16">
       <div className="pointer-events-none absolute inset-x-0 bottom-0">
         <img
           src="/images/home/Elegant Temple Wedding Banner.webp"
@@ -49,7 +56,7 @@ export default function ContactSection() {
       <div className="section-pad relative z-10">
         <div className="grid items-start gap-12 lg:grid-cols-12 lg:gap-14">
           {/* Left Column: Direct Contacts */}
-          <div className="lg:col-span-5">
+          <Reveal variant="left" className="lg:col-span-5">
             <div className="eyebrow">
               <span className="text-gold-500">✦</span>
               <span>{t("contact.eyebrow")}</span>
@@ -64,9 +71,9 @@ export default function ContactSection() {
             </p>
 
             {/* 3 Contact Info Cards */}
-            <div className="mt-8 space-y-4">
+            <RevealGroup className="mt-8 space-y-4" stagger={0.1}>
               {/* Call Us */}
-              <div className="card-ring flex items-center gap-4 bg-white/95 p-4 shadow-xs backdrop-blur transition hover:border-gold-500">
+              <div data-reveal-item className="card-ring flex items-center gap-4 bg-white/95 p-4 shadow-xs backdrop-blur transition hover:border-gold-500">
                 <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-gold-500/20 text-gold-700">
                   <svg
                     viewBox="0 0 24 24"
@@ -93,7 +100,7 @@ export default function ContactSection() {
               </div>
 
               {/* Email Us */}
-              <div className="card-ring flex items-center gap-4 bg-white/95 p-4 shadow-xs backdrop-blur transition hover:border-gold-500">
+              <div data-reveal-item className="card-ring flex items-center gap-4 bg-white/95 p-4 shadow-xs backdrop-blur transition hover:border-gold-500">
                 <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-gold-500/20 text-gold-700">
                   <svg
                     viewBox="0 0 24 24"
@@ -120,7 +127,7 @@ export default function ContactSection() {
               </div>
 
               {/* Our Address */}
-              <div className="card-ring flex items-center gap-4 bg-white/95 p-4 shadow-xs backdrop-blur transition hover:border-gold-500">
+              <div data-reveal-item className="card-ring flex items-center gap-4 bg-white/95 p-4 shadow-xs backdrop-blur transition hover:border-gold-500">
                 <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-gold-500/20 text-gold-700">
                   <svg
                     viewBox="0 0 24 24"
@@ -139,11 +146,11 @@ export default function ContactSection() {
                   </p>
                 </div>
               </div>
-            </div>
-          </div>
+            </RevealGroup>
+          </Reveal>
 
           {/* Right Column: Contact Form */}
-          <div className="lg:col-span-7">
+          <Reveal variant="right" delay={0.1} className="lg:col-span-7">
             <div className="card-ring bg-white p-6 shadow-lift sm:p-8 lg:p-10">
               <h3 className="font-display text-2xl font-bold text-navy-900">
                 {t("contact.formTitle")}
@@ -255,7 +262,7 @@ export default function ContactSection() {
                 </form>
               )}
             </div>
-          </div>
+          </Reveal>
         </div>
       </div>
     </section>

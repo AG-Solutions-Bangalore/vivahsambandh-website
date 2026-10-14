@@ -1,7 +1,9 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { COMPANY } from '../constants/company'
 import LanguageSwitcher from './LanguageSwitcher'
+import { gsap, useGSAP, ScrollTrigger, prefersReducedMotion } from '../lib/gsap-setup'
+import { lockPageScroll, unlockPageScroll } from '../lib/scroll'
 
 function LotusMark() {
   return (
@@ -18,6 +20,76 @@ function LotusMark() {
 export default function Header() {
   const { t } = useTranslation()
   const [open, setOpen] = useState(false)
+  const headerRef = useRef<HTMLElement | null>(null)
+
+  // Entrance + hide-on-scroll-down (auto-show on scroll-up / at top).
+  useGSAP(
+    () => {
+      const header = headerRef.current
+      if (!header || prefersReducedMotion()) return
+
+      // Entrance: slide down once (transform only — no layout shift).
+      gsap.from(header, {
+        y: -72,
+        autoAlpha: 0,
+        duration: 0.8,
+        ease: 'power3.out',
+        delay: 0.1,
+        overwrite: 'auto',
+      })
+
+      // Hide on scroll down, reveal on scroll up. Disabled while the
+      // mobile drawer is open (tracked via data attribute below).
+      // State-guarded: Lenis fires scroll events every frame, so only
+      // create a tween when visibility actually flips — otherwise hundreds
+      // of killed/reborn tweens churn per scroll (jank + flicker).
+      let hidden = false
+      const setHidden = (next: boolean) => {
+        if (hidden === next) return
+        hidden = next
+        gsap.to(header, {
+          yPercent: next ? -110 : 0,
+          duration: 0.35,
+          ease: 'power3.out',
+          overwrite: 'auto',
+        })
+      }
+      const trigger = ScrollTrigger.create({
+        start: 0,
+        end: 'max',
+        onUpdate: (self) => {
+          if (header.dataset.drawerOpen === 'true') return
+          if (self.scroll() <= 80) {
+            setHidden(false)
+            return
+          }
+          if (self.direction === 1) setHidden(true)
+          else if (self.direction === -1) setHidden(false)
+        },
+      })
+
+      return () => {
+        trigger.kill()
+      }
+    },
+    { scope: headerRef },
+  )
+
+  // Lock smooth-scroll + background scroll while the mobile drawer is open.
+  // NOTE: side-effects stay outside the setState updater (StrictMode
+  // double-invokes updaters — locking inside would lock/unlock twice).
+  const toggleDrawer = () => {
+    const next = !open
+    setOpen(next)
+    if (headerRef.current) headerRef.current.dataset.drawerOpen = String(next)
+    if (next) lockPageScroll()
+    else unlockPageScroll()
+  }
+  const closeDrawer = () => {
+    setOpen(false)
+    if (headerRef.current) headerRef.current.dataset.drawerOpen = 'false'
+    unlockPageScroll()
+  }
 
   const navItems = [
     { label: t('header.home'), href: '#' },
@@ -30,7 +102,11 @@ export default function Header() {
   ]
 
   return (
-    <header className="sticky top-0 z-50 border-b border-gold-500/25 bg-cream-50/90 backdrop-blur">
+    <header
+      ref={headerRef}
+      data-drawer-open="false"
+      className="sticky top-0 z-50 border-b border-gold-500/25 bg-cream-50/90 backdrop-blur will-change-transform"
+    >
       <div className="section-pad flex h-16 items-center justify-between gap-3">
         {/* Brand Logo */}
         <a href="#" className="flex items-center gap-2 transition hover:opacity-95">
@@ -81,7 +157,7 @@ export default function Header() {
           <LanguageSwitcher compact />
           <button
             type="button"
-            onClick={() => setOpen((v) => !v)}
+            onClick={toggleDrawer}
             aria-expanded={open}
             aria-label="Menu"
             className="rounded-full border border-gold-500/40 p-2 text-navy-900 hover:bg-gold-100"
@@ -101,7 +177,7 @@ export default function Header() {
               <li key={item.label}>
                 <a
                   href={item.href}
-                  onClick={() => setOpen(false)}
+                  onClick={closeDrawer}
                   className="block rounded-xl px-3 py-2 transition hover:bg-gold-100 hover:text-maroon-600"
                 >
                   {item.label}
@@ -110,10 +186,10 @@ export default function Header() {
             ))}
           </ul>
           <div className="mt-3 flex gap-2 border-t border-gold-500/20 pt-3">
-            <a href="#login" onClick={() => setOpen(false)} className="btn-gold flex-1 !py-2 text-[13px]">
+            <a href="#login" onClick={closeDrawer} className="btn-gold flex-1 !py-2 text-[13px]">
               {t('header.login')}
             </a>
-            <a href="#register" onClick={() => setOpen(false)} className="btn-primary flex-1 !py-2 text-[13px]">
+            <a href="#register" onClick={closeDrawer} className="btn-primary flex-1 !py-2 text-[13px]">
               {t('header.createProfile')}
             </a>
           </div>

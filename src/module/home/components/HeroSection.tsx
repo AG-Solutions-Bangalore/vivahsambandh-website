@@ -1,4 +1,6 @@
+import { useRef } from "react";
 import { useTranslation } from "react-i18next";
+import { gsap, useGSAP, prefersReducedMotion } from "../../../lib/gsap-setup";
 
 const TRUST_BADGES = [
   {
@@ -88,9 +90,93 @@ const MATCH_CARDS = [
 
 export default function HeroSection() {
   const { t } = useTranslation();
+  const rootRef = useRef<HTMLDivElement | null>(null);
+
+  useGSAP(
+    () => {
+      const root = rootRef.current;
+      if (!root || prefersReducedMotion()) return;
+
+      // ——— Intro timeline (above the fold → play on mount, not on scroll) ———
+      const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
+      tl.from('[data-hero="eyebrow"]', { autoAlpha: 0, y: 18, duration: 0.6 }, 0.1)
+        // Line-mask reveal: each headline line slides up from inside its
+        // overflow-hidden mask (yPercent, transform-only). Masks carry
+        // pb/-mb compensation so Devanagari descenders never clip.
+        .from(
+          '[data-hero-line]',
+          { yPercent: 115, autoAlpha: 0, duration: 0.9, ease: "power4.out", stagger: 0.12 },
+          0.2,
+        )
+        .from('[data-hero="subtitle"]', { autoAlpha: 0, y: 20, duration: 0.7 }, 0.45)
+        .from('[data-hero="cta"] > *', { autoAlpha: 0, y: 18, duration: 0.6, stagger: 0.1 }, 0.55)
+        .from('[data-hero="badges"] > li', { autoAlpha: 0, y: 14, duration: 0.5, stagger: 0.07 }, 0.7)
+        .from('[data-hero="badge-side"]', { autoAlpha: 0, x: 24, duration: 0.8 }, 0.6);
+
+      // ——— Banner parallax (scrub, desktop only — mobile keeps static image) ———
+      const mm = gsap.matchMedia();
+      mm.add("(min-width: 768px)", () => {
+        gsap.to('[data-hero="banner"]', {
+          yPercent: 12,
+          ease: "none",
+          scrollTrigger: {
+            trigger: '[data-hero="banner-wrap"]',
+            start: "top top",
+            end: "bottom top",
+            scrub: 0.6,
+          },
+        });
+        // Flowers drift at different rates for depth.
+        gsap.to('[data-hero="flower-l"]', {
+          y: -40,
+          ease: "none",
+          scrollTrigger: {
+            trigger: root,
+            start: "top top",
+            end: "bottom top",
+            scrub: 0.8,
+          },
+        });
+        gsap.to('[data-hero="flower-r"]', {
+          y: -56,
+          ease: "none",
+          scrollTrigger: {
+            trigger: root,
+            start: "top top",
+            end: "bottom top",
+            scrub: 0.8,
+          },
+        });
+      });
+
+      // ——— Match cards entrance (just below fold → scroll-triggered, once) ———
+      gsap.fromTo(
+        '[data-hero="cards"] > *',
+        { autoAlpha: 0, y: 36 },
+        {
+          autoAlpha: 1,
+          y: 0,
+          duration: 0.8,
+          ease: "power3.out",
+          stagger: 0.12,
+          overwrite: "auto",
+          scrollTrigger: {
+            trigger: '[data-hero="cards"]',
+            start: "top 88%",
+            once: true,
+          },
+        },
+      );
+
+      return () => {
+        mm.revert();
+      };
+    },
+    { scope: rootRef },
+  );
 
   return (
-    <div className="relative isolate bg-cream-50">
+    <div ref={rootRef} className="relative isolate bg-cream-50">
       {/* ============================================================== */}
       {/* Real Flower Images: Left & Right cascading garlands             */}
       {/* Small + in front                                                */}
@@ -98,6 +184,7 @@ export default function HeroSection() {
       <img
         src="/images/home/flower1_image.png"
         alt=""
+        data-hero="flower-l"
         className="pointer-events-none absolute left-0 bottom-0 z-20 w-32 sm:w-40 md:w-48 lg:w-56 xl:w-64 max-w-[22vw] h-auto object-contain object-left-bottom select-none"
         loading="eager"
         aria-hidden="true"
@@ -105,6 +192,7 @@ export default function HeroSection() {
       <img
         src="/images/home/flower2_image.png"
         alt=""
+        data-hero="flower-r"
         className="pointer-events-none absolute right-0 bottom-0 z-20 w-32 sm:w-44 md:w-52 lg:w-60 xl:w-72 max-w-[26vw] h-auto object-contain object-right-top select-none"
         loading="eager"
         aria-hidden="true"
@@ -113,7 +201,7 @@ export default function HeroSection() {
       {/* ============================================================== */}
       {/* 1. HERO BANNER: Full-width, proportionally sized to 2172x724   */}
       {/* ============================================================== */}
-      <section className="relative isolate z-10 w-full h-[470px] sm:h-[490px] lg:h-[520px] xl:h-[540px]">
+      <section data-hero="banner-wrap" className="relative isolate z-10 w-full h-[470px] sm:h-[490px] lg:h-[520px] xl:h-[540px]">
         {/* Top garlands: hang from top */}
         <img
           src="/images/home/flower1_image.png"
@@ -137,7 +225,8 @@ export default function HeroSection() {
           <img
             src="/images/home/home_banner_image.png"
             alt=""
-            className="h-full w-full object-cover object-[78%_center] sm:object-[76%_center] lg:object-[82%_center] xl:object-right"
+            data-hero="banner"
+            className="h-full w-full object-cover object-[78%_center] sm:object-[76%_center] lg:object-[82%_center] xl:object-right will-change-transform"
             loading="eager"
           />
         </div>
@@ -153,7 +242,7 @@ export default function HeroSection() {
             {/* Left Content Column */}
             <div className="lg:col-span-7 xl:col-span-6 py-4">
               {/* Eyebrow */}
-              <div className="inline-flex items-center gap-2 text-[10px] sm:text-[11px] font-bold tracking-[0.22em] uppercase text-gold-700">
+              <div data-hero="eyebrow" className="inline-flex items-center gap-2 text-[10px] sm:text-[11px] font-bold tracking-[0.22em] uppercase text-gold-700">
                 <span className="text-gold-600 text-xs sm:text-sm font-black">
                   ✱
                 </span>
@@ -161,21 +250,25 @@ export default function HeroSection() {
                 <span className="h-px w-12 sm:w-16 bg-gold-500/50" />
               </div>
 
-              {/* Headline */}
-              <h1 className="font-display mt-3 text-3xl sm:text-4xl lg:text-[44px] xl:text-[50px] font-bold leading-[1.12]">
-                <span className="block text-navy-900">{t("hero.titleA")}</span>
-                <span className="block text-gold-600 mt-0.5">
-                  {t("hero.titleB")}
+              {/* Headline (line masks for the mask-reveal intro) */}
+              <h1 data-hero="title" className="font-display mt-3 text-3xl sm:text-4xl lg:text-[44px] xl:text-[50px] font-bold leading-[1.12]">
+                <span className="block overflow-hidden pb-[0.12em] -mb-[0.12em]">
+                  <span data-hero-line className="block text-navy-900 will-change-transform">{t("hero.titleA")}</span>
+                </span>
+                <span className="block overflow-hidden pb-[0.12em] -mb-[0.12em]">
+                  <span data-hero-line className="block text-gold-600 mt-0.5 will-change-transform">
+                    {t("hero.titleB")}
+                  </span>
                 </span>
               </h1>
 
               {/* Subtitle */}
-              <p className="mt-3.5 max-w-md text-xs sm:text-sm leading-relaxed text-ink-600 font-medium">
+              <p data-hero="subtitle" className="mt-3.5 max-w-md text-xs sm:text-sm leading-relaxed text-ink-600 font-medium">
                 {t("hero.subtitle")}
               </p>
 
               {/* Buttons */}
-              <div className="mt-6 flex flex-wrap items-center gap-3.5">
+              <div data-hero="cta" className="mt-6 flex flex-wrap items-center gap-3.5">
                 <a
                   href="#register"
                   className="inline-flex items-center justify-center gap-2 rounded-full bg-navy-900 px-6 py-2.5 text-xs sm:text-sm font-semibold text-white shadow-md transition hover:bg-navy-800 active:scale-[0.98]"
@@ -200,7 +293,7 @@ export default function HeroSection() {
               </div>
 
               {/* Trust Badges: Clean single horizontal row with distinct icons */}
-              <div className="mt-6 pt-2">
+              <div data-hero="badges" className="mt-6 pt-2">
                 <ul className="flex flex-wrap items-center gap-x-4 sm:gap-x-5 gap-y-2 text-[11px] sm:text-xs font-semibold text-navy-900">
                   {TRUST_BADGES.map((b) => (
                     <li
@@ -223,7 +316,7 @@ export default function HeroSection() {
               aria-hidden="true"
             >
               {/* "Same Values Brighter Futures ♥" badge next to bride (from design reference) */}
-              <div className="absolute right-12 xl:right-16 top-1/2 -translate-y-1/2 text-center pointer-events-none select-none z-10">
+              <div data-hero="badge-side" className="absolute right-12 xl:right-16 top-1/2 -translate-y-1/2 text-center pointer-events-none select-none z-10">
                 <p className="font-serif italic text-lg sm:text-xl xl:text-2xl font-bold leading-tight text-maroon-600 drop-shadow-xs">
                   Same
                   <br />
@@ -244,7 +337,7 @@ export default function HeroSection() {
       {/* 2. QUICK MATCH CARDS: Positioned cleanly below the hero banner */}
       {/* ============================================================== */}
       <section className="section-pad pt-6 pb-4 sm:pt-8 sm:pb-6 lg:pt-10 lg:pb-8 relative z-10">
-        <div className="grid gap-6 sm:grid-cols-2 lg:gap-8 w-full max-w-7xl mx-auto">
+        <div data-hero="cards" className="grid gap-6 sm:grid-cols-2 lg:gap-8 w-full max-w-7xl mx-auto">
           {MATCH_CARDS.map((card) => (
             <a
               key={card.id}

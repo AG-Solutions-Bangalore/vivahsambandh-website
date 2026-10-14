@@ -68,8 +68,48 @@
   --shadow-gold: 0 8px 24px -8px rgb(183 121 31 / 0.45);
 }
 
+/* NOTE: no `scroll-behavior: smooth` here — Lenis owns smoothing.
+   Native CSS smooth scroll fights Lenis and causes double/janky motion. */
 html {
-  scroll-behavior: smooth;
+  scroll-behavior: auto;
+}
+
+/* ————— Lenis recommended styles (required for correct pin/measure) ————— */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+/* Native-fallback offset for anchored sections (reduced-motion path,
+   Lenis-unavailable path). Lenis path uses SCROLL_OFFSET instead. */
+section[id] {
+  scroll-margin-top: 80px;
+}
+
+/* Animated elements: hint compositor only while revealing */
+[data-reveal-item] {
+  will-change: transform, opacity;
+}
+
+/* Vestibular safety: kill ALL motion when the OS asks for it. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
 
 body {

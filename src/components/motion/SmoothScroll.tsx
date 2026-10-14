@@ -1,0 +1,142 @@
+import { useEffect } from 'react'
+import Lenis from 'lenis'
+import { gsap, ScrollTrigger, prefersReducedMotion } from '../../lib/gsap-setup'
+import { setLenis, scrollToAnchor, safeReplaceState } from '../../lib/scroll'
+
+/**
+ * Lenis smooth-scroll provider + GSAP ScrollTrigger integration.
+ *
+ * Edge cases handled:
+ * - prefers-reduced-motion → no Lenis, no smoothing (native scroll)
+ * - StrictMode double-invoke → full cleanup (destroy Lenis, remove ticker)
+ * - ScrollTrigger sync via gsap ticker (lagSmoothing 0) + lenis 'scroll' event
+ * - Anchor links (href="#…") intercepted → lenis.scrollTo with header offset
+ * - Images/fonts shifting layout → ScrollTrigger.refresh() on load + fonts.ready
+ * - Touch devices → syncTouch off (native touch, smooth wheel only on desktop)
+ * - Lenis constructor throw → native-scroll fallback, page never breaks
+ * - history.replaceState guarded (throws in sandboxed iframes)
+ */
+export default function SmoothScroll({ children }: { children: React.ReactNode }) {
+  useEffect(() => {
+    // Guard: client-only (effect never runs on server anyway).
+    if (typeof window === 'undefined') return
+
+    // Reduced motion: skip smoothing entirely, keep native anchors working.
+    if (prefersReducedMotion()) {
+      const onClickNative = (e: MouseEvent) => {
+        const anchor = (e.target as HTMLElement).closest?.(
+          'a[href^="#"]',
+        ) as HTMLAnchorElement | null
+        if (!anchor) return
+        const hash = anchor.getAttribute('href')
+        if (!hash || hash === '#') return
+        // Let a same-page target jump instantly (no smooth).
+        const target =
+          document.getElementById(hash.slice(1)) ?? document.querySelector(hash)
+        if (target) {
+          e.preventDefault()
+          target.scrollIntoView({ behavior: 'auto', block: 'start' })
+          safeReplaceState(hash)
+        }
+      }
+      document.addEventListener('click', onClickNative)
+      return () => document.removeEventListener('click', onClickNative)
+    }
+
+    // Lenis construction can throw in exotic webviews (no rAF, frozen
+    // objects). Fall back to native scrolling + CSS scroll-margin-top
+    // instead of breaking the whole page.
+    let lenis: Lenis | null = null
+    try {
+      lenis = new Lenis({
+        duration: 1.15,
+        easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+        smoothWheel: true,
+        // Keep native touch scrolling on mobile (perf + Swiper compat);
+        // Lenis smooths wheel/trackpad on desktop where it shines.
+        syncTouch: false,
+        touchMultiplier: 1.5,
+        autoRaf: false,
+      })
+    } catch {
+      lenis = null
+    }
+    if (!lenis) return undefined
+    const smooth = lenis as Lenis
+    setLenis(smooth)
+
+    // ——— GSAP ↔ Lenis sync (official recommended pattern) ———
+    // NOTE: no scrollerProxy needed — Lenis v1 drives the native scroll
+    // position, so ScrollTrigger reads the default viewport scroller.
+    // lagSmoothing(0) stops GSAP from jumping tweens after tab-switch gaps.
+    smooth.on('scroll', ScrollTrigger.update)
+    const raf = (time: number) => {
+      smooth.raf(time * 1000)
+    }
+    gsap.ticker.add(raf)
+    gsap.ticker.lagSmoothing(0)
+
+    // ——— Anchor navigation (href="#section") ———
+    const onClick = (e: MouseEvent) => {
+      // Ignore modified clicks (new tab) and non-left buttons.
+      if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey)
+        return
+      const anchor = (e.target as HTMLElement).closest?.(
+        'a[href^="#"]',
+      ) as HTMLAnchorElement | null
+      if (!anchor) return
+      const hash = anchor.getAttribute('href')
+      if (!hash || hash === '#') {
+        // Bare "#" → scroll to top instead of a dead jump.
+        e.preventDefault()
+        if (smooth) smooth.scrollTo(0, { duration: 1.2 })
+        else window.scrollTo({ top: 0, behavior: 'smooth' })
+        safeReplaceState(window.location.pathname)
+        return
+      }
+      const handled = scrollToAnchor(hash)
+      if (handled) {
+        e.preventDefault()
+        // Update URL without triggering a native jump.
+        safeReplaceState(hash)
+      }
+      // Unknown hash → let the browser do its default (no preventDefault).
+    }
+    document.addEventListener('click', onClick)
+
+    // ——— Layout shifts (images, webfonts, late content) ———
+    const refresh = () => ScrollTrigger.refresh()
+    window.addEventListener('load', refresh)
+    let fontsPromise: Promise<unknown> | undefined
+    try {
+      fontsPromise = (document as Document).fonts?.ready as unknown as
+        | Promise<unknown>
+        | undefined
+      fontsPromise?.then(() => ScrollTrigger.refresh()).catch(() => {})
+    } catch {
+      /* fonts API unavailable — ignore */
+    }
+    // Late-loading images below the fold can still shift triggers.
+    const imgs = Array.from(document.images ?? [])
+    const onImgLoad = () => ScrollTrigger.refresh()
+    imgs.forEach((img) => {
+      if (!img.complete) img.addEventListener('load', onImgLoad, { once: true })
+    })
+
+    // Initial measurement after first paint.
+    const rafId = requestAnimationFrame(() => ScrollTrigger.refresh())
+
+    return () => {
+      cancelAnimationFrame(rafId)
+      document.removeEventListener('click', onClick)
+      window.removeEventListener('load', refresh)
+      imgs.forEach((img) => img.removeEventListener('load', onImgLoad))
+      gsap.ticker.remove(raf)
+      // destroy() removes Lenis's internal listeners (incl. ScrollTrigger.update)
+      smooth.destroy()
+      setLenis(null)
+    }
+  }, [])
+
+  return <>{children}</>
+}
