@@ -13,15 +13,15 @@ export default function FaqSection() {
 
   return (
     <section className="relative overflow-hidden bg-[#FFFBF2] py-12">
-      {/* Background Architectural Temple Arch Artwork — washed out so text stays readable */}
-      <div className="pointer-events-none absolute inset-0 opacity-[0.08]">
+      {/* Background Architectural Temple Arch Artwork — soft, visible, text stays readable */}
+      <div className="pointer-events-none absolute inset-0 opacity-[0.16]">
         <img
           src="/images/home/Elegant Temple Wedding Banner.webp"
           alt=""
           className="h-full w-full object-cover object-bottom"
         />
       </div>
-      <div className="pointer-events-none absolute inset-0 bg-[#FFFBF2]/70" />
+      <div className="pointer-events-none absolute inset-0 bg-[#FFFBF2]/45" />
 
       <div className="section-pad relative">
         <div className="grid items-start gap-12 lg:grid-cols-12 lg:gap-16">
@@ -79,11 +79,18 @@ export default function FaqSection() {
                     </span>
                   </button>
 
-                  {isOpen && (
-                    <div className="border-t border-gold-500/20 bg-cream-50/50 px-4 pb-4 pt-3 text-xs leading-relaxed text-ink-600 sm:px-5 sm:pb-5 sm:text-sm">
-                      <p>{item.a}</p>
+                  {/* Animated answer — grid-rows transition, no layout jump */}
+                  <div
+                    className={`grid transition-[grid-template-rows,opacity] duration-300 ease-in-out ${
+                      isOpen ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'
+                    }`}
+                  >
+                    <div className="overflow-hidden">
+                      <div className="border-t border-gold-500/20 bg-cream-50/50 px-4 pb-4 pt-3 text-xs leading-relaxed text-ink-600 sm:px-5 sm:pb-5 sm:text-sm">
+                        <p>{item.a}</p>
+                      </div>
                     </div>
-                  )}
+                  </div>
                 </div>
               )
             })}

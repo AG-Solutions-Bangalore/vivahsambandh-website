@@ -1,62 +1,66 @@
-import { useState } from 'react'
-import { useTranslation } from 'react-i18next'
-import { COMPANY, getCompanyAddress, getCompanyHours } from '../../../constants/company'
-import { getAppLanguage } from '../../../i18n'
-import type { ContactFormData } from '../types'
+import { useState } from "react";
+import { useTranslation } from "react-i18next";
+import {
+  COMPANY,
+  getCompanyAddress,
+  getCompanyHours,
+} from "../../../constants/company";
+import { getAppLanguage } from "../../../i18n";
+import type { ContactFormData } from "../types";
 
 export default function ContactSection() {
-  const { t } = useTranslation()
-  const lang = getAppLanguage()
-  const [submitted, setSubmitted] = useState(false)
+  const { t } = useTranslation();
+  const lang = getAppLanguage();
+  const [submitted, setSubmitted] = useState(false);
   const [formData, setFormData] = useState<ContactFormData>({
-    name: '',
-    email: '',
-    phone: '',
-    message: '',
-  })
+    name: "",
+    email: "",
+    phone: "",
+    message: "",
+  });
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
-    const { name, value } = e.target
-    setFormData((prev) => ({ ...prev, [name]: value }))
-  }
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    setSubmitted(true)
+    e.preventDefault();
+    setSubmitted(true);
     setTimeout(() => {
-      setFormData({ name: '', email: '', phone: '', message: '' })
-      setSubmitted(false)
-    }, 4500)
-  }
+      setFormData({ name: "", email: "", phone: "", message: "" });
+      setSubmitted(false);
+    }, 4500);
+  };
 
   return (
-    <section className="relative overflow-hidden py-16 lg:py-24">
-      {/* Background Architectural Temple Arch Artwork */}
-      <div className="pointer-events-none absolute inset-0">
+    <section className="relative overflow-hidden bg-[#FFFBF2] py-16">
+      <div className="pointer-events-none absolute inset-x-0 bottom-0">
         <img
           src="/images/home/Elegant Temple Wedding Banner.webp"
           alt=""
-          className="h-full w-full object-cover object-center"
+          className="h-auto w-full"
         />
       </div>
+      <div className="pointer-events-none absolute inset-0 bg-[#FFFBF2]/25" />
 
-      <div className="section-pad relative">
+      <div className="section-pad relative z-10">
         <div className="grid items-start gap-12 lg:grid-cols-12 lg:gap-14">
           {/* Left Column: Direct Contacts */}
           <div className="lg:col-span-5">
             <div className="eyebrow">
               <span className="text-gold-500">✦</span>
-              <span>{t('contact.eyebrow')}</span>
+              <span>{t("contact.eyebrow")}</span>
             </div>
 
             <h2 className="font-display mt-4 text-3xl font-bold text-navy-900 sm:text-4xl lg:text-5xl">
-              {t('contact.title')}
+              {t("contact.title")}
             </h2>
 
             <p className="mt-4 text-sm leading-relaxed text-ink-600 sm:text-base">
-              {t('contact.subtitle')}
+              {t("contact.subtitle")}
             </p>
 
             {/* 3 Contact Info Cards */}
@@ -64,50 +68,72 @@ export default function ContactSection() {
               {/* Call Us */}
               <div className="card-ring flex items-center gap-4 bg-white/95 p-4 shadow-xs backdrop-blur transition hover:border-gold-500">
                 <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-gold-500/20 text-gold-700">
-                  <svg viewBox="0 0 24 24" className="h-6 w-6" fill="currentColor">
+                  <svg
+                    viewBox="0 0 24 24"
+                    className="h-6 w-6"
+                    fill="currentColor"
+                  >
                     <path d="M6.62 10.79a15.053 15.053 0 006.59 6.59l2.2-2.2a1 1 0 011.01-.24c1.12.37 2.33.57 3.58.57a1 1 0 011 1V20a1 1 0 01-1 1A17 17 0 013 4a1 1 0 011-1h3.5a1 1 0 011 1c0 1.25.2 2.45.57 3.57a1 1 0 01-.25 1.02l-2.2 2.2z" />
                   </svg>
                 </div>
                 <div>
-                  <p className="text-xs font-semibold text-ink-400">{t('contact.callTitle')}</p>
+                  <p className="text-xs font-semibold text-ink-400">
+                    {t("contact.callTitle")}
+                  </p>
                   <a
                     href={COMPANY.supportPhoneLink}
                     className="font-display text-base font-bold text-navy-900 transition hover:text-gold-600 sm:text-lg"
                   >
                     {COMPANY.supportPhoneDisplay}
                   </a>
-                  <p className="text-xs text-ink-500">{getCompanyHours(lang)}</p>
+                  <p className="text-xs text-ink-500">
+                    {getCompanyHours(lang)}
+                  </p>
                 </div>
               </div>
 
               {/* Email Us */}
               <div className="card-ring flex items-center gap-4 bg-white/95 p-4 shadow-xs backdrop-blur transition hover:border-gold-500">
                 <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-gold-500/20 text-gold-700">
-                  <svg viewBox="0 0 24 24" className="h-6 w-6" fill="currentColor">
+                  <svg
+                    viewBox="0 0 24 24"
+                    className="h-6 w-6"
+                    fill="currentColor"
+                  >
                     <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z" />
                   </svg>
                 </div>
                 <div>
-                  <p className="text-xs font-semibold text-ink-400">{t('contact.emailTitle')}</p>
+                  <p className="text-xs font-semibold text-ink-400">
+                    {t("contact.emailTitle")}
+                  </p>
                   <a
                     href={`mailto:${COMPANY.supportEmail}`}
                     className="font-display text-base font-bold text-navy-900 transition hover:text-gold-600 sm:text-lg"
                   >
                     {COMPANY.supportEmail}
                   </a>
-                  <p className="text-xs text-ink-500">{t('contact.emailNote')}</p>
+                  <p className="text-xs text-ink-500">
+                    {t("contact.emailNote")}
+                  </p>
                 </div>
               </div>
 
               {/* Our Address */}
               <div className="card-ring flex items-center gap-4 bg-white/95 p-4 shadow-xs backdrop-blur transition hover:border-gold-500">
                 <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-gold-500/20 text-gold-700">
-                  <svg viewBox="0 0 24 24" className="h-6 w-6" fill="currentColor">
+                  <svg
+                    viewBox="0 0 24 24"
+                    className="h-6 w-6"
+                    fill="currentColor"
+                  >
                     <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 010-5 2.5 2.5 0 010 5z" />
                   </svg>
                 </div>
                 <div>
-                  <p className="text-xs font-semibold text-ink-400">{t('contact.addressTitle')}</p>
+                  <p className="text-xs font-semibold text-ink-400">
+                    {t("contact.addressTitle")}
+                  </p>
                   <p className="font-display text-sm font-bold text-navy-900 sm:text-base">
                     {getCompanyAddress(lang)}
                   </p>
@@ -120,10 +146,10 @@ export default function ContactSection() {
           <div className="lg:col-span-7">
             <div className="card-ring bg-white p-6 shadow-lift sm:p-8 lg:p-10">
               <h3 className="font-display text-2xl font-bold text-navy-900">
-                {t('contact.formTitle')}
+                {t("contact.formTitle")}
               </h3>
               <p className="mt-1 text-xs text-ink-500 sm:text-sm">
-                {t('contact.formSubtitle')}
+                {t("contact.formSubtitle")}
               </p>
 
               {submitted ? (
@@ -132,12 +158,14 @@ export default function ContactSection() {
                     ✓
                   </div>
                   <p className="mt-3 font-display text-lg font-bold">
-                    {lang === 'hi' ? 'धन्यवाद! संदेश प्राप्त हुआ।' : 'Thank You! Message Received.'}
+                    {lang === "hi"
+                      ? "धन्यवाद! संदेश प्राप्त हुआ।"
+                      : "Thank You! Message Received."}
                   </p>
                   <p className="mt-1 text-xs text-emerald-800">
-                    {lang === 'hi'
-                      ? 'हमारी टीम जल्द ही आपसे संपर्क करेगी।'
-                      : 'Our representative will get in touch with you shortly.'}
+                    {lang === "hi"
+                      ? "हमारी टीम जल्द ही आपसे संपर्क करेगी।"
+                      : "Our representative will get in touch with you shortly."}
                   </p>
                 </div>
               ) : (
@@ -155,7 +183,7 @@ export default function ContactSection() {
                       required
                       value={formData.name}
                       onChange={handleChange}
-                      placeholder={`${t('contact.name')} *`}
+                      placeholder={`${t("contact.name")} *`}
                       className="w-full rounded-xl border border-gold-500/30 bg-cream-50/50 py-3 pr-4 pl-11 text-sm text-navy-900 placeholder:text-ink-400 focus:border-gold-600 focus:bg-white focus:outline-hidden focus:ring-1 focus:ring-gold-500"
                     />
                   </div>
@@ -173,7 +201,7 @@ export default function ContactSection() {
                       required
                       value={formData.email}
                       onChange={handleChange}
-                      placeholder={`${t('contact.email')} *`}
+                      placeholder={`${t("contact.email")} *`}
                       className="w-full rounded-xl border border-gold-500/30 bg-cream-50/50 py-3 pr-4 pl-11 text-sm text-navy-900 placeholder:text-ink-400 focus:border-gold-600 focus:bg-white focus:outline-hidden focus:ring-1 focus:ring-gold-500"
                     />
                   </div>
@@ -191,7 +219,7 @@ export default function ContactSection() {
                       required
                       value={formData.phone}
                       onChange={handleChange}
-                      placeholder={`${t('contact.phone')} *`}
+                      placeholder={`${t("contact.phone")} *`}
                       className="w-full rounded-xl border border-gold-500/30 bg-cream-50/50 py-3 pr-4 pl-11 text-sm text-navy-900 placeholder:text-ink-400 focus:border-gold-600 focus:bg-white focus:outline-hidden focus:ring-1 focus:ring-gold-500"
                     />
                   </div>
@@ -209,7 +237,7 @@ export default function ContactSection() {
                       required
                       value={formData.message}
                       onChange={handleChange}
-                      placeholder={`${t('contact.message')} *`}
+                      placeholder={`${t("contact.message")} *`}
                       className="w-full rounded-xl border border-gold-500/30 bg-cream-50/50 py-3 pr-4 pl-11 text-sm text-navy-900 placeholder:text-ink-400 focus:border-gold-600 focus:bg-white focus:outline-hidden focus:ring-1 focus:ring-gold-500"
                     />
                   </div>
@@ -219,7 +247,7 @@ export default function ContactSection() {
                     type="submit"
                     className="btn-primary w-full !py-3.5 text-base"
                   >
-                    <span>{t('contact.send')}</span>
+                    <span>{t("contact.send")}</span>
                     <span className="text-gold-300" aria-hidden="true">
                       →
                     </span>
@@ -231,5 +259,5 @@ export default function ContactSection() {
         </div>
       </div>
     </section>
-  )
+  );
 }
