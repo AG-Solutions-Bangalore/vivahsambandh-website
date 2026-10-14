@@ -12,15 +12,16 @@ export default function FaqSection() {
   }
 
   return (
-    <section className="relative overflow-hidden py-16 lg:py-24">
-      {/* Background Architectural Temple Arch Artwork */}
-      <div className="pointer-events-none absolute inset-0 opacity-15">
+    <section className="relative overflow-hidden bg-[#FFFBF2] py-12">
+      {/* Background Architectural Temple Arch Artwork — washed out so text stays readable */}
+      <div className="pointer-events-none absolute inset-0 opacity-[0.08]">
         <img
           src="/images/home/Elegant Temple Wedding Banner.webp"
           alt=""
           className="h-full w-full object-cover object-bottom"
         />
       </div>
+      <div className="pointer-events-none absolute inset-0 bg-[#FFFBF2]/70" />
 
       <div className="section-pad relative">
         <div className="grid items-start gap-12 lg:grid-cols-12 lg:gap-16">

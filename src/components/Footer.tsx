@@ -1,44 +1,68 @@
-import { useTranslation } from 'react-i18next'
-import { COMPANY, getCompanyAddress } from '../constants/company'
-import { getAppLanguage } from '../i18n'
+import { useTranslation } from "react-i18next";
+import { COMPANY, getCompanyAddress } from "../constants/company";
+import { getAppLanguage } from "../i18n";
 
 function LotusMark() {
   return (
-    <svg viewBox="0 0 32 32" className="h-8 w-8 text-gold-400" aria-hidden="true">
+    <svg
+      viewBox="0 0 32 32"
+      className="h-8 w-8 text-gold-400"
+      aria-hidden="true"
+    >
       <path
         fill="currentColor"
         d="M16 3c2.5 3.2 4 6.4 4 9.2 2.8-.6 5.4-.4 8 .8-2.2 1.4-4.7 2-7.4 1.9 1.5 1.2 2.6 2.9 3.1 5-2.6.7-5.3.5-7.7-.5-2.4 1-5.1 1.2-7.7.5.5-2.1 1.6-3.8 3.1-5-2.7.1-5.2-.5-7.4-1.9 2.6-1.2 5.2-1.4 8-.8 0-2.8 1.5-6 4-9.2z"
       />
-      <ellipse cx="16" cy="27" rx="9" ry="1.6" fill="currentColor" opacity=".35" />
+      <ellipse
+        cx="16"
+        cy="27"
+        rx="9"
+        ry="1.6"
+        fill="currentColor"
+        opacity=".35"
+      />
     </svg>
-  )
+  );
 }
 
 export default function Footer() {
-  const { t } = useTranslation()
-  const lang = getAppLanguage()
+  const { t } = useTranslation();
+  const lang = getAppLanguage();
 
   const quickLinks = [
-    { label: t('header.home'), href: '#' },
-    { label: t('header.about'), href: '#about' },
-    { label: t('header.search'), href: '#search' },
-    { label: t('header.successStories'), href: '#stories' },
-    { label: t('header.membership'), href: '#explore-features' },
-    { label: t('header.faq'), href: '#faq' },
-    { label: t('header.contact'), href: '#contact' },
-  ]
+    { label: t("header.home"), href: "#" },
+    { label: t("header.about"), href: "#about" },
+    { label: t("header.search"), href: "#search" },
+    { label: t("header.successStories"), href: "#stories" },
+    { label: t("header.membership"), href: "#explore-features" },
+    { label: t("header.faq"), href: "#faq" },
+    { label: t("header.contact"), href: "#contact" },
+  ];
 
   const support = [
-    t('footer.helpCenter'),
-    t('footer.privacy'),
-    t('footer.terms'),
-    t('footer.guidelines'),
-    t('footer.sitemap'),
-  ]
+    t("footer.helpCenter"),
+    t("footer.privacy"),
+    t("footer.terms"),
+    t("footer.guidelines"),
+    t("footer.sitemap"),
+  ];
 
   return (
-    <footer className="bg-navy-pattern text-white">
-      <div className="section-pad grid gap-10 py-14 md:grid-cols-[1.4fr_1fr_1fr_1.2fr]">
+    <footer className="relative overflow-hidden bg-navy-pattern text-white">
+      {/* Temple Skyline Divider as footer background — behind the text, not a separate section */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 z-0 select-none"
+      >
+        <img
+          src="/images/common/Temple_Skyline_Divider_footer_image.png"
+          alt=""
+          className="absolute opacity-25 inset-x-0 bottom-6 h-auto w-full"
+          loading="lazy"
+        />
+      </div>
+
+      <div className="section-pad overflow-hidden relative z-10 grid gap-10 pt-24 pb-10 md:grid-cols-[1.4fr_1fr_1fr_1.2fr]">
         {/* Brand & Socials Column */}
         <div>
           <div className="flex items-center gap-2.5">
@@ -48,13 +72,13 @@ export default function Footer() {
                 {COMPANY.name}
               </p>
               <p className="mt-1 text-[10px] font-sans font-semibold uppercase tracking-[0.24em] text-gold-300">
-                {t('meta.tagline')}
+                {t("meta.tagline")}
               </p>
             </div>
           </div>
 
           <p className="mt-4 max-w-sm text-xs leading-relaxed text-white/70 sm:text-sm">
-            {t('footer.about')}
+            {t("footer.about")}
           </p>
 
           {/* Social Icons matching design */}
@@ -111,8 +135,8 @@ export default function Footer() {
 
         {/* Quick Links Column */}
         <nav aria-label="Quick links">
-          <p className="text-sm font-bold uppercase tracking-widest text-gold-300">
-            {t('footer.quickLinks')}
+          <p className="text-[15px] font-bold text-white">
+            {t("footer.quickLinks")}
           </p>
           <ul className="mt-3.5 space-y-2 text-xs text-white/75 sm:text-sm">
             {quickLinks.map((link) => (
@@ -127,8 +151,8 @@ export default function Footer() {
 
         {/* Support Column */}
         <nav aria-label="Support">
-          <p className="text-sm font-bold uppercase tracking-widest text-gold-300">
-            {t('footer.support')}
+          <p className="text-[15px] font-bold text-white">
+            {t("footer.support")}
           </p>
           <ul className="mt-3.5 space-y-2 text-xs text-white/75 sm:text-sm">
             {support.map((l) => (
@@ -143,8 +167,8 @@ export default function Footer() {
 
         {/* Contact Info Column (Directly from COMPANY constants) */}
         <div>
-          <p className="text-sm font-bold uppercase tracking-widest text-gold-300">
-            {t('footer.contactUs')}
+          <p className="text-[15px] font-bold text-white">
+            {t("footer.contactUs")}
           </p>
           <ul className="mt-3.5 space-y-2.5 text-xs text-white/75 sm:text-sm">
             <li className="flex items-start gap-2">
@@ -153,13 +177,19 @@ export default function Footer() {
             </li>
             <li className="flex items-center gap-2">
               <span className="text-gold-400">📞</span>
-              <a href={COMPANY.supportPhoneLink} className="transition hover:text-gold-300">
+              <a
+                href={COMPANY.supportPhoneLink}
+                className="transition hover:text-gold-300"
+              >
                 {COMPANY.supportPhoneDisplay}
               </a>
             </li>
             <li className="flex items-center gap-2">
               <span className="text-gold-400">✉️</span>
-              <a href={`mailto:${COMPANY.supportEmail}`} className="transition hover:text-gold-300">
+              <a
+                href={`mailto:${COMPANY.supportEmail}`}
+                className="transition hover:text-gold-300"
+              >
                 {COMPANY.supportEmail}
               </a>
             </li>
@@ -168,16 +198,18 @@ export default function Footer() {
       </div>
 
       {/* Bottom Copyright Bar */}
-      <div className="border-t border-white/10">
-        <div className="section-pad flex flex-col items-center justify-between gap-2 py-4 text-xs text-white/60 sm:flex-row">
+      <div className="relative z-10 bordear-t py-6 border-gold-500/30">
+        <div className="section-pad flex flex-col items-center justify-between gap-2 py-3 text-xs text-white/60 sm:flex-row">
           <p>
-            © {COMPANY.copyrightYear} {COMPANY.name}. {t('footer.rights').replace(/© \d+ [^.]+\./, '')}
+            © {COMPANY.copyrightYear} {COMPANY.name}.{" "}
+            {t("footer.rights").replace(/© \d+ [^.]+\./, "")}
           </p>
           <p className="font-semibold tracking-wide text-gold-300/90">
-            {t('footer.madeWith')} <span className="text-maroon-500">♥</span> {COMPANY.name}
+            {t("footer.madeWith")} <span className="text-maroon-500">♥</span>{" "}
+            {COMPANY.name}
           </p>
         </div>
       </div>
     </footer>
-  )
+  );
 }
