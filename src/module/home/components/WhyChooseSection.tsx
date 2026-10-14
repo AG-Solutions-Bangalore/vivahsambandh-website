@@ -3,63 +3,66 @@ import type { WhyFeature } from '../types'
 import Reveal, { RevealGroup } from '../../../components/motion/Reveal'
 
 // Bespoke golden Mughal/Indian arched icons matching the design screenshot
-function FeatureArchedIcon({ index }: { index: number }) {
-  const icons = [
-    // 0: Verified & Genuine Profiles (Person bust with checkmark badge)
-    (
-      <svg viewBox="0 0 24 24" className="h-9 w-9 text-gold-700 fill-none stroke-current" strokeWidth="1.8" aria-hidden="true">
-        <path d="M12 12a3.5 3.5 0 100-7 3.5 3.5 0 000 7z" />
-        <path d="M6 19.5c0-2.8 2.7-4.5 6-4.5" />
-        <circle cx="17.5" cy="17.5" r="3.5" fill="#f4d894" strokeWidth="1.2" />
-        <path d="M16 17.5l1 1 2-2" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-      </svg>
-    ),
-    // 1: Community Based Matching (Two figures/couple together)
-    (
-      <svg viewBox="0 0 24 24" className="h-9 w-9 text-gold-700 fill-none stroke-current" strokeWidth="1.8" aria-hidden="true">
-        <path d="M9 11a3 3 0 100-6 3 3 0 000 6zM16 11a2.5 2.5 0 100-5 2.5 2.5 0 000 5z" />
-        <path d="M4.5 19c0-2.5 2-4 4.5-4s4.5 1.5 4.5 4" />
-        <path d="M13.5 15c.5-.4 1.3-.7 2.5-.7 2.2 0 4 1.3 4 3.7" />
-      </svg>
-    ),
-    // 2: Advanced Search Filters (Magnifying glass + filter sliders)
-    (
-      <svg viewBox="0 0 24 24" className="h-9 w-9 text-gold-700 fill-none stroke-current" strokeWidth="1.8" aria-hidden="true">
-        <circle cx="11" cy="11" r="5" />
-        <path d="M15 15l4.5 4.5" strokeLinecap="round" />
-        <path d="M8 8h6M9 11h4M10 14h2" strokeLinecap="round" />
-      </svg>
-    ),
-    // 3: Personalized Match Suggestions (Figure with heart spark)
-    (
-      <svg viewBox="0 0 24 24" className="h-9 w-9 text-gold-700 fill-none stroke-current" strokeWidth="1.8" aria-hidden="true">
-        <path d="M10 12a3 3 0 100-6 3 3 0 000 6z" />
-        <path d="M5 19c0-2.5 2.2-4 5-4" />
-        <path d="M16 12.5c-.8-1-2.2-.8-2.6.3-.4-1.1-1.8-1.3-2.6-.3-1 1.2 0 2.5 2.6 4.5 2.6-2 3.6-3.3 2.6-4.5z" fill="#f4d894" strokeWidth="1.3" />
-      </svg>
-    ),
-    // 4: Family Involvement Options (Joined hands / family elders)
-    (
-      <svg viewBox="0 0 24 24" className="h-9 w-9 text-gold-700 fill-none stroke-current" strokeWidth="1.8" aria-hidden="true">
-        <path d="M12 4v16M8 8l4-4 4 4" strokeLinecap="round" strokeLinejoin="round" />
-        <path d="M6 14c0-2 1.5-3 3-3h6c1.5 0 3 1 3 3v4H6v-4z" />
-        <circle cx="9" cy="8" r="1.5" />
-        <circle cx="15" cy="8" r="1.5" />
-      </svg>
-    ),
-    // 5: Safe & Secure Communication (Shield with lock)
-    (
-      <svg viewBox="0 0 24 24" className="h-9 w-9 text-gold-700 fill-none stroke-current" strokeWidth="1.8" aria-hidden="true">
-        <path d="M12 3s6 2 6 7c0 5-3.5 8.5-6 9.5C9.5 18.5 6 15 6 10c0-5 6-7 6-7z" />
-        <path d="M10 11.5v-1a2 2 0 114 0v1" strokeLinecap="round" />
-        <rect x="9" y="11.5" width="6" height="4" rx="1" fill="#f4d894" />
-      </svg>
-    ),
-  ]
+function renderFeatureIcon(index: number) {
+  switch (index % 6) {
+    case 0:
+      return (
+        <svg viewBox="0 0 24 24" className="h-9 w-9 text-gold-700 fill-none stroke-current" strokeWidth="1.8" aria-hidden="true">
+          <path d="M12 12a3.5 3.5 0 100-7 3.5 3.5 0 000 7z" />
+          <path d="M6 19.5c0-2.8 2.7-4.5 6-4.5" />
+          <circle cx="17.5" cy="17.5" r="3.5" fill="#f4d894" strokeWidth="1.2" />
+          <path d="M16 17.5l1 1 2-2" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      )
+    case 1:
+      return (
+        <svg viewBox="0 0 24 24" className="h-9 w-9 text-gold-700 fill-none stroke-current" strokeWidth="1.8" aria-hidden="true">
+          <path d="M9 11a3 3 0 100-6 3 3 0 000 6zM16 11a2.5 2.5 0 100-5 2.5 2.5 0 000 5z" />
+          <path d="M4.5 19c0-2.5 2-4 4.5-4s4.5 1.5 4.5 4" />
+          <path d="M13.5 15c.5-.4 1.3-.7 2.5-.7 2.2 0 4 1.3 4 3.7" />
+        </svg>
+      )
+    case 2:
+      return (
+        <svg viewBox="0 0 24 24" className="h-9 w-9 text-gold-700 fill-none stroke-current" strokeWidth="1.8" aria-hidden="true">
+          <circle cx="11" cy="11" r="5" />
+          <path d="M15 15l4.5 4.5" strokeLinecap="round" />
+          <path d="M8 8h6M9 11h4M10 14h2" strokeLinecap="round" />
+        </svg>
+      )
+    case 3:
+      return (
+        <svg viewBox="0 0 24 24" className="h-9 w-9 text-gold-700 fill-none stroke-current" strokeWidth="1.8" aria-hidden="true">
+          <path d="M10 12a3 3 0 100-6 3 3 0 000 6z" />
+          <path d="M5 19c0-2.5 2.2-4 5-4" />
+          <path d="M16 12.5c-.8-1-2.2-.8-2.6.3-.4-1.1-1.8-1.3-2.6-.3-1 1.2 0 2.5 2.6 4.5 2.6-2 3.6-3.3 2.6-4.5z" fill="#f4d894" strokeWidth="1.3" />
+        </svg>
+      )
+    case 4:
+      return (
+        <svg viewBox="0 0 24 24" className="h-9 w-9 text-gold-700 fill-none stroke-current" strokeWidth="1.8" aria-hidden="true">
+          <path d="M12 4v16M8 8l4-4 4 4" strokeLinecap="round" strokeLinejoin="round" />
+          <path d="M6 14c0-2 1.5-3 3-3h6c1.5 0 3 1 3 3v4H6v-4z" />
+          <circle cx="9" cy="8" r="1.5" />
+          <circle cx="15" cy="8" r="1.5" />
+        </svg>
+      )
+    default:
+      return (
+        <svg viewBox="0 0 24 24" className="h-9 w-9 text-gold-700 fill-none stroke-current" strokeWidth="1.8" aria-hidden="true">
+          <path d="M12 3s6 2 6 7c0 5-3.5 8.5-6 9.5C9.5 18.5 6 15 6 10c0-5 6-7 6-7z" />
+          <path d="M10 11.5v-1a2 2 0 114 0v1" strokeLinecap="round" />
+          <rect x="9" y="11.5" width="6" height="4" rx="1" fill="#f4d894" />
+        </svg>
+      )
+  }
+}
 
+// Bespoke golden Mughal/Indian arched icons matching the design screenshot
+function FeatureArchedIcon({ index }: { index: number }) {
   return (
     <div className="relative -mb-3.5 flex w-[68px] shrink-0 items-center justify-center self-stretch rounded-t-full rounded-b-none border border-b-0 border-gold-500/40 bg-gold-50/90 text-gold-700 shadow-2xs transition-colors group-hover:border-gold-600 group-hover:bg-gold-100 sm:-mb-4 sm:w-[60px]">
-      {icons[index % icons.length]}
+      {renderFeatureIcon(index)}
     </div>
   )
 }

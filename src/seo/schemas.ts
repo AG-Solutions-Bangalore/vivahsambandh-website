@@ -3,10 +3,11 @@
  * Typed Schema.org JSON-LD graph builders for Google Rich Results.
  *
  * Utilizes `schema-dts` for compile-time type safety against official Schema.org standards.
- * Powered by `COMPANY_CONFIG` as the single source of truth.
+ * Supports multi-language output (English & Hindi) powered by `COMPANY_CONFIG`.
  */
 
 import type {
+  Answer,
   BreadcrumbList,
   ContactPoint,
   FAQPage,
@@ -14,6 +15,7 @@ import type {
   ListItem,
   Organization,
   PostalAddress,
+  Question,
   SearchAction,
   Thing,
   WebPage,
@@ -26,6 +28,7 @@ import {
   SITE_OG_IMAGE,
   SITE_LOGO,
   getCanonicalUrl,
+  type SupportedLang,
 } from './config';
 
 export { SITE_NAME, SITE_ORIGIN, SITE_OG_IMAGE, SITE_LOGO, getCanonicalUrl };
@@ -33,7 +36,7 @@ export { SITE_NAME, SITE_ORIGIN, SITE_OG_IMAGE, SITE_LOGO, getCanonicalUrl };
 /**
  * Builds the primary Organization Schema for VivahSambandh.
  */
-export function organizationSchema(): Organization {
+export function organizationSchema(lang: SupportedLang = 'en'): Organization {
   return {
     '@type': 'Organization',
     '@id': `${COMPANY_CONFIG.siteOrigin}/#organization`,
@@ -45,16 +48,16 @@ export function organizationSchema(): Organization {
       url: COMPANY_CONFIG.logo,
     } as ImageObject,
     image: COMPANY_CONFIG.ogImage,
-    description: COMPANY_CONFIG.description,
+    description: COMPANY_CONFIG.descriptions[lang],
     email: COMPANY_CONFIG.supportEmail,
     telephone: COMPANY_CONFIG.supportPhone,
     address: {
       '@type': 'PostalAddress',
-      streetAddress: COMPANY_CONFIG.address.streetAddress,
-      addressLocality: COMPANY_CONFIG.address.addressLocality,
-      addressRegion: COMPANY_CONFIG.address.addressRegion,
-      postalCode: COMPANY_CONFIG.address.postalCode,
-      addressCountry: COMPANY_CONFIG.address.addressCountry,
+      streetAddress: COMPANY_CONFIG.address[lang],
+      addressLocality: 'Bengaluru',
+      addressRegion: 'Karnataka',
+      postalCode: '560001',
+      addressCountry: 'IN',
     } as PostalAddress,
     sameAs: [...COMPANY_CONFIG.socials],
     contactPoint: [
@@ -72,7 +75,7 @@ export function organizationSchema(): Organization {
 /**
  * Builds the WebSite Schema node with search query capability.
  */
-export function websiteSchema(): WebSite {
+export function websiteSchema(lang: SupportedLang = 'en'): WebSite {
   return {
     '@type': 'WebSite',
     '@id': `${COMPANY_CONFIG.siteOrigin}/#website`,
@@ -81,7 +84,7 @@ export function websiteSchema(): WebSite {
     publisher: {
       '@id': `${COMPANY_CONFIG.siteOrigin}/#organization`,
     },
-    inLanguage: ['en', 'hi'],
+    inLanguage: lang === 'hi' ? ['hi', 'en'] : ['en', 'hi'],
     potentialAction: {
       '@type': 'SearchAction',
       target: `${COMPANY_CONFIG.siteOrigin}/#search?q={search_term_string}`,
@@ -94,7 +97,10 @@ export function websiteSchema(): WebSite {
  * Builds BreadcrumbList schema for navigation rich results.
  */
 export function breadcrumbSchema(
-  items: Array<{ name: string; path: string }> = [{ name: 'Home', path: '/' }],
+  lang: SupportedLang = 'en',
+  items: Array<{ name: string; path: string }> = [
+    { name: lang === 'hi' ? 'होम' : 'Home', path: lang === 'hi' ? '/hi' : '/' },
+  ],
 ): BreadcrumbList {
   return {
     '@type': 'BreadcrumbList',
@@ -102,61 +108,73 @@ export function breadcrumbSchema(
       '@type': 'ListItem',
       position: index + 1,
       name: item.name,
-      item: getCanonicalUrl(item.path),
+      item: getCanonicalUrl(item.path, lang),
     } as ListItem)),
   };
 }
 
 /**
- * Builds the WebPage Schema node for the homepage with BreadcrumbList.
+ * Builds the WebPage Schema node for the current route with BreadcrumbList.
  */
-export function webPageSchema(): WebPage {
+export function webPageSchema(lang: SupportedLang = 'en'): WebPage {
+  const pageUrl = getCanonicalUrl('', lang);
   return {
     '@type': 'WebPage',
-    '@id': `${COMPANY_CONFIG.siteOrigin}/#webpage`,
-    url: `${COMPANY_CONFIG.siteOrigin}/`,
-    name: COMPANY_CONFIG.title,
-    description: COMPANY_CONFIG.description,
+    '@id': `${pageUrl}#webpage`,
+    url: pageUrl,
+    name: COMPANY_CONFIG.titles[lang],
+    description: COMPANY_CONFIG.descriptions[lang],
     isPartOf: {
       '@id': `${COMPANY_CONFIG.siteOrigin}/#website`,
     },
     about: {
       '@id': `${COMPANY_CONFIG.siteOrigin}/#organization`,
     },
-    inLanguage: ['en', 'hi'],
-    breadcrumb: breadcrumbSchema(),
+    author: {
+      '@id': `${COMPANY_CONFIG.siteOrigin}/#organization`,
+    },
+    publisher: {
+      '@id': `${COMPANY_CONFIG.siteOrigin}/#organization`,
+    },
+    inLanguage: lang === 'hi' ? ['hi', 'en'] : ['en', 'hi'],
+    breadcrumb: breadcrumbSchema(lang),
   };
 }
 
 /**
- * Builds the FAQPage Schema from the platform FAQs.
+ * Builds the FAQPage Schema from the platform FAQs in the specified language.
  */
-export function faqPageSchema(): FAQPage {
+export function faqPageSchema(lang: SupportedLang = 'en'): FAQPage {
+  const pageUrl = getCanonicalUrl('', lang);
+  const faqList = COMPANY_CONFIG.faqs[lang];
   return {
     '@type': 'FAQPage',
-    '@id': `${COMPANY_CONFIG.siteOrigin}/#faq`,
-    mainEntity: COMPANY_CONFIG.faqs.map((faq) => ({
-      '@type': 'Question',
+    '@id': `${pageUrl}#faq`,
+    mainEntity: faqList.map((faq) => ({
+      '@type': 'Question' as const,
       name: faq.question,
       acceptedAnswer: {
-        '@type': 'Answer',
+        '@type': 'Answer' as const,
         text: faq.answer,
-      },
-    })),
+      } as Answer,
+    } as Question)),
   };
 }
 
 /**
  * Assembles a unified `@context/@graph` structured data object containing all active schemas.
  */
-export function createCompositeGraph(): { '@context': string; '@graph': Thing[] } {
+export function createCompositeGraph(lang: SupportedLang = 'en'): {
+  '@context': string;
+  '@graph': Thing[];
+} {
   return {
     '@context': 'https://schema.org',
     '@graph': [
-      organizationSchema(),
-      websiteSchema(),
-      webPageSchema(),
-      faqPageSchema(),
+      organizationSchema(lang),
+      websiteSchema(lang),
+      webPageSchema(lang),
+      faqPageSchema(lang),
     ],
   };
 }

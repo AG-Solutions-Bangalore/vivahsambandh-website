@@ -3,11 +3,17 @@
  * Static Site Generation (SSG) prerender entry point for Vite.
  *
  * Invoked by `vite-prerender-plugin` at build time to produce static HTML pages
- * with pre-rendered title, metadata, canonical URL, and Schema.org JSON-LD structured data.
+ * for all supported languages (`/` for English, `/hi` for Hindi) with rich console feedback
+ * and static Schema.org JSON-LD structured data baked directly into the output HTML.
  */
 
 import type { PrerenderArguments, PrerenderResult } from 'vite-prerender-plugin';
-import { COMPANY_CONFIG } from './config';
+import {
+  COMPANY_CONFIG,
+  LANG_METADATA,
+  getCanonicalUrl,
+  type SupportedLang,
+} from './config';
 import { createCompositeGraph } from './schemas';
 
 interface HeadElement {
@@ -16,29 +22,102 @@ interface HeadElement {
   children?: string;
 }
 
-export async function prerender(_args?: PrerenderArguments): Promise<PrerenderResult> {
-  const graph = createCompositeGraph();
+/**
+ * Static Site Generation (SSG) prerender function.
+ * Generates SEO meta tags, OpenGraph cards, hreflang alternates,
+ * and Schema.org composite graph for each language route.
+ */
+export async function prerender(args?: PrerenderArguments): Promise<PrerenderResult> {
+  const startTime = performance.now();
+  const url = args?.url ?? '/';
+  const isHindi = url === '/hi' || url.startsWith('/hi');
+  const lang: SupportedLang = isHindi ? 'hi' : 'en';
+  const langInfo = LANG_METADATA[lang];
+
+  // ——— Rich Console Reporting ———
+  const divider = '═'.repeat(68);
+  const thinDivider = '─'.repeat(68);
+  console.log(`\n\x1b[36m╔${divider}╗\x1b[0m`);
+  console.log(
+    `\x1b[36m║\x1b[0m  \x1b[1;32m⚡ [SSG Prerender]\x1b[0m Route: \x1b[1;33m${url.padEnd(16)}\x1b[0m Language: \x1b[1;35m${(langInfo.nativeName + ' (' + lang + ')').padEnd(21)}\x1b[0m\x1b[36m║\x1b[0m`,
+  );
+  console.log(`\x1b[36m╠${divider}╣\x1b[0m`);
+
+  const title = COMPANY_CONFIG.titles[lang];
+  const description = COMPANY_CONFIG.descriptions[lang];
+  const keywords = COMPANY_CONFIG.keywords[lang];
+  const keywordCount = keywords.split(',').length;
+  const canonicalUrl = getCanonicalUrl(url, lang);
+  const graph = createCompositeGraph(lang);
   const graphJson = JSON.stringify(graph);
+  const graphSizeKb = (Buffer.byteLength(graphJson, 'utf8') / 1024).toFixed(2);
+
+  // Safe schema node type extraction from schema-dts graph
+  const schemaTypes = graph['@graph']
+    .map((node) => {
+      if (typeof node === 'object' && node !== null && '@type' in node) {
+        return String((node as { '@type': unknown })['@type']);
+      }
+      return 'Thing';
+    })
+    .join(', ');
+
+  console.log(`  \x1b[1m📄 Page Metadata\x1b[0m`);
+  console.log(`     ├─ Title       : "\x1b[37m${title}\x1b[0m" (${title.length} chars)`);
+  console.log(`     ├─ Description : "\x1b[90m${description.slice(0, 75)}...\x1b[0m" (${description.length} chars)`);
+  console.log(`     ├─ Keywords    : ${keywordCount} terms defined`);
+  console.log(`     ├─ Robots      : \x1b[32m${COMPANY_CONFIG.robots}\x1b[0m`);
+  console.log(`     ├─ Author      : ${COMPANY_CONFIG.author} | Publisher: ${COMPANY_CONFIG.publisher}`);
+  console.log(`     └─ Canonical   : \x1b[34m${canonicalUrl}\x1b[0m`);
+
+  console.log(`  \x1b[1m🌐 Multi-Language Hreflang Alternates\x1b[0m`);
+  console.log(`     ├─ en        (English)   -> ${COMPANY_CONFIG.siteOrigin}/`);
+  console.log(`     ├─ hi        (हिन्दी)     -> ${COMPANY_CONFIG.siteOrigin}/hi`);
+  console.log(`     └─ x-default (Fallback)   -> ${COMPANY_CONFIG.siteOrigin}/`);
+
+  console.log(`  \x1b[1m🏷️  Schema.org Structured Data (@graph)\x1b[0m`);
+  console.log(`     ├─ Types (${graph['@graph'].length}) : \x1b[35m${schemaTypes}\x1b[0m`);
+  console.log(`     └─ Payload Size : \x1b[33m${graphSizeKb} KB\x1b[0m JSON-LD`);
 
   const elements: HeadElement[] = [
-    { type: 'meta', props: { name: 'description', content: COMPANY_CONFIG.description } },
-    { type: 'meta', props: { name: 'keywords', content: COMPANY_CONFIG.keywords } },
-    { type: 'link', props: { rel: 'canonical', href: COMPANY_CONFIG.canonicalUrl } },
+    { type: 'meta', props: { name: 'description', content: description } },
+    { type: 'meta', props: { name: 'keywords', content: keywords } },
+    { type: 'meta', props: { name: 'robots', content: COMPANY_CONFIG.robots } },
+    { type: 'meta', props: { name: 'googlebot', content: 'index, follow' } },
+    { type: 'meta', props: { name: 'author', content: COMPANY_CONFIG.author } },
+    { type: 'meta', props: { name: 'publisher', content: COMPANY_CONFIG.publisher } },
+    { type: 'link', props: { rel: 'author', href: COMPANY_CONFIG.siteOrigin } },
+    { type: 'link', props: { rel: 'publisher', href: COMPANY_CONFIG.siteOrigin } },
+    { type: 'link', props: { rel: 'canonical', href: canonicalUrl } },
+
+    // Multi-language Hreflang alternates
+    {
+      type: 'link',
+      props: { rel: 'alternate', hreflang: 'en', href: `${COMPANY_CONFIG.siteOrigin}/` },
+    },
+    {
+      type: 'link',
+      props: { rel: 'alternate', hreflang: 'hi', href: `${COMPANY_CONFIG.siteOrigin}/hi` },
+    },
+    {
+      type: 'link',
+      props: { rel: 'alternate', hreflang: 'x-default', href: `${COMPANY_CONFIG.siteOrigin}/` },
+    },
 
     // Open Graph Tags
     { type: 'meta', props: { property: 'og:type', content: 'website' } },
     { type: 'meta', props: { property: 'og:site_name', content: COMPANY_CONFIG.name } },
-    { type: 'meta', props: { property: 'og:title', content: COMPANY_CONFIG.title } },
-    { type: 'meta', props: { property: 'og:description', content: COMPANY_CONFIG.description } },
-    { type: 'meta', props: { property: 'og:url', content: COMPANY_CONFIG.canonicalUrl } },
+    { type: 'meta', props: { property: 'og:title', content: title } },
+    { type: 'meta', props: { property: 'og:description', content: description } },
+    { type: 'meta', props: { property: 'og:url', content: canonicalUrl } },
     { type: 'meta', props: { property: 'og:image', content: COMPANY_CONFIG.ogImage } },
     { type: 'meta', props: { property: 'og:image:alt', content: COMPANY_CONFIG.name } },
-    { type: 'meta', props: { property: 'og:locale', content: 'en_IN' } },
+    { type: 'meta', props: { property: 'og:locale', content: langInfo.locale } },
 
     // Twitter Card Tags
     { type: 'meta', props: { name: 'twitter:card', content: 'summary_large_image' } },
-    { type: 'meta', props: { name: 'twitter:title', content: COMPANY_CONFIG.title } },
-    { type: 'meta', props: { name: 'twitter:description', content: COMPANY_CONFIG.description } },
+    { type: 'meta', props: { name: 'twitter:title', content: title } },
+    { type: 'meta', props: { name: 'twitter:description', content: description } },
     { type: 'meta', props: { name: 'twitter:image', content: COMPANY_CONFIG.ogImage } },
 
     // JSON-LD Structured Data Schema Graph
@@ -49,11 +128,18 @@ export async function prerender(_args?: PrerenderArguments): Promise<PrerenderRe
     },
   ];
 
+  const durationMs = (performance.now() - startTime).toFixed(2);
+  console.log(`\x1b[36m╠${thinDivider}╣\x1b[0m`);
+  console.log(
+    `\x1b[36m║\x1b[0m  \x1b[32m✔ SSG Complete:\x1b[0m Injected \x1b[33m${elements.length}\x1b[0m head tags into HTML in \x1b[32m${durationMs}ms\x1b[0m\x1b[36m║\x1b[0m`,
+  );
+  console.log(`\x1b[36m╚${divider}╝\x1b[0m\n`);
+
   return {
     html: '',
     head: {
-      lang: 'en',
-      title: COMPANY_CONFIG.title,
+      lang,
+      title,
       elements: new Set(elements),
     },
   };

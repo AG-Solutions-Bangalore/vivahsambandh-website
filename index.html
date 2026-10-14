@@ -8,17 +8,18 @@
          this site ships its own English/हिन्दी switcher. -->
     <script>
       try {
-        var __vl = localStorage.getItem('vivah-lang');
-        if (__vl === 'hi' || __vl === 'en') document.documentElement.lang = __vl;
+        var isHi = location.pathname === '/hi' || location.pathname.indexOf('/hi/') === 0;
+        if (isHi) {
+          document.documentElement.lang = 'hi';
+        } else {
+          var __vl = localStorage.getItem('vivah-lang');
+          if (__vl === 'hi' || __vl === 'en') document.documentElement.lang = __vl;
+        }
       } catch (e) { /* storage unavailable — default lang="en" stands */ }
     </script>
     <meta name="google" content="notranslate" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta
-      name="description"
-      content="VivahSambandh — a premium Agarwal matrimonial platform. Tradition meets new beginnings. Available in English and हिन्दी."
-    />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link

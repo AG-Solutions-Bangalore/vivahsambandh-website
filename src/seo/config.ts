@@ -1,36 +1,48 @@
 import { COMPANY } from '../constants/company';
 
 /**
- * Single source of truth for company constants and SEO metadata across VivahSambandh.
- * Updating values here or in `src/constants/company.ts` updates all metadata, schemas,
- * OpenGraph tags, and SSG prerendered HTML everywhere automatically.
+ * Single source of truth for company constants and multi-language SEO metadata.
+ * Updating values here or in `src/constants/company.ts` updates all metadata,
+ * schemas, OpenGraph tags, and SSG prerendered HTML across English and Hindi automatically.
  */
 export const COMPANY_CONFIG = {
   name: COMPANY.name,
   legalName: COMPANY.legalName,
-  tagline: 'Tradition Meets New Beginnings',
-  title: 'VivahSambandh — Premium Agarwal Matrimony | Tradition Meets New Beginnings',
-  description:
-    'VivahSambandh is India’s premier Agarwal matrimonial platform connecting verified families with shared traditions, Gotra compatibility, and values for lifelong relationships.',
-  keywords:
-    'Agarwal matrimony, Agarwal matrimonial, VivahSambandh, Agarwal shaadi, Agarwal brides, Agarwal grooms, Bansal gotra, Mittal gotra, Jindal gotra, Agarwal marriage bureau, premium matrimony India',
+
+  taglines: {
+    en: 'Tradition Meets New Beginnings',
+    hi: 'परंपरा से जुड़ें, नए रिश्तों की शुरुआत',
+  },
+
+  titles: {
+    en: 'VivahSambandh — Premium Agarwal Matrimony | Tradition Meets New Beginnings',
+    hi: 'विवाहसंबंध — विश्वसनीय अग्रवाल वैवाहिक मंच | परंपरा से जुड़ें',
+  },
+
+  descriptions: {
+    en: 'VivahSambandh is India’s trusted premium Agarwal matrimonial platform connecting verified families with shared traditions, Gotra compatibility, and values for lifelong relationships.',
+    hi: 'विवाहसंबंध अग्रवाल परिवारों के लिए एक विश्वसनीय वैवाहिक मंच है, जो साझा संस्कारों, मूल्यों और परंपराओं के साथ जीवनसाथी खोजने में आपकी सहायता करता है।',
+  },
+
+  keywords: {
+    en: 'Agarwal matrimony, Agarwal matrimonial, VivahSambandh, Agarwal shaadi, Agarwal brides, Agarwal grooms, Bansal gotra, Mittal gotra, Jindal gotra, Agarwal marriage bureau, premium matrimony India',
+    hi: 'अग्रवाल मैट्रिमोनी, विवाहसंबंध, अग्रवाल शादी, अग्रवाल रिश्ते, बंसल गोत्र, मित्तल गोत्र, जिंदल गोत्र, अग्रवाल वैवाहिक मंच',
+  },
+
   siteOrigin: 'https://vivahsambandh.com',
   canonicalUrl: 'https://vivahsambandh.com/',
   logo: 'https://vivahsambandh.com/images/common/Temple_Skyline_Divider_footer_image.png',
   ogImage: 'https://vivahsambandh.com/images/home/home_banner_image.png',
 
+  author: COMPANY.name,
+  publisher: COMPANY.name,
+  robots: 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1',
+
   supportEmail: COMPANY.supportEmail,
   supportPhone: COMPANY.supportPhoneDisplay,
   supportPhoneLink: COMPANY.supportPhoneLink,
-  supportHours: COMPANY.supportHours.en,
-
-  address: {
-    streetAddress: COMPANY.address.en,
-    addressLocality: 'Bengaluru',
-    addressRegion: 'Karnataka',
-    postalCode: '560001',
-    addressCountry: 'IN',
-  },
+  supportHours: COMPANY.supportHours,
+  address: COMPANY.address,
 
   socials: [
     COMPANY.socials.facebook,
@@ -39,34 +51,66 @@ export const COMPANY_CONFIG = {
     COMPANY.socials.linkedin,
   ],
 
-  establishedYear: COMPANY.community.establishedYear,
+  community: COMPANY.community,
   priceRange: '₹₹',
 
-  faqs: [
-    {
-      question: 'Is my information secure on VivahSambandh?',
-      answer:
-        'Yes. We use strict verification, privacy controls and secure communication to protect every member and family.',
-    },
-    {
-      question: 'Can I search by Agarwal gotra or city?',
-      answer:
-        'Yes. Browse verified matches across all 18 Agarwal Gotras (Bansal, Mittal, Jindal, Singhal, etc.), cities, professions, and education.',
-    },
-    {
-      question: 'Are profiles on VivahSambandh verified?',
-      answer:
-        'Every profile passes strict screening plus optional official ID and family background verification before going live.',
-    },
-    {
-      question: 'How does the matching process work?',
-      answer:
-        'Create your profile, set your partner preferences, receive curated Agarwal matches with Kundali compatibility, and connect directly with families.',
-    },
-  ],
+  faqs: {
+    en: [
+      {
+        question: 'Is my information secure on VivahSambandh?',
+        answer:
+          'Yes. We use strict verification, privacy controls and secure communication to protect every member and family.',
+      },
+      {
+        question: 'Can I search by Agarwal gotra or city?',
+        answer:
+          'Yes. Browse verified matches across all 18 Agarwal Gotras (Bansal, Mittal, Jindal, Singhal, etc.), cities, professions, and education.',
+      },
+      {
+        question: 'Are profiles on VivahSambandh verified?',
+        answer:
+          'Every profile passes strict screening plus optional official ID and family background verification before going live.',
+      },
+      {
+        question: 'How does the matching process work?',
+        answer:
+          'Create your profile, set your partner preferences, receive curated Agarwal matches with Kundali compatibility, and connect directly with families.',
+      },
+    ],
+    hi: [
+      {
+        question: 'क्या विवाहसंबंध पर मेरी जानकारी सुरक्षित है?',
+        answer:
+          'हाँ, हम हर सदस्य की सुरक्षा के लिए कड़े सत्यापन, गोपनीयता नियंत्रण और सुरक्षित संचार का उपयोग करते हैं।',
+      },
+      {
+        question: 'क्या मैं गोत्र या शहर के अनुसार जीवनसाथी खोज सकता हूँ?',
+        answer:
+          'हाँ, आप शहर, सभी 18 अग्रवाल गोत्र, व्यवसाय, शिक्षा और कई अन्य फ़िल्टर के आधार पर प्रोफाइल देख सकते हैं।',
+      },
+      {
+        question: 'क्या विवाहसंबंध पर सभी प्रोफाइल सत्यापित हैं?',
+        answer:
+          'हर प्रोफाइल लाइव होने से पहले सख्त जांच और पहचान सत्यापन से गुजरती है।',
+      },
+      {
+        question: 'रिश्ता खोजने की प्रक्रिया कैसे काम करती है?',
+        answer:
+          'अपनी प्रोफाइल बनाएं, प्राथमिकताएं चुनें, उपयुक्त रिश्ते देखें और परिवारों से सीधे संपर्क करें।',
+      },
+    ],
+  },
 } as const;
 
 export type CompanyConfig = typeof COMPANY_CONFIG;
+export type SupportedLang = 'en' | 'hi';
+export const SUPPORTED_LANGS: readonly SupportedLang[] = ['en', 'hi'] as const;
+export const SUPPORTED_SSG_ROUTES = ['/', '/hi'] as const;
+
+export const LANG_METADATA: Record<SupportedLang, { label: string; nativeName: string; locale: string }> = {
+  en: { label: 'English', nativeName: 'English', locale: 'en_IN' },
+  hi: { label: 'Hindi', nativeName: 'हिन्दी', locale: 'hi_IN' },
+};
 
 export const SITE_NAME = COMPANY_CONFIG.name;
 export const SITE_ORIGIN = COMPANY_CONFIG.siteOrigin;
@@ -74,9 +118,12 @@ export const SITE_OG_IMAGE = COMPANY_CONFIG.ogImage;
 export const SITE_LOGO = COMPANY_CONFIG.logo;
 
 /**
- * Computes an absolute, normalized canonical URL for any internal route.
+ * Computes an absolute, normalized canonical URL for any route and language.
  */
-export function getCanonicalUrl(pathname = ''): string {
+export function getCanonicalUrl(pathname = '', lang: SupportedLang = 'en'): string {
   const clean = pathname.replace(/^\/+/, '').replace(/\/+$/, '');
+  if (lang === 'hi' || clean === 'hi') {
+    return `${COMPANY_CONFIG.siteOrigin}/hi`;
+  }
   return clean ? `${COMPANY_CONFIG.siteOrigin}/${clean}` : `${COMPANY_CONFIG.siteOrigin}/`;
 }
