@@ -19,6 +19,7 @@
     "react-helmet-async": "^3.0.0",
     "react-i18next": "^17.0.16",
     "schema-dts": "^2.1.0",
+    "swiper": "^14.3.0",
     "tailwindcss": "^4.3.3",
     "vite-plugin-compression": "^0.5.1",
     "vite-prerender-plugin": "^0.5.14"

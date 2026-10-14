@@ -90,21 +90,22 @@ export default function HeroSection() {
   const { t } = useTranslation();
 
   return (
-    <div className="relative overflow-hidden bg-cream-50">
+    <div className="relative isolate bg-cream-50">
       {/* ============================================================== */}
       {/* Real Flower Images: Left & Right cascading garlands             */}
+      {/* Small + in front                                                */}
       {/* ============================================================== */}
       <img
         src="/images/home/flower1_image.png"
         alt=""
-        className="pointer-events-none absolute left-0 bottom-0 z-20 w-36 sm:w-48 md:w-60 lg:w-72 xl:w-84 max-w-[26vw] object-contain object-left-bottom select-none"
+        className="pointer-events-none absolute left-0 bottom-0 z-20 w-32 sm:w-40 md:w-48 lg:w-56 xl:w-64 max-w-[22vw] h-auto object-contain object-left-bottom select-none"
         loading="eager"
         aria-hidden="true"
       />
       <img
         src="/images/home/flower2_image.png"
         alt=""
-        className="pointer-events-none absolute right-0 bottom-0 z-20 w-36 sm:w-48 md:w-60 lg:w-72 xl:w-88 max-w-[34vw] object-contain object-right-top select-none"
+        className="pointer-events-none absolute right-0 bottom-0 z-20 w-32 sm:w-44 md:w-52 lg:w-60 xl:w-72 max-w-[26vw] h-auto object-contain object-right-top select-none"
         loading="eager"
         aria-hidden="true"
       />
@@ -112,7 +113,22 @@ export default function HeroSection() {
       {/* ============================================================== */}
       {/* 1. HERO BANNER: Full-width, proportionally sized to 2172x724   */}
       {/* ============================================================== */}
-      <section className="relative w-full overflow-hidden border-b border-gold-500/20 bg-cream-50 h-[470px] sm:h-[490px] lg:h-[520px] xl:h-[540px]">
+      <section className="relative isolate z-10 w-full h-[470px] sm:h-[490px] lg:h-[520px] xl:h-[540px]">
+        {/* Top garlands: hang from top */}
+        <img
+          src="/images/home/flower1_image.png"
+          alt=""
+          className="pointer-events-none absolute left-0 top-0 z-[5] w-16 sm:w-20 md:w-24 lg:w-28 xl:w-32 max-w-[12vw] h-auto object-contain object-left-top select-none -scale-y-100"
+          loading="eager"
+          aria-hidden="true"
+        />
+        <img
+          src="/images/home/flower2_image.png"
+          alt=""
+          className="pointer-events-none absolute right-0 top-0 z-[5] w-16 sm:w-20 md:w-24 lg:w-28 xl:w-32 max-w-[12vw] h-auto object-contain object-right-top select-none -scale-y-100"
+          loading="eager"
+          aria-hidden="true"
+        />
         {/* Section Background Image: Contained and properly scaled */}
         <div
           className="pointer-events-none absolute inset-0 overflow-hidden"
@@ -125,6 +141,11 @@ export default function HeroSection() {
             loading="eager"
           />
         </div>
+        {/* Blend overlay: bottom fade into cards */}
+        <div
+          className="pointer-events-none absolute inset-x-0 bottom-0 z-[2] h-20 bg-gradient-to-b from-transparent to-cream-50 sm:h-24 lg:h-28"
+          aria-hidden="true"
+        />
 
         {/* Content Container (Aligned exactly with design) */}
         <div className="section-pad relative z-10 flex h-full items-center">
@@ -222,7 +243,7 @@ export default function HeroSection() {
       {/* ============================================================== */}
       {/* 2. QUICK MATCH CARDS: Positioned cleanly below the hero banner */}
       {/* ============================================================== */}
-      <section className="section-pad py-8 sm:py-10 lg:py-12 relative z-10">
+      <section className="section-pad pt-6 pb-4 sm:pt-8 sm:pb-6 lg:pt-10 lg:pb-8 relative z-10">
         <div className="grid gap-6 sm:grid-cols-2 lg:gap-8 w-full max-w-7xl mx-auto">
           {MATCH_CARDS.map((card) => (
             <a

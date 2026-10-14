@@ -1,135 +1,240 @@
-import { useRef } from 'react'
 import { useTranslation } from 'react-i18next'
-import type { CityProfile } from '../types'
+import { Swiper, SwiperSlide } from 'swiper/react'
+import { Navigation, Autoplay, A11y } from 'swiper/modules'
 
-// Stylized architectural SVG landmarks for Indian heritage cities matching the design's arched aesthetic
-function CityMonumentIcon({ index }: { index: number }) {
-  const styles = [
-    // Fort / Minar (Delhi)
-    'from-amber-500/20 via-orange-400/20 to-sky-300/30',
-    // Gateway / Coastal arch (Mumbai)
-    'from-sky-500/20 via-blue-400/20 to-indigo-300/30',
-    // Memorial / Classical Dome (Kolkata)
-    'from-emerald-500/20 via-teal-400/20 to-sky-300/30',
-    // Palace / Dravidian Turret (Bengaluru)
-    'from-rose-500/20 via-pink-400/20 to-purple-300/30',
-    // Charminar / Heritage Pillars (Hyderabad)
-    'from-amber-600/20 via-yellow-500/20 to-orange-300/30',
-    // Wada / Historic Citadel (Pune)
-    'from-blue-600/20 via-cyan-500/20 to-sky-300/30',
-    // Stepwell / Havelis (Ahmedabad)
-    'from-orange-500/20 via-amber-400/20 to-yellow-300/30',
-    // Pan-India / International (Others)
-    'from-gold-500/20 via-purple-400/20 to-pink-300/30',
-  ]
+import 'swiper/css'
+import 'swiper/css/navigation'
 
-  const bg = styles[index % styles.length]
-
-  return (
-    <div className={`relative flex h-32 w-full items-end justify-center overflow-hidden rounded-t-xl bg-gradient-to-t ${bg} p-2`}>
-      {/* Decorative Palace Silhouettes */}
-      <svg
-        viewBox="0 0 120 90"
-        className="h-24 w-auto text-gold-700/80 drop-shadow-sm transition-transform duration-500 group-hover:scale-110"
-        fill="currentColor"
-        aria-hidden="true"
-      >
-        <path d="M60 4c-3 6-8 12-8 16h16c0-4-5-10-8-16zM50 20c-8 3-14 11-14 20h48c0-9-6-17-14-20H50z" />
-        <path d="M30 40h60v44H30zM42 50h12v34H42zM66 50h12v34H66z" />
-        <path d="M18 52h8v32h-8zM94 52h8v32h-8zM14 84h92v4H14z" />
-        <path d="M22 36c-2 4-5 8-5 12h10c0-4-3-8-5-12zM98 36c-2 4-5 8-5 12h10c0-4-3-8-5-12z" />
-      </svg>
-      {/* Sun / Sky subtle glow */}
-      <div className="absolute top-2 h-10 w-10 rounded-full bg-gold-400/30 blur-md pointer-events-none" />
-    </div>
-  )
+interface CityItem {
+  id: string
+  nameKey: string
+  defaultName: string
+  count: string
+  image: string
 }
+
+const CITIES: readonly CityItem[] = [
+  {
+    id: 'delhi',
+    nameKey: 'cities.list.0.name',
+    defaultName: 'Delhi',
+    count: '8,500+',
+    image: '/images/home/cities/delhi.jpg',
+  },
+  {
+    id: 'mumbai',
+    nameKey: 'cities.list.1.name',
+    defaultName: 'Mumbai',
+    count: '6,200+',
+    image: '/images/home/cities/mumbai.jpg',
+  },
+  {
+    id: 'kolkata',
+    nameKey: 'cities.list.2.name',
+    defaultName: 'Kolkata',
+    count: '4,800+',
+    image: '/images/home/cities/kolkata.jpg',
+  },
+  {
+    id: 'bengaluru',
+    nameKey: 'cities.list.3.name',
+    defaultName: 'Bengaluru',
+    count: '3,500+',
+    image: '/images/home/cities/bengaluru.jpg',
+  },
+  {
+    id: 'hyderabad',
+    nameKey: 'cities.list.4.name',
+    defaultName: 'Hyderabad',
+    count: '3,500+',
+    image: '/images/home/cities/hyderabad.jpg',
+  },
+  {
+    id: 'pune',
+    nameKey: 'cities.list.5.name',
+    defaultName: 'Pune',
+    count: '2,900+',
+    image: '/images/home/cities/pune.jpg',
+  },
+  {
+    id: 'ahmedabad',
+    nameKey: 'cities.list.6.name',
+    defaultName: 'Ahmedabad',
+    count: '2,200+',
+    image: '/images/home/cities/ahmedabad.jpg',
+  },
+  {
+    id: 'others',
+    nameKey: 'cities.list.7.name',
+    defaultName: 'Others',
+    count: '10,000+',
+    image: '/images/home/cities/others.jpg',
+  },
+]
 
 export default function CityMatchesSection() {
   const { t } = useTranslation()
-  const scrollRef = useRef<HTMLDivElement>(null)
-
-  const rawCities = (t('cities.list', { returnObjects: true }) as CityProfile[]) || []
-
-  const scroll = (direction: 'left' | 'right') => {
-    if (scrollRef.current) {
-      const offset = direction === 'left' ? -320 : 320
-      scrollRef.current.scrollBy({ left: offset, behavior: 'smooth' })
-    }
-  }
 
   return (
-    <section className="bg-cream-100/60 relative py-16 lg:py-24">
-      <div className="section-pad">
-        {/* Section Header */}
+    <section className="relative overflow-hidden bg-cream-50 py-12 sm:py-16 lg:py-20">
+      <div className="section-pad relative z-10">
+        {/* ============================================================== */}
+        {/* Section Header: Eyebrow, Title, Subtitle, and View All link    */}
+        {/* ============================================================== */}
         <div className="flex flex-col justify-between gap-4 md:flex-row md:items-end">
           <div>
-            <div className="eyebrow">
-              <span className="text-gold-500">✦</span>
-              <span>{t('cities.eyebrow')}</span>
+            {/* Eyebrow */}
+            <div className="inline-flex items-center gap-2">
+              <span className="text-gold-600 text-sm font-bold" aria-hidden="true">
+                ☸
+              </span>
+              <span className="text-[11px] sm:text-xs font-bold tracking-[0.2em] uppercase text-gold-700">
+                {t('cities.eyebrow')}
+              </span>
             </div>
-            <h2 className="font-display mt-2 text-3xl font-bold text-navy-900 sm:text-4xl">
+
+            {/* Title */}
+            <h2 className="font-display mt-2 text-2xl sm:text-3xl lg:text-4xl font-bold text-navy-950">
               {t('cities.title')}
             </h2>
-            <p className="mt-2 text-sm text-ink-600 sm:text-base">
+
+            {/* Subtitle */}
+            <p className="mt-1.5 text-xs sm:text-sm text-ink-600 font-medium">
               {t('cities.subtitle')}
             </p>
           </div>
 
-          <div className="flex items-center gap-3">
+          {/* "View All Cities →" link */}
+          <div>
             <a
               href="#all-cities"
-              className="inline-flex items-center gap-1.5 text-sm font-bold text-maroon-600 transition hover:text-maroon-700 hover:underline"
+              className="group inline-flex items-center gap-1.5 text-xs sm:text-sm font-bold text-maroon-700 transition hover:text-maroon-800"
             >
               <span>{t('cities.viewAll')}</span>
-              <span aria-hidden="true">→</span>
-            </a>
-            {/* Scroll Navigation Controls */}
-            <div className="hidden gap-1.5 sm:flex">
-              <button
-                type="button"
-                onClick={() => scroll('left')}
-                aria-label="Previous cities"
-                className="flex h-9 w-9 items-center justify-center rounded-full border border-gold-500/40 bg-white text-navy-900 shadow-xs transition hover:bg-gold-50"
-              >
-                ←
-              </button>
-              <button
-                type="button"
-                onClick={() => scroll('right')}
-                aria-label="Next cities"
-                className="flex h-9 w-9 items-center justify-center rounded-full border border-gold-500/40 bg-white text-navy-900 shadow-xs transition hover:bg-gold-50"
+              <span
+                className="transition-transform duration-300 group-hover:translate-x-1"
+                aria-hidden="true"
               >
                 →
-              </button>
-            </div>
+              </span>
+            </a>
           </div>
         </div>
 
-        {/* Horizontal Cities Carousel */}
-        <div
-          ref={scrollRef}
-          className="no-scrollbar mt-10 flex gap-4 overflow-x-auto pb-4 pt-1 snap-x snap-mandatory"
-        >
-          {rawCities.map((city, idx) => (
-            <a
-              key={city.name}
-              href={`#city-${city.name}`}
-              className="group card-ring relative flex min-w-[170px] flex-col overflow-hidden text-center transition-all duration-300 hover:-translate-y-1.5 hover:border-gold-500 hover:shadow-lift snap-start sm:min-w-[190px]"
+        {/* ============================================================== */}
+        {/* Swiper.js Slider: strictly 4 cards at a time on desktop       */}
+        {/* ============================================================== */}
+        <div className="group/cities relative mt-8 px-10 sm:mt-10 sm:px-12">
+          {/* Custom Navigation Button: Prev (Left) — shows on hover */}
+          <button
+            type="button"
+            aria-label="Previous cities"
+            className="city-prev absolute left-0 top-[38%] z-30 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full border border-gold-500/40 bg-white text-navy-900 shadow-lg transition-all duration-300 hover:scale-105 hover:border-gold-600 hover:bg-gold-50 active:scale-95 cursor-pointer sm:h-10 sm:w-10 invisible opacity-0 group-hover/cities:visible group-hover/cities:opacity-100 focus-visible:visible focus-visible:opacity-100"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              className="h-4 w-4 text-navy-900 sm:h-5 sm:w-5"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.5"
             >
-              {/* Arched Landmark Image Area */}
-              <CityMonumentIcon index={idx} />
+              <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+            </svg>
+          </button>
 
-              <div className="p-3.5">
-                <h3 className="font-display text-base font-bold text-navy-900 group-hover:text-maroon-600 transition-colors">
-                  {city.name}
-                </h3>
-                <p className="mt-1 inline-block rounded-full bg-gold-100/70 px-2.5 py-0.5 text-[11px] font-semibold text-gold-800">
-                  {city.count} {t('cities.profiles')}
-                </p>
-              </div>
-            </a>
-          ))}
+          {/* Custom Navigation Button: Next (Right) — shows on hover */}
+          <button
+            type="button"
+            aria-label="Next cities"
+            className="city-next absolute right-0 top-[38%] z-30 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full border border-gold-500/40 bg-white shadow-lg transition-all duration-300 hover:scale-105 hover:border-gold-600 hover:bg-gold-50 active:scale-95 cursor-pointer sm:h-10 sm:w-10 invisible opacity-0 group-hover/cities:visible group-hover/cities:opacity-100 focus-visible:visible focus-visible:opacity-100"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              className="h-4 w-4 text-gold-600 sm:h-5 sm:w-5"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.5"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
+
+          {/* Swiper Container: max 4 visible cards, pages by 4 on desktop */}
+          <Swiper
+            modules={[Navigation, Autoplay, A11y]}
+            navigation={{
+              prevEl: '.city-prev',
+              nextEl: '.city-next',
+            }}
+            loop={CITIES.length > 4}
+            speed={600}
+            watchOverflow={true}
+            grabCursor={true}
+            autoplay={{
+              delay: 3500,
+              disableOnInteraction: false,
+              pauseOnMouseEnter: true,
+            }}
+            spaceBetween={14}
+            slidesPerView={1.2}
+            slidesPerGroup={1}
+            breakpoints={{
+              480: {
+                slidesPerView: 2,
+                slidesPerGroup: 2,
+                spaceBetween: 16,
+              },
+              768: {
+                slidesPerView: 3,
+                slidesPerGroup: 3,
+                spaceBetween: 20,
+              },
+              1024: {
+                slidesPerView: 4,
+                slidesPerGroup: 4,
+                spaceBetween: 22,
+              },
+              1280: {
+                slidesPerView: 4,
+                slidesPerGroup: 4,
+                spaceBetween: 24,
+              },
+            }}
+            className="!py-2"
+          >
+            {CITIES.map((city) => {
+              const cityName = t(city.nameKey, { defaultValue: city.defaultName })
+
+              return (
+                <SwiperSlide key={city.id} className="!h-auto">
+                  <a
+                    href={`#city-${city.id}`}
+                    className="group flex h-full flex-col overflow-hidden rounded-2xl border border-gold-500/30 bg-white p-1.5 transition-all duration-300 hover:-translate-y-1.5 hover:border-gold-500 hover:shadow-lg focus:outline-hidden focus:ring-2 focus:ring-gold-500 sm:p-2"
+                  >
+                    {/* City Monument Image (Aspect 4/3 with rounded corners) */}
+                    <div className="relative aspect-[4/3] w-full overflow-hidden rounded-xl bg-gold-50">
+                      <img
+                        src={city.image}
+                        alt={cityName}
+                        className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+                        loading="lazy"
+                      />
+                    </div>
+
+                    {/* City Label & Profile Count matching design */}
+                    <div className="px-1 pt-2.5 pb-1 text-center">
+                      <h3 className="font-display truncate text-xs font-bold text-navy-950 transition-colors group-hover:text-maroon-700 sm:text-sm">
+                        {cityName}
+                      </h3>
+                      <p className="mt-0.5 text-[10px] font-semibold text-sky-700 sm:text-[11px]">
+                        {city.count} {t('cities.profiles')}
+                      </p>
+                    </div>
+                  </a>
+                </SwiperSlide>
+              )
+            })}
+          </Swiper>
         </div>
       </div>
     </section>
