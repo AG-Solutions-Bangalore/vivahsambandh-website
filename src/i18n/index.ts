@@ -10,6 +10,11 @@ export type AppLang = (typeof SUPPORTED_LANGS)[number]
 export const DEFAULT_LANG: AppLang = 'en'
 export const LANG_STORAGE_KEY = 'vivah-lang'
 
+/** Initial UI language (URL path, then saved preference, then default). */
+export function getInitialAppLanguage(): AppLang {
+  return getInitialLanguage()
+}
+
 /**
  * Determines initial language based on URL pathname (e.g., /hi) or saved preference.
  */

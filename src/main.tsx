@@ -1,13 +1,25 @@
-import { createRoot } from "react-dom/client";
-import { HelmetProvider } from "react-helmet-async";
-import App from "./App.tsx";
+import { createRoot, hydrateRoot } from "react-dom/client";
 import "./i18n";
 import "./index.css";
-import { SeoHost } from "./seo/seo.tsx";
+import Root from "./Root.tsx";
+import { getInitialAppLanguage } from "./i18n";
 
-createRoot(document.getElementById("root")!).render(
-  <HelmetProvider>
-    <App />
-    <SeoHost />
-  </HelmetProvider>,
-);
+const container = document.getElementById("root")!;
+const lang = getInitialAppLanguage();
+
+// Build-time prerendering stamps its language as the first child:
+// <!--ssg:en--> or <!--ssg:hi-->. Hydrate only on an exact match — a
+// stored language differing from the prerendered route falls back to a
+// fresh client render instead of a hydration mismatch.
+const firstChild = container.firstChild;
+const prerenderedLang =
+  firstChild && firstChild.nodeType === Node.COMMENT_NODE
+    ? (firstChild.textContent ?? "")
+    : "";
+
+if (prerenderedLang === `ssg:${lang}`) {
+  hydrateRoot(container, <Root />);
+} else {
+  container.innerHTML = "";
+  createRoot(container).render(<Root />);
+}

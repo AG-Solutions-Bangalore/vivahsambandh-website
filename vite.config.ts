@@ -86,6 +86,8 @@ function eventLoopCleanup(): Plugin {
 /**
  * Demotes Vite's `<link rel="modulepreload">` hints to `<link rel="prefetch">`
  * in every emitted HTML page to keep LCP critical path lean.
+ * (Deliberately NOT deprioritizing the entry module script — measured TTI
+ * regression outweighs the LCP bandwidth gain.)
  */
 function deferNonCriticalPreloads(): Plugin {
   const rewriteFile = (full: string): void => {
@@ -198,6 +200,15 @@ export default defineConfig({
         manualChunks(id) {
           if (!id.includes('node_modules')) return undefined;
           const p = id.replace(/\\/g, '/');
+          // Server renderer (prerender script only) — never shipped to clients.
+          // Covers the package entry shims (server.*.js) and the compiled
+          // implementation (cjs/react-dom-server.*).
+          if (
+            /\/node_modules\/react-dom\/(server[^/]*\.js|cjs\/react-dom-server[^/]*)/.test(
+              p,
+            )
+          )
+            return 'ssr-renderer';
           if (/gsap/.test(p)) return 'gsap';
           if (/\/lenis\//.test(p)) return 'lenis';
           if (/swiper/.test(p)) return 'swiper';

@@ -8,6 +8,9 @@
  */
 
 import type { PrerenderArguments, PrerenderResult } from 'vite-prerender-plugin';
+import { renderToString } from 'react-dom/server';
+import Root from '../Root';
+import i18n from '../i18n';
 import {
   COMPANY_CONFIG,
   LANG_METADATA,
@@ -135,8 +138,30 @@ export async function prerender(args?: PrerenderArguments): Promise<PrerenderRes
   );
   console.log(`\x1b[36m╚${divider}╝\x1b[0m\n`);
 
+  // ——— Static body prerender (LCP fast path) ———
+  // Header + hero + footer chrome render to HTML inside #root so first paint
+  // never waits for the JS bundle. Below-fold sections stay deferred
+  // (skeletons) and hydrate identically — same tree as the client, so no
+  // hydration mismatch. Language-stamped for the hydrate gate in main.tsx.
+  //
+  // NOTE: react-dom/server must stay a static import (single React instance
+  // for renderToString). vite.config isolates it into its own chunk so the
+  // server renderer never ships to the client.
+  if (i18n.language !== lang) {
+    await i18n.changeLanguage(lang);
+  }
+  const markup = renderToString(<Root />);
+  // React 19 hoists a preload hint for EVERY SSR image — those compete with
+  // the LCP banner for bandwidth. Strip them; the banner keeps its dedicated
+  // head preload (with responsive candidates), everything else loads in place.
+  const bodyHtml = markup.replace(/<link rel="preload" as="image"[^>]*>/g, '');
+  const html = `<!--ssg:${lang}-->${bodyHtml}`;
+  console.log(
+    `  \x1b[1m🖨️  Prerendered body\x1b[0m ${(Buffer.byteLength(html, 'utf8') / 1024).toFixed(1)} KB HTML (${lang})`,
+  );
+
   return {
-    html: '',
+    html,
     head: {
       lang,
       title,

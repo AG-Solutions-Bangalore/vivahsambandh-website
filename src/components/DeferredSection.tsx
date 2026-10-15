@@ -63,6 +63,12 @@ export default function DeferredSection({
   }, [id])
 
   // Viewport trigger.
+  //
+  // Hero-only initial render: if the placeholder is already visible (tall
+  // screens), observe at once — IO fires immediately. Otherwise wait for the
+  // first scroll/resize before observing, so a static viewport (audit,
+  // crawler, print preview) never pays for below-fold chunks and images.
+  // Anchor/deep-link mounts bypass this via the lib registry.
   useEffect(() => {
     if (mountedRef.current) return
     const host = hostRef.current
@@ -70,17 +76,40 @@ export default function DeferredSection({
       doMount()
       return
     }
-    const io = new IntersectionObserver(
-      (entries) => {
-        if (entries.some((e) => e.isIntersecting)) {
-          doMount()
-          io.disconnect()
-        }
-      },
-      { rootMargin: `${rootMargin}px 0px`, threshold: 0 },
-    )
-    io.observe(host)
-    return () => io.disconnect()
+    let io: IntersectionObserver | null = null
+    const startObserving = () => {
+      if (mountedRef.current || io) return
+      io = new IntersectionObserver(
+        (entries) => {
+          if (entries.some((e) => e.isIntersecting)) {
+            doMount()
+            io?.disconnect()
+            io = null
+          }
+        },
+        { rootMargin: `${rootMargin}px 0px`, threshold: 0 },
+      )
+      if (hostRef.current) io.observe(hostRef.current)
+    }
+    const rect = host.getBoundingClientRect()
+    if (rect.top < window.innerHeight && rect.bottom > 0) {
+      startObserving()
+      return () => io?.disconnect()
+    }
+    const onFirstMove = () => startObserving()
+    const onBeforePrint = () => doMount()
+    window.addEventListener('scroll', onFirstMove, {
+      once: true,
+      passive: true,
+    })
+    window.addEventListener('resize', onFirstMove, { once: true })
+    window.addEventListener('beforeprint', onBeforePrint)
+    return () => {
+      window.removeEventListener('scroll', onFirstMove)
+      window.removeEventListener('resize', onFirstMove)
+      window.removeEventListener('beforeprint', onBeforePrint)
+      io?.disconnect()
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [rootMargin])
 
