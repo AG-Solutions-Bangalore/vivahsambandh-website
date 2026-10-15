@@ -127,6 +127,13 @@ html[lang="hi"] body {
 html[lang="hi"] .font-display {
   font-family: var(--font-devanagari);
 }
+/* Hindi locale: headline line-masks need headroom above for tall Devanagari
+   matras (e.g. परंपरा, जुड़ें) — otherwise overflow-hidden slices glyph tops.
+   Negative margin cancels the padding so layout is unchanged. */
+html[lang="hi"] [data-hero-mask] {
+  padding-top: 0.2em;
+  margin-top: -0.2em;
+}
 /* Hindi locale: Teko for eyebrow labels — condensed, high-impact Devanagari.
    (Teko runs narrow, so size steps up slightly vs the 11px Mukta labels.) */
 html[lang="hi"] .eyebrow,
@@ -136,6 +143,7 @@ html[lang="hi"] [data-eyebrow] {
   font-size: 0.8125rem;
   font-weight: 600;
   letter-spacing: 0.16em;
+  line-height: 1.4;
 }
 
 ::selection {

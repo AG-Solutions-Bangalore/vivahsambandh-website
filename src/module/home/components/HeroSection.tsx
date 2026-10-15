@@ -298,10 +298,10 @@ export default function HeroSection() {
 
               {/* Headline (line masks for the mask-reveal intro) */}
               <h1 data-hero="title" className="font-display mt-3 text-3xl sm:text-4xl lg:text-[44px] xl:text-[50px] font-bold leading-[1.12]">
-                <span className="block overflow-hidden pb-[0.12em] -mb-[0.12em]">
+                <span data-hero-mask className="block overflow-hidden pb-[0.12em] -mb-[0.12em]">
                   <span data-hero-line className="block text-navy-900 will-change-transform">{t("hero.titleA")}</span>
                 </span>
-                <span className="block overflow-hidden pb-[0.12em] -mb-[0.12em]">
+                <span data-hero-mask className="block overflow-hidden pb-[0.12em] -mb-[0.12em]">
                   <span data-hero-line className="block text-gold-600 mt-0.5 will-change-transform">
                     {t("hero.titleB")}
                   </span>
