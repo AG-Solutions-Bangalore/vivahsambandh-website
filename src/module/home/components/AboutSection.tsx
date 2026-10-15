@@ -184,8 +184,8 @@ export default function AboutSection() {
               {t('about.body')}
             </p>
 
-            {/* CTA Button */}
-            <div className="mt-7 sm:mt-8 flex items-center gap-4">
+            {/* CTA Button — centered on phones, left-aligned from sm up */}
+            <div className="mt-7 sm:mt-8 flex items-center justify-center gap-4 sm:justify-start">
               <Link
                 to={aboutHref}
                 title={t('about.cta')}

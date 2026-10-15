@@ -284,7 +284,7 @@ export default function HeroSection() {
       {/* ============================================================== */}
       {/* 1. HERO BANNER: Full-width, proportionally sized to 2172x724   */}
       {/* ============================================================== */}
-      <section data-hero="banner-wrap" className="relative isolate z-10 w-full h-[470px] sm:h-[490px] lg:h-[520px] xl:h-[540px]">
+      <section data-hero="banner-wrap" className="relative isolate z-10 w-full lg:h-[520px] xl:h-[540px]">
         {/* Top garlands: hang from top */}
         <img
           src="/images/home/flower1_image-320.webp"
@@ -312,9 +312,10 @@ export default function HeroSection() {
           fetchPriority="low"
           aria-hidden="true"
         />
-        {/* Section Background Image: Contained and properly scaled */}
+        {/* Banner image: photo block on top for small screens, full-bleed
+            backdrop from lg up (desktop untouched). */}
         <div
-          className="pointer-events-none absolute inset-0 overflow-hidden"
+          className="pointer-events-none relative h-72 sm:h-96 overflow-hidden lg:absolute lg:inset-0 lg:h-auto"
           aria-hidden="true"
         >
           <img
@@ -328,8 +329,13 @@ export default function HeroSection() {
             data-hero="banner"
             fetchPriority="high"
             decoding="async"
-            className="h-full w-full object-cover object-[78%_center] sm:object-[76%_center] lg:object-[82%_center] xl:object-right will-change-transform"
+            className="h-full w-full object-cover object-[68%_25%] sm:object-[70%_30%] lg:object-[82%_center] xl:object-right will-change-transform"
             loading="eager"
+          />
+          {/* Mobile fade: photo melts into the cream copy below */}
+          <div
+            className="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-b from-transparent to-cream-50 lg:hidden"
+            aria-hidden="true"
           />
         </div>
         {/* Blend overlay: bottom fade into cards */}
@@ -339,7 +345,7 @@ export default function HeroSection() {
         />
 
         {/* Content Container (Aligned exactly with design) */}
-        <div className="section-pad relative z-10 flex h-full items-center">
+        <div className="section-pad relative z-10 -mt-10 pt-4 pb-8 sm:-mt-12 lg:mt-0 lg:flex lg:h-full lg:items-center lg:py-0">
           <div className="grid w-full items-center lg:grid-cols-12">
             {/* Left Content Column */}
             <div className="lg:col-span-7 xl:col-span-6 py-4">
@@ -369,12 +375,12 @@ export default function HeroSection() {
                 {t("hero.subtitle")}
               </p>
 
-              {/* Buttons: styled exactly to design reference pill buttons with rich micro-animations */}
-              <div data-hero="cta" className="mt-6 sm:mt-7 flex flex-wrap items-center gap-3.5 sm:gap-4 relative z-20">
+              {/* Buttons: stacked full-width on phones, side-by-side from sm up */}
+              <div data-hero="cta" className="mt-6 sm:mt-7 flex flex-col items-stretch gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:gap-4 relative z-20">
                 <a
                   href="#register"
                   title={t("hero.createProfile")}
-                  className="group relative inline-flex items-center justify-center gap-2 sm:gap-2.5 overflow-hidden rounded-full bg-navy-900 px-6 py-2.5 sm:px-7 sm:py-3 text-xs sm:text-sm font-semibold text-white shadow-md shadow-navy-950/20 transition-all duration-300 hover:-translate-y-0.5 hover:bg-navy-800 hover:shadow-lg hover:shadow-navy-950/30 active:scale-[0.97]"
+                  className="group relative inline-flex w-full sm:w-auto items-center justify-center gap-2 sm:gap-2.5 overflow-hidden rounded-full bg-navy-900 px-6 py-3 sm:px-7 sm:py-3 text-[13px] sm:text-sm font-semibold text-white shadow-md shadow-navy-950/20 transition-all duration-300 hover:-translate-y-0.5 hover:bg-navy-800 hover:shadow-lg hover:shadow-navy-950/30 active:scale-[0.97]"
                 >
                   {/* Subtle shine sweep on hover */}
                   <span
@@ -392,7 +398,7 @@ export default function HeroSection() {
                 <a
                   href="#search"
                   title={t("hero.findMatch")}
-                  className="group relative inline-flex items-center justify-center gap-2 sm:gap-2.5 overflow-hidden rounded-full border border-gold-500/80 bg-white/95 px-6 py-2.5 sm:px-7 sm:py-3 text-xs sm:text-sm font-semibold text-navy-900 shadow-xs backdrop-blur-xs transition-all duration-300 hover:-translate-y-0.5 hover:border-gold-600 hover:bg-gold-50/80 hover:shadow-md hover:shadow-gold-500/15 active:scale-[0.97]"
+                  className="group relative inline-flex w-full sm:w-auto items-center justify-center gap-2 sm:gap-2.5 overflow-hidden rounded-full border border-gold-500/80 bg-white/95 px-6 py-3 sm:px-7 sm:py-3 text-[13px] sm:text-sm font-semibold text-navy-900 shadow-xs backdrop-blur-xs transition-all duration-300 hover:-translate-y-0.5 hover:border-gold-600 hover:bg-gold-50/80 hover:shadow-md hover:shadow-gold-500/15 active:scale-[0.97]"
                 >
                   {/* Subtle gold sheen sweep on hover */}
                   <span

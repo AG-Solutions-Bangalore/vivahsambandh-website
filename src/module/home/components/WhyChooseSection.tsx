@@ -73,9 +73,12 @@ export default function WhyChooseSection() {
 
   return (
     <section id="explore-features" className="relative overflow-hidden bg-[#071833] py-14 sm:py-16 lg:py-20">
-      {/* ============================================================== */}
-      {/* Ornate Corner Filigree on Left & Right Edges                */}
-      {/* ============================================================== */}
+      {/* Ornate Corner Filigree — desktop only. On phones the full-height
+          sides overwhelm the copy, so mobile gets a soft gold glow. */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute -top-20 left-1/2 z-0 h-64 w-72 -translate-x-1/2 rounded-full bg-gold-500/15 blur-3xl select-none lg:hidden"
+      />
       <img
         src="/images/home/Ornate_Corner_Filigree_image.webp"
         srcSet="/images/home/Ornate_Corner_Filigree_image-480.webp 480w, /images/home/Ornate_Corner_Filigree_image.webp 948w"
@@ -87,7 +90,7 @@ export default function WhyChooseSection() {
         aria-hidden="true"
         loading="lazy"
         decoding="async"
-        className="pointer-events-none absolute inset-y-0 -left-4 scale-105 opacity-65 z-0 h-full w-auto max-w-none select-none"
+        className="pointer-events-none absolute inset-y-0 -left-4 scale-105 opacity-65 z-0 h-full w-auto max-w-none select-none hidden lg:block"
       />
 
       <img
@@ -101,10 +104,10 @@ export default function WhyChooseSection() {
         aria-hidden="true"
         loading="lazy"
         decoding="async"
-        className="pointer-events-none absolute inset-y-0 -right-4 scale-105 opacity-65 z-0 h-full w-auto max-w-none rotate-180 select-none"
+        className="pointer-events-none absolute inset-y-0 -right-4 scale-105 opacity-65 z-0 h-full w-auto max-w-none rotate-180 select-none hidden lg:block"
       />
 
-      <div className="section-pad relative z-10 !max-w-[1440px] !pl-[64px] !pr-[64px] sm:!pl-[84px] sm:!pr-[84px] lg:!pl-[104px] lg:!pr-[104px]">
+      <div className="section-pad relative z-10 !max-w-[1440px] !pl-5 !pr-5 sm:!pl-[84px] sm:!pr-[84px] lg:!pl-[104px] lg:!pr-[104px]">
         <div className="grid items-center gap-10 lg:grid-cols-12 lg:gap-8 xl:gap-12">
           {/* ========================================================== */}
           {/* Left Column: Eyebrow, Heading, Subtitle, and Gold CTA Button*/}

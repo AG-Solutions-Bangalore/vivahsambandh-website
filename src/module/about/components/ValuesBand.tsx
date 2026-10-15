@@ -41,16 +41,11 @@ export default function ValuesBand() {
 
   return (
     <section className="relative overflow-hidden bg-[#071833] py-14 sm:py-16 lg:py-20">
-      {/* Filigree sides */}
-      <img
-        src="/images/home/Ornate_Corner_Filigree_image.webp"
-        width={948}
-        height={1659}
-        alt=""
+      {/* Filigree sides — desktop only. On phones the full-height sides
+          overwhelm the copy, so mobile gets a soft gold glow. */}
+      <div
         aria-hidden="true"
-        loading="lazy"
-        decoding="async"
-        className="pointer-events-none absolute inset-y-0 -left-4 z-0 h-full w-auto max-w-none select-none scale-105 opacity-60"
+        className="pointer-events-none absolute -top-20 left-1/2 z-0 h-64 w-72 -translate-x-1/2 rounded-full bg-gold-500/15 blur-3xl select-none lg:hidden"
       />
       <img
         src="/images/home/Ornate_Corner_Filigree_image.webp"
@@ -60,7 +55,17 @@ export default function ValuesBand() {
         aria-hidden="true"
         loading="lazy"
         decoding="async"
-        className="pointer-events-none absolute inset-y-0 -right-4 z-0 h-full w-auto max-w-none select-none rotate-180 scale-105 opacity-60"
+        className="pointer-events-none absolute inset-y-0 -left-4 z-0 h-full w-auto max-w-none select-none scale-105 opacity-60 hidden lg:block"
+      />
+      <img
+        src="/images/home/Ornate_Corner_Filigree_image.webp"
+        width={948}
+        height={1659}
+        alt=""
+        aria-hidden="true"
+        loading="lazy"
+        decoding="async"
+        className="pointer-events-none absolute inset-y-0 -right-4 z-0 h-full w-auto max-w-none select-none rotate-180 scale-105 opacity-60 hidden lg:block"
       />
       {/* Corner florals */}
       <img

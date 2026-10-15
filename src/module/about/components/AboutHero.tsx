@@ -38,7 +38,7 @@ export default function AboutHero() {
         aria-hidden="true"
       />
 
-      <section className="relative isolate z-10 w-full h-[480px] sm:h-[500px] lg:h-[540px] xl:h-[580px]">
+      <section className="relative isolate z-10 w-full lg:h-[540px] xl:h-[580px]">
         {/* Top hanging garlands */}
         <img
           src="/images/home/flower1_image-320.webp"
@@ -67,8 +67,9 @@ export default function AboutHero() {
           aria-hidden="true"
         />
 
-        {/* Banner background — same image as the home hero */}
-        <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
+        {/* Banner image: photo block on top for small screens, full-bleed
+            backdrop from lg up (desktop untouched) — same as home hero. */}
+        <div className="pointer-events-none relative h-72 sm:h-96 overflow-hidden lg:absolute lg:inset-0 lg:h-auto" aria-hidden="true">
           <img
             src="/images/home/home_banner_image.webp"
             srcSet="/images/home/home_banner_image-640.webp 640w, /images/home/home_banner_image-1024.webp 1024w, /images/home/home_banner_image.webp 2172w"
@@ -79,8 +80,13 @@ export default function AboutHero() {
             title="VivahSambandh Indian wedding celebration banner"
             fetchPriority="high"
             decoding="async"
-            className="h-full w-full object-cover object-[78%_center] sm:object-[76%_center] lg:object-[82%_center] xl:object-right will-change-transform"
+            className="h-full w-full object-cover object-[68%_25%] sm:object-[70%_30%] lg:object-[82%_center] xl:object-right will-change-transform"
             loading="eager"
+          />
+          {/* Mobile fade: photo melts into the cream copy below */}
+          <div
+            className="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-b from-transparent to-cream-50 lg:hidden"
+            aria-hidden="true"
           />
         </div>
         {/* Blend overlay: bottom fade into the next section */}
@@ -90,7 +96,7 @@ export default function AboutHero() {
         />
 
         {/* Content */}
-        <div className="section-pad relative z-10 flex h-full items-center">
+        <div className="section-pad relative z-10 -mt-10 pt-4 pb-8 sm:-mt-12 lg:mt-0 lg:flex lg:h-full lg:items-center lg:py-0">
           <div className="grid w-full items-center lg:grid-cols-12">
             <div className="lg:col-span-7 xl:col-span-6 py-4">
               {/* Eyebrow */}
