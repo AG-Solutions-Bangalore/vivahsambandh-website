@@ -8,6 +8,7 @@
  * whenever the user toggles between English and Hindi.
  */
 
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Helmet } from 'react-helmet-async';
 import {
@@ -28,6 +29,16 @@ export function SeoHost() {
   const keywords = COMPANY_CONFIG.keywords[lang];
   const canonicalUrl = getCanonicalUrl('', lang);
   const compositeGraph = createCompositeGraph(lang);
+
+  // The JSON-LD <script> is NOT hoistable (unlike title/meta/link), so it
+  // renders inline — after mount only. Rendering it on first paint would
+  // mismatch the prerendered HTML (which carries JSON-LD in <head>) and
+  // trip hydration (#418 + console error). Post-hydration insert is safe:
+  // <script> nodes never affect layout, and crawlers still see the head copy.
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   return (
     <Helmet prioritizeSeoTags>
@@ -64,10 +75,12 @@ export function SeoHost() {
       <meta name="twitter:description" content={description} />
       <meta name="twitter:image" content={COMPANY_CONFIG.ogImage} />
 
-      {/* Structured Data (JSON-LD) */}
-      <script type="application/ld+json">
-        {JSON.stringify(compositeGraph)}
-      </script>
+      {/* Structured Data (JSON-LD) — post-mount only, see above */}
+      {mounted && (
+        <script type="application/ld+json">
+          {JSON.stringify(compositeGraph)}
+        </script>
+      )}
     </Helmet>
   );
 }

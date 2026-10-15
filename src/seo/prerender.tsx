@@ -9,7 +9,7 @@
 
 import type { PrerenderArguments, PrerenderResult } from 'vite-prerender-plugin';
 import { renderToString } from 'react-dom/server';
-import Root from '../Root';
+import App from '../App';
 import i18n from '../i18n';
 import {
   COMPANY_CONFIG,
@@ -144,13 +144,19 @@ export async function prerender(args?: PrerenderArguments): Promise<PrerenderRes
   // (skeletons) and hydrate identically — same tree as the client, so no
   // hydration mismatch. Language-stamped for the hydrate gate in main.tsx.
   //
+  // NOTE: renders <App/> WITHOUT <SeoHost/> on purpose. The plugin injects
+  // the complete head set below; SeoHost stays client-only (runtime language
+  // switching). Under React 19, renderToString does not hoist
+  // title/meta/link — including SeoHost here would inline ~25 head tags into
+  // <div id="root"> (W3C errors + duplicate description).
+  //
   // NOTE: react-dom/server must stay a static import (single React instance
   // for renderToString). vite.config isolates it into its own chunk so the
   // server renderer never ships to the client.
   if (i18n.language !== lang) {
     await i18n.changeLanguage(lang);
   }
-  const markup = renderToString(<Root />);
+  const markup = renderToString(<App />);
   // React 19 hoists a preload hint for EVERY SSR image — those compete with
   // the LCP banner for bandwidth. Strip them; the banner keeps its dedicated
   // head preload (with responsive candidates), everything else loads in place.

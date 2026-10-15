@@ -11,11 +11,18 @@ const lang = getInitialAppLanguage();
 // <!--ssg:en--> or <!--ssg:hi-->. Hydrate only on an exact match — a
 // stored language differing from the prerendered route falls back to a
 // fresh client render instead of a hydration mismatch.
+//
+// The marker lives outside React's VDOM, so remove it before hydrating:
+// a foreign leading comment inside the container trips hydration (#418)
+// and logs a console error (Best Practices penalty).
 const firstChild = container.firstChild;
 const prerenderedLang =
   firstChild && firstChild.nodeType === Node.COMMENT_NODE
     ? (firstChild.textContent ?? "")
     : "";
+if (firstChild && firstChild.nodeType === Node.COMMENT_NODE) {
+  container.removeChild(firstChild);
+}
 
 if (prerenderedLang === `ssg:${lang}`) {
   hydrateRoot(container, <Root />);
