@@ -1,9 +1,8 @@
 import { useTranslation } from 'react-i18next'
 
 /**
- * About hero — same full-width banner treatment as the home hero:
- * `home_banner_image` backdrop, copy on the left
- * ("Our Story" + navy/gold headline), garlands + bottom blend.
+ * About hero — same banner + same `data-hero` motion contract as the home
+ * hero (intro line-mask reveal, scrub banner parallax, drifting garlands).
  */
 export default function AboutHero() {
   const { t } = useTranslation()
@@ -19,6 +18,7 @@ export default function AboutHero() {
         height={1536}
         alt="Decorative flower garland"
         title="Decorative flower garland"
+        data-hero="flower-l"
         fetchPriority="low"
         className="pointer-events-none absolute left-0 bottom-0 z-20 w-32 sm:w-40 md:w-48 lg:w-56 xl:w-64 max-w-[22vw] h-auto object-contain object-left-bottom select-none"
         loading="eager"
@@ -32,13 +32,14 @@ export default function AboutHero() {
         height={1536}
         alt="Decorative flower garland"
         title="Decorative flower garland"
+        data-hero="flower-r"
         fetchPriority="low"
         className="pointer-events-none absolute right-0 bottom-0 z-20 w-32 sm:w-44 md:w-52 lg:w-60 xl:w-72 max-w-[26vw] h-auto object-contain object-right-top select-none"
         loading="eager"
         aria-hidden="true"
       />
 
-      <section className="relative isolate z-10 w-full lg:h-[540px] xl:h-[580px]">
+      <section data-hero="banner-wrap" className="relative isolate z-10 w-full lg:h-[540px] xl:h-[580px]">
         {/* Top hanging garlands */}
         <img
           src="/images/home/flower1_image-320.webp"
@@ -68,7 +69,7 @@ export default function AboutHero() {
         />
 
         {/* Banner image: photo block on top for small screens, full-bleed
-            backdrop from lg up (desktop untouched) — same as home hero. */}
+            backdrop from lg up — same image as the home hero. */}
         <div className="pointer-events-none relative h-72 sm:h-96 overflow-hidden lg:absolute lg:inset-0 lg:h-auto" aria-hidden="true">
           <img
             src="/images/home/home_banner_image.webp"
@@ -78,6 +79,7 @@ export default function AboutHero() {
             height={724}
             alt="VivahSambandh Indian wedding celebration banner"
             title="VivahSambandh Indian wedding celebration banner"
+            data-hero="banner"
             fetchPriority="high"
             decoding="async"
             className="h-full w-full object-cover object-[68%_25%] sm:object-[70%_30%] lg:object-[82%_center] xl:object-right will-change-transform"
@@ -95,29 +97,37 @@ export default function AboutHero() {
           aria-hidden="true"
         />
 
-        {/* Content */}
+        {/* Copy */}
         <div className="section-pad relative z-10 -mt-10 pt-4 pb-8 sm:-mt-12 lg:mt-0 lg:flex lg:h-full lg:items-center lg:py-0">
           <div className="grid w-full items-center lg:grid-cols-12">
             <div className="lg:col-span-7 xl:col-span-6 py-4">
               {/* Eyebrow */}
-              <div className="mt-4 inline-flex items-center gap-2 text-[10px] sm:text-[11px] font-bold tracking-[0.22em] uppercase text-gold-700">
-                <span className="text-gold-600 text-xs sm:text-sm font-black">✱</span>
+              <div data-hero="eyebrow" className="inline-flex items-center gap-2 text-[10px] sm:text-[11px] font-bold tracking-[0.22em] uppercase text-gold-700">
+                <span className="text-gold-600 text-xs sm:text-sm font-black">
+                  ✱
+                </span>
                 <span>{t('aboutPage.storyEyebrow')}</span>
                 <span className="h-px w-12 sm:w-16 bg-gold-500/50" />
               </div>
 
-              {/* Headline */}
-              <h1 className="font-display mt-3 text-3xl sm:text-4xl lg:text-[44px] xl:text-[50px] font-bold leading-[1.12]">
-                <span className="block text-navy-900">{t('aboutPage.titleA')}</span>
-                <span className="block text-gold-600 mt-0.5">{t('aboutPage.titleB')}</span>
+              {/* Headline (line masks for the mask-reveal intro) */}
+              <h1 data-hero="title" className="font-display mt-3 text-3xl sm:text-4xl lg:text-[44px] xl:text-[50px] font-bold leading-[1.12]">
+                <span data-hero-mask className="block overflow-hidden pb-[0.12em] -mb-[0.12em]">
+                  <span data-hero-line className="block text-navy-900 will-change-transform">{t('aboutPage.titleA')}</span>
+                </span>
+                <span data-hero-mask className="block overflow-hidden pb-[0.12em] -mb-[0.12em]">
+                  <span data-hero-line className="block text-gold-600 mt-0.5 will-change-transform">
+                    {t('aboutPage.titleB')}
+                  </span>
+                </span>
               </h1>
 
-              {/* Body */}
-              <p className="mt-3.5 max-w-md text-xs sm:text-sm leading-relaxed text-ink-600 font-medium">
+              {/* Subtitle */}
+              <p data-hero="subtitle" className="mt-3.5 max-w-md text-xs sm:text-sm leading-relaxed text-ink-600 font-medium">
                 {t('aboutPage.body')}
               </p>
             </div>
-            {/* Right side kept clear — the couple lives in the banner photo */}
+            {/* Right side kept clear — the celebration lives in the banner photo */}
             <div className="hidden lg:col-span-5 xl:col-span-6 lg:block h-full" aria-hidden="true" />
           </div>
         </div>

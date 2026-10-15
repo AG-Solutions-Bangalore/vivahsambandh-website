@@ -4,6 +4,7 @@ import ValuesBand from '../components/ValuesBand'
 import WhyBuilt from '../components/WhyBuilt'
 import StatsStrip from '../components/StatsStrip'
 import CtaBand from '../components/CtaBand'
+import PageParallax from '../../../components/motion/PageParallax'
 
 /**
  * About Us page — assembles the "More Than a Matrimonial Platform"
@@ -13,6 +14,7 @@ import CtaBand from '../components/CtaBand'
 export default function AboutPage() {
   return (
     <div className="relative overflow-hidden">
+      <PageParallax />
       <AboutHero />
       <MissionVision />
       <ValuesBand />

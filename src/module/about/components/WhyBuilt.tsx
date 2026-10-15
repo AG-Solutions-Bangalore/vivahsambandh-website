@@ -99,7 +99,7 @@ export default function WhyBuilt() {
                 title={t('aboutPage.whyTitleA')}
                 loading="lazy"
                 decoding="async"
-                className="h-auto w-full max-w-xl object-contain drop-shadow-sm transition-transform duration-500 hover:scale-[1.01]"
+                className="h-auto w-full max-w-xl object-contain drop-shadow-sm transition-transform duration-500 hover:scale-[1.01] will-change-transform"
               />
             </Reveal>
           </div>

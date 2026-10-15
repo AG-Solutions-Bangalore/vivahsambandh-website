@@ -9,8 +9,8 @@ export default function OfficeVisit() {
   const { t } = useTranslation()
 
   return (
-    <Reveal variant="up" delay={0.08}>
-      <article className="card-ring overflow-hidden p-6 sm:p-7">
+    <Reveal variant="up" delay={0.08} className="h-full">
+      <article className="card-ring flex h-full flex-col overflow-hidden p-6 sm:p-7">
         <h2 className="font-display text-xl sm:text-2xl font-bold text-navy-900">
           {t('contactPage.officeTitle')}
         </h2>
@@ -18,8 +18,8 @@ export default function OfficeVisit() {
           {t('contactPage.officeBody')}
         </p>
 
-        {/* Live Google Map (keyless embed) */}
-        <div className="relative mt-4 h-72 sm:h-80 overflow-hidden rounded-xl border border-gold-500/25">
+        {/* Live Google Map (keyless embed) — grows to match the form card */}
+        <div className="relative mt-4 min-h-72 flex-1 overflow-hidden rounded-xl border border-gold-500/25 sm:min-h-80">
           <iframe
             title={`${t('contactPage.officePin')}, ${t('contactPage.officePinSub')}`}
             src="https://www.google.com/maps?q=Bengaluru,Karnataka,India&z=13&output=embed"

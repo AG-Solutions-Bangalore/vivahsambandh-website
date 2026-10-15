@@ -50,7 +50,7 @@ export default function ContactCta() {
               title={t('contactPage.ctaTitleA')}
               loading="lazy"
               decoding="async"
-              className="mx-auto h-auto w-full max-w-xl object-contain drop-shadow-sm lg:origin-bottom lg:scale-125 lg:-mb-12"
+              className="mx-auto h-auto w-full max-w-xl object-contain drop-shadow-sm will-change-transform lg:origin-bottom lg:scale-125 lg:-mb-12"
             />
           </Reveal>
 
