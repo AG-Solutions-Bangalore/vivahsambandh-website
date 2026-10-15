@@ -1,4 +1,7 @@
 import { useTranslation } from 'react-i18next'
+import { Link } from 'react-router-dom'
+import { pagePath } from '../../../constants/navigation'
+import type { AppLang } from '../../../i18n'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import { Pagination, Autoplay, A11y } from 'swiper/modules'
 import Reveal from '../../../components/motion/Reveal'
@@ -32,7 +35,8 @@ const STORY_IMAGES = [
 ]
 
 export default function SuccessStoriesSection() {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
+  const lang: AppLang = i18n.resolvedLanguage === 'hi' || i18n.language === 'hi' ? 'hi' : 'en'
   const rawItems = (t('stories.items', { returnObjects: true }) as Array<{ quote: string; name: string; city: string }>) || []
 
   const items = rawItems.map((item, idx) => ({
@@ -56,7 +60,7 @@ export default function SuccessStoriesSection() {
   const titleBFirst = titleBWords.join(' ')
 
   return (
-    <section className="relative overflow-hidden bg-[#FFFAF2] py-14 sm:py-16">
+    <section id="stories" className="relative overflow-hidden bg-[#FFFAF2] py-14 sm:py-16">
       {/* soft gold glow accents like the reference */}
       <div
         aria-hidden="true"
@@ -90,14 +94,14 @@ export default function SuccessStoriesSection() {
             </p>
 
             <div className="mt-7">
-              <a
-                href="#stories"
+              <Link
+                to={pagePath('/stories', lang)}
                 title={t('stories.cta')}
                 className="group inline-flex items-center justify-center gap-2 rounded-full bg-navy-900 px-7 py-3 text-[13px] font-bold text-white shadow-lift transition hover:bg-navy-700 active:scale-[0.98]"
               >
                 <span>{t('stories.cta')}</span>
                 <span aria-hidden="true" className="transition-transform duration-300 group-hover:translate-x-1">→</span>
-              </a>
+              </Link>
             </div>
           </Reveal>
 
@@ -108,7 +112,7 @@ export default function SuccessStoriesSection() {
           {/* ========================================================== */}
           <div className="w-full min-w-0 lg:col-span-7 xl:col-span-8">
             {/* No data-lenis-prevent: flat Swiper wrapper, see CityMatches. */}
-            <div className="group/stories relative w-full min-w-0 max-w-full overflow-hidden" id="stories">
+            <div className="group/stories relative w-full min-w-0 max-w-full overflow-hidden">
               <Swiper
                 modules={[Pagination, Autoplay, A11y]}
                 pagination={{ el: '.stories-pagination', clickable: true }}

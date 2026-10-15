@@ -167,7 +167,17 @@ export default defineConfig({
     vitePrerenderPlugin({
       prerenderScript: path.resolve(import.meta.dirname ?? '.', 'src/prerender.tsx'),
       renderTarget: '#root',
-      additionalPrerenderRoutes: ['/hi', '/about', '/hi/about', '/contact', '/hi/contact'],
+      additionalPrerenderRoutes: [
+        '/hi',
+        '/about',
+        '/hi/about',
+        '/stories',
+        '/hi/stories',
+        '/membership',
+        '/hi/membership',
+        '/contact',
+        '/hi/contact',
+      ],
     }),
     compression({ algorithm: 'gzip', threshold: 1024 }),
     deferNonCriticalPreloads(),

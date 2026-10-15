@@ -1,6 +1,9 @@
 import { useTranslation } from 'react-i18next'
+import { Link } from 'react-router-dom'
 import type { WhyFeature } from '../types'
 import Reveal, { RevealGroup } from '../../../components/motion/Reveal'
+import { pagePath } from '../../../constants/navigation'
+import type { AppLang } from '../../../i18n'
 
 // Bespoke golden Mughal/Indian arched icons matching the design screenshot
 function renderFeatureIcon(index: number) {
@@ -68,7 +71,8 @@ function FeatureArchedIcon({ index }: { index: number }) {
 }
 
 export default function WhyChooseSection() {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
+  const lang: AppLang = i18n.resolvedLanguage === 'hi' || i18n.language === 'hi' ? 'hi' : 'en'
   const rawFeatures = (t('why.features', { returnObjects: true }) as WhyFeature[]) || []
 
   return (
@@ -135,8 +139,8 @@ export default function WhyChooseSection() {
 
             {/* CTA Button in rich golden gradient */}
             <div className="mt-7">
-              <a
-                href="#explore-features"
+              <Link
+                to={pagePath('/membership', lang)}
                 title={t('why.cta')}
                 className="group inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r text-white from-gold-400 via-gold-500 to-gold-400 px-7 py-3 text-xs sm:text-sm font-bold text-navy-950 shadow-md transition-all duration-300 hover:brightness-105 active:scale-95"
               >
@@ -147,7 +151,7 @@ export default function WhyChooseSection() {
                 >
                   →
                 </span>
-              </a>
+              </Link>
             </div>
           </Reveal>
 

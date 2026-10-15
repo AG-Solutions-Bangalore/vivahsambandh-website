@@ -108,7 +108,7 @@ export const SUPPORTED_LANGS: readonly SupportedLang[] = ['en', 'hi'] as const;
 export const SUPPORTED_SSG_ROUTES = ['/', '/hi'] as const;
 
 /** Standalone pages that carry their own SEO metadata. */
-export type PageKey = 'home' | 'about' | 'contact';
+export type PageKey = 'home' | 'about' | 'stories' | 'membership' | 'contact';
 
 /**
  * Per-page SEO metadata (both languages). Home entries intentionally mirror
@@ -135,6 +135,26 @@ export const PAGE_SEO: Record<PageKey, { titles: Record<SupportedLang, string>; 
       hi: 'विवाहसंबंध के बारे में जानें — परंपरा, कड़े सत्यापन और पारिवारिक मूल्यों पर आधारित अग्रवाल परिवारों के लिए विश्वसनीय वैवाहिक मंच।',
     },
   },
+  stories: {
+    titles: {
+      en: 'Success Stories — VivahSambandh | Agarwal Matrimony Weddings',
+      hi: 'सफलता की कहानियां — विवाहसंबंध | सफल अग्रवाल विवाह',
+    },
+    descriptions: {
+      en: 'Read inspiring wedding stories of 500+ Agarwal couples who found their life partner through VivahSambandh with shared values and family trust.',
+      hi: 'विवाहसंबंध के माध्यम से जुड़े 500+ अग्रवाल दंपत्तियों की सुखद विवाह गाथाएं पढ़ें और अपनी शादी की कहानी साझा करें।',
+    },
+  },
+  membership: {
+    titles: {
+      en: 'Membership Plans — VivahSambandh | Premium Agarwal Matrimony',
+      hi: 'सदस्यता योजनाएं — विवाहसंबंध | पारदर्शी एवं भरोसेमंद प्लान',
+    },
+    descriptions: {
+      en: 'Explore transparent membership plans for Agarwal families. Verified profile access, Kundali matching, and dedicated matchmaker guidance.',
+      hi: 'अग्रवाल परिवारों के लिए पारदर्शी सदस्यता योजनाएं देखें — सत्यापित प्रोफाइल, कुंडली मिलान और व्यक्तिगत परामर्शदाता सहायता।',
+    },
+  },
   contact: {
     titles: {
       en: 'Contact Us — VivahSambandh | Agarwal Matrimony Support',
@@ -155,6 +175,8 @@ export function resolvePageKey(pathname = '/'): PageKey {
   const clean = pathname.toLowerCase().replace(/\/+$/, '');
   const withoutLang = clean === '/hi' ? '' : clean.replace(/^\/hi(?=\/|$)/, '');
   if (withoutLang === '/about') return 'about';
+  if (withoutLang === '/stories' || withoutLang === '/success-stories') return 'stories';
+  if (withoutLang === '/membership') return 'membership';
   if (withoutLang === '/contact') return 'contact';
   return 'home';
 }
