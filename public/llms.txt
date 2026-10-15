@@ -1,0 +1,29 @@
+# VivahSambandh
+
+> VivahSambandh is India's trusted premium Agarwal matrimonial platform connecting verified families with shared traditions, Gotra compatibility, and values for lifelong relationships. Content is available in English and Hindi (हिन्दी).
+
+## Pages
+
+- [Home (English)](https://vivahsambandh.com/): hero, about, city matches, features, success stories, app download, FAQ, contact
+- [Home (Hindi)](https://vivahsambandh.com/hi): same content in Hindi (हिन्दी)
+
+## Sections
+
+- [About](https://vivahsambandh.com/#about): community, verification, Membership
+- [City matches](https://vivahsambandh.com/#search): Delhi, Mumbai, Kolkata, Bengaluru, Hyderabad, Pune, Ahmedabad
+- [Success stories](https://vivahsambandh.com/#stories): couple testimonials
+- [FAQ](https://vivahsambandh.com/#faq): verification, gotra search, matching process
+- [Contact](https://vivahsambandh.com/#contact): support email and phone
+
+## Apps and socials
+
+- [Google Play app](https://play.google.com/store/apps/details?id=com.vivahsambandh.app)
+- [Facebook](https://facebook.com/vivahsambandh)
+- [Instagram](https://instagram.com/vivahsambandh)
+- [YouTube](https://youtube.com/@vivahsambandh)
+- [LinkedIn](https://linkedin.com/company/vivahsambandh)
+
+## Support
+
+- Email: support@vivahsambandh.com
+- Hours and phone are listed on the [contact section](https://vivahsambandh.com/#contact)

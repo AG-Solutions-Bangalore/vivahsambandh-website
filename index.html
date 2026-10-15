@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en" translate="no">
+  <head>
+    <meta charset="UTF-8" >
+    <!-- Pre-paint language sync: set <html lang> from the saved choice before
+         i18n boots, so the browser never sees a lang/content mismatch.
+         translate="no" + notranslate keep browser auto-translate off —
+         this site ships its own English/हिन्दी switcher. -->
+    <script>
+      try {
+        var isHi = location.pathname === '/hi' || location.pathname.indexOf('/hi/') === 0;
+        if (isHi) {
+          document.documentElement.lang = 'hi';
+        } else {
+          var __vl = localStorage.getItem('vivah-lang');
+          if (__vl === 'hi' || __vl === 'en') document.documentElement.lang = __vl;
+        }
+      } catch (e) { /* storage unavailable — default lang="en" stands */ }
+    </script>
+    <meta name="google" content="notranslate" >
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" >
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" >
+    <link rel="preconnect" href="https://fonts.googleapis.com" >
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin >
+    <!-- LCP banner: preload with responsive candidates so the hero paints fast -->
+    <link
+      rel="preload"
+      as="image"
+      href="/images/home/home_banner_image.webp"
+      imagesrcset="/images/home/home_banner_image-640.webp 640w, /images/home/home_banner_image-1024.webp 1024w, /images/home/home_banner_image.webp 2172w"
+      imagesizes="100vw"
+      fetchpriority="high"
+    >
+    <!-- Google Fonts: async (non-render-blocking) + display=swap, no FOUT-blocking -->
+    <link
+      rel="preload"
+      as="style"
+      href="https://fonts.googleapis.com/css2?family=Gotu&family=Mukta:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;0,800;1,600&family=Teko:wght@500;600&family=Tiro+Devanagari+Hindi&display=swap"
+    >
+    <link
+      href="https://fonts.googleapis.com/css2?family=Gotu&family=Mukta:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;0,800;1,600&family=Teko:wght@500;600&family=Tiro+Devanagari+Hindi&display=swap"
+      rel="stylesheet"
+      media="print"
+      onload="this.media='all'"
+    >
+    <noscript>
+      <link
+        href="https://fonts.googleapis.com/css2?family=Gotu&family=Mukta:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;0,800;1,600&family=Teko:wght@500;600&family=Tiro+Devanagari+Hindi&display=swap"
+        rel="stylesheet"
+      >
+    </noscript>
+    <title>VivahSambandh — Premium Agarwal Matrimony</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

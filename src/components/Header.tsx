@@ -1,0 +1,236 @@
+import { useEffect, useRef, useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import { COMPANY } from '../constants/company'
+import LanguageSwitcher from './LanguageSwitcher'
+import { Drawer, DrawerContent, DrawerTitle } from './ui/drawer'
+import { ensureMotion, prefersReducedMotion } from '../lib/gsap-setup'
+import { Link, useLocation } from 'react-router-dom'
+import { getNavItems, homePath } from '../constants/navigation'
+import type { AppLang } from '../i18n'
+import { lockPageScroll, unlockPageScroll } from '../lib/scroll'
+
+function LotusMark() {
+  return (
+    <svg viewBox="0 0 32 32" className="h-8 w-8 text-gold-600" aria-hidden="true">
+      <path
+        fill="currentColor"
+        d="M16 3c2.5 3.2 4 6.4 4 9.2 2.8-.6 5.4-.4 8 .8-2.2 1.4-4.7 2-7.4 1.9 1.5 1.2 2.6 2.9 3.1 5-2.6.7-5.3.5-7.7-.5-2.4 1-5.1 1.2-7.7.5.5-2.1 1.6-3.8 3.1-5-2.7.1-5.2-.5-7.4-1.9 2.6-1.2 5.2-1.4 8-.8 0-2.8 1.5-6 4-9.2z"
+      />
+      <ellipse cx="16" cy="27" rx="9" ry="1.6" fill="currentColor" opacity=".35" />
+    </svg>
+  )
+}
+
+export default function Header() {
+  const { t, i18n } = useTranslation()
+  const [open, setOpen] = useState(false)
+  const headerRef = useRef<HTMLElement | null>(null)
+
+  // Navigation derives from the central model (constants/navigation):
+  // labels via i18n, hrefs lang-prefixed, active state from the route.
+  // <Link> client-navigates (no page refresh); same-page hashes are still
+  // owned by the SmoothScroll interceptor + ScrollManager.
+  const lang: AppLang = i18n.resolvedLanguage === 'hi' || i18n.language === 'hi' ? 'hi' : 'en'
+  const { pathname } = useLocation()
+  const navItems = getNavItems(t, lang, pathname)
+  const brandHref = homePath(lang)
+
+  // Entrance + hide-on-scroll-down (auto-show on scroll-up / at top).
+  // Motion loads lazily (see lib/gsap-setup): identical behavior, wired
+  // after the chunk lands.
+  useEffect(() => {
+    let trigger: { kill: () => void } | null = null
+    let cancelled = false
+    void ensureMotion()
+      .then(({ gsap, ScrollTrigger }) => {
+      const header = headerRef.current
+      if (cancelled || !header || prefersReducedMotion()) return
+
+      // Entrance: slide down only on the very first view of the tab
+      // session (transform only — no layout shift). Every navigation is a
+      // full page load that remounts the header, so a session flag is what
+      // keeps the intro from replaying on each page change.
+      let firstView = true
+      try {
+        firstView = sessionStorage.getItem('vivah-header-seen') === null
+        sessionStorage.setItem('vivah-header-seen', '1')
+      } catch {
+        firstView = true
+      }
+      if (firstView) {
+        gsap.from(header, {
+          y: -72,
+          autoAlpha: 0,
+          duration: 0.8,
+          ease: 'power3.out',
+          delay: 0.1,
+          overwrite: 'auto',
+        })
+      }
+
+      // Hide on scroll down, reveal on scroll up. Disabled while the
+      // mobile drawer is open (tracked via data attribute below).
+      // State-guarded: Lenis fires scroll events every frame, so only
+      // create a tween when visibility actually flips — otherwise hundreds
+      // of killed/reborn tweens churn per scroll (jank + flicker).
+      let hidden = false
+      const setHidden = (next: boolean) => {
+        if (hidden === next) return
+        hidden = next
+        gsap.to(header, {
+          yPercent: next ? -110 : 0,
+          duration: 0.35,
+          ease: 'power3.out',
+          overwrite: 'auto',
+        })
+      }
+      trigger = ScrollTrigger.create({
+        start: 0,
+        end: 'max',
+        onUpdate: (self) => {
+          if (header.dataset.drawerOpen === 'true') return
+          if (self.scroll() <= 80) {
+            setHidden(false)
+            return
+          }
+          if (self.direction === 1) setHidden(true)
+          else if (self.direction === -1) setHidden(false)
+        },
+      })
+      })
+      .catch(() => {
+        /* motion failed to load — header stays visible and static */
+      })
+    return () => {
+      cancelled = true
+      trigger?.kill()
+      trigger = null
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  // Bottom-sheet drawer state. onOpenChange is the single sync point —
+  // covers trigger taps, backdrop taps, swipe-to-dismiss and Escape.
+  // NOTE: side-effects stay outside the setState updater (StrictMode
+  // double-invokes updaters — locking inside would lock/unlock twice).
+  const syncDrawer = (next: boolean) => {
+    setOpen(next)
+    if (headerRef.current) headerRef.current.dataset.drawerOpen = String(next)
+    if (next) lockPageScroll()
+    else unlockPageScroll()
+  }
+  const toggleDrawer = () => syncDrawer(!open)
+  const closeDrawer = () => syncDrawer(false)
+
+  return (
+    <header
+      ref={headerRef}
+      data-drawer-open="false"
+      className="sticky top-0 z-50 border-b border-gold-500/25 bg-cream-50/90 backdrop-blur will-change-transform"
+    >
+      <div className="section-pad flex h-16 items-center justify-between gap-3">
+        {/* Brand Logo */}
+        <Link to={brandHref} title={COMPANY.name} className="flex items-center gap-2 transition hover:opacity-95">
+          <LotusMark />
+          <span className="leading-none">
+            <span className="font-display block text-lg font-bold text-navy-900 sm:text-xl">
+              {COMPANY.name}
+            </span>
+            <span className="block text-[9px] font-semibold uppercase tracking-[0.24em] text-gold-700 sm:text-[10px]">
+              {t('meta.tagline')}
+            </span>
+          </span>
+        </Link>
+
+        {/* Desktop Navigation Links */}
+        <nav className="hidden items-center gap-5 text-sm font-medium text-navy-900/80 lg:flex" aria-label="Primary">
+          {navItems.map((item) => (
+            <Link
+              key={item.key}
+              to={item.href}
+              title={item.label}
+              className={`transition hover:text-maroon-600 ${
+                item.active
+                  ? 'font-bold text-maroon-600 underline decoration-gold-500 decoration-2 underline-offset-8'
+                  : ''
+              }`}
+            >
+              {item.label}
+            </Link>
+          ))}
+        </nav>
+
+        {/* Right Controls: Language Switcher, Login, Create Profile */}
+        <div className="hidden items-center gap-2.5 lg:flex">
+          <LanguageSwitcher />
+          <a
+            href="#login"
+            title={t('header.login')}
+            className="rounded-full px-3.5 py-2 text-sm font-semibold text-navy-900 transition hover:bg-gold-100"
+          >
+            {t('header.login')}
+          </a>
+          <a href="#register" title={t('header.createProfile')} className="btn-primary !px-5 !py-2 text-[13px]">
+            {t('header.createProfile')}
+          </a>
+        </div>
+
+        {/* Mobile Menu Button & Language Switcher */}
+        <div className="flex items-center gap-2 lg:hidden">
+          <LanguageSwitcher compact />
+          <button
+            type="button"
+            onClick={toggleDrawer}
+            aria-expanded={open}
+            aria-label="Menu"
+            className="rounded-full border border-gold-500/40 p-2 text-navy-900 hover:bg-gold-100"
+          >
+            <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+              <path d="M4 7h16M4 12h16M4 17h16" />
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      {/* Mobile bottom-sheet menu (shadcn/base Drawer — swipe-to-dismiss,
+          backdrop tap and Escape all funnel through onOpenChange) */}
+      <Drawer open={open} onOpenChange={syncDrawer} showSwipeHandle>
+        <DrawerContent className="rounded-t-3xl border-gold-500/30 bg-cream-50 text-navy-900">
+          {/* A11y title for the dialog (visually hidden — handle implies it) */}
+          <DrawerTitle className="sr-only">Menu</DrawerTitle>
+          <nav
+            aria-label="Mobile"
+            className="max-h-[82dvh] overflow-y-auto px-4 pt-1 pb-[calc(0.75rem+env(safe-area-inset-bottom))]"
+          >
+            <ul className="grid gap-1 text-[15px] font-medium">
+              {navItems.map((item) => (
+                <li key={item.key}>
+                  <Link
+                    to={item.href}
+                    onClick={closeDrawer}
+                    title={item.label}
+                    aria-current={item.active ? 'page' : undefined}
+                    className={`flex items-center justify-between rounded-xl px-3 py-2.5 transition hover:bg-gold-100 hover:text-maroon-600 ${
+                      item.active ? 'bg-gold-100 font-bold text-maroon-600' : ''
+                    }`}
+                  >
+                    <span>{item.label}</span>
+                    <span aria-hidden="true" className="text-gold-500">→</span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+            <div className="mt-3 flex gap-2 border-t border-gold-500/20 pt-4">
+              <a href="#login" onClick={closeDrawer} title={t('header.login')} className="btn-gold flex-1 !py-2.5 text-sm">
+                {t('header.login')}
+              </a>
+              <a href="#register" onClick={closeDrawer} title={t('header.createProfile')} className="btn-primary flex-1 !py-2.5 text-sm">
+                {t('header.createProfile')}
+              </a>
+            </div>
+          </nav>
+        </DrawerContent>
+      </Drawer>
+    </header>
+  )
+}
