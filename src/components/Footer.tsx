@@ -5,6 +5,7 @@ import { getNavItems } from "../constants/navigation";
 import type { AppLang } from "../i18n";
 import { useAppLanguage } from "../i18n/useAppLanguage";
 import Reveal from "./motion/Reveal";
+import { useCompanyQuery } from "../module/company";
 
 function LotusMark() {
   return (
@@ -46,6 +47,12 @@ export default function Footer() {
     t("footer.guidelines"),
     t("footer.sitemap"),
   ];
+
+  const { data: companyRes } = useCompanyQuery()
+  const live = companyRes?.data
+  const phoneDisplay = live?.company_mobile_no ? `+91 ${live.company_mobile_no}` : COMPANY.supportPhoneDisplay
+  const phoneLink = live?.company_mobile_no ? `tel:+91${live.company_mobile_no.replace(/\D/g, '')}` : COMPANY.supportPhoneLink
+  const emailDisplay = live?.company_email?.trim() || COMPANY.supportEmail
 
   return (
     <footer className="relative overflow-hidden bg-navy-pattern text-white">
@@ -191,21 +198,21 @@ export default function Footer() {
             <li className="flex items-center gap-2">
               <span className="text-gold-400">📞</span>
               <a
-                href={COMPANY.supportPhoneLink}
-                title={COMPANY.supportPhoneDisplay}
+                href={phoneLink}
+                title={phoneDisplay}
                 className="transition hover:text-gold-300"
               >
-                {COMPANY.supportPhoneDisplay}
+                {phoneDisplay}
               </a>
             </li>
             <li className="flex items-center gap-2">
               <span className="text-gold-400">✉️</span>
               <a
-                href={`mailto:${COMPANY.supportEmail}`}
-                title={COMPANY.supportEmail}
+                href={`mailto:${emailDisplay}`}
+                title={emailDisplay}
                 className="transition hover:text-gold-300"
               >
-                {COMPANY.supportEmail}
+                {emailDisplay}
               </a>
             </li>
           </ul>

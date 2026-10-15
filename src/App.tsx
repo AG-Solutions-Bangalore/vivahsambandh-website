@@ -12,6 +12,7 @@ import AboutPage from './module/about/pages/AboutPage'
 import StoriesPage from './module/stories/pages/StoriesPage'
 import MembershipPage from './module/membership/pages/MembershipPage'
 import ContactPage from './module/contact/pages/ContactPage'
+import { QueryProvider } from './lib/api/queryClient'
 import type { AppLang } from './i18n'
 
 /**
@@ -81,32 +82,34 @@ export default function App() {
   }, [i18n])
 
   return (
-    <SmoothScroll>
-      <div className="min-h-screen bg-cream-50">
-        <LanguageSync />
-        <ScrollManager />
-        <Header />
-        <main>
-          <Routes>
-            <Route path="/" element={<HomePage />} />
-            <Route path="/hi" element={<HomePage />} />
-            <Route path="/about" element={<AboutPage />} />
-            <Route path="/hi/about" element={<AboutPage />} />
-            <Route path="/stories" element={<StoriesPage />} />
-            <Route path="/hi/stories" element={<StoriesPage />} />
-            <Route path="/success-stories" element={<StoriesPage />} />
-            <Route path="/hi/success-stories" element={<StoriesPage />} />
-            <Route path="/membership" element={<MembershipPage />} />
-            <Route path="/hi/membership" element={<MembershipPage />} />
-            <Route path="/contact" element={<ContactPage />} />
-            <Route path="/hi/contact" element={<ContactPage />} />
-            {/* Unknown paths fall back home (client-side; hosts serving
-                static files may still 404 direct hits — see README). */}
-            <Route path="*" element={<HomePage />} />
-          </Routes>
-        </main>
-        <Footer />
-      </div>
-    </SmoothScroll>
+    <QueryProvider>
+      <SmoothScroll>
+        <div className="min-h-screen bg-cream-50">
+          <LanguageSync />
+          <ScrollManager />
+          <Header />
+          <main>
+            <Routes>
+              <Route path="/" element={<HomePage />} />
+              <Route path="/hi" element={<HomePage />} />
+              <Route path="/about" element={<AboutPage />} />
+              <Route path="/hi/about" element={<AboutPage />} />
+              <Route path="/stories" element={<StoriesPage />} />
+              <Route path="/hi/stories" element={<StoriesPage />} />
+              <Route path="/success-stories" element={<StoriesPage />} />
+              <Route path="/hi/success-stories" element={<StoriesPage />} />
+              <Route path="/membership" element={<MembershipPage />} />
+              <Route path="/hi/membership" element={<MembershipPage />} />
+              <Route path="/contact" element={<ContactPage />} />
+              <Route path="/hi/contact" element={<ContactPage />} />
+              {/* Unknown paths fall back home (client-side; hosts serving
+                  static files may still 404 direct hits — see README). */}
+              <Route path="*" element={<HomePage />} />
+            </Routes>
+          </main>
+          <Footer />
+        </div>
+      </SmoothScroll>
+    </QueryProvider>
   )
 }

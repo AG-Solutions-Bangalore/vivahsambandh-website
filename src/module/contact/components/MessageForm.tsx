@@ -1,6 +1,8 @@
 import { useState, type FormEvent, type ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import Reveal from '../../../components/motion/Reveal'
+import { useEnquiryMutation } from '../hook/useEnquiry'
+import { getEnquiryFrom, getUtmParams } from '../../../lib/api/utm'
 
 const inputCls =
   'w-full rounded-xl border border-navy-100 bg-white py-3 pl-11 pr-4 text-sm text-navy-900 placeholder:text-ink-400 shadow-xs outline-none transition focus:border-gold-500 focus:ring-2 focus:ring-gold-500/30'
@@ -30,16 +32,43 @@ function Field({ label, required, children }: { label: string; required?: boolea
 
 /**
  * Navy "We'd Love to Hear from You" form card (design's left panel).
- * Controlled fields, native required validation, inline success state.
+ * Controlled fields, native required validation, inline success state, and CRM API integration.
  */
 export default function MessageForm() {
   const { t } = useTranslation()
   const subjectOptions = (t('contactPage.subjectOptions', { returnObjects: true }) as string[]) || []
   const [sent, setSent] = useState(false)
+  const [errorMsg, setErrorMsg] = useState<string | null>(null)
+  const enquiryMutation = useEnquiryMutation()
 
-  const onSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    setSent(true)
+    setErrorMsg(null)
+
+    const form = e.currentTarget
+    const formData = new FormData(form)
+    const name = String(formData.get('name') ?? '').trim()
+    const email = String(formData.get('email') ?? '').trim()
+    const phone = String(formData.get('phone') ?? '').trim()
+    const subject = String(formData.get('subject') ?? '').trim()
+    const message = String(formData.get('message') ?? '').trim()
+
+    try {
+      await enquiryMutation.mutateAsync({
+        enquiryFullName: name,
+        enquiryEmail: email,
+        enquiryMobile: phone,
+        enquirySubject: subject,
+        enquiryMessage: message,
+        enquiryFrom: getEnquiryFrom('Contact Page'),
+        ...getUtmParams(),
+      })
+      setSent(true)
+    } catch (err) {
+      // In case of backend error or network failure, provide helpful feedback
+      const msg = err instanceof Error ? err.message : 'Unable to submit your message. Please try again.'
+      setErrorMsg(msg)
+    }
   }
 
   return (
@@ -145,14 +174,26 @@ export default function MessageForm() {
                   />
                 </Field>
               </div>
+              {errorMsg && (
+                <div role="alert" className="rounded-xl border border-rose-500/40 bg-rose-500/10 p-3.5 text-xs text-rose-200 sm:col-span-2">
+                  <p className="font-semibold">{errorMsg}</p>
+                </div>
+              )}
               <div className="pt-1 sm:col-span-2">
                 <button
                   type="submit"
-                  className="group flex w-full items-center justify-center gap-2.5 rounded-full bg-gradient-to-r from-gold-300 via-gold-400 to-gold-300 px-7 py-3.5 text-sm font-bold text-navy-950 shadow-gold transition hover:brightness-105 active:scale-[0.99] cursor-pointer"
+                  disabled={enquiryMutation.isPending}
+                  className="group flex w-full items-center justify-center gap-2.5 rounded-full bg-gradient-to-r from-gold-300 via-gold-400 to-gold-300 px-7 py-3.5 text-sm font-bold text-navy-950 shadow-gold transition hover:brightness-105 active:scale-[0.99] disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer"
                 >
-                  <span aria-hidden="true">✈</span>
-                  <span>{t('contactPage.send')}</span>
-                  <span aria-hidden="true" className="transition-transform duration-300 group-hover:translate-x-1">→</span>
+                  {enquiryMutation.isPending ? (
+                    <span>{t('contactPage.submitting', 'Sending...')}</span>
+                  ) : (
+                    <>
+                      <span aria-hidden="true">✈</span>
+                      <span>{t('contactPage.send')}</span>
+                      <span aria-hidden="true" className="transition-transform duration-300 group-hover:translate-x-1">→</span>
+                    </>
+                  )}
                 </button>
               </div>
             </form>

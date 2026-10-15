@@ -3,10 +3,21 @@ import { useTranslation } from 'react-i18next'
 import type { FaqItem } from '../types'
 import Reveal from '../../../components/motion/Reveal'
 import { refreshScrollTriggers } from '../../../lib/gsap-setup'
+import { useFaqQuery } from '../../faq/hook/useFaq'
 
 export default function FaqSection() {
   const { t } = useTranslation()
   const rawItems = (t('faq.items', { returnObjects: true }) as FaqItem[]) || []
+  const { data: faqData } = useFaqQuery('home')
+
+  const apiItems = faqData?.data
+    ?.map((f) => ({
+      q: f.faq_que || f.question || '',
+      a: f.faq_ans || f.answer || '',
+    }))
+    .filter((f) => f.q && f.a)
+
+  const items = apiItems && apiItems.length > 0 ? apiItems : rawItems
   const [openIndex, setOpenIndex] = useState<number | null>(0)
 
   // Accordion height animates over 300ms (CSS grid-rows transition).
@@ -69,11 +80,11 @@ export default function FaqSection() {
 
           {/* Right Column: Accordion Questions */}
           <Reveal variant="right" delay={0.1} className="space-y-3 lg:col-span-7">
-            {rawItems.map((item, i) => {
+            {items.map((item, i) => {
               const isOpen = openIndex === i
               return (
                 <div
-                  key={item.q}
+                  key={`${item.q}-${i}`}
                   className={`card-ring overflow-hidden bg-white/95 backdrop-blur transition-all duration-300 ${
                     isOpen ? 'border-gold-500 shadow-md ring-1 ring-gold-500/30' : 'hover:border-gold-400'
                   }`}

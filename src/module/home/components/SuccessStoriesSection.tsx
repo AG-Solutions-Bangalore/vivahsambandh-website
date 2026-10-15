@@ -6,6 +6,7 @@ import { Swiper, SwiperSlide } from 'swiper/react'
 import { Pagination, Autoplay, A11y } from 'swiper/modules'
 import Reveal from '../../../components/motion/Reveal'
 import { prefersReducedMotion } from '../../../lib/gsap-setup'
+import { useTestimonialsQuery } from '../../testimonial/hook/useTestimonials'
 
 import 'swiper/css'
 import 'swiper/css/pagination'
@@ -38,11 +39,21 @@ export default function SuccessStoriesSection() {
   const { t, i18n } = useTranslation()
   const lang: AppLang = i18n.resolvedLanguage === 'hi' || i18n.language === 'hi' ? 'hi' : 'en'
   const rawItems = (t('stories.items', { returnObjects: true }) as Array<{ quote: string; name: string; city: string }>) || []
+  const { data: testimonialData } = useTestimonialsQuery('home')
 
-  const items = rawItems.map((item, idx) => ({
+  const fallbackItems = rawItems.map((item, idx) => ({
     ...item,
     img: STORY_IMAGES[idx % STORY_IMAGES.length],
   }))
+
+  const apiItems = testimonialData?.data?.map((test, idx) => ({
+    quote: test.testimonial_description || '',
+    name: test.testimonial_client_name || '',
+    city: '',
+    img: STORY_IMAGES[idx % STORY_IMAGES.length],
+  })).filter((item) => item.quote && item.name)
+
+  const items = apiItems && apiItems.length > 0 ? apiItems : fallbackItems
 
   // Duplicate so the 3-card loop slider always has slides to advance to
   const slides = items.length > 3 ? items : [...items, ...items]
