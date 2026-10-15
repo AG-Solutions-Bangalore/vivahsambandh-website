@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { COMPANY } from '../constants/company'
 import LanguageSwitcher from './LanguageSwitcher'
+import { Drawer, DrawerContent, DrawerTitle } from './ui/drawer'
 import { ensureMotion, prefersReducedMotion } from '../lib/gsap-setup'
 import { Link, useLocation } from 'react-router-dom'
 import { getNavItems, homePath } from '../constants/navigation'
@@ -108,21 +109,18 @@ export default function Header() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  // Lock smooth-scroll + background scroll while the mobile drawer is open.
+  // Bottom-sheet drawer state. onOpenChange is the single sync point —
+  // covers trigger taps, backdrop taps, swipe-to-dismiss and Escape.
   // NOTE: side-effects stay outside the setState updater (StrictMode
   // double-invokes updaters — locking inside would lock/unlock twice).
-  const toggleDrawer = () => {
-    const next = !open
+  const syncDrawer = (next: boolean) => {
     setOpen(next)
     if (headerRef.current) headerRef.current.dataset.drawerOpen = String(next)
     if (next) lockPageScroll()
     else unlockPageScroll()
   }
-  const closeDrawer = () => {
-    setOpen(false)
-    if (headerRef.current) headerRef.current.dataset.drawerOpen = 'false'
-    unlockPageScroll()
-  }
+  const toggleDrawer = () => syncDrawer(!open)
+  const closeDrawer = () => syncDrawer(false)
 
   return (
     <header
@@ -188,39 +186,51 @@ export default function Header() {
             className="rounded-full border border-gold-500/40 p-2 text-navy-900 hover:bg-gold-100"
           >
             <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2">
-              {open ? <path d="M6 6l12 12M18 6L6 18" /> : <path d="M4 7h16M4 12h16M4 17h16" />}
+              <path d="M4 7h16M4 12h16M4 17h16" />
             </svg>
           </button>
         </div>
       </div>
 
-      {/* Mobile Drawer Menu */}
-      {open && (
-        <nav className="border-t border-gold-500/25 bg-cream-50 px-4 py-3 lg:hidden" aria-label="Mobile">
-          <ul className="grid gap-1 text-sm font-medium text-navy-900">
-            {navItems.map((item) => (
-              <li key={item.key}>
-                <Link
-                  to={item.href}
-                  onClick={closeDrawer}
-                  title={item.label}
-                  className="block rounded-xl px-3 py-2 transition hover:bg-gold-100 hover:text-maroon-600"
-                >
-                  {item.label}
-                </Link>
-              </li>
-            ))}
-          </ul>
-          <div className="mt-3 flex gap-2 border-t border-gold-500/20 pt-3">
-            <a href="#login" onClick={closeDrawer} title={t('header.login')} className="btn-gold flex-1 !py-2 text-[13px]">
-              {t('header.login')}
-            </a>
-            <a href="#register" onClick={closeDrawer} title={t('header.createProfile')} className="btn-primary flex-1 !py-2 text-[13px]">
-              {t('header.createProfile')}
-            </a>
-          </div>
-        </nav>
-      )}
+      {/* Mobile bottom-sheet menu (shadcn/base Drawer — swipe-to-dismiss,
+          backdrop tap and Escape all funnel through onOpenChange) */}
+      <Drawer open={open} onOpenChange={syncDrawer} showSwipeHandle>
+        <DrawerContent className="rounded-t-3xl border-gold-500/30 bg-cream-50 text-navy-900">
+          {/* A11y title for the dialog (visually hidden — handle implies it) */}
+          <DrawerTitle className="sr-only">Menu</DrawerTitle>
+          <nav
+            aria-label="Mobile"
+            className="max-h-[82dvh] overflow-y-auto px-4 pt-1 pb-[calc(0.75rem+env(safe-area-inset-bottom))]"
+          >
+            <ul className="grid gap-1 text-[15px] font-medium">
+              {navItems.map((item) => (
+                <li key={item.key}>
+                  <Link
+                    to={item.href}
+                    onClick={closeDrawer}
+                    title={item.label}
+                    aria-current={item.active ? 'page' : undefined}
+                    className={`flex items-center justify-between rounded-xl px-3 py-2.5 transition hover:bg-gold-100 hover:text-maroon-600 ${
+                      item.active ? 'bg-gold-100 font-bold text-maroon-600' : ''
+                    }`}
+                  >
+                    <span>{item.label}</span>
+                    <span aria-hidden="true" className="text-gold-500">→</span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+            <div className="mt-3 flex gap-2 border-t border-gold-500/20 pt-4">
+              <a href="#login" onClick={closeDrawer} title={t('header.login')} className="btn-gold flex-1 !py-2.5 text-sm">
+                {t('header.login')}
+              </a>
+              <a href="#register" onClick={closeDrawer} title={t('header.createProfile')} className="btn-primary flex-1 !py-2.5 text-sm">
+                {t('header.createProfile')}
+              </a>
+            </div>
+          </nav>
+        </DrawerContent>
+      </Drawer>
     </header>
   )
 }

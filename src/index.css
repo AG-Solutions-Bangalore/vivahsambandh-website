@@ -54,6 +54,15 @@
   --color-ink-700: #2a2118;
   --color-ink-900: #180f08;
 
+  /* ————— shadcn/base surface tokens (mapped to the brand palette) ————— */
+  --color-background: var(--color-cream-50);
+  --color-foreground: var(--color-navy-900);
+  --color-popover: #ffffff;
+  --color-popover-foreground: var(--color-navy-900);
+  --color-muted: var(--color-cream-200);
+  --color-muted-foreground: var(--color-ink-500);
+  --color-border: var(--color-cream-300);
+
   /* ————— Typography ————— */
   --font-display: "Playfair Display", "Tiro Devanagari Hindi", "Georgia", serif;
   --font-devanagari: "Gotu", "Tiro Devanagari Hindi", "Georgia", serif;
