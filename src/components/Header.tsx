@@ -1,8 +1,8 @@
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { COMPANY } from '../constants/company'
 import LanguageSwitcher from './LanguageSwitcher'
-import { gsap, useGSAP, ScrollTrigger, prefersReducedMotion } from '../lib/gsap-setup'
+import { ensureMotion, prefersReducedMotion } from '../lib/gsap-setup'
 import { lockPageScroll, unlockPageScroll } from '../lib/scroll'
 
 function LotusMark() {
@@ -23,10 +23,15 @@ export default function Header() {
   const headerRef = useRef<HTMLElement | null>(null)
 
   // Entrance + hide-on-scroll-down (auto-show on scroll-up / at top).
-  useGSAP(
-    () => {
+  // Motion loads lazily (see lib/gsap-setup): identical behavior, wired
+  // after the chunk lands.
+  useEffect(() => {
+    let trigger: { kill: () => void } | null = null
+    let cancelled = false
+    void ensureMotion()
+      .then(({ gsap, ScrollTrigger }) => {
       const header = headerRef.current
-      if (!header || prefersReducedMotion()) return
+      if (cancelled || !header || prefersReducedMotion()) return
 
       // Entrance: slide down once (transform only — no layout shift).
       gsap.from(header, {
@@ -54,7 +59,7 @@ export default function Header() {
           overwrite: 'auto',
         })
       }
-      const trigger = ScrollTrigger.create({
+      trigger = ScrollTrigger.create({
         start: 0,
         end: 'max',
         onUpdate: (self) => {
@@ -67,13 +72,17 @@ export default function Header() {
           else if (self.direction === -1) setHidden(false)
         },
       })
-
-      return () => {
-        trigger.kill()
-      }
-    },
-    { scope: headerRef },
-  )
+      })
+      .catch(() => {
+        /* motion failed to load — header stays visible and static */
+      })
+    return () => {
+      cancelled = true
+      trigger?.kill()
+      trigger = null
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   // Lock smooth-scroll + background scroll while the mobile drawer is open.
   // NOTE: side-effects stay outside the setState updater (StrictMode

@@ -1,5 +1,5 @@
-import { useRef, type CSSProperties } from 'react'
-import { gsap, useGSAP, prefersReducedMotion } from '../../lib/gsap-setup'
+import { useEffect, useRef, type CSSProperties } from 'react'
+import { ensureMotion, prefersReducedMotion } from '../../lib/gsap-setup'
 
 type RevealVariant = 'up' | 'fade' | 'left' | 'right' | 'scale' | 'none'
 
@@ -58,45 +58,60 @@ export default function Reveal({
 }: RevealProps) {
   const ref = useRef<HTMLDivElement | null>(null)
 
-  useGSAP(
-    () => {
-      const el = ref.current
-      if (!el) return
+  // Motion loads lazily (see lib/gsap-setup): same tweens, wired after the
+  // chunk lands. gsap.context() gives the StrictMode-safe revert useGSAP had.
+  useEffect(() => {
+    let ctx: { revert: () => void } | null = null
+    let cancelled = false
+    void ensureMotion()
+      .then(({ gsap }) => {
+        const el = ref.current
+        if (cancelled || !el) return
 
-      // Reduced motion or 'none' → ensure visible, no animation.
-      if (variant === 'none' || prefersReducedMotion()) {
-        gsap.set(el, { clearProps: 'all', autoAlpha: 1, x: 0, y: 0, scale: 1 })
-        return
-      }
+        // Reduced motion or 'none' → ensure visible, no animation.
+        if (variant === 'none' || prefersReducedMotion()) {
+          gsap.set(el, { clearProps: 'all', autoAlpha: 1, x: 0, y: 0, scale: 1 })
+          return
+        }
 
-      const from = variant === 'fade' ? { autoAlpha: 0 } : { autoAlpha: 0, ...OFFSETS[variant](distance) }
+        const from =
+          variant === 'fade' ? { autoAlpha: 0 } : { autoAlpha: 0, ...OFFSETS[variant](distance) }
 
-      gsap.fromTo(
-        el,
-        from,
-        {
-          autoAlpha: 1,
-          x: 0,
-          y: 0,
-          scale: 1,
-          duration,
-          delay,
-          ease: 'power3.out',
-          overwrite: 'auto',
-          // Release the will-change compositor layer after playing —
-          // keeping it forever pins GPU memory on low-end phones.
-          clearProps: 'willChange',
-          scrollTrigger: {
-            trigger: el,
-            start,
-            toggleActions: once ? 'play none none none' : 'play reverse play reverse',
-            once,
-          },
-        },
-      )
-    },
-    { scope: ref },
-  )
+        ctx = gsap.context(() => {
+          gsap.fromTo(
+            el,
+            from,
+            {
+              autoAlpha: 1,
+              x: 0,
+              y: 0,
+              scale: 1,
+              duration,
+              delay,
+              ease: 'power3.out',
+              overwrite: 'auto',
+              // Release the will-change compositor layer after playing —
+              // keeping it forever pins GPU memory on low-end phones.
+              clearProps: 'willChange',
+              scrollTrigger: {
+                trigger: el,
+                start,
+                toggleActions: once ? 'play none none none' : 'play reverse play reverse',
+                once,
+              },
+            },
+          )
+        }, ref)
+      })
+      .catch(() => {
+        /* motion failed to load — content stays visible (final state) */
+      })
+    return () => {
+      cancelled = true
+      ctx?.revert()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const Tag = as as 'div'
   return (
@@ -130,41 +145,53 @@ export function RevealGroup({
 }: RevealGroupProps) {
   const ref = useRef<HTMLDivElement | null>(null)
 
-  useGSAP(
-    () => {
-      const root = ref.current
-      if (!root) return
-      const items = root.querySelectorAll('[data-reveal-item]')
-      if (items.length === 0) return
+  useEffect(() => {
+    let ctx: { revert: () => void } | null = null
+    let cancelled = false
+    void ensureMotion()
+      .then(({ gsap }) => {
+        const root = ref.current
+        if (cancelled || !root) return
+        const items = root.querySelectorAll('[data-reveal-item]')
+        if (items.length === 0) return
 
-      if (prefersReducedMotion()) {
-        gsap.set(items, { clearProps: 'all', autoAlpha: 1, y: 0 })
-        return
-      }
+        if (prefersReducedMotion()) {
+          gsap.set(items, { clearProps: 'all', autoAlpha: 1, y: 0 })
+          return
+        }
 
-      gsap.fromTo(
-        items,
-        { autoAlpha: 0, y: 26 },
-        {
-          autoAlpha: 1,
-          y: 0,
-          duration: 0.7,
-          ease: 'power3.out',
-          stagger,
-          overwrite: 'auto',
-          // Release the will-change compositor layers after playing.
-          clearProps: 'willChange',
-          scrollTrigger: {
-            trigger: root,
-            start,
-            toggleActions: once ? 'play none none none' : 'play reverse play reverse',
-            once,
-          },
-        },
-      )
-    },
-    { scope: ref },
-  )
+        ctx = gsap.context(() => {
+          gsap.fromTo(
+            items,
+            { autoAlpha: 0, y: 26 },
+            {
+              autoAlpha: 1,
+              y: 0,
+              duration: 0.7,
+              ease: 'power3.out',
+              stagger,
+              overwrite: 'auto',
+              // Release the will-change compositor layers after playing.
+              clearProps: 'willChange',
+              scrollTrigger: {
+                trigger: root,
+                start,
+                toggleActions: once ? 'play none none none' : 'play reverse play reverse',
+                once,
+              },
+            },
+          )
+        }, ref)
+      })
+      .catch(() => {
+        /* motion failed to load — content stays visible (final state) */
+      })
+    return () => {
+      cancelled = true
+      ctx?.revert()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   return (
     <div ref={ref} className={className} style={style}>

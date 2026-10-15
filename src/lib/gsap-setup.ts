@@ -1,19 +1,45 @@
-import gsap from 'gsap'
-import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import { useGSAP } from '@gsap/react'
+/**
+ * Motion library loader — GSAP (and its plugins) load lazily via dynamic
+ * import so ~120KB of animation runtime never contends with LCP/hero bytes.
+ * The static page paints first; animation enhances as soon as the chunk lands
+ * (no-JS / failed-load still shows final content — initial states are set in
+ * JS only, never in markup/CSS).
+ */
 
-// Register once — safe to import from anywhere (client-only usage via
-// useGSAP / useEffect, never during SSR render).
-gsap.registerPlugin(useGSAP, ScrollTrigger)
+interface MotionLibs {
+  gsap: typeof import('gsap').default
+  ScrollTrigger: typeof import('gsap/ScrollTrigger').ScrollTrigger
+}
 
-// Mobile browsers fire resize when the URL bar shows/hides; without this,
-// every bar toggle triggers ScrollTrigger.refresh() → visible content jumps.
-ScrollTrigger.config({ ignoreMobileResize: true })
+let motionPromise: Promise<MotionLibs> | null = null
 
-// Sensible project-wide defaults: transform/opacity only, no layout props.
-gsap.defaults({ duration: 0.7, ease: 'power3.out' })
+/** Load GSAP + ScrollTrigger once, register plugins and project defaults. */
+export function ensureMotion(): Promise<MotionLibs> {
+  if (!motionPromise) {
+    motionPromise = (async () => {
+      const [{ default: gsap }, { ScrollTrigger }] = await Promise.all([
+        import('gsap'),
+        import('gsap/ScrollTrigger'),
+      ])
+      gsap.registerPlugin(ScrollTrigger)
 
-export { gsap, ScrollTrigger, useGSAP }
+      // Mobile browsers fire resize when the URL bar shows/hides; without this,
+      // every bar toggle triggers ScrollTrigger.refresh() → content jumps.
+      ScrollTrigger.config({ ignoreMobileResize: true })
+
+      // Sensible project-wide defaults: transform/opacity only, no layout props.
+      gsap.defaults({ duration: 0.7, ease: 'power3.out' })
+
+      return { gsap, ScrollTrigger }
+    })()
+  }
+  return motionPromise
+}
+
+/** True when the build-time motion libs have finished loading. */
+export function isMotionReady(): boolean {
+  return motionPromise !== null
+}
 
 /** True when the user prefers reduced motion (vestibular safety). */
 export function prefersReducedMotion(): boolean {
@@ -32,23 +58,23 @@ export function prefersReducedMotion(): boolean {
  * @returns cleanup function that cancels the pending refresh.
  */
 export function refreshScrollTriggers(afterMs = 0): () => void {
-  if (afterMs <= 0) {
-    // requestAnimationFrame avoids forced-sync-layout inside React render.
-    const rafId = requestAnimationFrame(() => {
+  // Motion not loaded yet (pre-hydration, deferred sections before JS):
+  // no triggers exist, so there is nothing to refresh.
+  if (!isMotionReady()) return () => {}
+  const run = () => {
+    void ensureMotion().then(({ ScrollTrigger }) => {
       try {
         ScrollTrigger.refresh()
       } catch {
         /* ScrollTrigger not yet initialised — safe to ignore */
       }
     })
+  }
+  if (afterMs <= 0) {
+    // requestAnimationFrame avoids forced-sync-layout inside React render.
+    const rafId = requestAnimationFrame(run)
     return () => cancelAnimationFrame(rafId)
   }
-  const timeoutId = setTimeout(() => {
-    try {
-      ScrollTrigger.refresh()
-    } catch {
-      /* ScrollTrigger not yet initialised — safe to ignore */
-    }
-  }, afterMs)
+  const timeoutId = setTimeout(run, afterMs)
   return () => clearTimeout(timeoutId)
 }

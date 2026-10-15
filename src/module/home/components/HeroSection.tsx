@@ -1,6 +1,6 @@
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
-import { gsap, useGSAP, prefersReducedMotion } from "../../../lib/gsap-setup";
+import { ensureMotion, prefersReducedMotion } from "../../../lib/gsap-setup";
 
 const TRUST_BADGES = [
   {
@@ -106,10 +106,18 @@ export default function HeroSection() {
   const { t } = useTranslation();
   const rootRef = useRef<HTMLDivElement | null>(null);
 
-  useGSAP(
-    () => {
+  // Motion loads lazily (see lib/gsap-setup): identical choreography, wired
+  // after the chunk lands. Static hero paints first; intro enhances after.
+  useEffect(() => {
+    let mm: {
+      revert: () => void
+      add: (conditions: string, callback: () => void) => void
+    } | null = null
+    let cancelled = false
+    void ensureMotion()
+      .then(({ gsap }) => {
       const root = rootRef.current;
-      if (!root || prefersReducedMotion()) return;
+      if (cancelled || !root || prefersReducedMotion()) return;
 
       // ——— Intro timeline (above the fold → play on mount, not on scroll) ———
       const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
@@ -174,7 +182,7 @@ export default function HeroSection() {
         );
 
       // ——— Banner parallax (scrub, desktop only — mobile keeps static image) ———
-      const mm = gsap.matchMedia();
+      mm = gsap.matchMedia();
       mm.add("(min-width: 768px)", () => {
         gsap.to('[data-hero="banner"]', {
           yPercent: 12,
@@ -227,13 +235,16 @@ export default function HeroSection() {
           },
         },
       );
-
-      return () => {
-        mm.revert();
-      };
-    },
-    { scope: rootRef },
-  );
+      })
+      .catch(() => {
+        /* motion failed to load — content stays visible (final state) */
+      });
+    return () => {
+      cancelled = true;
+      mm?.revert();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <div ref={rootRef} className="relative isolate bg-cream-50">
@@ -249,6 +260,7 @@ export default function HeroSection() {
         height={1536}
         alt=""
         data-hero="flower-l"
+        fetchPriority="low"
         className="pointer-events-none absolute left-0 bottom-0 z-20 w-32 sm:w-40 md:w-48 lg:w-56 xl:w-64 max-w-[22vw] h-auto object-contain object-left-bottom select-none"
         loading="eager"
         aria-hidden="true"
@@ -261,6 +273,7 @@ export default function HeroSection() {
         height={1536}
         alt=""
         data-hero="flower-r"
+        fetchPriority="low"
         className="pointer-events-none absolute right-0 bottom-0 z-20 w-32 sm:w-44 md:w-52 lg:w-60 xl:w-72 max-w-[26vw] h-auto object-contain object-right-top select-none"
         loading="eager"
         aria-hidden="true"
@@ -280,6 +293,7 @@ export default function HeroSection() {
           alt=""
           className="pointer-events-none absolute left-0 top-0 z-[5] w-16 sm:w-20 md:w-24 lg:w-28 xl:w-32 max-w-[12vw] h-auto object-contain object-left-top select-none -scale-y-100"
           loading="eager"
+          fetchPriority="low"
           aria-hidden="true"
         />
         <img
@@ -291,6 +305,7 @@ export default function HeroSection() {
           alt=""
           className="pointer-events-none absolute right-0 top-0 z-[5] w-16 sm:w-20 md:w-24 lg:w-28 xl:w-32 max-w-[12vw] h-auto object-contain object-right-top select-none -scale-y-100"
           loading="eager"
+          fetchPriority="low"
           aria-hidden="true"
         />
         {/* Section Background Image: Contained and properly scaled */}
@@ -450,6 +465,7 @@ export default function HeroSection() {
                   alt={t(card.labelKey)}
                   loading="lazy"
                   decoding="async"
+                  fetchPriority="low"
                   className="h-full w-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
                 />
               </div>
@@ -465,6 +481,7 @@ export default function HeroSection() {
                   alt={card.illustrationAlt}
                   loading="lazy"
                   decoding="async"
+                  fetchPriority="low"
                   className="h-14 w-auto sm:h-18 md:h-20 lg:h-22 object-contain transition-transform duration-300 group-hover:scale-105"
                 />
                 <p className="mt-1 text-xs sm:text-sm font-bold text-navy-950">
@@ -505,6 +522,7 @@ export default function HeroSection() {
                   alt=""
                   loading="lazy"
                   decoding="async"
+                  fetchPriority="low"
                   className="h-full w-full object-contain object-right-bottom -scale-x-100 rotate-6"
                 />
               </div>
