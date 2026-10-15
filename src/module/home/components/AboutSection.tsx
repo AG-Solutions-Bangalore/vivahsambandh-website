@@ -91,6 +91,7 @@ export default function AboutSection() {
                   <svg
                     viewBox="0 0 24 24"
                     className="ml-1 h-7 w-7 sm:h-8 sm:w-8 fill-current text-gold-500 transition-transform group-hover:scale-105"
+                    aria-hidden="true"
                   >
                     <path d="M8 5v14l11-7z" />
                   </svg>
@@ -209,6 +210,7 @@ export default function AboutSection() {
           className="fixed inset-0 z-50 flex items-center justify-center bg-navy-950/80 p-4 backdrop-blur-sm"
           role="dialog"
           aria-modal="true"
+          aria-label="Introduction video"
           onClick={() => setIsVideoOpen(false)}
         >
           <div

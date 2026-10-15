@@ -214,7 +214,7 @@ export default function Footer() {
       </div>
 
       {/* Bottom Copyright Bar */}
-      <div className="relative z-10 bordear-t py-6 border-gold-500/30">
+      <div className="relative z-10 border-t py-6 border-gold-500/30">
         <div className="section-pad flex flex-col items-center justify-between gap-2 py-3 text-xs text-white/60 sm:flex-row">
           <p>
             © {COMPANY.copyrightYear} {COMPANY.name}.{" "}

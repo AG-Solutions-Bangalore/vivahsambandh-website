@@ -20,7 +20,8 @@ export default function ContactCta() {
         src="/images/home/flower1_image-320.webp"
         width={320}
         height={480}
-        alt=""
+        alt="Decorative flower garland"
+        title="Decorative flower garland"
         aria-hidden="true"
         loading="lazy"
         className="pointer-events-none absolute left-0 bottom-0 z-[1] w-20 sm:w-28 h-auto max-w-[16vw] select-none"
@@ -29,7 +30,8 @@ export default function ContactCta() {
         src="/images/home/flower2_image-320.webp"
         width={320}
         height={480}
-        alt=""
+        alt="Decorative flower garland"
+        title="Decorative flower garland"
         aria-hidden="true"
         loading="lazy"
         className="pointer-events-none absolute right-0 bottom-0 z-[1] w-20 sm:w-28 h-auto max-w-[16vw] select-none"

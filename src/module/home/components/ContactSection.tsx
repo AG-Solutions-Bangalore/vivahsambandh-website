@@ -44,7 +44,7 @@ export default function ContactSection() {
 
   return (
     <section id="contact" className="relative overflow-hidden bg-[#FFFBF2] py-16">
-      <div className="pointer-events-none absolute inset-x-0 bottom-0">
+      <div className="pointer-events-none absolute inset-x-0 bottom-0" aria-hidden="true">
         <img
           src="/images/home/elegant-temple-wedding-banner.webp"
           srcSet="/images/home/elegant-temple-wedding-banner-1024.webp 1024w, /images/home/elegant-temple-wedding-banner.webp 2170w"
@@ -86,6 +86,7 @@ export default function ContactSection() {
                     viewBox="0 0 24 24"
                     className="h-6 w-6"
                     fill="currentColor"
+                    aria-hidden="true"
                   >
                     <path d="M6.62 10.79a15.053 15.053 0 006.59 6.59l2.2-2.2a1 1 0 011.01-.24c1.12.37 2.33.57 3.58.57a1 1 0 011 1V20a1 1 0 01-1 1A17 17 0 013 4a1 1 0 011-1h3.5a1 1 0 011 1c0 1.25.2 2.45.57 3.57a1 1 0 01-.25 1.02l-2.2 2.2z" />
                   </svg>
@@ -114,6 +115,7 @@ export default function ContactSection() {
                     viewBox="0 0 24 24"
                     className="h-6 w-6"
                     fill="currentColor"
+                    aria-hidden="true"
                   >
                     <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z" />
                   </svg>
@@ -142,6 +144,7 @@ export default function ContactSection() {
                     viewBox="0 0 24 24"
                     className="h-6 w-6"
                     fill="currentColor"
+                    aria-hidden="true"
                   >
                     <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 010-5 2.5 2.5 0 010 5z" />
                   </svg>
@@ -189,7 +192,7 @@ export default function ContactSection() {
                   {/* Name */}
                   <div className="relative">
                     <span className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-ink-400">
-                      <svg viewBox="0 0 24 24" className="h-5 w-5 fill-current">
+                      <svg viewBox="0 0 24 24" className="h-5 w-5 fill-current" aria-hidden="true">
                         <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
                       </svg>
                     </span>
@@ -199,6 +202,7 @@ export default function ContactSection() {
                       required
                       value={formData.name}
                       onChange={handleChange}
+                      aria-label={t("contact.name")}
                       placeholder={`${t("contact.name")} *`}
                       className="w-full rounded-xl border border-gold-500/30 bg-cream-50/50 py-3 pr-4 pl-11 text-sm text-navy-900 placeholder:text-ink-400 focus:border-gold-600 focus:bg-white focus:outline-hidden focus:ring-1 focus:ring-gold-500"
                     />
@@ -207,7 +211,7 @@ export default function ContactSection() {
                   {/* Email */}
                   <div className="relative">
                     <span className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-ink-400">
-                      <svg viewBox="0 0 24 24" className="h-5 w-5 fill-current">
+                      <svg viewBox="0 0 24 24" className="h-5 w-5 fill-current" aria-hidden="true">
                         <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z" />
                       </svg>
                     </span>
@@ -217,6 +221,7 @@ export default function ContactSection() {
                       required
                       value={formData.email}
                       onChange={handleChange}
+                      aria-label={t("contact.email")}
                       placeholder={`${t("contact.email")} *`}
                       className="w-full rounded-xl border border-gold-500/30 bg-cream-50/50 py-3 pr-4 pl-11 text-sm text-navy-900 placeholder:text-ink-400 focus:border-gold-600 focus:bg-white focus:outline-hidden focus:ring-1 focus:ring-gold-500"
                     />
@@ -225,7 +230,7 @@ export default function ContactSection() {
                   {/* Phone */}
                   <div className="relative">
                     <span className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-ink-400">
-                      <svg viewBox="0 0 24 24" className="h-5 w-5 fill-current">
+                      <svg viewBox="0 0 24 24" className="h-5 w-5 fill-current" aria-hidden="true">
                         <path d="M6.62 10.79a15.053 15.053 0 006.59 6.59l2.2-2.2a1 1 0 011.01-.24c1.12.37 2.33.57 3.58.57a1 1 0 011 1V20a1 1 0 01-1 1A17 17 0 013 4a1 1 0 011-1h3.5a1 1 0 011 1c0 1.25.2 2.45.57 3.57a1 1 0 01-.25 1.02l-2.2 2.2z" />
                       </svg>
                     </span>
@@ -235,6 +240,7 @@ export default function ContactSection() {
                       required
                       value={formData.phone}
                       onChange={handleChange}
+                      aria-label={t("contact.phone")}
                       placeholder={`${t("contact.phone")} *`}
                       className="w-full rounded-xl border border-gold-500/30 bg-cream-50/50 py-3 pr-4 pl-11 text-sm text-navy-900 placeholder:text-ink-400 focus:border-gold-600 focus:bg-white focus:outline-hidden focus:ring-1 focus:ring-gold-500"
                     />
@@ -243,7 +249,7 @@ export default function ContactSection() {
                   {/* Message */}
                   <div className="relative">
                     <span className="pointer-events-none absolute top-3.5 left-0 flex items-center pl-3.5 text-ink-400">
-                      <svg viewBox="0 0 24 24" className="h-5 w-5 fill-current">
+                      <svg viewBox="0 0 24 24" className="h-5 w-5 fill-current" aria-hidden="true">
                         <path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 9h12v2H6V9zm8 5H6v-2h8v2zm4-6H6V6h12v2z" />
                       </svg>
                     </span>
@@ -253,6 +259,7 @@ export default function ContactSection() {
                       required
                       value={formData.message}
                       onChange={handleChange}
+                      aria-label={t("contact.message")}
                       placeholder={`${t("contact.message")} *`}
                       className="w-full rounded-xl border border-gold-500/30 bg-cream-50/50 py-3 pr-4 pl-11 text-sm text-navy-900 placeholder:text-ink-400 focus:border-gold-600 focus:bg-white focus:outline-hidden focus:ring-1 focus:ring-gold-500"
                     />

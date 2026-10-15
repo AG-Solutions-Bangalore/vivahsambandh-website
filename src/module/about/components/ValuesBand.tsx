@@ -51,7 +51,8 @@ export default function ValuesBand() {
         src="/images/home/Ornate_Corner_Filigree_image.webp"
         width={948}
         height={1659}
-        alt=""
+        alt="Ornate golden filigree decoration"
+        title="Ornate golden filigree decoration"
         aria-hidden="true"
         loading="lazy"
         decoding="async"
@@ -61,7 +62,8 @@ export default function ValuesBand() {
         src="/images/home/Ornate_Corner_Filigree_image.webp"
         width={948}
         height={1659}
-        alt=""
+        alt="Ornate golden filigree decoration"
+        title="Ornate golden filigree decoration"
         aria-hidden="true"
         loading="lazy"
         decoding="async"
@@ -72,7 +74,8 @@ export default function ValuesBand() {
         src="/images/home/flower1_image-320.webp"
         width={320}
         height={480}
-        alt=""
+        alt="Decorative flower garland"
+        title="Decorative flower garland"
         aria-hidden="true"
         loading="lazy"
         className="pointer-events-none absolute -left-3 bottom-0 z-[1] w-16 sm:w-24 h-auto select-none opacity-90"
@@ -81,7 +84,8 @@ export default function ValuesBand() {
         src="/images/home/flower2_image-320.webp"
         width={320}
         height={480}
-        alt=""
+        alt="Decorative flower garland"
+        title="Decorative flower garland"
         aria-hidden="true"
         loading="lazy"
         className="pointer-events-none absolute -right-3 bottom-0 z-[1] w-16 sm:w-24 h-auto select-none opacity-90"

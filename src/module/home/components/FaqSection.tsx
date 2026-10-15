@@ -24,7 +24,7 @@ export default function FaqSection() {
   return (
     <section id="faq" className="relative overflow-hidden bg-[#FFFBF2] py-12">
       {/* Background Architectural Temple Arch Artwork — soft, visible, text stays readable */}
-      <div className="pointer-events-none absolute inset-0 opacity-[0.16]">
+      <div className="pointer-events-none absolute inset-0 opacity-[0.16]" aria-hidden="true">
         <img
           src="/images/home/elegant-temple-wedding-banner.webp"
           srcSet="/images/home/elegant-temple-wedding-banner-1024.webp 1024w, /images/home/elegant-temple-wedding-banner.webp 2170w"

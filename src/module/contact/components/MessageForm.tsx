@@ -50,7 +50,8 @@ export default function MessageForm() {
           src="/images/home/Ornate_Corner_Filigree_image.webp"
           width={948}
           height={1659}
-          alt=""
+          alt="Ornate golden filigree decoration"
+          title="Ornate golden filigree decoration"
           aria-hidden="true"
           loading="lazy"
           decoding="async"

@@ -53,7 +53,8 @@ export default function WhyBuilt() {
         src="/images/home/flower3_image.webp"
         width={942}
         height={1670}
-        alt=""
+        alt="Decorative flower garland"
+        title="Decorative flower garland"
         aria-hidden="true"
         loading="lazy"
         decoding="async"
@@ -63,7 +64,8 @@ export default function WhyBuilt() {
         src="/images/home/flower4_image.webp"
         width={942}
         height={1670}
-        alt=""
+        alt="Decorative flower garland"
+        title="Decorative flower garland"
         aria-hidden="true"
         loading="lazy"
         decoding="async"
