@@ -15,7 +15,10 @@ import i18n from '../i18n';
 import {
   COMPANY_CONFIG,
   LANG_METADATA,
+  PAGE_SEO,
   getCanonicalUrl,
+  getPagePath,
+  resolvePageKey,
   type SupportedLang,
 } from './config';
 import { createCompositeGraph } from './schemas';
@@ -47,12 +50,17 @@ export async function prerender(args?: PrerenderArguments): Promise<PrerenderRes
   );
   console.log(`\x1b[36m╠${divider}╣\x1b[0m`);
 
-  const title = COMPANY_CONFIG.titles[lang];
-  const description = COMPANY_CONFIG.descriptions[lang];
+  // Route-aware head: same resolver as the client SeoHost, so prerendered
+  // HTML and the hydrated head are identical for every route.
+  const page = resolvePageKey(url);
+  const title = PAGE_SEO[page].titles[lang];
+  const description = PAGE_SEO[page].descriptions[lang];
   const keywords = COMPANY_CONFIG.keywords[lang];
   const keywordCount = keywords.split(',').length;
   const canonicalUrl = getCanonicalUrl(url, lang);
-  const graph = createCompositeGraph(lang);
+  const enHref = `${COMPANY_CONFIG.siteOrigin}${getPagePath(page, 'en')}`;
+  const hiHref = `${COMPANY_CONFIG.siteOrigin}${getPagePath(page, 'hi')}`;
+  const graph = createCompositeGraph(lang, page);
   const graphJson = JSON.stringify(graph);
   const graphSizeKb = (Buffer.byteLength(graphJson, 'utf8') / 1024).toFixed(2);
 
@@ -75,9 +83,9 @@ export async function prerender(args?: PrerenderArguments): Promise<PrerenderRes
   console.log(`     └─ Canonical   : \x1b[34m${canonicalUrl}\x1b[0m`);
 
   console.log(`  \x1b[1m🌐 Multi-Language Hreflang Alternates\x1b[0m`);
-  console.log(`     ├─ en        (English)   -> ${COMPANY_CONFIG.siteOrigin}/`);
-  console.log(`     ├─ hi        (हिन्दी)     -> ${COMPANY_CONFIG.siteOrigin}/hi`);
-  console.log(`     └─ x-default (Fallback)   -> ${COMPANY_CONFIG.siteOrigin}/`);
+  console.log(`     ├─ en        (English)   -> ${enHref}`);
+  console.log(`     ├─ hi        (हिन्दी)     -> ${hiHref}`);
+  console.log(`     └─ x-default (Fallback)   -> ${enHref}`);
 
   console.log(`  \x1b[1m🏷️  Schema.org Structured Data (@graph)\x1b[0m`);
   console.log(`     ├─ Types (${graph['@graph'].length}) : \x1b[35m${schemaTypes}\x1b[0m`);
@@ -94,18 +102,18 @@ export async function prerender(args?: PrerenderArguments): Promise<PrerenderRes
     { type: 'link', props: { rel: 'publisher', href: COMPANY_CONFIG.siteOrigin } },
     { type: 'link', props: { rel: 'canonical', href: canonicalUrl } },
 
-    // Multi-language Hreflang alternates
+    // Multi-language Hreflang alternates (same page, both languages)
     {
       type: 'link',
-      props: { rel: 'alternate', hreflang: 'en', href: `${COMPANY_CONFIG.siteOrigin}/` },
+      props: { rel: 'alternate', hreflang: 'en', href: enHref },
     },
     {
       type: 'link',
-      props: { rel: 'alternate', hreflang: 'hi', href: `${COMPANY_CONFIG.siteOrigin}/hi` },
+      props: { rel: 'alternate', hreflang: 'hi', href: hiHref },
     },
     {
       type: 'link',
-      props: { rel: 'alternate', hreflang: 'x-default', href: `${COMPANY_CONFIG.siteOrigin}/` },
+      props: { rel: 'alternate', hreflang: 'x-default', href: enHref },
     },
 
     // Open Graph Tags

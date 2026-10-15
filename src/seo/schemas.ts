@@ -23,11 +23,14 @@ import type {
 } from 'schema-dts';
 import {
   COMPANY_CONFIG,
+  PAGE_SEO,
   SITE_NAME,
   SITE_ORIGIN,
   SITE_OG_IMAGE,
   SITE_LOGO,
   getCanonicalUrl,
+  getPagePath,
+  type PageKey,
   type SupportedLang,
 } from './config';
 
@@ -116,14 +119,14 @@ export function breadcrumbSchema(
 /**
  * Builds the WebPage Schema node for the current route with BreadcrumbList.
  */
-export function webPageSchema(lang: SupportedLang = 'en'): WebPage {
-  const pageUrl = getCanonicalUrl('', lang);
+export function webPageSchema(lang: SupportedLang = 'en', page: PageKey = 'home'): WebPage {
+  const pageUrl = getCanonicalUrl(getPagePath(page, lang), lang);
   return {
     '@type': 'WebPage',
     '@id': `${pageUrl}#webpage`,
     url: pageUrl,
-    name: COMPANY_CONFIG.titles[lang],
-    description: COMPANY_CONFIG.descriptions[lang],
+    name: PAGE_SEO[page].titles[lang],
+    description: PAGE_SEO[page].descriptions[lang],
     isPartOf: {
       '@id': `${COMPANY_CONFIG.siteOrigin}/#website`,
     },
@@ -164,7 +167,7 @@ export function faqPageSchema(lang: SupportedLang = 'en'): FAQPage {
 /**
  * Assembles a unified `@context/@graph` structured data object containing all active schemas.
  */
-export function createCompositeGraph(lang: SupportedLang = 'en'): {
+export function createCompositeGraph(lang: SupportedLang = 'en', page: PageKey = 'home'): {
   '@context': string;
   '@graph': Thing[];
 } {
@@ -173,7 +176,7 @@ export function createCompositeGraph(lang: SupportedLang = 'en'): {
     '@graph': [
       organizationSchema(lang),
       websiteSchema(lang),
-      webPageSchema(lang),
+      webPageSchema(lang, page),
       faqPageSchema(lang),
     ],
   };

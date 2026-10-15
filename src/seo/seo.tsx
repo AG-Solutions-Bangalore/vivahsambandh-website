@@ -3,17 +3,22 @@
  * Global SEO host and Head metadata manager for VivahSambandh.
  *
  * Mounted once in `main.tsx` inside `<HelmetProvider>` — no per-page hooks needed.
- * Automatically synchronizes title, description, canonical link, hreflang alternates,
- * open graph, twitter cards, and typed Schema.org JSON-LD structured data in real-time
+ * Route-aware: subscribes to the router pathname, so title, description,
+ * canonical link, hreflang alternates, open graph, twitter cards, and typed
+ * Schema.org JSON-LD update in real-time on client-side navigation as well as
  * whenever the user toggles between English and Hindi.
  */
 
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useLocation } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import {
   COMPANY_CONFIG,
+  PAGE_SEO,
   getCanonicalUrl,
+  getPagePath,
+  resolvePageKey,
   type SupportedLang,
 } from './config';
 import { createCompositeGraph } from './schemas';
@@ -21,14 +26,22 @@ import { createCompositeGraph } from './schemas';
 
 export function SeoHost() {
   const { i18n } = useTranslation();
+  const { pathname } = useLocation();
   const currentLang = (i18n.resolvedLanguage === 'hi' || i18n.language === 'hi') ? 'hi' : 'en';
   const lang: SupportedLang = currentLang;
 
-  const title = COMPANY_CONFIG.titles[lang];
-  const description = COMPANY_CONFIG.descriptions[lang];
+  // Route-aware metadata: subscribing to the pathname re-renders Helmet on
+  // every client-side navigation, so title/description/canonical follow the
+  // page without a reload. Same resolver feeds the prerenderer, keeping
+  // static HTML and hydrated head identical.
+  const page = resolvePageKey(pathname);
+  const title = PAGE_SEO[page].titles[lang];
+  const description = PAGE_SEO[page].descriptions[lang];
   const keywords = COMPANY_CONFIG.keywords[lang];
-  const canonicalUrl = getCanonicalUrl('', lang);
-  const compositeGraph = createCompositeGraph(lang);
+  const canonicalUrl = getCanonicalUrl(pathname, lang);
+  const enHref = `${COMPANY_CONFIG.siteOrigin}${getPagePath(page, 'en')}`;
+  const hiHref = `${COMPANY_CONFIG.siteOrigin}${getPagePath(page, 'hi')}`;
+  const compositeGraph = createCompositeGraph(lang, page);
 
   // The JSON-LD <script> is NOT hoistable (unlike title/meta/link), so it
   // renders inline — after mount only. Rendering it on first paint would
@@ -54,10 +67,10 @@ export function SeoHost() {
       <link rel="publisher" href={COMPANY_CONFIG.siteOrigin} />
       <link rel="canonical" href={canonicalUrl} />
 
-      {/* Multi-language Hreflang alternates */}
-      <link rel="alternate" hrefLang="en" href={`${COMPANY_CONFIG.siteOrigin}/`} />
-      <link rel="alternate" hrefLang="hi" href={`${COMPANY_CONFIG.siteOrigin}/hi`} />
-      <link rel="alternate" hrefLang="x-default" href={`${COMPANY_CONFIG.siteOrigin}/`} />
+      {/* Multi-language Hreflang alternates (same page, both languages) */}
+      <link rel="alternate" hrefLang="en" href={enHref} />
+      <link rel="alternate" hrefLang="hi" href={hiHref} />
+      <link rel="alternate" hrefLang="x-default" href={enHref} />
 
       {/* Open Graph Tags */}
       <meta property="og:type" content="website" />
