@@ -63,14 +63,14 @@ export default function Footer() {
           alt="Temple skyline divider"
           title="Temple skyline divider"
           decoding="async"
-          className="absolute opacity-25 inset-x-0 bottom-6 h-auto w-full"
+          className="absolute opacity-35 sm:opacity-25 inset-x-0 -bottom-4 sm:bottom-6 h-auto w-full"
           loading="lazy"
         />
       </div>
 
-      <div className="section-pad overflow-hidden relative z-10 grid gap-10 pt-24 pb-10 md:grid-cols-[1.4fr_1fr_1fr_1.2fr]">
+      <div className="section-pad overflow-hidden relative z-10 grid grid-cols-2 gap-x-6 gap-y-8 pt-16 pb-10 sm:gap-10 sm:pt-24 md:grid-cols-[1.4fr_1fr_1fr_1.2fr]">
         {/* Brand & Socials Column */}
-        <Reveal variant="up">
+        <Reveal variant="up" className="col-span-2 md:col-span-1">
         <div>
           <div className="flex items-center gap-2.5">
             <LotusMark />
@@ -178,7 +178,7 @@ export default function Footer() {
         </Reveal>
 
         {/* Contact Info Column (Directly from COMPANY constants) */}
-        <Reveal variant="up" delay={0.2}>
+        <Reveal variant="up" delay={0.2} className="col-span-2 md:col-span-1">
         <div>
           <p className="text-[15px] font-bold text-white">
             {t("footer.contactUs")}

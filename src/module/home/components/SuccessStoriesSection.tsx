@@ -72,7 +72,7 @@ export default function SuccessStoriesSection() {
           {/* ========================================================== */}
           {/* Left Column: Eyebrow, Heading, Subtitle, CTA               */}
           {/* ========================================================== */}
-          <Reveal variant="left" className="lg:col-span-5 xl:col-span-4">
+          <Reveal variant="left" className="min-w-0 lg:col-span-5 xl:col-span-4">
             <div className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-[0.2em] text-gold-600">
               <span aria-hidden="true" className="text-sm leading-none">✦</span>
               <span data-eyebrow>{t('stories.eyebrow')}</span>
@@ -106,9 +106,9 @@ export default function SuccessStoriesSection() {
           {/* NOTE: intentionally NOT wrapped in a GSAP Reveal — same    */}
           {/* reason as CityMatches: Swiper owns its transform loop.    */}
           {/* ========================================================== */}
-          <div className="lg:col-span-7 xl:col-span-8">
+          <div className="w-full min-w-0 lg:col-span-7 xl:col-span-8">
             {/* No data-lenis-prevent: flat Swiper wrapper, see CityMatches. */}
-            <div className="group/stories relative" id="stories">
+            <div className="group/stories relative w-full min-w-0 max-w-full overflow-hidden" id="stories">
               <Swiper
                 modules={[Pagination, Autoplay, A11y]}
                 pagination={{ el: '.stories-pagination', clickable: true }}
@@ -123,17 +123,18 @@ export default function SuccessStoriesSection() {
                 grabCursor={true}
                 autoplay={autoplay}
                 spaceBetween={16}
-                slidesPerView={1.15}
+                slidesPerView={1}
                 slidesPerGroup={1}
                 breakpoints={{
-                  560: { slidesPerView: 2, slidesPerGroup: 1, spaceBetween: 18 },
+                  480: { slidesPerView: 1.15, slidesPerGroup: 1, spaceBetween: 16 },
+                  640: { slidesPerView: 2, slidesPerGroup: 1, spaceBetween: 18 },
                   1024: { slidesPerView: 2, slidesPerGroup: 1, spaceBetween: 20 },
                   1280: { slidesPerView: 3, slidesPerGroup: 1, spaceBetween: 20 },
                 }}
-                className="!py-2"
+                className="!w-full !max-w-full !py-2"
               >
                 {slides.map((story, i) => (
-                  <SwiperSlide key={`${story.name}-${i}`} className="!h-auto">
+                  <SwiperSlide key={`${story.name}-${i}`} className="!h-auto min-w-0 max-w-full">
                     <article className="flex h-full flex-col overflow-hidden rounded-[18px] border border-gold-500/25 bg-white shadow-card transition-all duration-300 hover:-translate-y-1 hover:border-gold-500 hover:shadow-lift">
                       {/* Couple photo */}
                       <div className="relative aspect-[16/10] overflow-hidden bg-gold-100">
