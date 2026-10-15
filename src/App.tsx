@@ -9,6 +9,7 @@ import { DEFERRED_SECTION_IDS, whenSectionReady } from './lib/deferredSections'
 import { refreshScrollTriggers } from './lib/gsap-setup'
 import HomePage from './module/home/pages/HomePage'
 import AboutPage from './module/about/pages/AboutPage'
+import ContactPage from './module/contact/pages/ContactPage'
 import type { AppLang } from './i18n'
 
 /**
@@ -89,6 +90,8 @@ export default function App() {
             <Route path="/hi" element={<HomePage />} />
             <Route path="/about" element={<AboutPage />} />
             <Route path="/hi/about" element={<AboutPage />} />
+            <Route path="/contact" element={<ContactPage />} />
+            <Route path="/hi/contact" element={<ContactPage />} />
             {/* Unknown paths fall back home (client-side; hosts serving
                 static files may still 404 direct hits — see README). */}
             <Route path="*" element={<HomePage />} />

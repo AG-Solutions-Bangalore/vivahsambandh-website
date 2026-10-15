@@ -33,7 +33,7 @@ export const NAV_ENTRIES: readonly NavEntry[] = [
   { key: 'stories', i18nKey: 'header.successStories', kind: 'section', hash: '#stories' },
   { key: 'membership', i18nKey: 'header.membership', kind: 'section', hash: '#explore-features' },
   { key: 'faq', i18nKey: 'header.faq', kind: 'section', hash: '#all-faq' },
-  { key: 'contact', i18nKey: 'header.contact', kind: 'section', hash: '#contact' },
+  { key: 'contact', i18nKey: 'header.contact', kind: 'page', page: '/contact' },
 ]
 
 /** Every standalone page route (without lang prefix). Used by App + i18n. */
