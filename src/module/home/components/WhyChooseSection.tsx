@@ -82,7 +82,8 @@ export default function WhyChooseSection() {
         sizes="13rem"
         width={948}
         height={1659}
-        alt=""
+        alt="Ornate golden filigree decoration"
+        title="Ornate golden filigree decoration"
         aria-hidden="true"
         loading="lazy"
         decoding="async"
@@ -95,7 +96,8 @@ export default function WhyChooseSection() {
         sizes="13rem"
         width={948}
         height={1659}
-        alt=""
+        alt="Ornate golden filigree decoration"
+        title="Ornate golden filigree decoration"
         aria-hidden="true"
         loading="lazy"
         decoding="async"
@@ -132,6 +134,7 @@ export default function WhyChooseSection() {
             <div className="mt-7">
               <a
                 href="#explore-features"
+                title={t('why.cta')}
                 className="group inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r text-white from-gold-400 via-gold-500 to-gold-400 px-7 py-3 text-xs sm:text-sm font-bold text-navy-950 shadow-md transition-all duration-300 hover:brightness-105 active:scale-95"
               >
                 <span>{t('why.cta')}</span>

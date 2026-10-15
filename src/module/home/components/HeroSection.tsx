@@ -258,7 +258,8 @@ export default function HeroSection() {
         sizes="(max-width: 640px) 22vw, (max-width: 768px) 10rem, (max-width: 1024px) 12rem, (max-width: 1280px) 14rem, 16rem"
         width={1024}
         height={1536}
-        alt=""
+        alt="Decorative flower garland"
+        title="Decorative flower garland"
         data-hero="flower-l"
         fetchPriority="low"
         className="pointer-events-none absolute left-0 bottom-0 z-20 w-32 sm:w-40 md:w-48 lg:w-56 xl:w-64 max-w-[22vw] h-auto object-contain object-left-bottom select-none"
@@ -271,7 +272,8 @@ export default function HeroSection() {
         sizes="(max-width: 640px) 26vw, (max-width: 768px) 11rem, (max-width: 1024px) 13rem, (max-width: 1280px) 15rem, 18rem"
         width={1024}
         height={1536}
-        alt=""
+        alt="Decorative flower garland"
+        title="Decorative flower garland"
         data-hero="flower-r"
         fetchPriority="low"
         className="pointer-events-none absolute right-0 bottom-0 z-20 w-32 sm:w-44 md:w-52 lg:w-60 xl:w-72 max-w-[26vw] h-auto object-contain object-right-top select-none"
@@ -290,7 +292,8 @@ export default function HeroSection() {
           sizes="(max-width: 640px) 12vw, (max-width: 768px) 5rem, 8rem"
           width={320}
           height={480}
-          alt=""
+          alt="Decorative flower garland"
+          title="Decorative flower garland"
           className="pointer-events-none absolute left-0 top-0 z-[5] w-16 sm:w-20 md:w-24 lg:w-28 xl:w-32 max-w-[12vw] h-auto object-contain object-left-top select-none -scale-y-100"
           loading="eager"
           fetchPriority="low"
@@ -302,7 +305,8 @@ export default function HeroSection() {
           sizes="(max-width: 640px) 12vw, (max-width: 768px) 5rem, 8rem"
           width={320}
           height={480}
-          alt=""
+          alt="Decorative flower garland"
+          title="Decorative flower garland"
           className="pointer-events-none absolute right-0 top-0 z-[5] w-16 sm:w-20 md:w-24 lg:w-28 xl:w-32 max-w-[12vw] h-auto object-contain object-right-top select-none -scale-y-100"
           loading="eager"
           fetchPriority="low"
@@ -319,7 +323,8 @@ export default function HeroSection() {
             sizes="100vw"
             width={2172}
             height={724}
-            alt=""
+            alt="VivahSambandh Indian wedding celebration banner"
+            title="VivahSambandh Indian wedding celebration banner"
             data-hero="banner"
             fetchPriority="high"
             decoding="async"
@@ -368,6 +373,7 @@ export default function HeroSection() {
               <div data-hero="cta" className="mt-6 sm:mt-7 flex flex-wrap items-center gap-3.5 sm:gap-4 relative z-20">
                 <a
                   href="#register"
+                  title={t("hero.createProfile")}
                   className="group relative inline-flex items-center justify-center gap-2 sm:gap-2.5 overflow-hidden rounded-full bg-navy-900 px-6 py-2.5 sm:px-7 sm:py-3 text-xs sm:text-sm font-semibold text-white shadow-md shadow-navy-950/20 transition-all duration-300 hover:-translate-y-0.5 hover:bg-navy-800 hover:shadow-lg hover:shadow-navy-950/30 active:scale-[0.97]"
                 >
                   {/* Subtle shine sweep on hover */}
@@ -385,6 +391,7 @@ export default function HeroSection() {
                 </a>
                 <a
                   href="#search"
+                  title={t("hero.findMatch")}
                   className="group relative inline-flex items-center justify-center gap-2 sm:gap-2.5 overflow-hidden rounded-full border border-gold-500/80 bg-white/95 px-6 py-2.5 sm:px-7 sm:py-3 text-xs sm:text-sm font-semibold text-navy-900 shadow-xs backdrop-blur-xs transition-all duration-300 hover:-translate-y-0.5 hover:border-gold-600 hover:bg-gold-50/80 hover:shadow-md hover:shadow-gold-500/15 active:scale-[0.97]"
                 >
                   {/* Subtle gold sheen sweep on hover */}
@@ -452,6 +459,7 @@ export default function HeroSection() {
             <a
               key={card.id}
               href={card.href}
+              title={t(card.labelKey)}
               className="group relative flex items-center justify-between overflow-hidden rounded-2xl border border-gold-500/35 bg-white p-3 sm:p-4 md:p-5 transition-all duration-300 hover:-translate-y-1 hover:border-gold-500"
             >
               {/* Left: Rectangular photo with rounded corners */}
@@ -463,6 +471,7 @@ export default function HeroSection() {
                   width={card.photoWidth}
                   height={card.photoHeight}
                   alt={t(card.labelKey)}
+                  title={t(card.labelKey)}
                   loading="lazy"
                   decoding="async"
                   fetchPriority="low"
@@ -479,6 +488,7 @@ export default function HeroSection() {
                   width={card.illustrationWidth}
                   height={card.illustrationHeight}
                   alt={card.illustrationAlt}
+                  title={card.illustrationAlt}
                   loading="lazy"
                   decoding="async"
                   fetchPriority="low"
@@ -519,7 +529,8 @@ export default function HeroSection() {
                   sizes="(max-width: 768px) 9rem, 13rem"
                   width={320}
                   height={480}
-                  alt=""
+                  alt="Decorative flower garland"
+                  title="Decorative flower garland"
                   loading="lazy"
                   decoding="async"
                   fetchPriority="low"

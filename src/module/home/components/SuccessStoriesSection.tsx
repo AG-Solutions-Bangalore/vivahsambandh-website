@@ -92,6 +92,7 @@ export default function SuccessStoriesSection() {
             <div className="mt-7">
               <a
                 href="#stories"
+                title={t('stories.cta')}
                 className="group inline-flex items-center justify-center gap-2 rounded-full bg-navy-900 px-7 py-3 text-[13px] font-bold text-white shadow-lift transition hover:bg-navy-700 active:scale-[0.98]"
               >
                 <span>{t('stories.cta')}</span>
@@ -143,6 +144,7 @@ export default function SuccessStoriesSection() {
                           width={story.img.width}
                           height={story.img.height}
                           alt={story.name}
+                          title={story.name}
                           className="h-full w-full object-cover"
                           loading="lazy"
                           decoding="async"

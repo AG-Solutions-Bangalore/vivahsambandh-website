@@ -31,7 +31,8 @@ export default function FaqSection() {
           sizes="100vw"
           width={2170}
           height={725}
-          alt=""
+          alt="Elegant temple wedding banner"
+          title="Elegant temple wedding banner"
           loading="lazy"
           decoding="async"
           className="h-full w-full object-cover object-bottom"
@@ -57,7 +58,7 @@ export default function FaqSection() {
             </p>
 
             <div className="mt-8">
-              <a href="#all-faq" className="btn-primary !px-7 !py-3">
+              <a href="#all-faq" title={t('faq.cta')} className="btn-primary !px-7 !py-3">
                 {t('faq.cta')}
                 <span className="text-gold-300" aria-hidden="true">
                   →

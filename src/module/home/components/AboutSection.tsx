@@ -33,7 +33,8 @@ export default function AboutSection() {
         sizes="(max-width: 640px) 16vw, (max-width: 1024px) 9rem, 13rem"
         width={942}
         height={1670}
-        alt=""
+        alt="Decorative flower garland"
+        title="Decorative flower garland"
         className="pointer-events-none absolute left-0 bottom-0 z-0 w-24 sm:w-28 md:w-36 lg:w-44 xl:w-52 max-w-[16vw] h-auto object-contain object-left-bottom select-none opacity-95"
         loading="lazy"
         aria-hidden="true"
@@ -44,7 +45,8 @@ export default function AboutSection() {
         sizes="(max-width: 640px) 16vw, (max-width: 1024px) 9rem, 13rem"
         width={942}
         height={1670}
-        alt=""
+        alt="Decorative flower garland"
+        title="Decorative flower garland"
         className="pointer-events-none absolute right-0 bottom-0 z-0 w-24 sm:w-28 md:w-36 lg:w-44 xl:w-52 max-w-[16vw] h-auto object-contain object-right-bottom select-none opacity-95"
         loading="lazy"
         aria-hidden="true"
@@ -69,6 +71,7 @@ export default function AboutSection() {
                   width={1723}
                   height={913}
                   alt={`${COMPANY.name} Wedding Mandap`}
+                  title={`${COMPANY.name} Wedding Mandap`}
                   className="w-full h-auto object-contain drop-shadow-sm select-none transition-transform duration-500 hover:scale-[1.01]"
                   loading="lazy"
                 />
@@ -98,6 +101,7 @@ export default function AboutSection() {
                     width={128}
                     height={154}
                     alt="Member"
+                    title="Member"
                     loading="lazy"
                     decoding="async"
                     className="inline-block h-7 w-7 sm:h-8 sm:w-8 rounded-full border-2 border-white object-cover object-top"
@@ -107,6 +111,7 @@ export default function AboutSection() {
                     width={128}
                     height={128}
                     alt="Member"
+                    title="Member"
                     loading="lazy"
                     decoding="async"
                     className="inline-block h-7 w-7 sm:h-8 sm:w-8 rounded-full border-2 border-white object-cover object-top"
@@ -116,6 +121,7 @@ export default function AboutSection() {
                     width={128}
                     height={70}
                     alt="Member"
+                    title="Member"
                     loading="lazy"
                     decoding="async"
                     className="inline-block h-7 w-7 sm:h-8 sm:w-8 rounded-full border-2 border-white object-cover"
@@ -125,6 +131,7 @@ export default function AboutSection() {
                     width={128}
                     height={74}
                     alt="Member"
+                    title="Member"
                     loading="lazy"
                     decoding="async"
                     className="inline-block h-7 w-7 sm:h-8 sm:w-8 rounded-full border-2 border-white object-cover"
@@ -176,6 +183,7 @@ export default function AboutSection() {
             <div className="mt-7 sm:mt-8 flex items-center gap-4">
               <a
                 href="#about"
+                title={t('about.cta')}
                 className="inline-flex items-center justify-center gap-2.5 rounded-full bg-navy-900 px-7 py-3 sm:px-8 sm:py-3.5 text-xs sm:text-sm font-semibold text-white shadow-md transition-all duration-300 hover:bg-navy-800 hover:gap-3 active:scale-[0.98]"
               >
                 <span>{t('about.cta')}</span>

@@ -118,7 +118,7 @@ export default function Header() {
     >
       <div className="section-pad flex h-16 items-center justify-between gap-3">
         {/* Brand Logo */}
-        <a href="#" className="flex items-center gap-2 transition hover:opacity-95">
+        <a href="#" title={COMPANY.name} className="flex items-center gap-2 transition hover:opacity-95">
           <LotusMark />
           <span className="leading-none">
             <span className="font-display block text-lg font-bold text-navy-900 sm:text-xl">
@@ -136,6 +136,7 @@ export default function Header() {
             <a
               key={item.label}
               href={item.href}
+              title={item.label}
               className={`transition hover:text-maroon-600 ${
                 i === 0
                   ? 'font-bold text-maroon-600 underline decoration-gold-500 decoration-2 underline-offset-8'
@@ -152,11 +153,12 @@ export default function Header() {
           <LanguageSwitcher />
           <a
             href="#login"
+            title={t('header.login')}
             className="rounded-full px-3.5 py-2 text-sm font-semibold text-navy-900 transition hover:bg-gold-100"
           >
             {t('header.login')}
           </a>
-          <a href="#register" className="btn-primary !px-5 !py-2 text-[13px]">
+          <a href="#register" title={t('header.createProfile')} className="btn-primary !px-5 !py-2 text-[13px]">
             {t('header.createProfile')}
           </a>
         </div>
@@ -187,6 +189,7 @@ export default function Header() {
                 <a
                   href={item.href}
                   onClick={closeDrawer}
+                  title={item.label}
                   className="block rounded-xl px-3 py-2 transition hover:bg-gold-100 hover:text-maroon-600"
                 >
                   {item.label}
@@ -195,10 +198,10 @@ export default function Header() {
             ))}
           </ul>
           <div className="mt-3 flex gap-2 border-t border-gold-500/20 pt-3">
-            <a href="#login" onClick={closeDrawer} className="btn-gold flex-1 !py-2 text-[13px]">
+            <a href="#login" onClick={closeDrawer} title={t('header.login')} className="btn-gold flex-1 !py-2 text-[13px]">
               {t('header.login')}
             </a>
-            <a href="#register" onClick={closeDrawer} className="btn-primary flex-1 !py-2 text-[13px]">
+            <a href="#register" onClick={closeDrawer} title={t('header.createProfile')} className="btn-primary flex-1 !py-2 text-[13px]">
               {t('header.createProfile')}
             </a>
           </div>

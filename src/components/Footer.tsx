@@ -61,7 +61,8 @@ export default function Footer() {
           sizes="100vw"
           width={2171}
           height={724}
-          alt=""
+          alt="Temple skyline divider"
+          title="Temple skyline divider"
           decoding="async"
           className="absolute opacity-25 inset-x-0 bottom-6 h-auto w-full"
           loading="lazy"
@@ -94,7 +95,7 @@ export default function Footer() {
               href={COMPANY.socials.facebook}
               target="_blank"
               rel="noopener noreferrer"
-              aria-label="Facebook"
+              aria-label="Facebook" title="Facebook"
               className="flex h-9 w-9 items-center justify-center rounded-full border border-white/20 bg-white/10 text-white transition hover:border-gold-400 hover:bg-gold-500 hover:text-navy-950"
             >
               <svg viewBox="0 0 24 24" className="h-4 w-4 fill-current">
@@ -106,7 +107,7 @@ export default function Footer() {
               href={COMPANY.socials.instagram}
               target="_blank"
               rel="noopener noreferrer"
-              aria-label="Instagram"
+              aria-label="Instagram" title="Instagram"
               className="flex h-9 w-9 items-center justify-center rounded-full border border-white/20 bg-white/10 text-white transition hover:border-gold-400 hover:bg-gold-500 hover:text-navy-950"
             >
               <svg viewBox="0 0 24 24" className="h-4 w-4 fill-current">
@@ -118,7 +119,7 @@ export default function Footer() {
               href={COMPANY.socials.youtube}
               target="_blank"
               rel="noopener noreferrer"
-              aria-label="YouTube"
+              aria-label="YouTube" title="YouTube"
               className="flex h-9 w-9 items-center justify-center rounded-full border border-white/20 bg-white/10 text-white transition hover:border-gold-400 hover:bg-gold-500 hover:text-navy-950"
             >
               <svg viewBox="0 0 24 24" className="h-4 w-4 fill-current">
@@ -130,7 +131,7 @@ export default function Footer() {
               href={COMPANY.socials.linkedin}
               target="_blank"
               rel="noopener noreferrer"
-              aria-label="LinkedIn"
+              aria-label="LinkedIn" title="LinkedIn"
               className="flex h-9 w-9 items-center justify-center rounded-full border border-white/20 bg-white/10 text-white transition hover:border-gold-400 hover:bg-gold-500 hover:text-navy-950"
             >
               <svg viewBox="0 0 24 24" className="h-4 w-4 fill-current">
@@ -150,7 +151,7 @@ export default function Footer() {
           <ul className="mt-3.5 space-y-2 text-xs text-white/75 sm:text-sm">
             {quickLinks.map((link) => (
               <li key={link.label}>
-                <a href={link.href} className="transition hover:text-gold-300">
+                <a href={link.href} title={link.label} className="transition hover:text-gold-300">
                   {link.label}
                 </a>
               </li>
@@ -168,7 +169,7 @@ export default function Footer() {
           <ul className="mt-3.5 space-y-2 text-xs text-white/75 sm:text-sm">
             {support.map((l) => (
               <li key={l}>
-                <a href="#" className="transition hover:text-gold-300">
+                <a href="#" title={l} className="transition hover:text-gold-300">
                   {l}
                 </a>
               </li>
@@ -192,6 +193,7 @@ export default function Footer() {
               <span className="text-gold-400">📞</span>
               <a
                 href={COMPANY.supportPhoneLink}
+                title={COMPANY.supportPhoneDisplay}
                 className="transition hover:text-gold-300"
               >
                 {COMPANY.supportPhoneDisplay}
@@ -201,6 +203,7 @@ export default function Footer() {
               <span className="text-gold-400">✉️</span>
               <a
                 href={`mailto:${COMPANY.supportEmail}`}
+                title={COMPANY.supportEmail}
                 className="transition hover:text-gold-300"
               >
                 {COMPANY.supportEmail}

@@ -54,6 +54,7 @@ export default function CityMatchesSection() {
           <div>
             <a
               href="#all-cities"
+              title={t('cities.viewAll')}
               className="group inline-flex items-center gap-1.5 text-xs sm:text-sm font-bold text-maroon-700 transition hover:text-maroon-800"
             >
               <span>{t('cities.viewAll')}</span>
@@ -166,6 +167,7 @@ export default function CityMatchesSection() {
                 <SwiperSlide key={city.id} className="!h-auto">
                   <a
                     href={`#city-${city.id}`}
+                    title={cityName}
                     className="group flex h-full flex-col overflow-hidden rounded-2xl border border-gold-500/30 bg-white p-1.5 transition-all duration-300 hover:-translate-y-1.5 hover:border-gold-500 hover:shadow-lg focus:outline-hidden focus:ring-2 focus:ring-gold-500 sm:p-2"
                   >
                     {/* City Monument Image (Aspect 4/3 with rounded corners) */}
@@ -177,6 +179,7 @@ export default function CityMatchesSection() {
                         width={1200}
                         height={896}
                         alt={cityName}
+                        title={cityName}
                         loading="lazy"
                         decoding="async"
                         className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"

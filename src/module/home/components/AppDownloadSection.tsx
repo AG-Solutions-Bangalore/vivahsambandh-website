@@ -123,13 +123,15 @@ export default function AppDownloadSection() {
                 href={COMPANY.apps.playStore}
                 target="_blank"
                 rel="noopener noreferrer"
+                title="Google Play"
                 className="inline-flex items-center gap-3 rounded-xl border border-navy-900 bg-navy-900 px-4 py-2.5 text-white shadow-md transition hover:bg-navy-800"
               >
                 <img
                   src="/images/common/google-play-store.webp"
                   width={48}
                   height={48}
-                  alt=""
+                  alt="Get it on Google Play"
+                  title="Google Play"
                   aria-hidden="true"
                   className="h-6 w-6 object-contain"
                   loading="lazy"
@@ -148,13 +150,15 @@ export default function AppDownloadSection() {
                 href={COMPANY.apps.appStore}
                 target="_blank"
                 rel="noopener noreferrer"
+                title="App Store"
                 className="inline-flex items-center gap-3 rounded-xl border border-navy-900 bg-navy-900 px-4 py-2.5 text-white shadow-md transition hover:bg-navy-800"
               >
                 <img
                   src="/images/common/app-store.webp"
                   width={48}
                   height={48}
-                  alt=""
+                  alt="Download on the App Store"
+                  title="App Store"
                   aria-hidden="true"
                   className="h-6 w-6 object-contain"
                   loading="lazy"
@@ -181,6 +185,7 @@ export default function AppDownloadSection() {
                 width={1426}
                 height={1103}
                 alt={`${COMPANY.name} Mobile App Interface`}
+                title={`${COMPANY.name} Mobile App Interface`}
                 className="h-auto w-full object-contain"
                 loading="lazy"
               />

@@ -51,7 +51,8 @@ export default function ContactSection() {
           sizes="100vw"
           width={2170}
           height={725}
-          alt=""
+          alt="Elegant temple wedding banner"
+          title="Elegant temple wedding banner"
           loading="lazy"
           decoding="async"
           className="h-auto w-full"
@@ -95,6 +96,7 @@ export default function ContactSection() {
                   </p>
                   <a
                     href={COMPANY.supportPhoneLink}
+                    title={COMPANY.supportPhoneDisplay}
                     className="font-display text-base font-bold text-navy-900 transition hover:text-gold-600 sm:text-lg"
                   >
                     {COMPANY.supportPhoneDisplay}
@@ -122,6 +124,7 @@ export default function ContactSection() {
                   </p>
                   <a
                     href={`mailto:${COMPANY.supportEmail}`}
+                    title={COMPANY.supportEmail}
                     className="font-display text-base font-bold text-navy-900 transition hover:text-gold-600 sm:text-lg"
                   >
                     {COMPANY.supportEmail}
