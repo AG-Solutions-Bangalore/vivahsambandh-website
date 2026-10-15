@@ -78,16 +78,28 @@ export default function WhyChooseSection() {
       {/* ============================================================== */}
       <img
         src="/images/home/Ornate_Corner_Filigree_image.webp"
+        srcSet="/images/home/Ornate_Corner_Filigree_image-480.webp 480w, /images/home/Ornate_Corner_Filigree_image.webp 948w"
+        sizes="13rem"
+        width={948}
+        height={1659}
         alt=""
         aria-hidden="true"
-        className="pointer-events-none absolute inset-y-0 -left-4 scale-105 opacity-65 z-0 h-full w-auto select-none"
+        loading="lazy"
+        decoding="async"
+        className="pointer-events-none absolute inset-y-0 -left-4 scale-105 opacity-65 z-0 h-full w-auto max-w-none select-none"
       />
 
       <img
         src="/images/home/Ornate_Corner_Filigree_image.webp"
+        srcSet="/images/home/Ornate_Corner_Filigree_image-480.webp 480w, /images/home/Ornate_Corner_Filigree_image.webp 948w"
+        sizes="13rem"
+        width={948}
+        height={1659}
         alt=""
         aria-hidden="true"
-        className="pointer-events-none absolute inset-y-0 -right-4 scale-105 opacity-65 z-0 h-full w-auto rotate-180 select-none"
+        loading="lazy"
+        decoding="async"
+        className="pointer-events-none absolute inset-y-0 -right-4 scale-105 opacity-65 z-0 h-full w-auto max-w-none rotate-180 select-none"
       />
 
       <div className="section-pad relative z-10 !max-w-[1440px] !pl-[64px] !pr-[64px] sm:!pl-[84px] sm:!pr-[84px] lg:!pl-[104px] lg:!pr-[104px]">

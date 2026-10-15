@@ -172,9 +172,14 @@ export default function CityMatchesSection() {
                     <div className="relative aspect-[4/3] w-full overflow-hidden rounded-xl bg-gold-50">
                       <img
                         src={city.image}
+                        srcSet={`${city.imageSm} 640w, ${city.image} 1200w`}
+                        sizes="(max-width: 480px) 64vw, (max-width: 768px) 45vw, (max-width: 1024px) 30vw, 22vw"
+                        width={1200}
+                        height={896}
                         alt={cityName}
-                        className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
                         loading="lazy"
+                        decoding="async"
+                        className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
                       />
                     </div>
 

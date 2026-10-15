@@ -29,6 +29,10 @@ export default function AboutSection() {
       {/* ============================================================== */}
       <img
         src="/images/home/flower3_image.webp"
+        srcSet="/images/home/flower3_image-320.webp 320w, /images/home/flower3_image-640.webp 640w, /images/home/flower3_image.webp 942w"
+        sizes="(max-width: 640px) 16vw, (max-width: 1024px) 9rem, 13rem"
+        width={942}
+        height={1670}
         alt=""
         className="pointer-events-none absolute left-0 bottom-0 z-0 w-24 sm:w-28 md:w-36 lg:w-44 xl:w-52 max-w-[16vw] h-auto object-contain object-left-bottom select-none opacity-95"
         loading="lazy"
@@ -36,6 +40,10 @@ export default function AboutSection() {
       />
       <img
         src="/images/home/flower4_image.webp"
+        srcSet="/images/home/flower4_image-320.webp 320w, /images/home/flower4_image-640.webp 640w, /images/home/flower4_image.webp 942w"
+        sizes="(max-width: 640px) 16vw, (max-width: 1024px) 9rem, 13rem"
+        width={942}
+        height={1670}
         alt=""
         className="pointer-events-none absolute right-0 bottom-0 z-0 w-24 sm:w-28 md:w-36 lg:w-44 xl:w-52 max-w-[16vw] h-auto object-contain object-right-bottom select-none opacity-95"
         loading="lazy"
@@ -56,6 +64,10 @@ export default function AboutSection() {
               <div className="relative overflow-visible">
                 <img
                   src="/images/home/Mandap_image.webp"
+                  srcSet="/images/home/Mandap_image-800.webp 800w, /images/home/Mandap_image.webp 1723w"
+                  sizes="(max-width: 1024px) 92vw, 42vw"
+                  width={1723}
+                  height={913}
                   alt={`${COMPANY.name} Wedding Mandap`}
                   className="w-full h-auto object-contain drop-shadow-sm select-none transition-transform duration-500 hover:scale-[1.01]"
                   loading="lazy"
@@ -82,23 +94,39 @@ export default function AboutSection() {
                 {/* 4 Overlapping Avatar Bubbles */}
                 <div className="flex -space-x-2 overflow-hidden">
                   <img
-                    src="/images/home/radiant-indian-bride-in-floral-glow.webp"
+                    src="/images/home/radiant-indian-bride-in-floral-glow-128.webp"
+                    width={128}
+                    height={154}
                     alt="Member"
+                    loading="lazy"
+                    decoding="async"
                     className="inline-block h-7 w-7 sm:h-8 sm:w-8 rounded-full border-2 border-white object-cover object-top"
                   />
                   <img
-                    src="/images/home/radiant-indian-groom-in-a-golden-wedding-setting.webp"
+                    src="/images/home/radiant-indian-groom-in-a-golden-wedding-setting-128.webp"
+                    width={128}
+                    height={128}
                     alt="Member"
+                    loading="lazy"
+                    decoding="async"
                     className="inline-block h-7 w-7 sm:h-8 sm:w-8 rounded-full border-2 border-white object-cover object-top"
                   />
                   <img
-                    src="/images/home/radiant-indian-wedding-portrait.webp"
+                    src="/images/home/radiant-indian-wedding-portrait-128.webp"
+                    width={128}
+                    height={70}
                     alt="Member"
+                    loading="lazy"
+                    decoding="async"
                     className="inline-block h-7 w-7 sm:h-8 sm:w-8 rounded-full border-2 border-white object-cover"
                   />
                   <img
-                    src="/images/home/romantic-indian-wedding-portrait.webp"
+                    src="/images/home/romantic-indian-wedding-portrait-128.webp"
+                    width={128}
+                    height={74}
                     alt="Member"
+                    loading="lazy"
+                    decoding="async"
                     className="inline-block h-7 w-7 sm:h-8 sm:w-8 rounded-full border-2 border-white object-cover"
                   />
                 </div>

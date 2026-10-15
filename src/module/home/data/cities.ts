@@ -5,6 +5,7 @@ export interface CityItem {
   defaultName: string
   count: string
   image: string
+  imageSm: string
 }
 
 export const CITIES: readonly CityItem[] = [
@@ -14,6 +15,7 @@ export const CITIES: readonly CityItem[] = [
     defaultName: 'Delhi',
     count: '8,500+',
     image: '/images/home/cities/delhi.webp',
+    imageSm: '/images/home/cities/delhi-640.webp',
   },
   {
     id: 'mumbai',
@@ -21,6 +23,7 @@ export const CITIES: readonly CityItem[] = [
     defaultName: 'Mumbai',
     count: '6,200+',
     image: '/images/home/cities/mumbai.webp',
+    imageSm: '/images/home/cities/mumbai-640.webp',
   },
   {
     id: 'kolkata',
@@ -28,6 +31,7 @@ export const CITIES: readonly CityItem[] = [
     defaultName: 'Kolkata',
     count: '4,800+',
     image: '/images/home/cities/kolkata.webp',
+    imageSm: '/images/home/cities/kolkata-640.webp',
   },
   {
     id: 'bengaluru',
@@ -35,6 +39,7 @@ export const CITIES: readonly CityItem[] = [
     defaultName: 'Bengaluru',
     count: '3,500+',
     image: '/images/home/cities/bengaluru.webp',
+    imageSm: '/images/home/cities/bengaluru-640.webp',
   },
   {
     id: 'hyderabad',
@@ -42,6 +47,7 @@ export const CITIES: readonly CityItem[] = [
     defaultName: 'Hyderabad',
     count: '3,500+',
     image: '/images/home/cities/hyderabad.webp',
+    imageSm: '/images/home/cities/hyderabad-640.webp',
   },
   {
     id: 'pune',
@@ -49,6 +55,7 @@ export const CITIES: readonly CityItem[] = [
     defaultName: 'Pune',
     count: '2,900+',
     image: '/images/home/cities/pune.webp',
+    imageSm: '/images/home/cities/pune-640.webp',
   },
   {
     id: 'ahmedabad',
@@ -56,6 +63,7 @@ export const CITIES: readonly CityItem[] = [
     defaultName: 'Ahmedabad',
     count: '2,200+',
     image: '/images/home/cities/ahmedabad.webp',
+    imageSm: '/images/home/cities/ahmedabad-640.webp',
   },
   {
     id: 'others',
@@ -63,5 +71,6 @@ export const CITIES: readonly CityItem[] = [
     defaultName: 'Others',
     count: '10,000+',
     image: '/images/home/cities/others.webp',
+    imageSm: '/images/home/cities/others-640.webp',
   },
 ]

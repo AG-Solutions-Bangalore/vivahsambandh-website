@@ -115,7 +115,7 @@ export default function Header() {
             <span className="font-display block text-lg font-bold text-navy-900 sm:text-xl">
               {COMPANY.name}
             </span>
-            <span className="block text-[9px] font-semibold uppercase tracking-[0.24em] text-gold-600 sm:text-[10px]">
+            <span className="block text-[9px] font-semibold uppercase tracking-[0.24em] text-gold-700 sm:text-[10px]">
               {t('meta.tagline')}
             </span>
           </span>

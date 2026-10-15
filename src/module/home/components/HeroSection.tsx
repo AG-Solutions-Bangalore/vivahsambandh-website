@@ -70,7 +70,14 @@ const MATCH_CARDS = [
     id: "bride",
     href: "#search-bride",
     photo: "/images/home/radiant-indian-bride-in-floral-glow.webp",
+    photoSrcSet:
+      "/images/home/radiant-indian-bride-in-floral-glow-640.webp 640w, /images/home/radiant-indian-bride-in-floral-glow.webp 1145w",
+    photoWidth: 1145,
+    photoHeight: 1374,
     illustration: "/images/home/woman_image.webp",
+    illustrationSrcSet: "/images/home/woman_image-320.webp 320w, /images/home/woman_image.webp 1355w",
+    illustrationWidth: 1355,
+    illustrationHeight: 1161,
     illustrationAlt: "Bride Illustration",
     labelKey: "matchCards.bride",
     accentKey: "matchCards.brideAccent",
@@ -80,7 +87,14 @@ const MATCH_CARDS = [
     id: "groom",
     href: "#search-groom",
     photo: "/images/home/radiant-indian-groom-in-a-golden-wedding-setting.webp",
+    photoSrcSet:
+      "/images/home/radiant-indian-groom-in-a-golden-wedding-setting-640.webp 640w, /images/home/radiant-indian-groom-in-a-golden-wedding-setting.webp 1254w",
+    photoWidth: 1254,
+    photoHeight: 1254,
     illustration: "/images/home/man_image.webp",
+    illustrationSrcSet: "/images/home/man_image-320.webp 320w, /images/home/man_image.webp 1324w",
+    illustrationWidth: 1324,
+    illustrationHeight: 1188,
     illustrationAlt: "Groom Illustration",
     labelKey: "matchCards.groom",
     accentKey: "matchCards.groomAccent",
@@ -229,6 +243,10 @@ export default function HeroSection() {
       {/* ============================================================== */}
       <img
         src="/images/home/flower1_image.webp"
+        srcSet="/images/home/flower1_image-320.webp 320w, /images/home/flower1_image-640.webp 640w, /images/home/flower1_image.webp 1024w"
+        sizes="(max-width: 640px) 22vw, (max-width: 768px) 10rem, (max-width: 1024px) 12rem, (max-width: 1280px) 14rem, 16rem"
+        width={1024}
+        height={1536}
         alt=""
         data-hero="flower-l"
         className="pointer-events-none absolute left-0 bottom-0 z-20 w-32 sm:w-40 md:w-48 lg:w-56 xl:w-64 max-w-[22vw] h-auto object-contain object-left-bottom select-none"
@@ -237,6 +255,10 @@ export default function HeroSection() {
       />
       <img
         src="/images/home/flower2_image.webp"
+        srcSet="/images/home/flower2_image-320.webp 320w, /images/home/flower2_image-640.webp 640w, /images/home/flower2_image.webp 1024w"
+        sizes="(max-width: 640px) 26vw, (max-width: 768px) 11rem, (max-width: 1024px) 13rem, (max-width: 1280px) 15rem, 18rem"
+        width={1024}
+        height={1536}
         alt=""
         data-hero="flower-r"
         className="pointer-events-none absolute right-0 bottom-0 z-20 w-32 sm:w-44 md:w-52 lg:w-60 xl:w-72 max-w-[26vw] h-auto object-contain object-right-top select-none"
@@ -250,14 +272,22 @@ export default function HeroSection() {
       <section data-hero="banner-wrap" className="relative isolate z-10 w-full h-[470px] sm:h-[490px] lg:h-[520px] xl:h-[540px]">
         {/* Top garlands: hang from top */}
         <img
-          src="/images/home/flower1_image.webp"
+          src="/images/home/flower1_image-320.webp"
+          srcSet="/images/home/flower1_image-320.webp 320w, /images/home/flower1_image-640.webp 640w"
+          sizes="(max-width: 640px) 12vw, (max-width: 768px) 5rem, 8rem"
+          width={320}
+          height={480}
           alt=""
           className="pointer-events-none absolute left-0 top-0 z-[5] w-16 sm:w-20 md:w-24 lg:w-28 xl:w-32 max-w-[12vw] h-auto object-contain object-left-top select-none -scale-y-100"
           loading="eager"
           aria-hidden="true"
         />
         <img
-          src="/images/home/flower2_image.webp"
+          src="/images/home/flower2_image-320.webp"
+          srcSet="/images/home/flower2_image-320.webp 320w, /images/home/flower2_image-640.webp 640w"
+          sizes="(max-width: 640px) 12vw, (max-width: 768px) 5rem, 8rem"
+          width={320}
+          height={480}
           alt=""
           className="pointer-events-none absolute right-0 top-0 z-[5] w-16 sm:w-20 md:w-24 lg:w-28 xl:w-32 max-w-[12vw] h-auto object-contain object-right-top select-none -scale-y-100"
           loading="eager"
@@ -270,8 +300,14 @@ export default function HeroSection() {
         >
           <img
             src="/images/home/home_banner_image.webp"
+            srcSet="/images/home/home_banner_image-640.webp 640w, /images/home/home_banner_image-1024.webp 1024w, /images/home/home_banner_image.webp 2172w"
+            sizes="100vw"
+            width={2172}
+            height={724}
             alt=""
             data-hero="banner"
+            fetchPriority="high"
+            decoding="async"
             className="h-full w-full object-cover object-[78%_center] sm:object-[76%_center] lg:object-[82%_center] xl:object-right will-change-transform"
             loading="eager"
           />
@@ -407,7 +443,13 @@ export default function HeroSection() {
               <div className="relative h-28 w-28 sm:h-36 sm:w-40 md:h-40 md:w-48 lg:h-44 lg:w-56 xl:h-48 xl:w-64 shrink-0 overflow-hidden rounded-xl border-gold-500/30">
                 <img
                   src={card.photo}
+                  srcSet={card.photoSrcSet}
+                  sizes="(max-width: 640px) 7rem, (max-width: 1024px) 10rem, 16rem"
+                  width={card.photoWidth}
+                  height={card.photoHeight}
                   alt={t(card.labelKey)}
+                  loading="lazy"
+                  decoding="async"
                   className="h-full w-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
                 />
               </div>
@@ -416,7 +458,13 @@ export default function HeroSection() {
               <div className="flex flex-1 flex-col items-center justify-center text-center px-3 sm:px-4 md:px-6">
                 <img
                   src={card.illustration}
+                  srcSet={card.illustrationSrcSet}
+                  sizes="5.5rem"
+                  width={card.illustrationWidth}
+                  height={card.illustrationHeight}
                   alt={card.illustrationAlt}
+                  loading="lazy"
+                  decoding="async"
                   className="h-14 w-auto sm:h-18 md:h-20 lg:h-22 object-contain transition-transform duration-300 group-hover:scale-105"
                 />
                 <p className="mt-1 text-xs sm:text-sm font-bold text-navy-950">
@@ -449,8 +497,14 @@ export default function HeroSection() {
               {/* Decorative floral spray on bottom-right corner (enlarged & visible) */}
               <div className="pointer-events-none absolute -right-16 -bottom-3  sm:-bottom-4 h-32 w-28 sm:h-44 sm:w-36 md:h-52 md:w-44 lg:h-60 lg:w-52 opacity-95 select-none hidden sm:block">
                 <img
-                  src="/images/home/flower1_image.webp"
+                  src="/images/home/flower1_image-320.webp"
+                  srcSet="/images/home/flower1_image-320.webp 320w, /images/home/flower1_image-640.webp 640w"
+                  sizes="(max-width: 768px) 9rem, 13rem"
+                  width={320}
+                  height={480}
                   alt=""
+                  loading="lazy"
+                  decoding="async"
                   className="h-full w-full object-contain object-right-bottom -scale-x-100 rotate-6"
                 />
               </div>

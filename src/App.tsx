@@ -4,7 +4,7 @@ import Footer from './components/Footer'
 import Header from './components/Header'
 import SmoothScroll from './components/motion/SmoothScroll'
 import { refreshScrollTriggers } from './lib/gsap-setup'
-import { HomePage } from './module/home'
+import HomePage from './module/home/pages/HomePage'
 
 export default function App() {
   const { i18n } = useTranslation()

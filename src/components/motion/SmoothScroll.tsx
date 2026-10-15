@@ -1,7 +1,16 @@
 import { useEffect } from 'react'
 import Lenis from 'lenis'
 import { gsap, ScrollTrigger, prefersReducedMotion } from '../../lib/gsap-setup'
-import { setLenis, scrollToAnchor, safeReplaceState } from '../../lib/scroll'
+import {
+  setLenis,
+  scrollToAnchor,
+  safeReplaceState,
+  resolveHashId,
+} from '../../lib/scroll'
+import {
+  DEFERRED_SECTION_IDS,
+  whenSectionReady,
+} from '../../lib/deferredSections'
 
 /**
  * Lenis smooth-scroll provider + GSAP ScrollTrigger integration.
@@ -30,6 +39,21 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
         if (!anchor) return
         const hash = anchor.getAttribute('href')
         if (!hash || hash === '#') return
+        // Deferred below-fold section: mount it first, then jump instantly.
+        const targetId = resolveHashId(hash)
+        if (DEFERRED_SECTION_IDS.has(targetId)) {
+          e.preventDefault()
+          void whenSectionReady(targetId).then(() => {
+            const target =
+              document.getElementById(targetId) ??
+              document.querySelector(`#${CSS.escape(targetId)}`)
+            if (target) {
+              target.scrollIntoView({ behavior: 'auto', block: 'start' })
+              safeReplaceState(hash)
+            }
+          })
+          return
+        }
         // Let a same-page target jump instantly (no smooth).
         const target =
           document.getElementById(hash.slice(1)) ?? document.querySelector(hash)
@@ -99,6 +123,16 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
         e.preventDefault()
         // Update URL without triggering a native jump.
         safeReplaceState(hash)
+        return
+      }
+      // Deferred below-fold section not mounted yet: mount on demand,
+      // then smooth-scroll once its anchor exists. Never hangs (timeout).
+      const targetId = resolveHashId(hash)
+      if (DEFERRED_SECTION_IDS.has(targetId)) {
+        e.preventDefault()
+        void whenSectionReady(targetId).then(() => {
+          if (scrollToAnchor(hash)) safeReplaceState(hash)
+        })
       }
       // Unknown hash → let the browser do its default (no preventDefault).
     }

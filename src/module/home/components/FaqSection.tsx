@@ -27,7 +27,13 @@ export default function FaqSection() {
       <div className="pointer-events-none absolute inset-0 opacity-[0.16]">
         <img
           src="/images/home/elegant-temple-wedding-banner.webp"
+          srcSet="/images/home/elegant-temple-wedding-banner-1024.webp 1024w, /images/home/elegant-temple-wedding-banner.webp 2170w"
+          sizes="100vw"
+          width={2170}
+          height={725}
           alt=""
+          loading="lazy"
+          decoding="async"
           className="h-full w-full object-cover object-bottom"
         />
       </div>

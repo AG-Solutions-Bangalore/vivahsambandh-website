@@ -35,6 +35,12 @@ const HASH_ALIASES: Record<string, string> = {
   'all-cities': 'search',
 }
 
+/** Resolve a `#hash` to its target element id (follows legacy aliases). */
+export function resolveHashId(hash: string): string {
+  const id = hash.startsWith('#') ? hash.slice(1) : hash
+  if (!id) return ''
+  return HASH_ALIASES[id] ?? id
+}
 /** history.replaceState throws in sandboxed iframes — never break scrolling. */
 export function safeReplaceState(hash: string): void {
   try {
@@ -50,13 +56,12 @@ export function safeReplaceState(hash: string): void {
  */
 export function scrollToAnchor(hash: string): boolean {
   if (!hash || !hash.startsWith('#')) return false
-  const id = hash.slice(1)
-  if (!id) {
+  const resolvedId = resolveHashId(hash)
+  if (!resolvedId) {
     getLenis()?.scrollTo(0, { offset: 0, duration: 1.2 })
     if (!getLenis()) window.scrollTo({ top: 0, behavior: 'smooth' })
     return true
   }
-  const resolvedId = HASH_ALIASES[id] ?? id
   const el = document.getElementById(resolvedId)
   // Also support href="#about"-style anchors on sections without id by
   // matching querySelector (e.g. Swiper wrapper divs carry the id).

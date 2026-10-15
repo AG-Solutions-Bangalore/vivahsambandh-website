@@ -127,6 +127,8 @@ export default function AppDownloadSection() {
               >
                 <img
                   src="/images/common/google-play-store.webp"
+                  width={48}
+                  height={48}
                   alt=""
                   aria-hidden="true"
                   className="h-6 w-6 object-contain"
@@ -150,6 +152,8 @@ export default function AppDownloadSection() {
               >
                 <img
                   src="/images/common/app-store.webp"
+                  width={48}
+                  height={48}
                   alt=""
                   aria-hidden="true"
                   className="h-6 w-6 object-contain"
@@ -172,6 +176,10 @@ export default function AppDownloadSection() {
             <div className="relative mx-auto max-w-[440px] drop-shadow-2xl transition-transform duration-700 hover:scale-105 sm:max-w-[520px]">
               <img
                 src="/images/home/vivahsambandh-app-image.webp"
+                srcSet="/images/home/vivahsambandh-app-image-800.webp 800w, /images/home/vivahsambandh-app-image.webp 1426w"
+                sizes="(max-width: 640px) 90vw, 32rem"
+                width={1426}
+                height={1103}
                 alt={`${COMPANY.name} Mobile App Interface`}
                 className="h-auto w-full object-contain"
                 loading="lazy"

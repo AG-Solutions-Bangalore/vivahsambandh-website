@@ -57,7 +57,12 @@ export default function Footer() {
       >
         <img
           src="/images/common/Temple_Skyline_Divider_footer_image.webp"
+          srcSet="/images/common/Temple_Skyline_Divider_footer_image-1024.webp 1024w, /images/common/Temple_Skyline_Divider_footer_image.webp 2171w"
+          sizes="100vw"
+          width={2171}
+          height={724}
           alt=""
+          decoding="async"
           className="absolute opacity-25 inset-x-0 bottom-6 h-auto w-full"
           loading="lazy"
         />

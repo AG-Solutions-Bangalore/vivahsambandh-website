@@ -1,7 +1,6 @@
 import { useTranslation } from 'react-i18next'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import { Pagination, Autoplay, A11y } from 'swiper/modules'
-import type { SuccessStory } from '../types'
 import Reveal from '../../../components/motion/Reveal'
 import { prefersReducedMotion } from '../../../lib/gsap-setup'
 
@@ -9,18 +8,36 @@ import 'swiper/css'
 import 'swiper/css/pagination'
 
 const STORY_IMAGES = [
-  '/images/home/radiant-indian-wedding-portrait.webp',
-  '/images/home/romantic-indian-wedding-portrait.webp',
-  '/images/home/navy-and-gold-wedding-romance.webp',
+  {
+    src: '/images/home/radiant-indian-wedding-portrait.webp',
+    srcSet:
+      '/images/home/radiant-indian-wedding-portrait-640.webp 640w, /images/home/radiant-indian-wedding-portrait.webp 1693w',
+    width: 1693,
+    height: 929,
+  },
+  {
+    src: '/images/home/romantic-indian-wedding-portrait.webp',
+    srcSet:
+      '/images/home/romantic-indian-wedding-portrait-640.webp 640w, /images/home/romantic-indian-wedding-portrait.webp 1650w',
+    width: 1650,
+    height: 953,
+  },
+  {
+    src: '/images/home/navy-and-gold-wedding-romance.webp',
+    srcSet:
+      '/images/home/navy-and-gold-wedding-romance-640.webp 640w, /images/home/navy-and-gold-wedding-romance.webp 1504w',
+    width: 1504,
+    height: 1046,
+  },
 ]
 
 export default function SuccessStoriesSection() {
   const { t } = useTranslation()
   const rawItems = (t('stories.items', { returnObjects: true }) as Array<{ quote: string; name: string; city: string }>) || []
 
-  const items: SuccessStory[] = rawItems.map((item, idx) => ({
+  const items = rawItems.map((item, idx) => ({
     ...item,
-    image: STORY_IMAGES[idx % STORY_IMAGES.length],
+    img: STORY_IMAGES[idx % STORY_IMAGES.length],
   }))
 
   // Duplicate so the 3-card loop slider always has slides to advance to
@@ -120,10 +137,15 @@ export default function SuccessStoriesSection() {
                       {/* Couple photo */}
                       <div className="relative aspect-[16/10] overflow-hidden bg-gold-100">
                         <img
-                          src={story.image}
+                          src={story.img.src}
+                          srcSet={story.img.srcSet}
+                          sizes="(max-width: 560px) 75vw, (max-width: 1280px) 40vw, 25vw"
+                          width={story.img.width}
+                          height={story.img.height}
                           alt={story.name}
                           className="h-full w-full object-cover"
                           loading="lazy"
+                          decoding="async"
                         />
                       </div>
 
@@ -137,7 +159,7 @@ export default function SuccessStoriesSection() {
                             <span aria-hidden="true" className="text-base leading-none text-maroon-500">♥</span>
                             <span>{story.name}</span>
                           </h3>
-                          <p className="mt-1 pl-[24px] text-xs font-medium text-ink-400">{story.city}</p>
+                           <p className="mt-1 pl-[24px] text-xs font-medium text-ink-500">{story.city}</p>
                         </div>
                       </div>
                     </article>
