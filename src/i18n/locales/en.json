@@ -161,6 +161,49 @@
     "rights": "© 2026 VivahSambandh. All rights reserved.",
     "madeWith": "Traditions Connect Hearts"
   },
+  "aboutPage": {
+    "breadcrumbHome": "Home",
+    "breadcrumbCurrent": "About Us",
+    "storyEyebrow": "Our Story",
+    "titleA": "More Than a",
+    "titleB": "Matrimonial Platform",
+    "body": "VivahSambandh connects Agarwal families through shared values, traditions and modern technology. We are dedicated to creating meaningful and lasting relationships within the Agarwal community.",
+    "missionTitle": "Our Mission",
+    "missionBody": "To bring Agarwal families together by combining our rich traditions with modern technology, creating a trusted, simple and meaningful platform for lifelong companionship.",
+    "visionTitle": "Our Vision",
+    "visionBody": "To be the most trusted matrimonial platform for the Agarwal community, known for our values, authenticity and successful relationships that build brighter families and stronger generations.",
+    "valuesEyebrow": "Our Values",
+    "valuesTitleA": "Tradition at Heart.",
+    "valuesTitleB": "Trust in Every Connection.",
+    "valuesSubtitle": "Our platform is built on the values that matter most to Agarwal families.",
+    "values": [
+      { "title": "Family Values", "desc": "We respect and celebrate Agarwal traditions, values and cultural heritage in every match we make." },
+      { "title": "Verified Profiles", "desc": "We ensure genuine and verified profiles to create a safe and trustworthy experience." },
+      { "title": "Privacy & Safety", "desc": "Your privacy and security are our priority, with secure communication and complete data protection." }
+    ],
+    "whyEyebrow": "Why VivahSambandh?",
+    "whyTitleA": "Built for Agarwal",
+    "whyTitleB": "Families, by People Who Understand",
+    "whyBody": "We understand the unique values, preferences and expectations of Agarwal families. Our platform is designed to make the search for a life partner simple, trustworthy and meaningful.",
+    "whyPoints": [
+      { "title": "Agarwal Community Focus", "desc": "A dedicated platform exclusively for Agarwal families and individuals." },
+      { "title": "Meaningful Compatibility", "desc": "Advanced search and smart matching to find truly compatible partners." },
+      { "title": "Family Involvement", "desc": "We make it easy for families to be part of the journey, as traditions matter." },
+      { "title": "Secure Communication", "desc": "Safe and private communication tools to connect with confidence." }
+    ],
+    "stats": [
+      { "value": "50K+", "label": "Happy Members" },
+      { "value": "Verified", "label": "Profiles" },
+      { "value": "Community", "label": "First" },
+      { "value": "Privacy", "label": "Focused" }
+    ],
+    "ctaEyebrow": "Be a part of our story",
+    "ctaTitleA": "Your Story",
+    "ctaTitleB": "Begins Here",
+    "ctaBody": "Join thousands of Agarwal families who have found meaningful and lasting relationships on VivahSambandh.",
+    "ctaPrimary": "Create Your Profile",
+    "ctaSecondary": "Find Your Match"
+  },
   "lang": {
     "en": "English",
     "hi": "हिन्दी",

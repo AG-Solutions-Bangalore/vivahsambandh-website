@@ -1,2 +1,8 @@
-// About module — page + sections will live here (mirrors home module pattern).
-export {}
+export { default as AboutPage } from './pages/AboutPage'
+export { default as AboutHero } from './components/AboutHero'
+export { default as MissionVision } from './components/MissionVision'
+export { default as ValuesBand } from './components/ValuesBand'
+export { default as WhyBuilt } from './components/WhyBuilt'
+export { default as StatsStrip } from './components/StatsStrip'
+export { default as CtaBand } from './components/CtaBand'
+export * from './types'

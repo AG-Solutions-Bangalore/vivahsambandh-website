@@ -79,13 +79,24 @@ if (!i18n.isInitialized) {
 }
 
 /**
- * Changes active language, saves to localStorage, and updates URL path (/ or /hi).
+ * Language-prefixed path preserving whatever page is open
+ * ('/' ↔ '/hi', '/about' ↔ '/hi/about', …). Pure — no side effects,
+ * so both the router flow and the legacy flow can share it.
+ */
+export function targetPathForLanguage(lng: AppLang): string {
+  const pathname = typeof window !== 'undefined' ? window.location.pathname : '/'
+  const withoutLang = pathname.replace(/^\/hi(?=\/|$)/, '') || '/'
+  return lng === 'hi' ? (withoutLang === '/' ? '/hi' : `/hi${withoutLang}`) : withoutLang
+}
+
+/**
+ * Changes active language, saves to localStorage, and updates URL path
+ * (/ ↔ /hi), preserving whatever page is open (/about ↔ /hi/about, …).
  */
 export function setAppLanguage(lng: AppLang) {
   localStorage.setItem(LANG_STORAGE_KEY, lng)
   if (typeof window !== 'undefined') {
-    const isHi = lng === 'hi'
-    const targetPath = isHi ? '/hi' : '/'
+    const targetPath = targetPathForLanguage(lng)
     if (window.location.pathname !== targetPath) {
       window.history.replaceState(null, '', targetPath + window.location.hash)
     }

@@ -1,5 +1,8 @@
 import { useTranslation } from "react-i18next";
+import { Link, useLocation } from "react-router-dom";
 import { COMPANY, getCompanyAddress } from "../constants/company";
+import { getNavItems } from "../constants/navigation";
+import type { AppLang } from "../i18n";
 import { useAppLanguage } from "../i18n/useAppLanguage";
 import Reveal from "./motion/Reveal";
 
@@ -29,16 +32,12 @@ function LotusMark() {
 export default function Footer() {
   const { t } = useTranslation();
   const { lang } = useAppLanguage();
+  const appLang: AppLang = lang === "hi" ? "hi" : "en";
+  const { pathname } = useLocation();
 
-  const quickLinks = [
-    { label: t("header.home"), href: "#" },
-    { label: t("header.about"), href: "#about" },
-    { label: t("header.search"), href: "#search" },
-    { label: t("header.successStories"), href: "#stories" },
-    { label: t("header.membership"), href: "#explore-features" },
-    { label: t("header.faq"), href: "#faq" },
-    { label: t("header.contact"), href: "#contact" },
-  ];
+  // Quick links mirror the header nav (central model) so new routes
+  // appear in both places automatically. <Link> = no page refresh.
+  const quickLinks = getNavItems(t, appLang, pathname);
 
   const support = [
     t("footer.helpCenter"),
@@ -150,10 +149,10 @@ export default function Footer() {
           </p>
           <ul className="mt-3.5 space-y-2 text-xs text-white/75 sm:text-sm">
             {quickLinks.map((link) => (
-              <li key={link.label}>
-                <a href={link.href} title={link.label} className="transition hover:text-gold-300">
+              <li key={link.key}>
+                <Link to={link.href} title={link.label} className="transition hover:text-gold-300">
                   {link.label}
-                </a>
+                </Link>
               </li>
             ))}
           </ul>

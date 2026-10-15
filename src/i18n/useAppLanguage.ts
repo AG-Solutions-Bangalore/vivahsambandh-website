@@ -1,5 +1,12 @@
-import { useSyncExternalStore } from 'react'
-import i18n, { getAppLanguage, setAppLanguage, type AppLang } from './index'
+import { useCallback, useSyncExternalStore } from 'react'
+import { useNavigate } from 'react-router-dom'
+import i18n, {
+  getAppLanguage,
+  setAppLanguage,
+  targetPathForLanguage,
+  LANG_STORAGE_KEY,
+  type AppLang,
+} from './index'
 
 interface LangSnapshot {
   /** Last fully-applied language. */
@@ -35,12 +42,27 @@ let requestSeq = 0
  * Switch language. Safe to spam-click: superseded requests exit silently
  * and only the latest click commits state. Never leaves a stuck pending
  * flag — even if changeLanguage rejects, `finally` reconciles with i18next.
+ *
+ * When a router `navigate` is supplied, the URL change goes through React
+ * Router (no page refresh, no replaceState/router fight); otherwise it
+ * falls back to the legacy replaceState flow.
  */
-export function switchAppLanguage(lng: AppLang): void {
+export function switchAppLanguage(lng: AppLang, navigate?: (to: string) => void): void {
   const mySeq = ++requestSeq
   if (snapshot.lang === lng && snapshot.pending === null) return
   snapshot = { ...snapshot, pending: lng }
   emit()
+  if (navigate) {
+    const hash = typeof window !== 'undefined' ? window.location.hash : ''
+    navigate(targetPathForLanguage(lng) + hash)
+    localStorage.setItem(LANG_STORAGE_KEY, lng)
+    void i18n.changeLanguage(lng).finally(() => {
+      if (mySeq !== requestSeq) return
+      snapshot = { lang: getAppLanguage(), pending: null }
+      emit()
+    })
+    return
+  }
   void setAppLanguage(lng).finally(() => {
     if (mySeq !== requestSeq) return
     snapshot = { lang: getAppLanguage(), pending: null }
@@ -62,8 +84,14 @@ function getSnapshot(): LangSnapshot {
 /**
  * Reactive `{ lang, pending, switchTo }` for switchers and sections.
  * `pending` drives the in-flight pill state (pulse + aria-busy).
+ * Navigation goes through React Router — zero page refresh.
  */
 export function useAppLanguage() {
   const snap = useSyncExternalStore(subscribe, getSnapshot, getSnapshot)
-  return { lang: snap.lang, pending: snap.pending, switchTo: switchAppLanguage }
+  const navigate = useNavigate()
+  const switchTo = useCallback(
+    (lng: AppLang) => switchAppLanguage(lng, (to) => navigate(to, { replace: true })),
+    [navigate],
+  )
+  return { lang: snap.lang, pending: snap.pending, switchTo }
 }

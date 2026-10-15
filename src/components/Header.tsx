@@ -3,6 +3,9 @@ import { useTranslation } from 'react-i18next'
 import { COMPANY } from '../constants/company'
 import LanguageSwitcher from './LanguageSwitcher'
 import { ensureMotion, prefersReducedMotion } from '../lib/gsap-setup'
+import { Link, useLocation } from 'react-router-dom'
+import { getNavItems, homePath } from '../constants/navigation'
+import type { AppLang } from '../i18n'
 import { lockPageScroll, unlockPageScroll } from '../lib/scroll'
 
 function LotusMark() {
@@ -18,9 +21,18 @@ function LotusMark() {
 }
 
 export default function Header() {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const [open, setOpen] = useState(false)
   const headerRef = useRef<HTMLElement | null>(null)
+
+  // Navigation derives from the central model (constants/navigation):
+  // labels via i18n, hrefs lang-prefixed, active state from the route.
+  // <Link> client-navigates (no page refresh); same-page hashes are still
+  // owned by the SmoothScroll interceptor + ScrollManager.
+  const lang: AppLang = i18n.resolvedLanguage === 'hi' || i18n.language === 'hi' ? 'hi' : 'en'
+  const { pathname } = useLocation()
+  const navItems = getNavItems(t, lang, pathname)
+  const brandHref = homePath(lang)
 
   // Entrance + hide-on-scroll-down (auto-show on scroll-up / at top).
   // Motion loads lazily (see lib/gsap-setup): identical behavior, wired
@@ -33,15 +45,27 @@ export default function Header() {
       const header = headerRef.current
       if (cancelled || !header || prefersReducedMotion()) return
 
-      // Entrance: slide down once (transform only — no layout shift).
-      gsap.from(header, {
-        y: -72,
-        autoAlpha: 0,
-        duration: 0.8,
-        ease: 'power3.out',
-        delay: 0.1,
-        overwrite: 'auto',
-      })
+      // Entrance: slide down only on the very first view of the tab
+      // session (transform only — no layout shift). Every navigation is a
+      // full page load that remounts the header, so a session flag is what
+      // keeps the intro from replaying on each page change.
+      let firstView = true
+      try {
+        firstView = sessionStorage.getItem('vivah-header-seen') === null
+        sessionStorage.setItem('vivah-header-seen', '1')
+      } catch {
+        firstView = true
+      }
+      if (firstView) {
+        gsap.from(header, {
+          y: -72,
+          autoAlpha: 0,
+          duration: 0.8,
+          ease: 'power3.out',
+          delay: 0.1,
+          overwrite: 'auto',
+        })
+      }
 
       // Hide on scroll down, reveal on scroll up. Disabled while the
       // mobile drawer is open (tracked via data attribute below).
@@ -100,16 +124,6 @@ export default function Header() {
     unlockPageScroll()
   }
 
-  const navItems = [
-    { label: t('header.home'), href: '#' },
-    { label: t('header.about'), href: '#about' },
-    { label: t('header.search'), href: '#search' },
-    { label: t('header.successStories'), href: '#stories' },
-    { label: t('header.membership'), href: '#explore-features' },
-    { label: t('header.faq'), href: '#all-faq' },
-    { label: t('header.contact'), href: '#contact' },
-  ]
-
   return (
     <header
       ref={headerRef}
@@ -118,7 +132,7 @@ export default function Header() {
     >
       <div className="section-pad flex h-16 items-center justify-between gap-3">
         {/* Brand Logo */}
-        <a href="#" title={COMPANY.name} className="flex items-center gap-2 transition hover:opacity-95">
+        <Link to={brandHref} title={COMPANY.name} className="flex items-center gap-2 transition hover:opacity-95">
           <LotusMark />
           <span className="leading-none">
             <span className="font-display block text-lg font-bold text-navy-900 sm:text-xl">
@@ -128,23 +142,23 @@ export default function Header() {
               {t('meta.tagline')}
             </span>
           </span>
-        </a>
+        </Link>
 
         {/* Desktop Navigation Links */}
         <nav className="hidden items-center gap-5 text-sm font-medium text-navy-900/80 lg:flex" aria-label="Primary">
-          {navItems.map((item, i) => (
-            <a
-              key={item.label}
-              href={item.href}
+          {navItems.map((item) => (
+            <Link
+              key={item.key}
+              to={item.href}
               title={item.label}
               className={`transition hover:text-maroon-600 ${
-                i === 0
+                item.active
                   ? 'font-bold text-maroon-600 underline decoration-gold-500 decoration-2 underline-offset-8'
                   : ''
               }`}
             >
               {item.label}
-            </a>
+            </Link>
           ))}
         </nav>
 
@@ -185,15 +199,15 @@ export default function Header() {
         <nav className="border-t border-gold-500/25 bg-cream-50 px-4 py-3 lg:hidden" aria-label="Mobile">
           <ul className="grid gap-1 text-sm font-medium text-navy-900">
             {navItems.map((item) => (
-              <li key={item.label}>
-                <a
-                  href={item.href}
+              <li key={item.key}>
+                <Link
+                  to={item.href}
                   onClick={closeDrawer}
                   title={item.label}
                   className="block rounded-xl px-3 py-2 transition hover:bg-gold-100 hover:text-maroon-600"
                 >
                   {item.label}
-                </a>
+                </Link>
               </li>
             ))}
           </ul>

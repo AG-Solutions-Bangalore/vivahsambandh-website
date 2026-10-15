@@ -1,4 +1,5 @@
 import { createRoot, hydrateRoot } from "react-dom/client";
+import { BrowserRouter } from "react-router-dom";
 import "./i18n";
 import "./index.css";
 import Root from "./Root.tsx";
@@ -24,9 +25,17 @@ if (firstChild && firstChild.nodeType === Node.COMMENT_NODE) {
   container.removeChild(firstChild);
 }
 
+// Client-side routing (no page refresh): StaticRouter output from the
+// prerender is markup-identical for the same URL, so hydration is safe.
+const tree = (
+  <BrowserRouter>
+    <Root />
+  </BrowserRouter>
+);
+
 if (prerenderedLang === `ssg:${lang}`) {
-  hydrateRoot(container, <Root />);
+  hydrateRoot(container, tree);
 } else {
   container.innerHTML = "";
-  createRoot(container).render(<Root />);
+  createRoot(container).render(tree);
 }

@@ -9,6 +9,7 @@
 
 import type { PrerenderArguments, PrerenderResult } from 'vite-prerender-plugin';
 import { renderToString } from 'react-dom/server';
+import { StaticRouter } from 'react-router';
 import App from '../App';
 import i18n from '../i18n';
 import {
@@ -150,13 +151,20 @@ export async function prerender(args?: PrerenderArguments): Promise<PrerenderRes
   // title/meta/link — including SeoHost here would inline ~25 head tags into
   // <div id="root"> (W3C errors + duplicate description).
   //
+  // NOTE: StaticRouter mirrors BrowserRouter's output for the same URL, so
+  // client hydration matches exactly (no forced re-render).
+  //
   // NOTE: react-dom/server must stay a static import (single React instance
   // for renderToString). vite.config isolates it into its own chunk so the
   // server renderer never ships to the client.
   if (i18n.language !== lang) {
     await i18n.changeLanguage(lang);
   }
-  const markup = renderToString(<App />);
+  const markup = renderToString(
+    <StaticRouter location={url}>
+      <App />
+    </StaticRouter>,
+  );
   // React 19 hoists a preload hint for EVERY SSR image — those compete with
   // the LCP banner for bandwidth. Strip them; the banner keeps its dedicated
   // head preload (with responsive candidates), everything else loads in place.

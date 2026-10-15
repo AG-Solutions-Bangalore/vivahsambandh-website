@@ -1,12 +1,17 @@
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { Link } from 'react-router-dom'
 import { COMPANY } from '../../../constants/company'
+import { pagePath } from '../../../constants/navigation'
+import type { AppLang } from '../../../i18n'
 import Reveal from '../../../components/motion/Reveal'
 import { lockPageScroll, unlockPageScroll } from '../../../lib/scroll'
 
 export default function AboutSection() {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const [isVideoOpen, setIsVideoOpen] = useState(false)
+  const lang: AppLang = i18n.resolvedLanguage === 'hi' || i18n.language === 'hi' ? 'hi' : 'en'
+  const aboutHref = pagePath('/about', lang)
 
   // Modal open → stop Lenis + lock background scroll (restored on close).
   useEffect(() => {
@@ -181,8 +186,8 @@ export default function AboutSection() {
 
             {/* CTA Button */}
             <div className="mt-7 sm:mt-8 flex items-center gap-4">
-              <a
-                href="#about"
+              <Link
+                to={aboutHref}
                 title={t('about.cta')}
                 className="inline-flex items-center justify-center gap-2.5 rounded-full bg-navy-900 px-7 py-3 sm:px-8 sm:py-3.5 text-xs sm:text-sm font-semibold text-white shadow-md transition-all duration-300 hover:bg-navy-800 hover:gap-3 active:scale-[0.98]"
               >
@@ -190,7 +195,7 @@ export default function AboutSection() {
                 <span className="text-gold-400" aria-hidden="true">
                   →
                 </span>
-              </a>
+              </Link>
             </div>
           </Reveal>
         </div>
