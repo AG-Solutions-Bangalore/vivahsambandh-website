@@ -73,7 +73,7 @@ export default function ContactHero() {
         <div className="pointer-events-none relative h-72 sm:h-96 overflow-hidden lg:absolute lg:inset-0 lg:h-auto" aria-hidden="true">
           <img
             src="/images/home/home_banner_image.webp"
-            srcSet="/images/home/home_banner_image-640.webp 640w, /images/home/home_banner_image-1024.webp 1024w, /images/home/home_banner_image.webp 2172w"
+            srcSet="/images/home/home_banner_image-640.webp 640w, /images/home/home_banner_image-1024.webp 1024w, /images/home/home_banner_image-1280.webp 1280w, /images/home/home_banner_image.webp 2172w"
             sizes="100vw"
             width={2172}
             height={724}

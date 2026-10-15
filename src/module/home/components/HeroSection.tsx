@@ -287,11 +287,11 @@ export default function HeroSection() {
       <section data-hero="banner-wrap" className="relative isolate z-10 w-full lg:h-[520px] xl:h-[540px]">
         {/* Top garlands: hang from top */}
         <img
-          src="/images/home/flower1_image-320.webp"
+          src="/images/home/flower1_image-192.webp"
           srcSet="/images/home/flower1_image-192.webp 192w, /images/home/flower1_image-320.webp 320w, /images/home/flower1_image-640.webp 640w"
           sizes="(max-width: 640px) 12vw, (max-width: 768px) 5rem, 8rem"
-          width={320}
-          height={480}
+          width={192}
+          height={288}
           alt="Decorative flower garland"
           title="Decorative flower garland"
           className="pointer-events-none absolute left-0 top-0 z-[5] w-16 sm:w-20 md:w-24 lg:w-28 xl:w-32 max-w-[12vw] h-auto object-contain object-left-top select-none -scale-y-100"
@@ -300,11 +300,11 @@ export default function HeroSection() {
           aria-hidden="true"
         />
         <img
-          src="/images/home/flower2_image-320.webp"
+          src="/images/home/flower2_image-192.webp"
           srcSet="/images/home/flower2_image-192.webp 192w, /images/home/flower2_image-320.webp 320w, /images/home/flower2_image-640.webp 640w"
           sizes="(max-width: 640px) 12vw, (max-width: 768px) 5rem, 8rem"
-          width={320}
-          height={480}
+          width={192}
+          height={288}
           alt="Decorative flower garland"
           title="Decorative flower garland"
           className="pointer-events-none absolute right-0 top-0 z-[5] w-16 sm:w-20 md:w-24 lg:w-28 xl:w-32 max-w-[12vw] h-auto object-contain object-right-top select-none -scale-y-100"
@@ -320,7 +320,7 @@ export default function HeroSection() {
         >
           <img
             src="/images/home/home_banner_image.webp"
-            srcSet="/images/home/home_banner_image-640.webp 640w, /images/home/home_banner_image-1024.webp 1024w, /images/home/home_banner_image.webp 2172w"
+            srcSet="/images/home/home_banner_image-640.webp 640w, /images/home/home_banner_image-1024.webp 1024w, /images/home/home_banner_image-1280.webp 1280w, /images/home/home_banner_image.webp 2172w"
             sizes="100vw"
             width={2172}
             height={724}
