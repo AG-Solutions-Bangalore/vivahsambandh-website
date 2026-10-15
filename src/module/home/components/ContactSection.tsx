@@ -46,7 +46,7 @@ export default function ContactSection() {
     <section id="contact" className="relative overflow-hidden bg-[#FFFBF2] py-16">
       <div className="pointer-events-none absolute inset-x-0 bottom-0">
         <img
-          src="/images/home/Elegant Temple Wedding Banner.webp"
+          src="/images/home/elegant-temple-wedding-banner.webp"
           alt=""
           className="h-auto w-full"
         />

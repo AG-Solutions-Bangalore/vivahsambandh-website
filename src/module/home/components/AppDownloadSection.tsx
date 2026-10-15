@@ -171,7 +171,7 @@ export default function AppDownloadSection() {
           <Reveal variant="scale" delay={0.1} className="flex justify-center lg:col-span-5">
             <div className="relative mx-auto max-w-[440px] drop-shadow-2xl transition-transform duration-700 hover:scale-105 sm:max-w-[520px]">
               <img
-                src="/images/home/VivahSambandhApp_image.webp"
+                src="/images/home/vivahsambandh-app-image.webp"
                 alt={`${COMPANY.name} Mobile App Interface`}
                 className="h-auto w-full object-contain"
                 loading="lazy"

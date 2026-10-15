@@ -69,7 +69,7 @@ const MATCH_CARDS = [
   {
     id: "bride",
     href: "#search-bride",
-    photo: "/images/home/Radiant Indian Bride in Floral Glow.webp",
+    photo: "/images/home/radiant-indian-bride-in-floral-glow.webp",
     illustration: "/images/home/woman_image.webp",
     illustrationAlt: "Bride Illustration",
     labelKey: "matchCards.bride",
@@ -79,7 +79,7 @@ const MATCH_CARDS = [
   {
     id: "groom",
     href: "#search-groom",
-    photo: "/images/home/Radiant Indian Groom in a Golden Wedding Setting.webp",
+    photo: "/images/home/radiant-indian-groom-in-a-golden-wedding-setting.webp",
     illustration: "/images/home/man_image.webp",
     illustrationAlt: "Groom Illustration",
     labelKey: "matchCards.groom",
@@ -422,11 +422,11 @@ export default function HeroSection() {
                 <p className="mt-1 text-xs sm:text-sm font-bold text-navy-950">
                   {t(card.labelKey)}
                 </p>
-                <h3
+                <h2
                   className={`font-display text-2xl sm:text-3xl lg:text-4xl font-bold leading-tight ${card.accentColor}`}
                 >
                   {t(card.accentKey)}
-                </h3>
+                </h2>
               </div>
 
               {/* Right: Circular Navy Arrow Button */}

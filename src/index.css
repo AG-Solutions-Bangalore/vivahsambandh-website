@@ -56,8 +56,11 @@
 
   /* ————— Typography ————— */
   --font-display: "Playfair Display", "Tiro Devanagari Hindi", "Georgia", serif;
-  --font-devanagari: "Tiro Devanagari Hindi", "Playfair Display", "Georgia", serif;
+  --font-devanagari: "Gotu", "Tiro Devanagari Hindi", "Georgia", serif;
   --font-sans: "Mukta", "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  /* Hindi display alternates — loaded for html[lang="hi"] only */
+  --font-gotu: "Gotu", "Tiro Devanagari Hindi", "Georgia", serif;
+  --font-teko: "Teko", "Mukta", system-ui, sans-serif;
 
   /* ————— Shape & elevation ————— */
   --radius-card: 1.25rem;
@@ -124,6 +127,16 @@ html[lang="hi"] body {
 html[lang="hi"] .font-display {
   font-family: var(--font-devanagari);
 }
+/* Hindi locale: Teko for eyebrow labels — condensed, high-impact Devanagari.
+   (Teko runs narrow, so size steps up slightly vs the 11px Mukta labels.) */
+html[lang="hi"] .eyebrow,
+html[lang="hi"] [data-hero="eyebrow"],
+html[lang="hi"] [data-eyebrow] {
+  font-family: var(--font-teko);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+}
 
 ::selection {
   background: var(--color-gold-100);
@@ -175,5 +188,20 @@ html[lang="hi"] .font-display {
   &::-webkit-scrollbar {
     display: none;
   }
+}
+
+/* Success-stories Swiper pagination bullets (moved here from an inline
+   <style> tag — <style> in <body> is a W3C error without @scope). */
+.stories-pagination .swiper-pagination-bullet {
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: rgba(183, 121, 31, 0.35);
+  opacity: 1;
+  transition: all 0.3s ease;
+}
+.stories-pagination .swiper-pagination-bullet-active {
+  width: 22px;
+  background: #9e1b32;
 }
 

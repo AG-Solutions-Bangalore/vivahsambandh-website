@@ -9,9 +9,9 @@ import 'swiper/css'
 import 'swiper/css/pagination'
 
 const STORY_IMAGES = [
-  '/images/home/Radiant Indian Wedding Portrait.webp',
-  '/images/home/Romantic Indian Wedding Portrait.webp',
-  '/images/home/Navy and Gold Wedding Romance.webp',
+  '/images/home/radiant-indian-wedding-portrait.webp',
+  '/images/home/romantic-indian-wedding-portrait.webp',
+  '/images/home/navy-and-gold-wedding-romance.webp',
 ]
 
 export default function SuccessStoriesSection() {
@@ -58,7 +58,7 @@ export default function SuccessStoriesSection() {
           <Reveal variant="left" className="lg:col-span-5 xl:col-span-4">
             <div className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-[0.2em] text-gold-600">
               <span aria-hidden="true" className="text-sm leading-none">✦</span>
-              <span>{t('stories.eyebrow')}</span>
+              <span data-eyebrow>{t('stories.eyebrow')}</span>
             </div>
 
             <h2 className="font-display mt-3 text-4xl font-bold leading-[1.12] text-navy-900 sm:text-5xl lg:text-[44px] xl:text-[52px]">
@@ -133,10 +133,10 @@ export default function SuccessStoriesSection() {
                           &ldquo;{story.quote}&rdquo;
                         </p>
                         <div className="mt-4">
-                          <p className="flex items-center gap-1.5 text-[15px] font-bold text-navy-900">
+                          <h3 className="flex items-center gap-1.5 text-[15px] font-bold text-navy-900">
                             <span aria-hidden="true" className="text-base leading-none text-maroon-500">♥</span>
                             <span>{story.name}</span>
-                          </p>
+                          </h3>
                           <p className="mt-1 pl-[24px] text-xs font-medium text-ink-400">{story.city}</p>
                         </div>
                       </div>
@@ -152,21 +152,6 @@ export default function SuccessStoriesSection() {
         </div>
       </div>
 
-      {/* Swiper pagination bullet theme */}
-      <style>{`
-        .stories-pagination .swiper-pagination-bullet {
-          width: 7px;
-          height: 7px;
-          border-radius: 999px;
-          background: rgba(183, 121, 31, 0.35);
-          opacity: 1;
-          transition: all 0.3s ease;
-        }
-        .stories-pagination .swiper-pagination-bullet-active {
-          width: 22px;
-          background: #9e1b32;
-        }
-      `}</style>
     </section>
   )
 }

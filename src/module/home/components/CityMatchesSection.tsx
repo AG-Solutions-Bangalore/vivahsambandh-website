@@ -34,7 +34,7 @@ export default function CityMatchesSection() {
               <span className="text-gold-600 text-sm font-bold" aria-hidden="true">
                 ☸
               </span>
-              <span className="text-[11px] sm:text-xs font-bold tracking-[0.2em] uppercase text-gold-700">
+              <span data-eyebrow className="text-[11px] sm:text-xs font-bold tracking-[0.2em] uppercase text-gold-700">
                 {t('cities.eyebrow')}
               </span>
             </div>

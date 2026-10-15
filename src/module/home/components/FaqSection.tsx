@@ -26,7 +26,7 @@ export default function FaqSection() {
       {/* Background Architectural Temple Arch Artwork — soft, visible, text stays readable */}
       <div className="pointer-events-none absolute inset-0 opacity-[0.16]">
         <img
-          src="/images/home/Elegant Temple Wedding Banner.webp"
+          src="/images/home/elegant-temple-wedding-banner.webp"
           alt=""
           className="h-full w-full object-cover object-bottom"
         />

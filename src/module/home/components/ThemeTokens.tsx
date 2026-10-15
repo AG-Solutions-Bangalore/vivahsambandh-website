@@ -25,7 +25,8 @@ export default function ThemeTokens() {
       </div>
       <p className="mt-4 max-w-2xl text-sm text-ink-500">
         Fonts: <span className="font-display font-bold">Playfair Display</span> (EN display) ·{' '}
-        <span style={{ fontFamily: 'var(--font-devanagari)' }}>Tiro Devanagari Hindi</span> (HI display) ·{' '}
+        <span style={{ fontFamily: 'var(--font-gotu)' }}>Gotu</span> (HI display) ·{' '}
+        <span style={{ fontFamily: 'var(--font-teko)' }}>Teko</span> (HI eyebrows) ·{' '}
         <span className="font-semibold">Mukta</span> (body, Devanagari-safe). Toggle EN / हिन्दी in the header —
         every string renders from <code>src/i18n/locales/*.json</code> via react-i18next.
       </p>

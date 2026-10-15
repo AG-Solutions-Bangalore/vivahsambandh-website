@@ -82,22 +82,22 @@ export default function AboutSection() {
                 {/* 4 Overlapping Avatar Bubbles */}
                 <div className="flex -space-x-2 overflow-hidden">
                   <img
-                    src="/images/home/Radiant Indian Bride in Floral Glow.webp"
+                    src="/images/home/radiant-indian-bride-in-floral-glow.webp"
                     alt="Member"
                     className="inline-block h-7 w-7 sm:h-8 sm:w-8 rounded-full border-2 border-white object-cover object-top"
                   />
                   <img
-                    src="/images/home/Radiant Indian Groom in a Golden Wedding Setting.webp"
+                    src="/images/home/radiant-indian-groom-in-a-golden-wedding-setting.webp"
                     alt="Member"
                     className="inline-block h-7 w-7 sm:h-8 sm:w-8 rounded-full border-2 border-white object-cover object-top"
                   />
                   <img
-                    src="/images/home/Radiant Indian Wedding Portrait.webp"
+                    src="/images/home/radiant-indian-wedding-portrait.webp"
                     alt="Member"
                     className="inline-block h-7 w-7 sm:h-8 sm:w-8 rounded-full border-2 border-white object-cover"
                   />
                   <img
-                    src="/images/home/Romantic Indian Wedding Portrait.webp"
+                    src="/images/home/romantic-indian-wedding-portrait.webp"
                     alt="Member"
                     className="inline-block h-7 w-7 sm:h-8 sm:w-8 rounded-full border-2 border-white object-cover"
                   />
@@ -124,7 +124,7 @@ export default function AboutSection() {
               <span className="text-gold-600 text-sm font-bold" aria-hidden="true">
                 ☸
               </span>
-              <span className="text-[11px] sm:text-xs font-bold tracking-[0.2em] uppercase text-gold-600">
+              <span data-eyebrow className="text-[11px] sm:text-xs font-bold tracking-[0.2em] uppercase text-gold-600">
                 {t('about.eyebrow')}
               </span>
               <div className="inline-flex items-center gap-1 text-gold-500/80" aria-hidden="true">

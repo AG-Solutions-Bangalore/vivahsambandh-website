@@ -101,7 +101,7 @@ export default function WhyChooseSection() {
               <span className="text-gold-400 text-sm font-bold" aria-hidden="true">
                 ✳
               </span>
-              <span className="text-[11px] sm:text-xs font-bold tracking-[0.2em] uppercase text-gold-400">
+              <span data-eyebrow className="text-[11px] sm:text-xs font-bold tracking-[0.2em] uppercase text-gold-400">
                 {t('why.eyebrow')}
               </span>
             </div>
