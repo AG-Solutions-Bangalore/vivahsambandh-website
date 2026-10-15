@@ -70,7 +70,7 @@ const MATCH_CARDS = [
     id: "bride",
     href: "#search-bride",
     photo: "/images/home/Radiant Indian Bride in Floral Glow.webp",
-    illustration: "/images/home/woman_image.png",
+    illustration: "/images/home/woman_image.webp",
     illustrationAlt: "Bride Illustration",
     labelKey: "matchCards.bride",
     accentKey: "matchCards.brideAccent",
@@ -80,7 +80,7 @@ const MATCH_CARDS = [
     id: "groom",
     href: "#search-groom",
     photo: "/images/home/Radiant Indian Groom in a Golden Wedding Setting.webp",
-    illustration: "/images/home/man_image.png",
+    illustration: "/images/home/man_image.webp",
     illustrationAlt: "Groom Illustration",
     labelKey: "matchCards.groom",
     accentKey: "matchCards.groomAccent",
@@ -228,7 +228,7 @@ export default function HeroSection() {
       {/* Small + in front                                                */}
       {/* ============================================================== */}
       <img
-        src="/images/home/flower1_image.png"
+        src="/images/home/flower1_image.webp"
         alt=""
         data-hero="flower-l"
         className="pointer-events-none absolute left-0 bottom-0 z-20 w-32 sm:w-40 md:w-48 lg:w-56 xl:w-64 max-w-[22vw] h-auto object-contain object-left-bottom select-none"
@@ -236,7 +236,7 @@ export default function HeroSection() {
         aria-hidden="true"
       />
       <img
-        src="/images/home/flower2_image.png"
+        src="/images/home/flower2_image.webp"
         alt=""
         data-hero="flower-r"
         className="pointer-events-none absolute right-0 bottom-0 z-20 w-32 sm:w-44 md:w-52 lg:w-60 xl:w-72 max-w-[26vw] h-auto object-contain object-right-top select-none"
@@ -250,14 +250,14 @@ export default function HeroSection() {
       <section data-hero="banner-wrap" className="relative isolate z-10 w-full h-[470px] sm:h-[490px] lg:h-[520px] xl:h-[540px]">
         {/* Top garlands: hang from top */}
         <img
-          src="/images/home/flower1_image.png"
+          src="/images/home/flower1_image.webp"
           alt=""
           className="pointer-events-none absolute left-0 top-0 z-[5] w-16 sm:w-20 md:w-24 lg:w-28 xl:w-32 max-w-[12vw] h-auto object-contain object-left-top select-none -scale-y-100"
           loading="eager"
           aria-hidden="true"
         />
         <img
-          src="/images/home/flower2_image.png"
+          src="/images/home/flower2_image.webp"
           alt=""
           className="pointer-events-none absolute right-0 top-0 z-[5] w-16 sm:w-20 md:w-24 lg:w-28 xl:w-32 max-w-[12vw] h-auto object-contain object-right-top select-none -scale-y-100"
           loading="eager"
@@ -269,7 +269,7 @@ export default function HeroSection() {
           aria-hidden="true"
         >
           <img
-            src="/images/home/home_banner_image.png"
+            src="/images/home/home_banner_image.webp"
             alt=""
             data-hero="banner"
             className="h-full w-full object-cover object-[78%_center] sm:object-[76%_center] lg:object-[82%_center] xl:object-right will-change-transform"
@@ -449,7 +449,7 @@ export default function HeroSection() {
               {/* Decorative floral spray on bottom-right corner (enlarged & visible) */}
               <div className="pointer-events-none absolute -right-16 -bottom-3  sm:-bottom-4 h-32 w-28 sm:h-44 sm:w-36 md:h-52 md:w-44 lg:h-60 lg:w-52 opacity-95 select-none hidden sm:block">
                 <img
-                  src="/images/home/flower1_image.png"
+                  src="/images/home/flower1_image.webp"
                   alt=""
                   className="h-full w-full object-contain object-right-bottom -scale-x-100 rotate-6"
                 />

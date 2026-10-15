@@ -126,7 +126,7 @@ export default function AppDownloadSection() {
                 className="inline-flex items-center gap-3 rounded-xl border border-navy-900 bg-navy-900 px-4 py-2.5 text-white shadow-md transition hover:bg-navy-800"
               >
                 <img
-                  src="/images/common/google-play-store.png"
+                  src="/images/common/google-play-store.webp"
                   alt=""
                   aria-hidden="true"
                   className="h-6 w-6 object-contain"
@@ -149,7 +149,7 @@ export default function AppDownloadSection() {
                 className="inline-flex items-center gap-3 rounded-xl border border-navy-900 bg-navy-900 px-4 py-2.5 text-white shadow-md transition hover:bg-navy-800"
               >
                 <img
-                  src="/images/common/app-store.png"
+                  src="/images/common/app-store.webp"
                   alt=""
                   aria-hidden="true"
                   className="h-6 w-6 object-contain"

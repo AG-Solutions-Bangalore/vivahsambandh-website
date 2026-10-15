@@ -77,14 +77,14 @@ export default function WhyChooseSection() {
       {/* Ornate Corner Filigree on Left & Right Edges                */}
       {/* ============================================================== */}
       <img
-        src="/images/home/Ornate_Corner_Filigree_image.png"
+        src="/images/home/Ornate_Corner_Filigree_image.webp"
         alt=""
         aria-hidden="true"
         className="pointer-events-none absolute inset-y-0 -left-4 scale-105 opacity-65 z-0 h-full w-auto select-none"
       />
 
       <img
-        src="/images/home/Ornate_Corner_Filigree_image.png"
+        src="/images/home/Ornate_Corner_Filigree_image.webp"
         alt=""
         aria-hidden="true"
         className="pointer-events-none absolute inset-y-0 -right-4 scale-105 opacity-65 z-0 h-full w-auto rotate-180 select-none"

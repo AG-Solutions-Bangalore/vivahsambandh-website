@@ -56,7 +56,7 @@ export default function Footer() {
         className="pointer-events-none absolute inset-0 z-0 select-none"
       >
         <img
-          src="/images/common/Temple_Skyline_Divider_footer_image.png"
+          src="/images/common/Temple_Skyline_Divider_footer_image.webp"
           alt=""
           className="absolute opacity-25 inset-x-0 bottom-6 h-auto w-full"
           loading="lazy"

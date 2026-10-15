@@ -28,14 +28,14 @@ export default function AboutSection() {
       {/* Decorative Floral Vines: small, behind content, edge-anchored   */}
       {/* ============================================================== */}
       <img
-        src="/images/home/flower3_image.png"
+        src="/images/home/flower3_image.webp"
         alt=""
         className="pointer-events-none absolute left-0 bottom-0 z-0 w-24 sm:w-28 md:w-36 lg:w-44 xl:w-52 max-w-[16vw] h-auto object-contain object-left-bottom select-none opacity-95"
         loading="lazy"
         aria-hidden="true"
       />
       <img
-        src="/images/home/flower4_image.png"
+        src="/images/home/flower4_image.webp"
         alt=""
         className="pointer-events-none absolute right-0 bottom-0 z-0 w-24 sm:w-28 md:w-36 lg:w-44 xl:w-52 max-w-[16vw] h-auto object-contain object-right-bottom select-none opacity-95"
         loading="lazy"
@@ -55,7 +55,7 @@ export default function AboutSection() {
               {/* Ornate Mandap Arch PNG */}
               <div className="relative overflow-visible">
                 <img
-                  src="/images/home/Mandap_image.png"
+                  src="/images/home/Mandap_image.webp"
                   alt={`${COMPANY.name} Wedding Mandap`}
                   className="w-full h-auto object-contain drop-shadow-sm select-none transition-transform duration-500 hover:scale-[1.01]"
                   loading="lazy"
