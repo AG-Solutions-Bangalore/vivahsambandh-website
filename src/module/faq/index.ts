@@ -1,3 +1,5 @@
+export { default as FaqSection } from './components/FaqSection'
+export type { FaqSectionProps } from './components/FaqSection'
 export * from './api/faq.api'
 export * from './hook/useFaq'
 export * from './types'

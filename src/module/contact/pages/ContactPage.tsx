@@ -5,10 +5,12 @@ import OfficeVisit from '../components/OfficeVisit'
 import QuickAnswers from '../components/QuickAnswers'
 import ContactCta from '../components/ContactCta'
 import PageParallax from '../../../components/motion/PageParallax'
+import { TestimonialSection } from '../../testimonial'
+import { FaqSection } from '../../faq'
 
 /**
  * Contact Us page — hero → channel cards → form + office/answers →
- * closing CTA, per design.
+ * testimonials → FAQs → closing CTA.
  */
 export default function ContactPage() {
   return (
@@ -34,6 +36,8 @@ export default function ContactPage() {
           </div>
         </div>
       </section>
+      <TestimonialSection slug="contact" tone="paper" />
+      <FaqSection slug="contact" tone="cream" />
       <ContactCta />
     </div>
   )

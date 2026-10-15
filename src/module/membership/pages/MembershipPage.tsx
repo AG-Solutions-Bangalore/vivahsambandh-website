@@ -2,9 +2,10 @@ import MembershipHero from '../components/MembershipHero'
 import MembershipPlans from '../components/MembershipPlans'
 import FeatureComparison from '../components/FeatureComparison'
 import MembershipBenefits from '../components/MembershipBenefits'
-import MembershipFaq from '../components/MembershipFaq'
 import MembershipCta from '../components/MembershipCta'
 import PageParallax from '../../../components/motion/PageParallax'
+import { TestimonialSection } from '../../testimonial'
+import { FaqSection } from '../../faq'
 
 export default function MembershipPage() {
   return (
@@ -14,7 +15,8 @@ export default function MembershipPage() {
       <MembershipPlans />
       <FeatureComparison />
       <MembershipBenefits />
-      <MembershipFaq />
+      <TestimonialSection slug="membership" tone="paper" />
+      <FaqSection slug="membership" tone="cream" showCta={false} />
       <MembershipCta />
     </div>
   )
