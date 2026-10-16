@@ -163,7 +163,7 @@ export default function BlogSection({
             <span className="text-gold-500">✦</span>
             <span>{eyebrow || t(`blogs.${variant}.eyebrow`, defaults.eyebrow)}</span>
           </div>
-          <h2 className="font-display mt-4 text-3xl font-bold sm:text-4xl lg:text-5xl">
+          <h2 className="font-display mt-4 text-3xl font-bold sm:text-4xl lg:whitespace-nowrap lg:text-5xl">
             <span className={tone === 'navy' ? 'text-white' : 'text-navy-900'}>
               {titleA || t(`blogs.${variant}.titleA`, defaults.titleA)}{' '}
             </span>

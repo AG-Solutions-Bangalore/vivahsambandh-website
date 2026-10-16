@@ -199,6 +199,20 @@
       }
     ]
   },
+  "blogs": {
+    "featured": {
+      "eyebrow": "Featured insights",
+      "titleA": "Featured",
+      "titleB": "Stories & Guidance.",
+      "subtitle": "Handpicked reads on relationships, weddings and family values."
+    },
+    "front": {
+      "eyebrow": "From our blog",
+      "titleA": "Latest",
+      "titleB": "Updates & Stories.",
+      "subtitle": "Fresh articles, tips and community updates from VivahSambandh."
+    }
+  },
   "contact": {
     "eyebrow": "Get in touch",
     "title": "Contact Us",

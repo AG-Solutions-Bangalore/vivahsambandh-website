@@ -64,11 +64,12 @@
   --color-border: var(--color-cream-300);
 
   /* ————— Typography ————— */
-  --font-display: "Playfair Display", "Tiro Devanagari Hindi", "Georgia", serif;
-  --font-devanagari: "Gotu", "Tiro Devanagari Hindi", "Georgia", serif;
+  /* Single display font for both locales: Gotu (Devanagari + Latin). */
+  --font-display: "Gotu", "Georgia", serif;
+  --font-devanagari: "Gotu", "Georgia", serif;
   --font-sans: "Mukta", "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
   /* Hindi display alternates — loaded for html[lang="hi"] only */
-  --font-gotu: "Gotu", "Tiro Devanagari Hindi", "Georgia", serif;
+  --font-gotu: "Gotu", "Georgia", serif;
   --font-teko: "Teko", "Mukta", system-ui, sans-serif;
 
   /* ————— Shape & elevation ————— */
@@ -131,14 +132,11 @@ body {
 
 /* Hindi locale gets Devanagari-first stacks for correct matra rendering */
 html[lang="hi"] body {
-  font-family: "Mukta", "Tiro Devanagari Hindi", system-ui, sans-serif;
+  font-family: "Mukta", system-ui, sans-serif;
 }
-html[lang="hi"] .font-display {
-  font-family: var(--font-devanagari);
-}
-/* Hindi locale: headline line-masks need headroom above for tall Devanagari
-   matras (e.g. परंपरा, जुड़ें) — otherwise overflow-hidden slices glyph tops.
-   Negative margin cancels the padding so layout is unchanged. */
+/* Headline line-masks need headroom above for tall Devanagari
+   matras in Hindi (e.g. परंपरा, जुड़ें) — otherwise overflow-hidden slices
+   glyph tops. Negative margin cancels the padding so layout is unchanged. */
 html[lang="hi"] [data-hero-mask] {
   padding-top: 0.2em;
   margin-top: -0.2em;
