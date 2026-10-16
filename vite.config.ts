@@ -177,6 +177,8 @@ export default defineConfig({
         '/hi/membership',
         '/contact',
         '/hi/contact',
+        '/blogs',
+        '/hi/blogs',
       ],
     }),
     compression({ algorithm: 'gzip', threshold: 1024 }),

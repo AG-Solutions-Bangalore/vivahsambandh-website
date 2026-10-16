@@ -11,6 +11,7 @@
     "search": "Search",
     "successStories": "Success Stories",
     "membership": "Membership",
+    "blogs": "Blogs",
     "faq": "FAQ",
     "contact": "Contact Us",
     "login": "Login",
@@ -212,6 +213,24 @@
       "titleB": "Updates & Stories.",
       "subtitle": "Fresh articles, tips and community updates from VivahSambandh."
     }
+  },
+  "blogsPage": {
+    "eyebrow": "Our blog",
+    "titleA": "All",
+    "titleB": "Stories & Articles.",
+    "subtitle": "Browse every article, guide and community update from VivahSambandh.",
+    "retry": "Try again",
+    "loadErrorTitle": "Could not load blogs",
+    "loadErrorDesc": "Something went wrong while fetching articles. Please try again.",
+    "emptyTitle": "No articles yet",
+    "emptyDesc": "New stories are on the way — please check back soon.",
+    "backToBlogs": "All blogs",
+    "notFoundTitle": "Article not found",
+    "notFoundDesc": "This article may have been moved or removed.",
+    "byAuthor": "By",
+    "prevArticle": "Previous",
+    "nextArticle": "Next",
+    "relatedTitle": "Related reads"
   },
   "contact": {
     "eyebrow": "Get in touch",

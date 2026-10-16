@@ -5,7 +5,9 @@ import {
   getFeaturedBlogs,
   getFrontBlogs,
 } from '../api/blog.api'
-import type { BlogListResponse, SingleBlogResponse } from '../types'
+import { pagePath } from '../../../constants/navigation'
+import type { AppLang } from '../../../i18n'
+import type { BlogItem, BlogListResponse, SingleBlogResponse } from '../types'
 
 export const blogKeys = {
   all: ['blogs'] as const,
@@ -54,6 +56,14 @@ export function useBlogBySlugQuery(
     enabled: Boolean(slug && slug.trim()),
     ...options,
   })
+}
+
+/**
+ * Detail-page path for a blog post, language-aware (`/blogs/:slug`).
+ */
+export function blogDetailPath(item: Pick<BlogItem, 'blog_slug' | 'id'>, lang: AppLang): string {
+  const slug = item.blog_slug?.trim() || String(item.id)
+  return pagePath(`/blogs/${encodeURIComponent(slug)}`, lang)
 }
 
 /**

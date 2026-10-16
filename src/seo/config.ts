@@ -108,7 +108,7 @@ export const SUPPORTED_LANGS: readonly SupportedLang[] = ['en', 'hi'] as const;
 export const SUPPORTED_SSG_ROUTES = ['/', '/hi'] as const;
 
 /** Standalone pages that carry their own SEO metadata. */
-export type PageKey = 'home' | 'about' | 'stories' | 'membership' | 'contact';
+export type PageKey = 'home' | 'about' | 'stories' | 'membership' | 'contact' | 'blogs';
 
 /**
  * Per-page SEO metadata (both languages). Home entries intentionally mirror
@@ -165,6 +165,16 @@ export const PAGE_SEO: Record<PageKey, { titles: Record<SupportedLang, string>; 
       hi: 'कोई प्रश्न है या सहायता चाहिए? फोन, ईमेल द्वारा विवाहसंबंध टीम से संपर्क करें या हमारे कार्यालय पधारें — हम 24 घंटों के भीतर उत्तर देते हैं।',
     },
   },
+  blogs: {
+    titles: {
+      en: 'Blogs — VivahSambandh | Relationship Guides & Community Stories',
+      hi: 'ब्लॉग — विवाहसंबंध | रिश्तों की जानकारियां और सामुदायिक कहानियां',
+    },
+    descriptions: {
+      en: 'Browse every VivahSambandh article — relationship guidance, wedding tips and Agarwal community updates.',
+      hi: 'विवाहसंबंध के सभी लेख देखें — रिश्तों का मार्गदर्शन, शादी के टिप्स और अग्रवाल सामुदायिक अपडेट।',
+    },
+  },
 };
 
 /**
@@ -178,6 +188,7 @@ export function resolvePageKey(pathname = '/'): PageKey {
   if (withoutLang === '/stories' || withoutLang === '/success-stories') return 'stories';
   if (withoutLang === '/membership') return 'membership';
   if (withoutLang === '/contact') return 'contact';
+  if (withoutLang === '/blogs' || withoutLang.startsWith('/blogs/')) return 'blogs';
   return 'home';
 }
 

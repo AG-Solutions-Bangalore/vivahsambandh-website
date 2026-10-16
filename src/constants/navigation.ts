@@ -31,6 +31,7 @@ export const NAV_ENTRIES: readonly NavEntry[] = [
   { key: 'about', i18nKey: 'header.about', kind: 'page', page: '/about' },
   { key: 'stories', i18nKey: 'header.successStories', kind: 'page', page: '/stories' },
   { key: 'membership', i18nKey: 'header.membership', kind: 'page', page: '/membership' },
+  { key: 'blogs', i18nKey: 'header.blogs', kind: 'page', page: '/blogs' },
   { key: 'contact', i18nKey: 'header.contact', kind: 'page', page: '/contact' },
 ]
 

@@ -174,12 +174,7 @@ export default function HeroSection() {
           },
           0.5,
         )
-        .fromTo(
-          '[data-hero="badge-side"]',
-          { opacity: 0, x: 20 },
-          { opacity: 1, x: 0, duration: 0.6, clearProps: "all" },
-          0.35,
-        );
+
 
       // ——— Banner parallax (scrub, desktop only — mobile keeps static image) ———
       mm = gsap.matchMedia();
@@ -284,7 +279,7 @@ export default function HeroSection() {
       {/* ============================================================== */}
       {/* 1. HERO BANNER: Full-width, proportionally sized to 2172x724   */}
       {/* ============================================================== */}
-      <section data-hero="banner-wrap" className="relative isolate z-10 w-full lg:h-[520px] xl:h-[540px]">
+      <section data-hero="banner-wrap" className="relative isolate z-10 w-full lg:h-[440px] xl:h-[470px]">
         {/* Top garlands: hang from top */}
         <img
           src="/images/home/flower1_image-192.webp"
@@ -345,10 +340,10 @@ export default function HeroSection() {
         />
 
         {/* Content Container (Aligned exactly with design) */}
-        <div className="section-pad relative z-10 -mt-10 pt-4 pb-8 sm:-mt-12 lg:mt-0 lg:flex lg:h-full lg:items-center lg:py-0">
+        <div className="section-pad relative z-10 -mt-10 pt-4 pb-5 sm:-mt-12 lg:mt-0 lg:flex lg:h-full lg:items-center lg:py-0">
           <div className="grid w-full items-center lg:grid-cols-12">
             {/* Left Content Column */}
-            <div className="lg:col-span-7 xl:col-span-6 py-4">
+            <div className="lg:col-span-7 xl:col-span-6 py-2">
               {/* Eyebrow */}
               <div data-hero="eyebrow" className="inline-flex items-center gap-2 text-[10px] sm:text-[11px] font-bold tracking-[0.22em] uppercase text-gold-700">
                 <span className="text-gold-600 text-xs sm:text-sm font-black">
@@ -359,7 +354,7 @@ export default function HeroSection() {
               </div>
 
               {/* Headline (line masks for the mask-reveal intro) */}
-              <h1 data-hero="title" className="font-display mt-3 text-3xl sm:text-4xl lg:text-[44px] xl:text-[50px] font-bold leading-[1.12]">
+              <h1 data-hero="title" className="font-display mt-2 text-3xl sm:text-4xl lg:text-[44px] xl:text-[50px] font-bold leading-[1.12]">
                 <span data-hero-mask className="block overflow-hidden pb-[0.12em] -mb-[0.12em]">
                   <span data-hero-line className="block text-navy-900 will-change-transform">{t("hero.titleA")}</span>
                 </span>
@@ -371,12 +366,12 @@ export default function HeroSection() {
               </h1>
 
               {/* Subtitle */}
-              <p data-hero="subtitle" className="mt-3.5 max-w-md text-xs sm:text-sm leading-relaxed text-ink-600 font-medium">
+              <p data-hero="subtitle" className="mt-2 max-w-md text-xs sm:text-sm leading-relaxed text-ink-600 font-medium">
                 {t("hero.subtitle")}
               </p>
 
               {/* Buttons: stacked full-width on phones, side-by-side from sm up */}
-              <div data-hero="cta" className="mt-6 sm:mt-7 flex flex-col items-stretch gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:gap-4 relative z-20">
+              <div data-hero="cta" className="mt-4 sm:mt-5 flex flex-col items-stretch gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:gap-4 relative z-20">
                 <a
                   href="#register"
                   title={t("hero.createProfile")}
@@ -416,7 +411,7 @@ export default function HeroSection() {
               </div>
 
               {/* Trust Badges: Clean single horizontal row with distinct icons */}
-              <div data-hero="badges" className="mt-6 pt-2">
+              <div data-hero="badges" className="mt-4">
                 <ul className="flex flex-wrap items-center gap-x-4 sm:gap-x-5 gap-y-2 text-[11px] sm:text-xs font-semibold text-navy-900">
                   {TRUST_BADGES.map((b) => (
                     <li
@@ -437,21 +432,7 @@ export default function HeroSection() {
             <div
               className="hidden lg:col-span-5 xl:col-span-6 lg:block h-full relative"
               aria-hidden="true"
-            >
-              {/* "Same Values Brighter Futures ♥" badge next to bride (from design reference) */}
-              <div data-hero="badge-side" className="absolute right-12 xl:right-16 top-1/2 -translate-y-1/2 text-center pointer-events-none select-none z-10">
-                <p className="font-serif italic text-lg sm:text-xl xl:text-2xl font-bold leading-tight text-maroon-600 drop-shadow-xs">
-                  Same
-                  <br />
-                  Values
-                  <br />
-                  Brighter
-                  <br />
-                  Futures
-                </p>
-                <p className="mt-1 text-maroon-600 text-base xl:text-lg">♥</p>
-              </div>
-            </div>
+            />
           </div>
         </div>
       </section>
@@ -459,7 +440,7 @@ export default function HeroSection() {
       {/* ============================================================== */}
       {/* 2. QUICK MATCH CARDS: Positioned cleanly below the hero banner */}
       {/* ============================================================== */}
-      <section className="section-pad pt-6 pb-4 sm:pt-8 sm:pb-6 lg:pt-10 lg:pb-8 relative z-10">
+      <section className="section-pad pt-4 pb-3 sm:pt-5 sm:pb-4 lg:pt-6 lg:pb-6 relative z-10">
         <div data-hero="cards" className="grid gap-6 sm:grid-cols-2 lg:gap-8 w-full max-w-7xl mx-auto">
           {MATCH_CARDS.map((card) => (
             <a

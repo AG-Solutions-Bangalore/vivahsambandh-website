@@ -11,6 +11,7 @@ import HomePage from './module/home/pages/HomePage'
 import AboutPage from './module/about/pages/AboutPage'
 import StoriesPage from './module/stories/pages/StoriesPage'
 import MembershipPage from './module/membership/pages/MembershipPage'
+import { BlogsPage, BlogDetailPage } from './module/blog'
 import ContactPage from './module/contact/pages/ContactPage'
 import { QueryProvider } from './lib/api/queryClient'
 import type { AppLang } from './i18n'
@@ -102,6 +103,10 @@ export default function App() {
               <Route path="/hi/membership" element={<MembershipPage />} />
               <Route path="/contact" element={<ContactPage />} />
               <Route path="/hi/contact" element={<ContactPage />} />
+              <Route path="/blogs" element={<BlogsPage />} />
+              <Route path="/hi/blogs" element={<BlogsPage />} />
+              <Route path="/blogs/:slug" element={<BlogDetailPage />} />
+              <Route path="/hi/blogs/:slug" element={<BlogDetailPage />} />
               {/* Unknown paths fall back home (client-side; hosts serving
                   static files may still 404 direct hits — see README). */}
               <Route path="*" element={<HomePage />} />
