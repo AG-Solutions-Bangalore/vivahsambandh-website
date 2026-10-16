@@ -2,6 +2,7 @@ import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 import { pagePath } from '../../../constants/navigation'
 import type { AppLang } from '../../../i18n'
+import { img, imgSrcSet } from '../../../lib/image'
 
 export default function MembershipHero() {
   const { t, i18n } = useTranslation()
@@ -11,8 +12,8 @@ export default function MembershipHero() {
     <div className="relative isolate bg-cream-50">
       {/* Side cascading garlands */}
       <img
-        src="/images/home/flower1_image.webp"
-        srcSet="/images/home/flower1_image-192.webp 192w, /images/home/flower1_image-320.webp 320w, /images/home/flower1_image-640.webp 640w, /images/home/flower1_image.webp 1024w"
+        src={img('/images/home/flower1_image.webp')}
+        srcSet={imgSrcSet('/images/home/flower1_image-192.webp 192w, /images/home/flower1_image-320.webp 320w, /images/home/flower1_image-640.webp 640w, /images/home/flower1_image.webp 1024w')}
         sizes="(max-width: 640px) 22vw, (max-width: 768px) 10rem, (max-width: 1024px) 12rem, (max-width: 1280px) 14rem, 16rem"
         width={1024}
         height={1536}
@@ -26,8 +27,8 @@ export default function MembershipHero() {
         aria-hidden="true"
       />
       <img
-        src="/images/home/flower2_image.webp"
-        srcSet="/images/home/flower2_image-192.webp 192w, /images/home/flower2_image-320.webp 320w, /images/home/flower2_image-640.webp 640w, /images/home/flower2_image.webp 1024w"
+        src={img('/images/home/flower2_image.webp')}
+        srcSet={imgSrcSet('/images/home/flower2_image-192.webp 192w, /images/home/flower2_image-320.webp 320w, /images/home/flower2_image-640.webp 640w, /images/home/flower2_image.webp 1024w')}
         sizes="(max-width: 640px) 26vw, (max-width: 768px) 11rem, (max-width: 1024px) 13rem, (max-width: 1280px) 15rem, 18rem"
         width={1024}
         height={1536}
@@ -44,8 +45,8 @@ export default function MembershipHero() {
       <section data-hero="banner-wrap" className="relative isolate z-10 w-full lg:h-[520px] xl:h-[560px]">
         {/* Top hanging garlands */}
         <img
-          src="/images/home/flower1_image-192.webp"
-          srcSet="/images/home/flower1_image-192.webp 192w, /images/home/flower1_image-320.webp 320w, /images/home/flower1_image-640.webp 640w"
+          src={img('/images/home/flower1_image-192.webp')}
+          srcSet={imgSrcSet('/images/home/flower1_image-192.webp 192w, /images/home/flower1_image-320.webp 320w, /images/home/flower1_image-640.webp 640w')}
           sizes="(max-width: 640px) 12vw, (max-width: 768px) 5rem, 8rem"
           width={192}
           height={288}
@@ -57,8 +58,8 @@ export default function MembershipHero() {
           aria-hidden="true"
         />
         <img
-          src="/images/home/flower2_image-192.webp"
-          srcSet="/images/home/flower2_image-192.webp 192w, /images/home/flower2_image-320.webp 320w, /images/home/flower2_image-640.webp 640w"
+          src={img('/images/home/flower2_image-192.webp')}
+          srcSet={imgSrcSet('/images/home/flower2_image-192.webp 192w, /images/home/flower2_image-320.webp 320w, /images/home/flower2_image-640.webp 640w')}
           sizes="(max-width: 640px) 12vw, (max-width: 768px) 5rem, 8rem"
           width={192}
           height={288}
@@ -73,8 +74,8 @@ export default function MembershipHero() {
         {/* Hero Background banner */}
         <div className="pointer-events-none relative h-64 sm:h-80 overflow-hidden lg:absolute lg:inset-0 lg:h-auto" aria-hidden="true">
           <img
-            src="/images/home/home_banner_image.webp"
-            srcSet="/images/home/home_banner_image-640.webp 640w, /images/home/home_banner_image-1024.webp 1024w, /images/home/home_banner_image-1280.webp 1280w, /images/home/home_banner_image.webp 2172w"
+            src={img('/images/home/home_banner_image.webp')}
+            srcSet={imgSrcSet('/images/home/home_banner_image-640.webp 640w, /images/home/home_banner_image-1024.webp 1024w, /images/home/home_banner_image-1280.webp 1280w, /images/home/home_banner_image.webp 2172w')}
             sizes="100vw"
             width={2172}
             height={724}

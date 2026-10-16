@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { homePath } from '../../../constants/navigation'
 import type { AppLang } from '../../../i18n'
 import Reveal from '../../../components/motion/Reveal'
+import { img, imgSrcSet } from '../../../lib/image'
 
 /**
  * Closing CTA — "Your Story Begins Here" over a faint temple backdrop,
@@ -17,8 +18,8 @@ export default function CtaBand() {
     <section className="relative isolate overflow-hidden bg-cream-50 py-14 sm:py-18 lg:py-24">
       <div aria-hidden="true" className="pointer-events-none absolute inset-0 z-0 select-none">
         <img
-          src="/images/common/Temple_Skyline_Divider_footer_image.webp"
-          srcSet="/images/common/Temple_Skyline_Divider_footer_image-1024.webp 1024w, /images/common/Temple_Skyline_Divider_footer_image.webp 2171w"
+          src={img('/images/common/Temple_Skyline_Divider_footer_image.webp')}
+          srcSet={imgSrcSet('/images/common/Temple_Skyline_Divider_footer_image-1024.webp 1024w, /images/common/Temple_Skyline_Divider_footer_image.webp 2171w')}
           sizes="100vw"
           width={2171}
           height={724}
@@ -32,7 +33,7 @@ export default function CtaBand() {
       </div>
       {/* Edge florals */}
       <img
-        src="/images/home/flower1_image-320.webp"
+        src={img('/images/home/flower1_image-320.webp')}
         width={320}
         height={480}
         alt="Decorative flower garland"
@@ -42,7 +43,7 @@ export default function CtaBand() {
         className="pointer-events-none absolute left-0 bottom-0 z-[1] w-20 sm:w-28 lg:w-36 h-auto max-w-[16vw] select-none"
       />
       <img
-        src="/images/home/flower2_image-320.webp"
+        src={img('/images/home/flower2_image-320.webp')}
         width={320}
         height={480}
         alt="Decorative flower garland"

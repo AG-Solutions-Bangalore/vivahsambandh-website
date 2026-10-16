@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next'
 import Reveal, { RevealGroup } from '../../../components/motion/Reveal'
 import type { AboutPoint } from '../types'
+import { img, imgSrcSet } from '../../../lib/image'
 
 function PointIcon({ index }: { index: number }) {
   const cls = 'h-5 w-5'
@@ -50,7 +51,7 @@ export default function WhyBuilt() {
       <div aria-hidden="true" className="bg-jaali pointer-events-none absolute inset-0 opacity-60" />
       {/* Edge florals */}
       <img
-        src="/images/home/flower3_image.webp"
+        src={img("/images/home/flower3_image.webp")}
         width={942}
         height={1670}
         alt="Decorative flower garland"
@@ -61,7 +62,7 @@ export default function WhyBuilt() {
         className="pointer-events-none absolute left-0 bottom-0 z-0 w-20 sm:w-28 lg:w-36 h-auto max-w-[15vw] select-none opacity-95"
       />
       <img
-        src="/images/home/flower4_image.webp"
+        src={img("/images/home/flower4_image.webp")}
         width={942}
         height={1670}
         alt="Decorative flower garland"
@@ -92,8 +93,8 @@ export default function WhyBuilt() {
             </Reveal>
             <Reveal variant="scale" delay={0.1} className="mt-7">
               <img
-                src="/images/home/Mandap_image.webp"
-                srcSet="/images/home/Mandap_image-800.webp 800w, /images/home/Mandap_image.webp 1723w"
+                src={img("/images/home/Mandap_image.webp")}
+                srcSet={imgSrcSet("/images/home/Mandap_image-800.webp 800w, /images/home/Mandap_image.webp 1723w")}
                 sizes="(max-width: 1024px) 92vw, 42vw"
                 width={1723}
                 height={913}

@@ -4,6 +4,7 @@ import type { WhyFeature } from '../types'
 import Reveal, { RevealGroup } from '../../../components/motion/Reveal'
 import { pagePath } from '../../../constants/navigation'
 import type { AppLang } from '../../../i18n'
+import { img, imgSrcSet } from '../../../lib/image'
 
 // Bespoke golden Mughal/Indian arched icons matching the design screenshot
 function renderFeatureIcon(index: number) {
@@ -84,8 +85,8 @@ export default function WhyChooseSection() {
         className="pointer-events-none absolute -top-20 left-1/2 z-0 h-64 w-72 -translate-x-1/2 rounded-full bg-gold-500/15 blur-3xl select-none lg:hidden"
       />
       <img
-        src="/images/home/Ornate_Corner_Filigree_image.webp"
-        srcSet="/images/home/Ornate_Corner_Filigree_image-480.webp 480w, /images/home/Ornate_Corner_Filigree_image.webp 948w"
+        src={img("/images/home/Ornate_Corner_Filigree_image.webp")}
+        srcSet={imgSrcSet("/images/home/Ornate_Corner_Filigree_image-480.webp 480w, /images/home/Ornate_Corner_Filigree_image.webp 948w")}
         sizes="13rem"
         width={948}
         height={1659}
@@ -98,8 +99,8 @@ export default function WhyChooseSection() {
       />
 
       <img
-        src="/images/home/Ornate_Corner_Filigree_image.webp"
-        srcSet="/images/home/Ornate_Corner_Filigree_image-480.webp 480w, /images/home/Ornate_Corner_Filigree_image.webp 948w"
+        src={img("/images/home/Ornate_Corner_Filigree_image.webp")}
+        srcSet={imgSrcSet("/images/home/Ornate_Corner_Filigree_image-480.webp 480w, /images/home/Ornate_Corner_Filigree_image.webp 948w")}
         sizes="13rem"
         width={948}
         height={1659}

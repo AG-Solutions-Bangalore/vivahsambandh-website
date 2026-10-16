@@ -4,6 +4,7 @@ import Reveal from "../../../components/motion/Reveal";
 import { refreshScrollTriggers } from "../../../lib/gsap-setup";
 import { getFaqAnswer, getFaqQuestion, useGroupedFaqs } from "../hook/useFaq";
 import type { FaqFallbackItem } from "../types";
+import { img, imgSrcSet } from "../../../lib/image";
 
 export interface FaqSectionProps {
   slug?: string;
@@ -128,8 +129,8 @@ export default function FaqSection({
             aria-hidden="true"
           >
             <img
-              src="/images/home/elegant-temple-wedding-banner.webp"
-              srcSet="/images/home/elegant-temple-wedding-banner-1024.webp 1024w, /images/home/elegant-temple-wedding-banner.webp 2170w"
+              src={img("/images/home/elegant-temple-wedding-banner.webp")}
+              srcSet={imgSrcSet("/images/home/elegant-temple-wedding-banner-1024.webp 1024w, /images/home/elegant-temple-wedding-banner.webp 2170w")}
               sizes="100vw"
               width={2170}
               height={725}

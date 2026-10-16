@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next'
 import Reveal from '../../../components/motion/Reveal'
+import { img, imgSrcSet } from '../../../lib/image'
 
 export default function FeaturedStory() {
   const { t } = useTranslation()
@@ -23,8 +24,8 @@ export default function FeaturedStory() {
             {/* Image Column */}
             <div className="relative h-72 sm:h-96 lg:h-full lg:col-span-6 overflow-hidden bg-navy-950">
               <img
-                src="/images/home/radiant-indian-wedding-portrait.webp"
-                srcSet="/images/home/radiant-indian-wedding-portrait-640.webp 640w, /images/home/radiant-indian-wedding-portrait.webp 1200w"
+                src={img('/images/home/radiant-indian-wedding-portrait.webp')}
+                srcSet={imgSrcSet('/images/home/radiant-indian-wedding-portrait-640.webp 640w, /images/home/radiant-indian-wedding-portrait.webp 1200w')}
                 sizes="(max-width: 1024px) 100vw, 50vw"
                 width={1200}
                 height={800}

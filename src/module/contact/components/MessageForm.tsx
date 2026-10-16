@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import Reveal from '../../../components/motion/Reveal'
 import { useEnquiryMutation } from '../hook/useEnquiry'
 import { getEnquiryFrom, getUtmParams } from '../../../lib/api/utm'
+import { img } from '../../../lib/image'
 
 const inputCls =
   'w-full rounded-xl border border-navy-100 bg-white py-3 pl-11 pr-4 text-sm text-navy-900 placeholder:text-ink-400 shadow-xs outline-none transition focus:border-gold-500 focus:ring-2 focus:ring-gold-500/30'
@@ -76,7 +77,7 @@ export default function MessageForm() {
       <div className="relative h-full overflow-hidden rounded-[1.5rem] bg-navy-pattern p-6 sm:p-8 lg:p-10 shadow-lift">
         {/* Filigree corner */}
         <img
-          src="/images/home/Ornate_Corner_Filigree_image.webp"
+          src={img("/images/home/Ornate_Corner_Filigree_image.webp")}
           width={948}
           height={1659}
           alt="Ornate golden filigree decoration"

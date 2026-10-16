@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import Reveal, { RevealGroup } from '../../../components/motion/Reveal'
+import { img } from '../../../lib/image'
 
 interface StoryGridItem {
   id: string
@@ -76,7 +77,7 @@ export default function StoriesGrid() {
             >
               <div className="relative aspect-[16/10] overflow-hidden bg-navy-950">
                 <img
-                  src={item.image}
+                  src={img(item.image)}
                   width={640}
                   height={400}
                   alt={item.names}

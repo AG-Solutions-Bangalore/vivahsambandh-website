@@ -6,6 +6,7 @@ import type { AppLang } from "../i18n";
 import { useAppLanguage } from "../i18n/useAppLanguage";
 import Reveal from "./motion/Reveal";
 import { useCompanyQuery } from "../module/company";
+import { img, imgSrcSet } from "../lib/image";
 
 function LotusMark() {
   return (
@@ -62,8 +63,8 @@ export default function Footer() {
         className="pointer-events-none absolute inset-0 z-0 select-none"
       >
         <img
-          src="/images/common/Temple_Skyline_Divider_footer_image.webp"
-          srcSet="/images/common/Temple_Skyline_Divider_footer_image-1024.webp 1024w, /images/common/Temple_Skyline_Divider_footer_image.webp 2171w"
+          src={img("/images/common/Temple_Skyline_Divider_footer_image.webp")}
+          srcSet={imgSrcSet("/images/common/Temple_Skyline_Divider_footer_image-1024.webp 1024w, /images/common/Temple_Skyline_Divider_footer_image.webp 2171w")}
           sizes="100vw"
           width={2171}
           height={724}

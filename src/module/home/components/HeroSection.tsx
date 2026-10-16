@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { ensureMotion, prefersReducedMotion } from "../../../lib/gsap-setup";
+import { img, imgSrcSet } from "../../../lib/image";
 
 const TRUST_BADGES = [
   {
@@ -69,13 +70,13 @@ const MATCH_CARDS = [
   {
     id: "bride",
     href: "#search-bride",
-    photo: "/images/home/radiant-indian-bride-in-floral-glow.webp",
+    photo: img("/images/home/radiant-indian-bride-in-floral-glow.webp"),
     photoSrcSet:
-      "/images/home/radiant-indian-bride-in-floral-glow-320.webp 320w, /images/home/radiant-indian-bride-in-floral-glow-640.webp 640w, /images/home/radiant-indian-bride-in-floral-glow.webp 1145w",
+      imgSrcSet("/images/home/radiant-indian-bride-in-floral-glow-320.webp 320w, /images/home/radiant-indian-bride-in-floral-glow-640.webp 640w, /images/home/radiant-indian-bride-in-floral-glow.webp 1145w"),
     photoWidth: 1145,
     photoHeight: 1374,
-    illustration: "/images/home/woman_image.webp",
-    illustrationSrcSet: "/images/home/woman_image-160.webp 160w, /images/home/woman_image-320.webp 320w, /images/home/woman_image.webp 1355w",
+    illustration: img("/images/home/woman_image.webp"),
+    illustrationSrcSet: imgSrcSet("/images/home/woman_image-160.webp 160w, /images/home/woman_image-320.webp 320w, /images/home/woman_image.webp 1355w"),
     illustrationWidth: 1355,
     illustrationHeight: 1161,
     illustrationAlt: "Bride Illustration",
@@ -86,13 +87,13 @@ const MATCH_CARDS = [
   {
     id: "groom",
     href: "#search-groom",
-    photo: "/images/home/radiant-indian-groom-in-a-golden-wedding-setting.webp",
+    photo: img("/images/home/radiant-indian-groom-in-a-golden-wedding-setting.webp"),
     photoSrcSet:
-      "/images/home/radiant-indian-groom-in-a-golden-wedding-setting-320.webp 320w, /images/home/radiant-indian-groom-in-a-golden-wedding-setting-640.webp 640w, /images/home/radiant-indian-groom-in-a-golden-wedding-setting.webp 1254w",
+      imgSrcSet("/images/home/radiant-indian-groom-in-a-golden-wedding-setting-320.webp 320w, /images/home/radiant-indian-groom-in-a-golden-wedding-setting-640.webp 640w, /images/home/radiant-indian-groom-in-a-golden-wedding-setting.webp 1254w"),
     photoWidth: 1254,
     photoHeight: 1254,
-    illustration: "/images/home/man_image.webp",
-    illustrationSrcSet: "/images/home/man_image-160.webp 160w, /images/home/man_image-320.webp 320w, /images/home/man_image.webp 1324w",
+    illustration: img("/images/home/man_image.webp"),
+    illustrationSrcSet: imgSrcSet("/images/home/man_image-160.webp 160w, /images/home/man_image-320.webp 320w, /images/home/man_image.webp 1324w"),
     illustrationWidth: 1324,
     illustrationHeight: 1188,
     illustrationAlt: "Groom Illustration",
@@ -243,8 +244,8 @@ export default function HeroSection() {
       {/* Small + in front                                                */}
       {/* ============================================================== */}
       <img
-        src="/images/home/flower1_image.webp"
-        srcSet="/images/home/flower1_image-192.webp 192w, /images/home/flower1_image-320.webp 320w, /images/home/flower1_image-640.webp 640w, /images/home/flower1_image.webp 1024w"
+        src={img("/images/home/flower1_image.webp")}
+        srcSet={imgSrcSet("/images/home/flower1_image-192.webp 192w, /images/home/flower1_image-320.webp 320w, /images/home/flower1_image-640.webp 640w, /images/home/flower1_image.webp 1024w")}
         sizes="(max-width: 640px) 22vw, (max-width: 768px) 10rem, (max-width: 1024px) 12rem, (max-width: 1280px) 14rem, 16rem"
         width={1024}
         height={1536}
@@ -258,8 +259,8 @@ export default function HeroSection() {
         aria-hidden="true"
       />
       <img
-        src="/images/home/flower2_image.webp"
-        srcSet="/images/home/flower2_image-192.webp 192w, /images/home/flower2_image-320.webp 320w, /images/home/flower2_image-640.webp 640w, /images/home/flower2_image.webp 1024w"
+        src={img("/images/home/flower2_image.webp")}
+        srcSet={imgSrcSet("/images/home/flower2_image-192.webp 192w, /images/home/flower2_image-320.webp 320w, /images/home/flower2_image-640.webp 640w, /images/home/flower2_image.webp 1024w")}
         sizes="(max-width: 640px) 26vw, (max-width: 768px) 11rem, (max-width: 1024px) 13rem, (max-width: 1280px) 15rem, 18rem"
         width={1024}
         height={1536}
@@ -279,8 +280,8 @@ export default function HeroSection() {
       <section data-hero="banner-wrap" className="relative isolate z-10 w-full lg:h-[440px] xl:h-[470px]">
         {/* Top garlands: hang from top */}
         <img
-          src="/images/home/flower1_image-192.webp"
-          srcSet="/images/home/flower1_image-192.webp 192w, /images/home/flower1_image-320.webp 320w, /images/home/flower1_image-640.webp 640w"
+          src={img("/images/home/flower1_image-192.webp")}
+          srcSet={imgSrcSet("/images/home/flower1_image-192.webp 192w, /images/home/flower1_image-320.webp 320w, /images/home/flower1_image-640.webp 640w")}
           sizes="(max-width: 640px) 12vw, (max-width: 768px) 5rem, 8rem"
           width={192}
           height={288}
@@ -293,8 +294,8 @@ export default function HeroSection() {
           aria-hidden="true"
         />
         <img
-          src="/images/home/flower2_image-192.webp"
-          srcSet="/images/home/flower2_image-192.webp 192w, /images/home/flower2_image-320.webp 320w, /images/home/flower2_image-640.webp 640w"
+          src={img("/images/home/flower2_image-192.webp")}
+          srcSet={imgSrcSet("/images/home/flower2_image-192.webp 192w, /images/home/flower2_image-320.webp 320w, /images/home/flower2_image-640.webp 640w")}
           sizes="(max-width: 640px) 12vw, (max-width: 768px) 5rem, 8rem"
           width={192}
           height={288}
@@ -313,8 +314,8 @@ export default function HeroSection() {
           aria-hidden="true"
         >
           <img
-            src="/images/home/home_banner_image.webp"
-            srcSet="/images/home/home_banner_image-640.webp 640w, /images/home/home_banner_image-1024.webp 1024w, /images/home/home_banner_image-1280.webp 1280w, /images/home/home_banner_image.webp 2172w"
+            src={img("/images/home/home_banner_image.webp")}
+            srcSet={imgSrcSet("/images/home/home_banner_image-640.webp 640w, /images/home/home_banner_image-1024.webp 1024w, /images/home/home_banner_image-1280.webp 1280w, /images/home/home_banner_image.webp 2172w")}
             sizes="(max-width: 640px) 240px, (max-width: 1024px) 640px, 100vw"
             width={2172}
             height={724}
@@ -510,8 +511,8 @@ export default function HeroSection() {
               {/* Decorative floral spray on bottom-right corner (enlarged & visible) */}
               <div className="pointer-events-none absolute -right-16 -bottom-3  sm:-bottom-4 h-32 w-28 sm:h-44 sm:w-36 md:h-52 md:w-44 lg:h-60 lg:w-52 opacity-95 select-none hidden sm:block">
                 <img
-                  src="/images/home/flower1_image-320.webp"
-                  srcSet="/images/home/flower1_image-320.webp 320w, /images/home/flower1_image-640.webp 640w"
+                  src={img("/images/home/flower1_image-320.webp")}
+                  srcSet={imgSrcSet("/images/home/flower1_image-320.webp 320w, /images/home/flower1_image-640.webp 640w")}
                   sizes="(max-width: 768px) 9rem, 13rem"
                   width={320}
                   height={480}
