@@ -21,7 +21,6 @@ import {
   resolvePageKey,
   type SupportedLang,
 } from './config';
-import { createCompositeGraph } from './schemas';
 
 
 export function SeoHost() {
@@ -41,17 +40,17 @@ export function SeoHost() {
   const canonicalUrl = getCanonicalUrl(pathname, lang);
   const enHref = `${COMPANY_CONFIG.siteOrigin}${getPagePath(page, 'en')}`;
   const hiHref = `${COMPANY_CONFIG.siteOrigin}${getPagePath(page, 'hi')}`;
-  const compositeGraph = createCompositeGraph(lang, page);
 
-  // The JSON-LD <script> is NOT hoistable (unlike title/meta/link), so it
-  // renders inline — after mount only. Rendering it on first paint would
-  // mismatch the prerendered HTML (which carries JSON-LD in <head>) and
-  // trip hydration (#418 + console error). Post-hydration insert is safe:
-  // <script> nodes never affect layout, and crawlers still see the head copy.
-  const [mounted, setMounted] = useState(false);
+  // Lazy-load the schemas chunk post-mount so it doesn't block FCP/LCP.
+  // The JSON-LD <script> is already deferred to after mount, so this dynamic
+  // import matches the existing render timing perfectly.
+  const [compositeGraph, setCompositeGraph] = useState<object | null>(null);
   useEffect(() => {
-    setMounted(true);
-  }, []);
+    import('./schemas').then(({ createCompositeGraph }) => {
+      setCompositeGraph(createCompositeGraph(lang, page));
+    });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [lang, page]);
 
   return (
     <Helmet prioritizeSeoTags>
@@ -88,8 +87,8 @@ export function SeoHost() {
       <meta name="twitter:description" content={description} />
       <meta name="twitter:image" content={COMPANY_CONFIG.ogImage} />
 
-      {/* Structured Data (JSON-LD) — post-mount only, see above */}
-      {mounted && (
+      {/* Structured Data (JSON-LD) — loaded post-mount via lazy import, see above */}
+      {compositeGraph && (
         <script type="application/ld+json">
           {JSON.stringify(compositeGraph)}
         </script>

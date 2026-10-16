@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next'
+import { img, imgSrcSet } from '../../../lib/image'
 
 /**
  * About hero — same banner + same `data-hero` motion contract as the home
@@ -11,8 +12,8 @@ export default function AboutHero() {
     <div className="relative isolate bg-cream-50">
       {/* Side cascading garlands (same as home hero) */}
       <img
-        src="/images/home/flower1_image.webp"
-        srcSet="/images/home/flower1_image-320.webp 320w, /images/home/flower1_image-640.webp 640w, /images/home/flower1_image.webp 1024w"
+        src={img('/images/home/flower1_image.webp')}
+        srcSet={imgSrcSet('/images/home/flower1_image-320.webp 320w, /images/home/flower1_image-640.webp 640w, /images/home/flower1_image.webp 1024w')}
         sizes="(max-width: 640px) 22vw, (max-width: 768px) 10rem, (max-width: 1024px) 12rem, (max-width: 1280px) 14rem, 16rem"
         width={1024}
         height={1536}
@@ -25,8 +26,8 @@ export default function AboutHero() {
         aria-hidden="true"
       />
       <img
-        src="/images/home/flower2_image.webp"
-        srcSet="/images/home/flower2_image-320.webp 320w, /images/home/flower2_image-640.webp 640w, /images/home/flower2_image.webp 1024w"
+        src={img('/images/home/flower2_image.webp')}
+        srcSet={imgSrcSet('/images/home/flower2_image-320.webp 320w, /images/home/flower2_image-640.webp 640w, /images/home/flower2_image.webp 1024w')}
         sizes="(max-width: 640px) 26vw, (max-width: 768px) 11rem, (max-width: 1024px) 13rem, (max-width: 1280px) 15rem, 18rem"
         width={1024}
         height={1536}
@@ -42,8 +43,8 @@ export default function AboutHero() {
       <section data-hero="banner-wrap" className="relative isolate z-10 w-full lg:h-[540px] xl:h-[580px]">
         {/* Top hanging garlands */}
         <img
-          src="/images/home/flower1_image-320.webp"
-          srcSet="/images/home/flower1_image-192.webp 192w, /images/home/flower1_image-320.webp 320w, /images/home/flower1_image-640.webp 640w"
+          src={img('/images/home/flower1_image-320.webp')}
+          srcSet={imgSrcSet('/images/home/flower1_image-192.webp 192w, /images/home/flower1_image-320.webp 320w, /images/home/flower1_image-640.webp 640w')}
           sizes="(max-width: 640px) 12vw, (max-width: 768px) 5rem, 8rem"
           width={320}
           height={480}
@@ -55,8 +56,8 @@ export default function AboutHero() {
           aria-hidden="true"
         />
         <img
-          src="/images/home/flower2_image-320.webp"
-          srcSet="/images/home/flower2_image-192.webp 192w, /images/home/flower2_image-320.webp 320w, /images/home/flower2_image-640.webp 640w"
+          src={img('/images/home/flower2_image-320.webp')}
+          srcSet={imgSrcSet('/images/home/flower2_image-192.webp 192w, /images/home/flower2_image-320.webp 320w, /images/home/flower2_image-640.webp 640w')}
           sizes="(max-width: 640px) 12vw, (max-width: 768px) 5rem, 8rem"
           width={320}
           height={480}
@@ -72,8 +73,8 @@ export default function AboutHero() {
             backdrop from lg up — same image as the home hero. */}
         <div className="pointer-events-none relative h-72 sm:h-96 overflow-hidden lg:absolute lg:inset-0 lg:h-auto" aria-hidden="true">
           <img
-            src="/images/home/home_banner_image.webp"
-            srcSet="/images/home/home_banner_image-640.webp 640w, /images/home/home_banner_image-1024.webp 1024w, /images/home/home_banner_image.webp 2172w"
+            src={img('/images/home/home_banner_image.webp')}
+            srcSet={imgSrcSet('/images/home/home_banner_image-640.webp 640w, /images/home/home_banner_image-1024.webp 1024w, /images/home/home_banner_image-1280.webp 1280w, /images/home/home_banner_image.webp 2172w')}
             sizes="100vw"
             width={2172}
             height={724}

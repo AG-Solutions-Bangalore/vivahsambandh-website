@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next'
 import Reveal, { RevealGroup } from '../../../components/motion/Reveal'
 import type { AboutValue } from '../types'
+import { img } from '../../../lib/image'
 
 function ValueIcon({ index }: { index: number }) {
   const cls = 'h-6 w-6'
@@ -48,7 +49,7 @@ export default function ValuesBand() {
         className="pointer-events-none absolute -top-20 left-1/2 z-0 h-64 w-72 -translate-x-1/2 rounded-full bg-gold-500/15 blur-3xl select-none lg:hidden"
       />
       <img
-        src="/images/home/Ornate_Corner_Filigree_image.webp"
+        src={img("/images/home/Ornate_Corner_Filigree_image.webp")}
         width={948}
         height={1659}
         alt="Ornate golden filigree decoration"
@@ -59,7 +60,7 @@ export default function ValuesBand() {
         className="pointer-events-none absolute inset-y-0 -left-4 z-0 h-full w-auto max-w-none select-none scale-105 opacity-60 hidden lg:block"
       />
       <img
-        src="/images/home/Ornate_Corner_Filigree_image.webp"
+        src={img("/images/home/Ornate_Corner_Filigree_image.webp")}
         width={948}
         height={1659}
         alt="Ornate golden filigree decoration"
@@ -71,7 +72,7 @@ export default function ValuesBand() {
       />
       {/* Corner florals */}
       <img
-        src="/images/home/flower1_image-320.webp"
+        src={img("/images/home/flower1_image-320.webp")}
         width={320}
         height={480}
         alt="Decorative flower garland"
@@ -81,7 +82,7 @@ export default function ValuesBand() {
         className="pointer-events-none absolute -left-3 bottom-0 z-[1] w-16 sm:w-24 h-auto select-none opacity-90"
       />
       <img
-        src="/images/home/flower2_image-320.webp"
+        src={img("/images/home/flower2_image-320.webp")}
         width={320}
         height={480}
         alt="Decorative flower garland"

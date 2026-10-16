@@ -1,6 +1,10 @@
 import { useTranslation } from 'react-i18next'
+import { Link } from 'react-router-dom'
 import type { WhyFeature } from '../types'
 import Reveal, { RevealGroup } from '../../../components/motion/Reveal'
+import { pagePath } from '../../../constants/navigation'
+import type { AppLang } from '../../../i18n'
+import { img, imgSrcSet } from '../../../lib/image'
 
 // Bespoke golden Mughal/Indian arched icons matching the design screenshot
 function renderFeatureIcon(index: number) {
@@ -68,7 +72,8 @@ function FeatureArchedIcon({ index }: { index: number }) {
 }
 
 export default function WhyChooseSection() {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
+  const lang: AppLang = i18n.resolvedLanguage === 'hi' || i18n.language === 'hi' ? 'hi' : 'en'
   const rawFeatures = (t('why.features', { returnObjects: true }) as WhyFeature[]) || []
 
   return (
@@ -80,8 +85,8 @@ export default function WhyChooseSection() {
         className="pointer-events-none absolute -top-20 left-1/2 z-0 h-64 w-72 -translate-x-1/2 rounded-full bg-gold-500/15 blur-3xl select-none lg:hidden"
       />
       <img
-        src="/images/home/Ornate_Corner_Filigree_image.webp"
-        srcSet="/images/home/Ornate_Corner_Filigree_image-480.webp 480w, /images/home/Ornate_Corner_Filigree_image.webp 948w"
+        src={img("/images/home/Ornate_Corner_Filigree_image.webp")}
+        srcSet={imgSrcSet("/images/home/Ornate_Corner_Filigree_image-480.webp 480w, /images/home/Ornate_Corner_Filigree_image.webp 948w")}
         sizes="13rem"
         width={948}
         height={1659}
@@ -94,8 +99,8 @@ export default function WhyChooseSection() {
       />
 
       <img
-        src="/images/home/Ornate_Corner_Filigree_image.webp"
-        srcSet="/images/home/Ornate_Corner_Filigree_image-480.webp 480w, /images/home/Ornate_Corner_Filigree_image.webp 948w"
+        src={img("/images/home/Ornate_Corner_Filigree_image.webp")}
+        srcSet={imgSrcSet("/images/home/Ornate_Corner_Filigree_image-480.webp 480w, /images/home/Ornate_Corner_Filigree_image.webp 948w")}
         sizes="13rem"
         width={948}
         height={1659}
@@ -135,8 +140,8 @@ export default function WhyChooseSection() {
 
             {/* CTA Button in rich golden gradient */}
             <div className="mt-7">
-              <a
-                href="#explore-features"
+              <Link
+                to={pagePath('/membership', lang)}
                 title={t('why.cta')}
                 className="group inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r text-white from-gold-400 via-gold-500 to-gold-400 px-7 py-3 text-xs sm:text-sm font-bold text-navy-950 shadow-md transition-all duration-300 hover:brightness-105 active:scale-95"
               >
@@ -147,7 +152,7 @@ export default function WhyChooseSection() {
                 >
                   →
                 </span>
-              </a>
+              </Link>
             </div>
           </Reveal>
 

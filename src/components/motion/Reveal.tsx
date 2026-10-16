@@ -58,54 +58,80 @@ export default function Reveal({
 }: RevealProps) {
   const ref = useRef<HTMLDivElement | null>(null)
 
-  // Motion loads lazily (see lib/gsap-setup): same tweens, wired after the
-  // chunk lands. gsap.context() gives the StrictMode-safe revert useGSAP had.
+  // Motion loads lazily (see lib/gsap-setup): only when this element approaches
+  // the viewport (IntersectionObserver) is GSAP loaded and choreographed.
+  // Static content stays visible by default (no-JS / pre-trigger safe).
   useEffect(() => {
     let ctx: { revert: () => void } | null = null
     let cancelled = false
-    void ensureMotion()
-      .then(({ gsap }) => {
-        const el = ref.current
-        if (cancelled || !el) return
+    const el = ref.current
+    if (!el) return
 
-        // Reduced motion or 'none' → ensure visible, no animation.
-        if (variant === 'none' || prefersReducedMotion()) {
-          gsap.set(el, { clearProps: 'all', autoAlpha: 1, x: 0, y: 0, scale: 1 })
-          return
-        }
+    // Reduced motion or 'none' → content is already visible, no animation needed.
+    if (variant === 'none' || prefersReducedMotion()) {
+      return
+    }
 
-        const from =
-          variant === 'fade' ? { autoAlpha: 0 } : { autoAlpha: 0, ...OFFSETS[variant](distance) }
+    const wire = () => {
+      if (cancelled) return
+      void ensureMotion()
+        .then(({ gsap }) => {
+          if (cancelled || !el) return
 
-        ctx = gsap.context(() => {
-          gsap.fromTo(
-            el,
-            from,
-            {
-              autoAlpha: 1,
-              x: 0,
-              y: 0,
-              scale: 1,
-              duration,
-              delay,
-              ease: 'power3.out',
-              overwrite: 'auto',
-              // Release the will-change compositor layer after playing —
-              // keeping it forever pins GPU memory on low-end phones.
-              clearProps: 'willChange',
-              scrollTrigger: {
-                trigger: el,
-                start,
-                toggleActions: once ? 'play none none none' : 'play reverse play reverse',
-                once,
+          const from =
+            variant === 'fade' ? { autoAlpha: 0 } : { autoAlpha: 0, ...OFFSETS[variant](distance) }
+
+          ctx = gsap.context(() => {
+            gsap.fromTo(
+              el,
+              from,
+              {
+                autoAlpha: 1,
+                x: 0,
+                y: 0,
+                scale: 1,
+                duration,
+                delay,
+                ease: 'power3.out',
+                overwrite: 'auto',
+                // Release the will-change compositor layer after playing —
+                // keeping it forever pins GPU memory on low-end phones.
+                clearProps: 'willChange',
+                scrollTrigger: {
+                  trigger: el,
+                  start,
+                  toggleActions: once ? 'play none none none' : 'play reverse play reverse',
+                  once,
+                },
               },
-            },
-          )
-        }, ref)
-      })
-      .catch(() => {
-        /* motion failed to load — content stays visible (final state) */
-      })
+            )
+          }, ref)
+        })
+        .catch(() => {
+          /* motion failed to load — content stays visible (final state) */
+        })
+    }
+
+    // Only load motion when element approaches the viewport
+    if (typeof IntersectionObserver !== 'undefined') {
+      const io = new IntersectionObserver(
+        (entries) => {
+          if (entries.some((e) => e.isIntersecting)) {
+            io.disconnect()
+            wire()
+          }
+        },
+        { rootMargin: '350px 0px' },
+      )
+      io.observe(el)
+      return () => {
+        cancelled = true
+        io.disconnect()
+        ctx?.revert()
+      }
+    }
+
+    wire()
     return () => {
       cancelled = true
       ctx?.revert()

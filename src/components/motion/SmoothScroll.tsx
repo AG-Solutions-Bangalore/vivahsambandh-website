@@ -75,8 +75,10 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
     let cancelled = false
     let cleanupMotion: (() => void) | null = null
 
-    void Promise.all([import('lenis'), ensureMotion()])
-      .then(([{ default: LenisCtor }, { gsap, ScrollTrigger }]) => {
+    const initMotion = () => {
+      if (cancelled) return
+      void Promise.all([import('lenis'), ensureMotion()])
+        .then(([{ default: LenisCtor }, { gsap, ScrollTrigger }]) => {
         if (cancelled) return
         // Lenis construction can throw in exotic webviews (no rAF, frozen
         // objects). Fall back to native scrolling + CSS scroll-margin-top
@@ -184,7 +186,26 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
       .catch(() => {
         /* motion/smoothing failed — native scroll stays in place */
       })
+    }
 
+    if (typeof window !== 'undefined' && window.innerWidth < 768) {
+      const timer = setTimeout(initMotion, 6000)
+      const onMove = () => {
+        clearTimeout(timer)
+        initMotion()
+      }
+      window.addEventListener('scroll', onMove, { once: true, passive: true })
+      window.addEventListener('touchstart', onMove, { once: true, passive: true })
+      return () => {
+        cancelled = true
+        clearTimeout(timer)
+        window.removeEventListener('scroll', onMove)
+        window.removeEventListener('touchstart', onMove)
+        cleanupMotion?.()
+      }
+    }
+
+    initMotion()
     return () => {
       cancelled = true
       cleanupMotion?.()

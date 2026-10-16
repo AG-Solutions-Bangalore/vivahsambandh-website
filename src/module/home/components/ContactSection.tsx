@@ -9,6 +9,7 @@ import { useAppLanguage } from "../../../i18n/useAppLanguage";
 import type { ContactFormData } from "../types";
 import Reveal, { RevealGroup } from "../../../components/motion/Reveal";
 import { refreshScrollTriggers } from "../../../lib/gsap-setup";
+import { img, imgSrcSet } from "../../../lib/image";
 
 export default function ContactSection() {
   const { t } = useTranslation();
@@ -46,8 +47,8 @@ export default function ContactSection() {
     <section id="contact" className="relative overflow-hidden bg-[#FFFBF2] py-16">
       <div className="pointer-events-none absolute inset-x-0 bottom-0" aria-hidden="true">
         <img
-          src="/images/home/elegant-temple-wedding-banner.webp"
-          srcSet="/images/home/elegant-temple-wedding-banner-1024.webp 1024w, /images/home/elegant-temple-wedding-banner.webp 2170w"
+          src={img("/images/home/elegant-temple-wedding-banner.webp")}
+          srcSet={imgSrcSet("/images/home/elegant-temple-wedding-banner-1024.webp 1024w, /images/home/elegant-temple-wedding-banner.webp 2170w")}
           sizes="100vw"
           width={2170}
           height={725}

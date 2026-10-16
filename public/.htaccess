@@ -27,27 +27,50 @@ Options -Indexes
 <IfModule mod_headers.c>
   <FilesMatch "\.br$">
     Header set Content-Encoding br
-    Header set Vary "Accept-Encoding"
+    Header append Vary "Accept-Encoding"
   </FilesMatch>
   <FilesMatch "\.gz$">
     Header set Content-Encoding gzip
-    Header set Vary "Accept-Encoding"
+    Header append Vary "Accept-Encoding"
   </FilesMatch>
 </IfModule>
 
-# Correct MIME types when serving .br/.gz twins directly.
-AddEncoding br .br
-AddEncoding gzip .gz
-AddType application/javascript .js
-AddType text/css .css
-AddType image/svg+xml .svg
-AddType application/json .json
-AddType text/html .html
-AddType image/webp .webp
-AddType text/plain .txt
+# Serve precompressed twins with their original MIME types (prevents Apache from
+# assigning Content-Type: application/x-gzip to .gz files).
+<FilesMatch "\.html(\.gz|\.br)?$">
+  ForceType text/html
+</FilesMatch>
+<FilesMatch "\.js(\.gz|\.br)?$">
+  ForceType application/javascript
+</FilesMatch>
+<FilesMatch "\.css(\.gz|\.br)?$">
+  ForceType text/css
+</FilesMatch>
+<FilesMatch "\.svg(\.gz|\.br)?$">
+  ForceType image/svg+xml
+</FilesMatch>
+<FilesMatch "\.json(\.gz|\.br)?$">
+  ForceType application/json
+</FilesMatch>
+
+# Correct MIME types and encodings
+<IfModule mod_mime.c>
+  RemoveType .gz
+  RemoveType .br
+  AddEncoding br .br
+  AddEncoding gzip .gz
+  AddType application/javascript .js
+  AddType text/css .css
+  AddType image/svg+xml .svg
+  AddType application/json .json
+  AddType text/html .html
+  AddType image/webp .webp
+  AddType text/plain .txt
+</IfModule>
 
 # ——— On-the-fly compression fallback (assets without precompressed twins) ———
 <IfModule mod_deflate.c>
+  SetEnvIfNoCase Request_URI "\.(gz|br)$" no-gzip dont-vary
   AddOutputFilterByType DEFLATE text/html text/plain text/css text/xml
   AddOutputFilterByType DEFLATE application/javascript application/json application/xml
   AddOutputFilterByType DEFLATE image/svg+xml font/woff2

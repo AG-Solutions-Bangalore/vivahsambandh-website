@@ -29,10 +29,9 @@ export interface NavEntry {
 export const NAV_ENTRIES: readonly NavEntry[] = [
   { key: 'home', i18nKey: 'header.home', kind: 'home' },
   { key: 'about', i18nKey: 'header.about', kind: 'page', page: '/about' },
-  { key: 'search', i18nKey: 'header.search', kind: 'section', hash: '#search' },
-  { key: 'stories', i18nKey: 'header.successStories', kind: 'section', hash: '#stories' },
-  { key: 'membership', i18nKey: 'header.membership', kind: 'section', hash: '#explore-features' },
-  { key: 'faq', i18nKey: 'header.faq', kind: 'section', hash: '#all-faq' },
+  { key: 'stories', i18nKey: 'header.successStories', kind: 'page', page: '/stories' },
+  { key: 'membership', i18nKey: 'header.membership', kind: 'page', page: '/membership' },
+  { key: 'blogs', i18nKey: 'header.blogs', kind: 'page', page: '/blogs' },
   { key: 'contact', i18nKey: 'header.contact', kind: 'page', page: '/contact' },
 ]
 
@@ -85,19 +84,22 @@ export interface NavItem {
   label: string
   href: string
   active: boolean
+  kind: NavKind
 }
 
 /**
- * Resolve every nav entry to a concrete `{ label, href, active }` for the
+ * Resolve every nav entry to a concrete `{ label, href, active, kind }` for the
  * current language + location.
  * - 'home' → '#' when already home (pure anchor scroll), else the home path.
  * - 'page' → language-prefixed route, active when its route matches.
  * - 'section' → bare hash on home, home-prefixed hash from any other page.
+ * Accepts optional activeSectionKey to highlight specific section hashes on the home page.
  */
 export function getNavItems(
   t: (key: string) => string,
   lang: AppLang,
   pathname: string,
+  activeSectionKey?: string,
 ): NavItem[] {
   const home = homePath(lang)
   const onHome = isHomePath(pathname)
@@ -109,7 +111,8 @@ export function getNavItems(
           key: entry.key,
           label: t(entry.i18nKey),
           href: onHome ? '#' : home,
-          active: onHome,
+          active: onHome && (!activeSectionKey || activeSectionKey === 'home'),
+          kind: entry.kind,
         }
       case 'page': {
         const page = entry.page as string
@@ -118,6 +121,7 @@ export function getNavItems(
           label: t(entry.i18nKey),
           href: pagePath(page, lang),
           active: isPagePath(pathname, page),
+          kind: entry.kind,
         }
       }
       default: {
@@ -126,7 +130,8 @@ export function getNavItems(
           key: entry.key,
           label: t(entry.i18nKey),
           href: onHome ? hash : `${home}${hash}`,
-          active: false,
+          active: onHome && activeSectionKey === entry.key,
+          kind: entry.kind,
         }
       }
     }

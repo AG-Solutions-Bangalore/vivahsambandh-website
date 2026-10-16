@@ -11,6 +11,7 @@
     "search": "Search",
     "successStories": "Success Stories",
     "membership": "Membership",
+    "blogs": "Blogs",
     "faq": "FAQ",
     "contact": "Contact Us",
     "login": "Login",
@@ -29,7 +30,12 @@
     "community": "Agarwal Community",
     "familySupport": "Family Support",
     "sideNote": "Same Values Brighter Futures",
-    "sideBadge": ["Same", "Values", "Brighter", "Futures"]
+    "sideBadge": [
+      "Same",
+      "Values",
+      "Brighter",
+      "Futures"
+    ]
   },
   "matchCards": {
     "bride": "Looking for a",
@@ -53,14 +59,38 @@
     "viewAll": "View All Cities",
     "profiles": "Profiles",
     "list": [
-      { "name": "Delhi", "count": "8,500+" },
-      { "name": "Mumbai", "count": "6,200+" },
-      { "name": "Kolkata", "count": "4,800+" },
-      { "name": "Bengaluru", "count": "3,600+" },
-      { "name": "Hyderabad", "count": "3,500+" },
-      { "name": "Pune", "count": "2,900+" },
-      { "name": "Ahmedabad", "count": "2,200+" },
-      { "name": "Others", "count": "10,000+" }
+      {
+        "name": "Delhi",
+        "count": "8,500+"
+      },
+      {
+        "name": "Mumbai",
+        "count": "6,200+"
+      },
+      {
+        "name": "Kolkata",
+        "count": "4,800+"
+      },
+      {
+        "name": "Bengaluru",
+        "count": "3,600+"
+      },
+      {
+        "name": "Hyderabad",
+        "count": "3,500+"
+      },
+      {
+        "name": "Pune",
+        "count": "2,900+"
+      },
+      {
+        "name": "Ahmedabad",
+        "count": "2,200+"
+      },
+      {
+        "name": "Others",
+        "count": "10,000+"
+      }
     ]
   },
   "why": {
@@ -69,12 +99,24 @@
     "subtitle": "A perfect blend of tradition, trust and technology to help you find a compatible life partner.",
     "cta": "Explore Features",
     "features": [
-      { "title": "Verified & Genuine Profiles" },
-      { "title": "Community Based Matching" },
-      { "title": "Advanced Search Filters" },
-      { "title": "Personalized Match Suggestions" },
-      { "title": "Family Involvement Options" },
-      { "title": "Safe & Secure Communication" }
+      {
+        "title": "Verified & Genuine Profiles"
+      },
+      {
+        "title": "Community Based Matching"
+      },
+      {
+        "title": "Advanced Search Filters"
+      },
+      {
+        "title": "Personalized Match Suggestions"
+      },
+      {
+        "title": "Family Involvement Options"
+      },
+      {
+        "title": "Safe & Secure Communication"
+      }
     ]
   },
   "stories": {
@@ -108,25 +150,203 @@
     "googlePlay": "Get it on Google Play",
     "appStore": "Download on the App Store",
     "features": [
-      { "title": "Instant Notifications", "desc": "Get notified about new matches" },
-      { "title": "Smart Search Filters", "desc": "Find matches as per your preferences" },
-      { "title": "Profile Management", "desc": "Easily manage your profile" },
-      { "title": "Secure Communication", "desc": "Chat safely and privately" },
-      { "title": "User Friendly Interface", "desc": "Simple and easy to use" }
+      {
+        "title": "Instant Notifications",
+        "desc": "Get notified about new matches"
+      },
+      {
+        "title": "Smart Search Filters",
+        "desc": "Find matches as per your preferences"
+      },
+      {
+        "title": "Profile Management",
+        "desc": "Easily manage your profile"
+      },
+      {
+        "title": "Secure Communication",
+        "desc": "Chat safely and privately"
+      },
+      {
+        "title": "User Friendly Interface",
+        "desc": "Simple and easy to use"
+      }
     ]
   },
   "faq": {
     "eyebrow": "Frequently asked",
-    "title": "Questions",
-    "subtitle": "Get answers to common questions about VivahSambandh and our services.",
+    "title": "FAQ's",
+    "subtitle": "Quick answers to know more about VivahSambandh, verified profiles, membership plans, and matchmaking support.",
     "cta": "View All FAQ",
     "items": [
-      { "q": "What is VivahSambandh?", "a": "VivahSambandh is a premium matrimonial platform exclusively for the Agarwal community, blending tradition with modern matchmaking." },
-      { "q": "Is my information secure?", "a": "Yes. We use strict verification, privacy controls and secure communication to protect every member." },
-      { "q": "Can I search by community or city?", "a": "Yes. Browse matches by city, gotra, profession, education and many more filters." },
-      { "q": "Are profiles verified?", "a": "Every profile passes manual screening plus optional ID verification before going live." },
-      { "q": "How does the matching process work?", "a": "Create a profile, set preferences, receive curated matches, and connect with families directly." }
+      {
+        "q": "What is VivahSambandh?",
+        "a": "VivahSambandh is a premium matrimonial platform exclusively for the Agarwal community, blending tradition with modern matchmaking."
+      },
+      {
+        "q": "Is my information secure?",
+        "a": "Yes. We use strict verification, privacy controls and secure communication to protect every member."
+      },
+      {
+        "q": "Can I search by community or city?",
+        "a": "Yes. Browse matches by city, gotra, profession, education and many more filters."
+      },
+      {
+        "q": "Are profiles verified?",
+        "a": "Every profile passes manual screening plus optional ID verification before going live."
+      },
+      {
+        "q": "How does the matching process work?",
+        "a": "Create a profile, set preferences, receive curated matches, and connect with families directly."
+      }
     ]
+  },
+  "blogs": {
+    "featured": {
+      "eyebrow": "Featured insights",
+      "titleA": "Featured",
+      "titleB": "Stories & Guidance.",
+      "subtitle": "Handpicked reads on relationships, weddings and family values."
+    },
+    "front": {
+      "eyebrow": "From our blog",
+      "titleA": "Latest",
+      "titleB": "Updates & Stories.",
+      "subtitle": "Fresh articles, tips and community updates from VivahSambandh."
+    }
+  },
+  "blogsPage": {
+    "eyebrow": "Our blog",
+    "titleA": "All",
+    "titleB": "Stories & Articles.",
+    "subtitle": "Browse every article, guide and community update from VivahSambandh.",
+    "retry": "Try again",
+    "loadErrorTitle": "Could not load blogs",
+    "loadErrorDesc": "Something went wrong while fetching articles. Please try again.",
+    "emptyTitle": "No articles yet",
+    "emptyDesc": "New stories are on the way — please check back soon.",
+    "backToBlogs": "All blogs",
+    "notFoundTitle": "Article not found",
+    "notFoundDesc": "This article may have been moved or removed.",
+    "byAuthor": "By",
+    "prevArticle": "Previous",
+    "nextArticle": "Next",
+    "relatedTitle": "Related reads"
+  },
+  "legal": {
+    "needHelp": "Need help?",
+    "contactUs": "Contact us",
+    "privacy": {
+      "eyebrow": "Privacy Policy",
+      "title": "Your Privacy Matters",
+      "updated": "Last updated: January 2026",
+      "intro": "VivahSambandh respects your privacy. This policy explains what information we collect, how we use it, and the choices you have.",
+      "sections": [
+        {
+          "h": "Information We Collect",
+          "body": "We collect the details you share while creating and managing your profile — name, contact information, photographs, family and education background, partner preferences and verification documents. We also record basic usage information that helps us keep the platform safe and reliable."
+        },
+        {
+          "h": "How We Use It",
+          "body": "Your information is used to operate your account, suggest suitable matches, verify profiles, prevent fraud and communicate important updates. We never sell your personal information to third parties."
+        },
+        {
+          "h": "Sharing & Visibility",
+          "body": "Profile details you mark as visible are shown to other verified members as per your privacy settings. Contact details are shared only when you choose to connect. Verification documents are used internally and never displayed publicly."
+        },
+        {
+          "h": "Security",
+          "body": "We use bank-grade encryption, strict access controls and regular monitoring to protect your data. No method is completely risk-free, so we encourage you to use a strong password and never share OTPs."
+        },
+        {
+          "h": "Your Rights",
+          "body": "You may review, correct or delete your profile information at any time from your account, or write to us at support@vivahsambandh.com and our team will assist you within a reasonable time."
+        }
+      ]
+    },
+    "terms": {
+      "eyebrow": "Terms & Conditions",
+      "title": "Terms of Use",
+      "updated": "Last updated: January 2026",
+      "intro": "By creating an account or using VivahSambandh, you agree to the following terms. Please read them carefully.",
+      "sections": [
+        {
+          "h": "Eligibility",
+          "body": "You must be legally eligible for marriage as per Indian law (21 years or above for grooms, 18 years or above for brides) to register. Accounts may be created by the individual or by their family members on their behalf."
+        },
+        {
+          "h": "Account & Verification",
+          "body": "You agree to provide true, accurate and complete information. Profiles pass manual screening and optional ID verification before going live. We may suspend accounts with false, misleading or incomplete information."
+        },
+        {
+          "h": "Acceptable Use",
+          "body": "Use the platform only for genuine matrimonial purposes. Harassment, abusive language, solicitation, spam, fake profiles or any unlawful activity will lead to immediate suspension without refund."
+        },
+        {
+          "h": "Membership & Payments",
+          "body": "Basic profile creation and browsing are free. Paid plans unlock premium features as described on the Membership page. All payments are processed through secure gateways; plan benefits begin once payment is confirmed."
+        },
+        {
+          "h": "Our Role",
+          "body": "VivahSambandh is a matchmaking platform that facilitates introductions between families. We verify profiles with care, but the final decision to proceed with any alliance rests entirely with you and your family."
+        }
+      ]
+    },
+    "guidelines": {
+      "eyebrow": "Community Guidelines",
+      "title": "A Respectful Community",
+      "updated": "Last updated: January 2026",
+      "intro": "These guidelines keep VivahSambandh safe, genuine and welcoming for every Agarwal family.",
+      "sections": [
+        {
+          "h": "Be Genuine",
+          "body": "Share real photographs, correct personal details and honest expectations. Profiles found to be fake or misleading are removed."
+        },
+        {
+          "h": "Communicate With Respect",
+          "body": "Be polite in every conversation. Abusive, offensive or threatening language towards any member or family is strictly prohibited."
+        },
+        {
+          "h": "Respect Privacy",
+          "body": "Do not share another member's personal details, photographs or conversations outside the platform without their consent."
+        },
+        {
+          "h": "No Fraud or Solicitation",
+          "body": "Never ask for money, gifts or financial favours. Do not promote businesses, schemes or any unrelated services on the platform."
+        },
+        {
+          "h": "Report & Stay Safe",
+          "body": "If someone violates these guidelines, report the profile immediately through the Contact page. Meet new connections in safe, public settings and inform your family."
+        }
+      ]
+    },
+    "help": {
+      "eyebrow": "Help Center",
+      "title": "How Can We Help?",
+      "updated": "",
+      "intro": "Answers to common questions and the fastest ways to reach our support team.",
+      "sections": [
+        {
+          "h": "Creating Your Profile",
+          "body": "Click Create Profile, fill in your details and preferences, upload photographs and verify your phone number. Your profile goes live after a quick review by our team."
+        },
+        {
+          "h": "Searching Matches",
+          "body": "Use the Search section on the home page to browse by city, gotra, profession and education. Save your preferences to receive curated matches."
+        },
+        {
+          "h": "Membership & Payments",
+          "body": "Compare plans on the Membership page. Payments are accepted through UPI, Net Banking and Credit/Debit cards with bank-grade encryption. Premium benefits activate as soon as payment is confirmed."
+        },
+        {
+          "h": "Safety & Verification",
+          "body": "Look for verified badges on profiles. Never share OTPs or send money to anyone you meet online. Report suspicious profiles through the Contact page."
+        },
+        {
+          "h": "Talk to Our Team",
+          "body": "Still stuck? Reach us through the Contact page, call us Mon – Sat (10 AM – 6 PM), or email support@vivahsambandh.com — we reply within 24 hours."
+        }
+      ]
+    }
   },
   "contact": {
     "eyebrow": "Get in touch",
@@ -177,25 +397,58 @@
     "valuesTitleB": "Trust in Every Connection.",
     "valuesSubtitle": "Our platform is built on the values that matter most to Agarwal families.",
     "values": [
-      { "title": "Family Values", "desc": "We respect and celebrate Agarwal traditions, values and cultural heritage in every match we make." },
-      { "title": "Verified Profiles", "desc": "We ensure genuine and verified profiles to create a safe and trustworthy experience." },
-      { "title": "Privacy & Safety", "desc": "Your privacy and security are our priority, with secure communication and complete data protection." }
+      {
+        "title": "Family Values",
+        "desc": "We respect and celebrate Agarwal traditions, values and cultural heritage in every match we make."
+      },
+      {
+        "title": "Verified Profiles",
+        "desc": "We ensure genuine and verified profiles to create a safe and trustworthy experience."
+      },
+      {
+        "title": "Privacy & Safety",
+        "desc": "Your privacy and security are our priority, with secure communication and complete data protection."
+      }
     ],
     "whyEyebrow": "Why VivahSambandh?",
     "whyTitleA": "Built for Agarwal",
     "whyTitleB": "Families, by People Who Understand",
     "whyBody": "We understand the unique values, preferences and expectations of Agarwal families. Our platform is designed to make the search for a life partner simple, trustworthy and meaningful.",
     "whyPoints": [
-      { "title": "Agarwal Community Focus", "desc": "A dedicated platform exclusively for Agarwal families and individuals." },
-      { "title": "Meaningful Compatibility", "desc": "Advanced search and smart matching to find truly compatible partners." },
-      { "title": "Family Involvement", "desc": "We make it easy for families to be part of the journey, as traditions matter." },
-      { "title": "Secure Communication", "desc": "Safe and private communication tools to connect with confidence." }
+      {
+        "title": "Agarwal Community Focus",
+        "desc": "A dedicated platform exclusively for Agarwal families and individuals."
+      },
+      {
+        "title": "Meaningful Compatibility",
+        "desc": "Advanced search and smart matching to find truly compatible partners."
+      },
+      {
+        "title": "Family Involvement",
+        "desc": "We make it easy for families to be part of the journey, as traditions matter."
+      },
+      {
+        "title": "Secure Communication",
+        "desc": "Safe and private communication tools to connect with confidence."
+      }
     ],
     "stats": [
-      { "value": "50K+", "label": "Happy Members" },
-      { "value": "Verified", "label": "Profiles" },
-      { "value": "Community", "label": "First" },
-      { "value": "Privacy", "label": "Focused" }
+      {
+        "value": "50K+",
+        "label": "Happy Members"
+      },
+      {
+        "value": "Verified",
+        "label": "Profiles"
+      },
+      {
+        "value": "Community",
+        "label": "First"
+      },
+      {
+        "value": "Privacy",
+        "label": "Focused"
+      }
     ],
     "ctaEyebrow": "Be a part of our story",
     "ctaTitleA": "Your Story",
@@ -214,8 +467,8 @@
     "emailTitle": "Email Us",
     "emailNote": "We reply within 24 hours.",
     "addressTitle": "Our Address",
-    "addressValue": "Bengaluru, Karnataka, India",
-    "addressNote": "560001",
+    "addressValue": "#8, 1st Floor, 24th Main, 5th Phase, JP Nagar, Bangalore 560078",
+    "addressNote": "Karnataka, India",
     "hoursTitle": "Support Hours",
     "hoursValue": "Mon – Sat",
     "hoursNote": "10:00 AM – 6:00 PM",
@@ -228,7 +481,12 @@
     "phone": "Phone Number",
     "subject": "Subject",
     "subjectPlaceholder": "Select a subject",
-    "subjectOptions": ["General Question", "Membership & Pricing", "Profile Help", "Feedback & Suggestions"],
+    "subjectOptions": [
+      "General Question",
+      "Membership & Pricing",
+      "Profile Help",
+      "Feedback & Suggestions"
+    ],
     "message": "Your Message",
     "send": "Send Message",
     "successTitle": "Message Sent!",
@@ -242,11 +500,26 @@
     "qaTitle": "Quick Answers",
     "qaBody": "Find answers to common queries about our services.",
     "qa": [
-      { "q": "How can I create a profile?", "a": "Click Create Profile, fill in your details and preferences, verify your phone number — your profile goes live after a quick review." },
-      { "q": "Is my information safe and secure?", "a": "Yes. We use strict verification, privacy controls and secure communication to protect every member." },
-      { "q": "How does the matching process work?", "a": "Create a profile, set preferences, receive curated matches, and connect with families directly." },
-      { "q": "Can I search by city or community?", "a": "Yes. Browse matches by city, gotra, profession, education and many more filters." },
-      { "q": "How can I contact support?", "a": "Call us at +91 98765 43210 (Mon – Sat, 10 AM – 6 PM) or email support@vivahsambandh.com — we reply within 24 hours." }
+      {
+        "q": "How can I create a profile?",
+        "a": "Click Create Profile, fill in your details and preferences, verify your phone number — your profile goes live after a quick review."
+      },
+      {
+        "q": "Is my information safe and secure?",
+        "a": "Yes. We use strict verification, privacy controls and secure communication to protect every member."
+      },
+      {
+        "q": "How does the matching process work?",
+        "a": "Create a profile, set preferences, receive curated matches, and connect with families directly."
+      },
+      {
+        "q": "Can I search by city or community?",
+        "a": "Yes. Browse matches by city, gotra, profession, education and many more filters."
+      },
+      {
+        "q": "How can I contact support?",
+        "a": "Call us at +91 98765 43210 (Mon – Sat, 10 AM – 6 PM) or email support@vivahsambandh.com — we reply within 24 hours."
+      }
     ],
     "ctaEyebrow": "Still Have Questions?",
     "ctaTitleA": "We're Here",
@@ -259,5 +532,421 @@
     "en": "English",
     "hi": "हिन्दी",
     "switchTo": "Switch to Hindi"
+  },
+  "storiesPage": {
+    "breadcrumbHome": "Home",
+    "breadcrumbCurrent": "Success Stories",
+    "heroEyebrow": "500+ Agarwal Weddings Celebrated",
+    "heroTitleA": "Real People.",
+    "heroTitleB": "Real Happiness.",
+    "heroSubtitle": "Thousands of Agarwal families found their perfect match through VivahSambandh. Their heartwarming stories inspire us to create more beautiful beginnings.",
+    "badges": {
+      "verified": "Family Verified",
+      "gotras": "18 Gotras United",
+      "kundali": "Kundali Matching"
+    },
+    "stats": [
+      {
+        "value": "500+",
+        "label": "Weddings Celebrated",
+        "sub": "Across 45+ Cities"
+      },
+      {
+        "value": "18/18",
+        "label": "Agarwal Gotras",
+        "sub": "Complete Gotra Coverage"
+      },
+      {
+        "value": "100%",
+        "label": "Verified Profiles",
+        "sub": "Zero Fake Accounts"
+      },
+      {
+        "value": "4.9 ★",
+        "label": "Family Trust Rating",
+        "sub": "From Verified Reviews"
+      }
+    ],
+    "featured": {
+      "eyebrow": "Featured Story of the Month",
+      "title": "When Shared Values Created a Lifetime Bond",
+      "married": "Married: Feb 2026",
+      "gotras": "Bansal ✦ Mittal",
+      "city": "Bengaluru, Karnataka",
+      "couple": "Vikas & Riya",
+      "quote": "VivahSambandh made our journey simple, respectful and comfortable. Both families connected naturally, and knowing the profiles were strictly verified gave us immense peace of mind.",
+      "story": "From initial profile discovery with compatible gotras to in-depth family meetings, the platform ensured mutual respect and full privacy every step of the way.",
+      "tagTitle": "Agarwal Matrimony Union",
+      "tagSub": "Verified VivahSambandh Couple"
+    },
+    "grid": {
+      "eyebrow": "Real Couple Stories",
+      "title": "Bonds of Trust, Love & Tradition",
+      "filters": [
+        {
+          "id": "all",
+          "label": "All Cities"
+        },
+        {
+          "id": "delhi",
+          "label": "Delhi NCR"
+        },
+        {
+          "id": "bengaluru",
+          "label": "Bengaluru"
+        },
+        {
+          "id": "kolkata",
+          "label": "Kolkata"
+        },
+        {
+          "id": "mumbai",
+          "label": "Mumbai"
+        },
+        {
+          "id": "jaipur",
+          "label": "Jaipur"
+        }
+      ],
+      "items": [
+        {
+          "id": "rohan-ananya",
+          "cityKey": "delhi",
+          "names": "Rohan & Ananya",
+          "gotras": "Goel ✦ Singhal",
+          "city": "Delhi NCR",
+          "weddingDate": "December 2025",
+          "quote": "We found each other through family-first preferences. Our values, traditions, and priorities aligned seamlessly.",
+          "story": "Their parents initiated the connection on VivahSambandh. Within two months of respectful conversations and Kundali confirmation, the families met in Delhi to finalize the wedding.",
+          "image": "/images/home/romantic-indian-wedding-portrait.webp",
+          "badge": "Engaged to Married in 4 Mo"
+        },
+        {
+          "id": "amit-pooja",
+          "cityKey": "kolkata",
+          "names": "Amit & Pooja",
+          "gotras": "Garg ✦ Jindal",
+          "city": "Kolkata",
+          "weddingDate": "January 2026",
+          "quote": "Our families connected easily, and everything felt right from the start. Trust was established on day one.",
+          "story": "Both entrepreneurs from traditional business families, Amit and Pooja appreciated the verified background checks and privacy controls on contact details.",
+          "image": "/images/home/navy-and-gold-wedding-romance.webp",
+          "badge": "Business Families Union"
+        },
+        {
+          "id": "rahul-sneha",
+          "cityKey": "mumbai",
+          "names": "Rahul & Sneha",
+          "gotras": "Kansal ✦ Tayal",
+          "city": "Mumbai",
+          "weddingDate": "November 2025",
+          "quote": "Finding someone within our community with modern outlook yet deep cultural roots was our dream come true.",
+          "story": "Both working professionals in Mumbai, they discovered shared passions and family ties that spanned generations in Haryana.",
+          "image": "/images/home/radiant-indian-wedding-portrait.webp",
+          "badge": "Modern Agarwal Couple"
+        },
+        {
+          "id": "mayank-shweta",
+          "cityKey": "jaipur",
+          "names": "Mayank & Shweta",
+          "gotras": "Agrawal ✦ Bindal",
+          "city": "Jaipur",
+          "weddingDate": "January 2026",
+          "quote": "The gotra verification and prompt family support team gave our parents total clarity and trust.",
+          "story": "A grand royal wedding in Jaipur brought together two reputed families whose elder members appreciated the authenticity of every profile document.",
+          "image": "/images/home/romantic-indian-wedding-portrait.webp",
+          "badge": "Royal Heritage Wedding"
+        },
+        {
+          "id": "varun-neha",
+          "cityKey": "bengaluru",
+          "names": "Varun & Neha",
+          "gotras": "Dharan ✦ Kucchal",
+          "city": "Bengaluru",
+          "weddingDate": "October 2025",
+          "quote": "We found our life partner without stress or spam calls. VivahSambandh preserves the dignity of matchmaking.",
+          "story": "With clear communication channels and zero unsolicited calls, their elders felt respected and comfortable conducting matchmaking discussions.",
+          "image": "/images/home/navy-and-gold-wedding-romance.webp",
+          "badge": "Family Verified Match"
+        }
+      ]
+    },
+    "cta": {
+      "eyebrow": "Did You Meet on VivahSambandh?",
+      "title": "Share Your Wedding Story With Us",
+      "body": "Inspire thousands of Agarwal families searching for their ideal match. Share your wedding photographs and heartwarming journey with our community.",
+      "submit": "Submit Your Story ✉",
+      "createProfile": "Create Your Profile"
+    }
+  },
+  "membershipPage": {
+    "breadcrumbHome": "Home",
+    "breadcrumbCurrent": "Membership Plans",
+    "heroEyebrow": "Transparent & Trusted Membership",
+    "heroTitleA": "Invest in the Right",
+    "heroTitleB": "Life Partnership.",
+    "heroSubtitle": "Curated matrimonial plans designed exclusively for Agarwal families. Strict verification, privacy controls, Kundali compatibility, and dedicated relationship managers.",
+    "trustBadges": {
+      "noHidden": "Zero Hidden Charges",
+      "privacy": "100% Privacy Control",
+      "support": "Dedicated Advisors"
+    },
+    "plansHeader": {
+      "eyebrow": "Transparent Pricing",
+      "title": "Simple, Transparent Membership Plans",
+      "subtitle": "Choose the plan that best suits your family’s search. Upgrade or cancel anytime."
+    },
+    "plans": [
+      {
+        "id": "silver",
+        "name": "Silver Member",
+        "tagline": "Essential Match Discovery",
+        "price": "Free",
+        "duration": "Lifetime Access",
+        "badge": "Starter",
+        "ctaText": "Register Free",
+        "isPopular": false,
+        "features": [
+          {
+            "text": "Create & manage verified profile",
+            "included": true
+          },
+          {
+            "text": "Browse 50,000+ Agarwal profiles",
+            "included": true
+          },
+          {
+            "text": "Filter by 18 Gotras and Cities",
+            "included": true
+          },
+          {
+            "text": "Send express interest to matches",
+            "included": true
+          },
+          {
+            "text": "View verified phone numbers",
+            "included": false
+          },
+          {
+            "text": "Direct WhatsApp communication",
+            "included": false
+          },
+          {
+            "text": "Dedicated relationship manager",
+            "included": false
+          }
+        ]
+      },
+      {
+        "id": "gold",
+        "name": "Gold Premium",
+        "tagline": "Direct Family Connect",
+        "price": "₹4,999",
+        "duration": "3 Months Active",
+        "badge": "Most Popular",
+        "isPopular": true,
+        "ctaText": "Choose Gold Plan",
+        "features": [
+          {
+            "text": "Everything in Silver plan",
+            "included": true
+          },
+          {
+            "text": "View 50 verified contact numbers",
+            "included": true,
+            "highlight": true
+          },
+          {
+            "text": "Full Kundali & Gun Milan reports",
+            "included": true,
+            "highlight": true
+          },
+          {
+            "text": "Direct family WhatsApp connect",
+            "included": true
+          },
+          {
+            "text": "Profile boost in search results",
+            "included": true
+          },
+          {
+            "text": "Priority customer support",
+            "included": true
+          },
+          {
+            "text": "Dedicated relationship manager",
+            "included": false
+          }
+        ]
+      },
+      {
+        "id": "platinum",
+        "name": "Royal Platinum",
+        "tagline": "Handpicked VIP Concierge",
+        "price": "₹9,999",
+        "duration": "6 Months Active",
+        "badge": "Elite Matchmaking",
+        "isPopular": false,
+        "ctaText": "Choose Royal Plan",
+        "features": [
+          {
+            "text": "Everything in Gold plan",
+            "included": true
+          },
+          {
+            "text": "Unlimited verified contact views",
+            "included": true,
+            "highlight": true
+          },
+          {
+            "text": "Personal Senior Matchmaker assigned",
+            "included": true,
+            "highlight": true
+          },
+          {
+            "text": "Curated weekly match shortlist",
+            "included": true
+          },
+          {
+            "text": "Family meeting & intro coordination",
+            "included": true
+          },
+          {
+            "text": "Top featured placement on homepage",
+            "included": true
+          },
+          {
+            "text": "Strict privacy & discreet matching",
+            "included": true
+          }
+        ]
+      }
+    ],
+    "comparison": {
+      "eyebrow": "Detailed Comparison",
+      "title": "Compare Every Feature Side-by-Side",
+      "subtitle": "Clear breakdown of what is included in each membership tier.",
+      "colFeature": "Features & Privileges",
+      "colSilver": "Silver (Free)",
+      "colGold": "Gold (₹4,999)",
+      "colPlatinum": "Royal Platinum (₹9,999)",
+      "rows": [
+        {
+          "feature": "Verified Profile Creation",
+          "silver": "Included",
+          "gold": "Included",
+          "platinum": "Included"
+        },
+        {
+          "feature": "18 Gotras Filter Search",
+          "silver": "Included",
+          "gold": "Included",
+          "platinum": "Included"
+        },
+        {
+          "feature": "Send Express Interest",
+          "silver": "Unlimited",
+          "gold": "Unlimited",
+          "platinum": "Unlimited"
+        },
+        {
+          "feature": "Verified Contact Numbers",
+          "silver": "✕",
+          "gold": "50 Contacts",
+          "platinum": "Unlimited"
+        },
+        {
+          "feature": "Kundali & Gun Milan Report",
+          "silver": "✕",
+          "gold": "Included",
+          "platinum": "Included"
+        },
+        {
+          "feature": "Direct Family WhatsApp",
+          "silver": "✕",
+          "gold": "Included",
+          "platinum": "Included"
+        },
+        {
+          "feature": "Search Priority Boost",
+          "silver": "✕",
+          "gold": "2X Visibility",
+          "platinum": "Top Featured"
+        },
+        {
+          "feature": "Dedicated Senior Matchmaker",
+          "silver": "✕",
+          "gold": "✕",
+          "platinum": "Dedicated RM"
+        },
+        {
+          "feature": "Family Meeting Coordination",
+          "silver": "✕",
+          "gold": "✕",
+          "platinum": "Included"
+        },
+        {
+          "feature": "Discreet & Confidential Matching",
+          "silver": "Standard",
+          "gold": "Advanced",
+          "platinum": "VIP Level"
+        }
+      ]
+    },
+    "benefits": {
+      "eyebrow": "The VivahSambandh Advantage",
+      "title": "Built With Respect for Agarwal Traditions",
+      "items": [
+        {
+          "icon": "🛡️",
+          "title": "Strict Family Verification",
+          "desc": "Every profile undergoes government ID verification and background checks so you connect only with genuine families."
+        },
+        {
+          "icon": "☸️",
+          "title": "18 Gotras & Kundali Match",
+          "desc": "Respect for traditional Agarwal Gotra exogamy with instant 36-guna Milan calculations and Kundali compatibility."
+        },
+        {
+          "icon": "🔒",
+          "title": "Complete Privacy Controls",
+          "desc": "Your contact numbers, photos, and horoscopes are shared only with profiles you explicitly approve."
+        },
+        {
+          "icon": "🤝",
+          "title": "Personal Matchmaking Advisors",
+          "desc": "Our experienced senior advisors assist in facilitating first introductions and respectable family discussions."
+        }
+      ]
+    },
+    "faq": {
+      "eyebrow": "Membership Questions",
+      "title": "Frequently Asked Questions About Membership",
+      "items": [
+        {
+          "q": "Is profile registration completely free?",
+          "a": "Yes. Creating your profile, uploading verification documents, and browsing matches is 100% free with the Silver plan. You can upgrade to a paid plan anytime."
+        },
+        {
+          "q": "Which payment methods are accepted?",
+          "a": "We accept all major UPI apps (GPay, PhonePe, Paytm), Net Banking, and Credit/Debit cards with bank-grade 256-bit encryption."
+        },
+        {
+          "q": "Can I upgrade my plan anytime?",
+          "a": "Yes. If you start on Gold and later want the Royal Platinum VIP concierge with a dedicated matchmaker, you can upgrade seamlessly by paying only the price difference."
+        },
+        {
+          "q": "How are my contact details protected?",
+          "a": "Your contact numbers and addresses are strictly protected. They are displayed only to verified profiles that you mutually accept. We never sell data to telemarketers."
+        }
+      ]
+    },
+    "cta": {
+      "eyebrow": "Personal Matchmaking Guidance",
+      "title": "Need Help Choosing the Right Plan?",
+      "body": "Our senior matchmaking advisors are available to understand your family preferences and guide you through the ideal membership options.",
+      "advisorBtn": "Speak to an Advisor",
+      "contactBtn": "Contact Support"
+    }
   }
 }

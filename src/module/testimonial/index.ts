@@ -1,0 +1,5 @@
+export { default as TestimonialSection } from './components/TestimonialSection'
+export type { TestimonialSectionProps } from './components/TestimonialSection'
+export * from './api/testimonial.api'
+export * from './hook/useTestimonials'
+export * from './types'

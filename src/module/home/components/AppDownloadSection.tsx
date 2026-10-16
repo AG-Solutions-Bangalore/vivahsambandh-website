@@ -2,6 +2,7 @@ import { useTranslation } from "react-i18next";
 import { COMPANY } from "../../../constants/company";
 import type { AppFeature } from "../types";
 import Reveal, { RevealGroup } from "../../../components/motion/Reveal";
+import { img, imgSrcSet } from "../../../lib/image";
 
 function AppFeatureIcon({ index }: { index: number }) {
   switch (index) {
@@ -127,7 +128,7 @@ export default function AppDownloadSection() {
                 className="inline-flex items-center gap-3 rounded-xl border border-navy-900 bg-navy-900 px-4 py-2.5 text-white shadow-md transition hover:bg-navy-800"
               >
                 <img
-                  src="/images/common/google-play-store.webp"
+                  src={img("/images/common/google-play-store.webp")}
                   width={48}
                   height={48}
                   alt="Get it on Google Play"
@@ -154,7 +155,7 @@ export default function AppDownloadSection() {
                 className="inline-flex items-center gap-3 rounded-xl border border-navy-900 bg-navy-900 px-4 py-2.5 text-white shadow-md transition hover:bg-navy-800"
               >
                 <img
-                  src="/images/common/app-store.webp"
+                  src={img("/images/common/app-store.webp")}
                   width={48}
                   height={48}
                   alt="Download on the App Store"
@@ -179,8 +180,8 @@ export default function AppDownloadSection() {
           <Reveal variant="scale" delay={0.1} className="flex justify-center lg:col-span-5">
             <div className="relative mx-auto max-w-[440px] drop-shadow-2xl transition-transform duration-700 hover:scale-105 sm:max-w-[520px]">
               <img
-                src="/images/home/vivahsambandh-app-image.webp"
-                srcSet="/images/home/vivahsambandh-app-image-800.webp 800w, /images/home/vivahsambandh-app-image.webp 1426w"
+                src={img("/images/home/vivahsambandh-app-image.webp")}
+                srcSet={imgSrcSet("/images/home/vivahsambandh-app-image-800.webp 800w, /images/home/vivahsambandh-app-image.webp 1426w")}
                 sizes="(max-width: 640px) 90vw, 32rem"
                 width={1426}
                 height={1103}

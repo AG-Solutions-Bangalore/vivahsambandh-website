@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { ensureMotion, prefersReducedMotion } from "../../../lib/gsap-setup";
+import { img, imgSrcSet } from "../../../lib/image";
 
 const TRUST_BADGES = [
   {
@@ -69,13 +70,13 @@ const MATCH_CARDS = [
   {
     id: "bride",
     href: "#search-bride",
-    photo: "/images/home/radiant-indian-bride-in-floral-glow.webp",
+    photo: img("/images/home/radiant-indian-bride-in-floral-glow.webp"),
     photoSrcSet:
-      "/images/home/radiant-indian-bride-in-floral-glow-320.webp 320w, /images/home/radiant-indian-bride-in-floral-glow-640.webp 640w, /images/home/radiant-indian-bride-in-floral-glow.webp 1145w",
+      imgSrcSet("/images/home/radiant-indian-bride-in-floral-glow-128.webp 128w, /images/home/radiant-indian-bride-in-floral-glow-320.webp 320w, /images/home/radiant-indian-bride-in-floral-glow-640.webp 640w, /images/home/radiant-indian-bride-in-floral-glow.webp 1145w"),
     photoWidth: 1145,
     photoHeight: 1374,
-    illustration: "/images/home/woman_image.webp",
-    illustrationSrcSet: "/images/home/woman_image-160.webp 160w, /images/home/woman_image-320.webp 320w, /images/home/woman_image.webp 1355w",
+    illustration: img("/images/home/woman_image.webp"),
+    illustrationSrcSet: imgSrcSet("/images/home/woman_image-160.webp 160w, /images/home/woman_image-320.webp 320w, /images/home/woman_image.webp 1355w"),
     illustrationWidth: 1355,
     illustrationHeight: 1161,
     illustrationAlt: "Bride Illustration",
@@ -86,13 +87,13 @@ const MATCH_CARDS = [
   {
     id: "groom",
     href: "#search-groom",
-    photo: "/images/home/radiant-indian-groom-in-a-golden-wedding-setting.webp",
+    photo: img("/images/home/radiant-indian-groom-in-a-golden-wedding-setting.webp"),
     photoSrcSet:
-      "/images/home/radiant-indian-groom-in-a-golden-wedding-setting-320.webp 320w, /images/home/radiant-indian-groom-in-a-golden-wedding-setting-640.webp 640w, /images/home/radiant-indian-groom-in-a-golden-wedding-setting.webp 1254w",
+      imgSrcSet("/images/home/radiant-indian-groom-in-a-golden-wedding-setting-128.webp 128w, /images/home/radiant-indian-groom-in-a-golden-wedding-setting-320.webp 320w, /images/home/radiant-indian-groom-in-a-golden-wedding-setting-640.webp 640w, /images/home/radiant-indian-groom-in-a-golden-wedding-setting.webp 1254w"),
     photoWidth: 1254,
     photoHeight: 1254,
-    illustration: "/images/home/man_image.webp",
-    illustrationSrcSet: "/images/home/man_image-160.webp 160w, /images/home/man_image-320.webp 320w, /images/home/man_image.webp 1324w",
+    illustration: img("/images/home/man_image.webp"),
+    illustrationSrcSet: imgSrcSet("/images/home/man_image-160.webp 160w, /images/home/man_image-320.webp 320w, /images/home/man_image.webp 1324w"),
     illustrationWidth: 1324,
     illustrationHeight: 1188,
     illustrationAlt: "Groom Illustration",
@@ -106,9 +107,12 @@ export default function HeroSection() {
   const { t } = useTranslation();
   const rootRef = useRef<HTMLDivElement | null>(null);
 
-  // Motion loads lazily (see lib/gsap-setup): identical choreography, wired
-  // after the chunk lands. Static hero paints first; intro enhances after.
+  // Motion loads lazily (see lib/gsap-setup): desktop enhances with
+  // choreography; mobile hero paints instantly from static markup with 0 JS delay.
   useEffect(() => {
+    if (typeof window !== "undefined" && window.innerWidth < 768) {
+      return;
+    }
     let mm: {
       revert: () => void
       add: (conditions: string, callback: () => void) => void
@@ -119,71 +123,61 @@ export default function HeroSection() {
       const root = rootRef.current;
       if (cancelled || !root || prefersReducedMotion()) return;
 
-      // ——— Intro timeline (above the fold → play on mount, not on scroll) ———
-      const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
-      tl.fromTo(
-        '[data-hero="eyebrow"]',
-        { opacity: 0, y: 12 },
-        { opacity: 1, y: 0, duration: 0.45, clearProps: "all" },
-        0.05,
-      )
-        // Line-mask reveal: each headline line slides up from inside its overflow-hidden mask
-        .fromTo(
-          '[data-hero-line]',
-          { yPercent: 110 },
-          {
-            yPercent: 0,
-            duration: 0.75,
-            ease: "power4.out",
-            stagger: 0.09,
-            clearProps: "all",
-          },
-          0.1,
-        )
-        .fromTo(
-          '[data-hero="subtitle"]',
-          { opacity: 0, y: 14 },
-          { opacity: 1, y: 0, duration: 0.5, clearProps: "all" },
-          0.28,
-        )
-        // CTA Buttons: smooth spring bounce entrance without hard hiding
-        .fromTo(
-          '[data-hero="cta"] > *',
-          { opacity: 0, y: 16, scale: 0.95 },
-          {
-            opacity: 1,
-            y: 0,
-            scale: 1,
-            duration: 0.55,
-            stagger: 0.09,
-            ease: "back.out(1.4)",
-            clearProps: "all",
-          },
-          0.38,
-        )
-        // Trust Badges: staggered fade and lift
-        .fromTo(
-          '[data-hero="badges"] li',
-          { opacity: 0, y: 10 },
-          {
-            opacity: 1,
-            y: 0,
-            duration: 0.45,
-            stagger: 0.05,
-            clearProps: "all",
-          },
-          0.5,
-        )
-        .fromTo(
-          '[data-hero="badge-side"]',
-          { opacity: 0, x: 20 },
-          { opacity: 1, x: 0, duration: 0.6, clearProps: "all" },
-          0.35,
-        );
-
-      // ——— Banner parallax (scrub, desktop only — mobile keeps static image) ———
+      // ——— Desktop: Entrance animations & Parallax (mobile stays instant & lightweight) ———
       mm = gsap.matchMedia();
       mm.add("(min-width: 768px)", () => {
+        const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
+        tl.fromTo(
+          '[data-hero="eyebrow"]',
+          { opacity: 0, y: 12 },
+          { opacity: 1, y: 0, duration: 0.45, clearProps: "all" },
+          0.05,
+        )
+          .fromTo(
+            '[data-hero-line]',
+            { yPercent: 110 },
+            {
+              yPercent: 0,
+              duration: 0.75,
+              ease: "power4.out",
+              stagger: 0.09,
+              clearProps: "all",
+            },
+            0.1,
+          )
+          .fromTo(
+            '[data-hero="subtitle"]',
+            { opacity: 0, y: 14 },
+            { opacity: 1, y: 0, duration: 0.5, clearProps: "all" },
+            0.28,
+          )
+          .fromTo(
+            '[data-hero="cta"] > *',
+            { opacity: 0, y: 16, scale: 0.95 },
+            {
+              opacity: 1,
+              y: 0,
+              scale: 1,
+              duration: 0.55,
+              stagger: 0.09,
+              ease: "back.out(1.4)",
+              clearProps: "all",
+            },
+            0.38,
+          )
+          .fromTo(
+            '[data-hero="badges"] li',
+            { opacity: 0, y: 10 },
+            {
+              opacity: 1,
+              y: 0,
+              duration: 0.45,
+              stagger: 0.05,
+              clearProps: "all",
+            },
+            0.5,
+          );
+
         gsap.to('[data-hero="banner"]', {
           yPercent: 12,
           ease: "none",
@@ -253,8 +247,8 @@ export default function HeroSection() {
       {/* Small + in front                                                */}
       {/* ============================================================== */}
       <img
-        src="/images/home/flower1_image.webp"
-        srcSet="/images/home/flower1_image-320.webp 320w, /images/home/flower1_image-640.webp 640w, /images/home/flower1_image.webp 1024w"
+        src={img("/images/home/flower1_image.webp")}
+        srcSet={imgSrcSet("/images/home/flower1_image-192.webp 192w, /images/home/flower1_image-320.webp 320w, /images/home/flower1_image-640.webp 640w, /images/home/flower1_image.webp 1024w")}
         sizes="(max-width: 640px) 22vw, (max-width: 768px) 10rem, (max-width: 1024px) 12rem, (max-width: 1280px) 14rem, 16rem"
         width={1024}
         height={1536}
@@ -263,12 +257,13 @@ export default function HeroSection() {
         data-hero="flower-l"
         fetchPriority="low"
         className="pointer-events-none absolute left-0 bottom-0 z-20 w-32 sm:w-40 md:w-48 lg:w-56 xl:w-64 max-w-[22vw] h-auto object-contain object-left-bottom select-none"
-        loading="eager"
+        loading="lazy"
+        decoding="async"
         aria-hidden="true"
       />
       <img
-        src="/images/home/flower2_image.webp"
-        srcSet="/images/home/flower2_image-320.webp 320w, /images/home/flower2_image-640.webp 640w, /images/home/flower2_image.webp 1024w"
+        src={img("/images/home/flower2_image.webp")}
+        srcSet={imgSrcSet("/images/home/flower2_image-192.webp 192w, /images/home/flower2_image-320.webp 320w, /images/home/flower2_image-640.webp 640w, /images/home/flower2_image.webp 1024w")}
         sizes="(max-width: 640px) 26vw, (max-width: 768px) 11rem, (max-width: 1024px) 13rem, (max-width: 1280px) 15rem, 18rem"
         width={1024}
         height={1536}
@@ -277,38 +272,41 @@ export default function HeroSection() {
         data-hero="flower-r"
         fetchPriority="low"
         className="pointer-events-none absolute right-0 bottom-0 z-20 w-32 sm:w-44 md:w-52 lg:w-60 xl:w-72 max-w-[26vw] h-auto object-contain object-right-top select-none"
-        loading="eager"
+        loading="lazy"
+        decoding="async"
         aria-hidden="true"
       />
 
       {/* ============================================================== */}
       {/* 1. HERO BANNER: Full-width, proportionally sized to 2172x724   */}
       {/* ============================================================== */}
-      <section data-hero="banner-wrap" className="relative isolate z-10 w-full lg:h-[520px] xl:h-[540px]">
-        {/* Top garlands: hang from top */}
+      <section data-hero="banner-wrap" className="relative isolate z-10 w-full lg:h-[440px] xl:h-[470px]">
+        {/* Top garlands: hang from top on sm and up; hidden on small phones to keep mobile clean & fast */}
         <img
-          src="/images/home/flower1_image-320.webp"
-          srcSet="/images/home/flower1_image-192.webp 192w, /images/home/flower1_image-320.webp 320w, /images/home/flower1_image-640.webp 640w"
+          src={img("/images/home/flower1_image-192.webp")}
+          srcSet={imgSrcSet("/images/home/flower1_image-192.webp 192w, /images/home/flower1_image-320.webp 320w, /images/home/flower1_image-640.webp 640w")}
           sizes="(max-width: 640px) 12vw, (max-width: 768px) 5rem, 8rem"
-          width={320}
-          height={480}
+          width={192}
+          height={288}
           alt="Decorative flower garland"
           title="Decorative flower garland"
-          className="pointer-events-none absolute left-0 top-0 z-[5] w-16 sm:w-20 md:w-24 lg:w-28 xl:w-32 max-w-[12vw] h-auto object-contain object-left-top select-none -scale-y-100"
-          loading="eager"
+          className="pointer-events-none absolute left-0 top-0 z-[5] w-16 sm:w-20 md:w-24 lg:w-28 xl:w-32 max-w-[12vw] h-auto object-contain object-left-top select-none -scale-y-100 hidden sm:block"
+          loading="lazy"
+          decoding="async"
           fetchPriority="low"
           aria-hidden="true"
         />
         <img
-          src="/images/home/flower2_image-320.webp"
-          srcSet="/images/home/flower2_image-192.webp 192w, /images/home/flower2_image-320.webp 320w, /images/home/flower2_image-640.webp 640w"
+          src={img("/images/home/flower2_image-192.webp")}
+          srcSet={imgSrcSet("/images/home/flower2_image-192.webp 192w, /images/home/flower2_image-320.webp 320w, /images/home/flower2_image-640.webp 640w")}
           sizes="(max-width: 640px) 12vw, (max-width: 768px) 5rem, 8rem"
-          width={320}
-          height={480}
+          width={192}
+          height={288}
           alt="Decorative flower garland"
           title="Decorative flower garland"
-          className="pointer-events-none absolute right-0 top-0 z-[5] w-16 sm:w-20 md:w-24 lg:w-28 xl:w-32 max-w-[12vw] h-auto object-contain object-right-top select-none -scale-y-100"
-          loading="eager"
+          className="pointer-events-none absolute right-0 top-0 z-[5] w-16 sm:w-20 md:w-24 lg:w-28 xl:w-32 max-w-[12vw] h-auto object-contain object-right-top select-none -scale-y-100 hidden sm:block"
+          loading="lazy"
+          decoding="async"
           fetchPriority="low"
           aria-hidden="true"
         />
@@ -319,17 +317,17 @@ export default function HeroSection() {
           aria-hidden="true"
         >
           <img
-            src="/images/home/home_banner_image.webp"
-            srcSet="/images/home/home_banner_image-640.webp 640w, /images/home/home_banner_image-1024.webp 1024w, /images/home/home_banner_image.webp 2172w"
-            sizes="100vw"
+            src={img("/images/home/home_banner_image-640.webp")}
+            srcSet={imgSrcSet("/images/home/home_banner_image-640.webp 640w, /images/home/home_banner_image-1024.webp 1024w, /images/home/home_banner_image-1280.webp 1280w, /images/home/home_banner_image.webp 2172w")}
+            sizes="(max-width: 640px) 240px, (max-width: 1024px) 640px, 100vw"
             width={2172}
             height={724}
             alt="VivahSambandh Indian wedding celebration banner"
             title="VivahSambandh Indian wedding celebration banner"
             data-hero="banner"
             fetchPriority="high"
-            decoding="async"
-            className="h-full w-full object-cover object-[68%_25%] sm:object-[70%_30%] lg:object-[82%_center] xl:object-right will-change-transform"
+            decoding="sync"
+            className="h-full w-full object-cover object-[68%_25%] sm:object-[70%_30%] lg:object-[82%_center] xl:object-right"
             loading="eager"
           />
           {/* Mobile fade: photo melts into the cream copy below */}
@@ -345,10 +343,10 @@ export default function HeroSection() {
         />
 
         {/* Content Container (Aligned exactly with design) */}
-        <div className="section-pad relative z-10 -mt-10 pt-4 pb-8 sm:-mt-12 lg:mt-0 lg:flex lg:h-full lg:items-center lg:py-0">
+        <div className="section-pad relative z-10 -mt-10 pt-4 pb-5 sm:-mt-12 lg:mt-0 lg:flex lg:h-full lg:items-center lg:py-0">
           <div className="grid w-full items-center lg:grid-cols-12">
             {/* Left Content Column */}
-            <div className="lg:col-span-7 xl:col-span-6 py-4">
+            <div className="lg:col-span-7 xl:col-span-6 py-2">
               {/* Eyebrow */}
               <div data-hero="eyebrow" className="inline-flex items-center gap-2 text-[10px] sm:text-[11px] font-bold tracking-[0.22em] uppercase text-gold-700">
                 <span className="text-gold-600 text-xs sm:text-sm font-black">
@@ -359,7 +357,7 @@ export default function HeroSection() {
               </div>
 
               {/* Headline (line masks for the mask-reveal intro) */}
-              <h1 data-hero="title" className="font-display mt-3 text-3xl sm:text-4xl lg:text-[44px] xl:text-[50px] font-bold leading-[1.12]">
+              <h1 data-hero="title" className="font-display mt-2 text-3xl sm:text-4xl lg:text-[44px] xl:text-[50px] font-bold leading-[1.12]">
                 <span data-hero-mask className="block overflow-hidden pb-[0.12em] -mb-[0.12em]">
                   <span data-hero-line className="block text-navy-900 will-change-transform">{t("hero.titleA")}</span>
                 </span>
@@ -371,12 +369,12 @@ export default function HeroSection() {
               </h1>
 
               {/* Subtitle */}
-              <p data-hero="subtitle" className="mt-3.5 max-w-md text-xs sm:text-sm leading-relaxed text-ink-600 font-medium">
+              <p data-hero="subtitle" className="mt-2 max-w-md text-xs sm:text-sm leading-relaxed text-ink-600 font-medium">
                 {t("hero.subtitle")}
               </p>
 
               {/* Buttons: stacked full-width on phones, side-by-side from sm up */}
-              <div data-hero="cta" className="mt-6 sm:mt-7 flex flex-col items-stretch gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:gap-4 relative z-20">
+              <div data-hero="cta" className="mt-4 sm:mt-5 flex flex-col items-stretch gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:gap-4 relative z-20">
                 <a
                   href="#register"
                   title={t("hero.createProfile")}
@@ -416,7 +414,7 @@ export default function HeroSection() {
               </div>
 
               {/* Trust Badges: Clean single horizontal row with distinct icons */}
-              <div data-hero="badges" className="mt-6 pt-2">
+              <div data-hero="badges" className="mt-4">
                 <ul className="flex flex-wrap items-center gap-x-4 sm:gap-x-5 gap-y-2 text-[11px] sm:text-xs font-semibold text-navy-900">
                   {TRUST_BADGES.map((b) => (
                     <li
@@ -437,21 +435,7 @@ export default function HeroSection() {
             <div
               className="hidden lg:col-span-5 xl:col-span-6 lg:block h-full relative"
               aria-hidden="true"
-            >
-              {/* "Same Values Brighter Futures ♥" badge next to bride (from design reference) */}
-              <div data-hero="badge-side" className="absolute right-12 xl:right-16 top-1/2 -translate-y-1/2 text-center pointer-events-none select-none z-10">
-                <p className="font-serif italic text-lg sm:text-xl xl:text-2xl font-bold leading-tight text-maroon-600 drop-shadow-xs">
-                  Same
-                  <br />
-                  Values
-                  <br />
-                  Brighter
-                  <br />
-                  Futures
-                </p>
-                <p className="mt-1 text-maroon-600 text-base xl:text-lg">♥</p>
-              </div>
-            </div>
+            />
           </div>
         </div>
       </section>
@@ -459,7 +443,7 @@ export default function HeroSection() {
       {/* ============================================================== */}
       {/* 2. QUICK MATCH CARDS: Positioned cleanly below the hero banner */}
       {/* ============================================================== */}
-      <section className="section-pad pt-6 pb-4 sm:pt-8 sm:pb-6 lg:pt-10 lg:pb-8 relative z-10">
+      <section className="section-pad pt-4 pb-3 sm:pt-5 sm:pb-4 lg:pt-6 lg:pb-6 relative z-10">
         <div data-hero="cards" className="grid gap-6 sm:grid-cols-2 lg:gap-8 w-full max-w-7xl mx-auto">
           {MATCH_CARDS.map((card) => (
             <a
@@ -473,7 +457,7 @@ export default function HeroSection() {
                 <img
                   src={card.photo}
                   srcSet={card.photoSrcSet}
-                  sizes="(max-width: 640px) 7rem, (max-width: 1024px) 10rem, 16rem"
+                  sizes="(max-width: 640px) 48px, (max-width: 1024px) 10rem, 16rem"
                   width={card.photoWidth}
                   height={card.photoHeight}
                   alt={t(card.labelKey)}
@@ -530,8 +514,8 @@ export default function HeroSection() {
               {/* Decorative floral spray on bottom-right corner (enlarged & visible) */}
               <div className="pointer-events-none absolute -right-16 -bottom-3  sm:-bottom-4 h-32 w-28 sm:h-44 sm:w-36 md:h-52 md:w-44 lg:h-60 lg:w-52 opacity-95 select-none hidden sm:block">
                 <img
-                  src="/images/home/flower1_image-320.webp"
-                  srcSet="/images/home/flower1_image-320.webp 320w, /images/home/flower1_image-640.webp 640w"
+                  src={img("/images/home/flower1_image-320.webp")}
+                  srcSet={imgSrcSet("/images/home/flower1_image-320.webp 320w, /images/home/flower1_image-640.webp 640w")}
                   sizes="(max-width: 768px) 9rem, 13rem"
                   width={320}
                   height={480}

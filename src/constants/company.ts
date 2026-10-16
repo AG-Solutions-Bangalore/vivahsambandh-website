@@ -24,8 +24,8 @@ export const COMPANY = {
   supportEmail: 'support@vivahsambandh.com',
 
   address: {
-    en: 'Bengaluru, Karnataka, India 560001',
-    hi: 'बेंगलुरु, कर्नाटक, भारत 560001',
+    en: '#8, 1st Floor, 24th Main, 5th Phase, JP Nagar, Bangalore 560078',
+    hi: '#8, 1st Floor, 24th Main, 5th Phase, JP Nagar, Bangalore 560078',
   },
 
   community: {

@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import Reveal from '../../../components/motion/Reveal'
 import { homePath } from '../../../constants/navigation'
 import type { AppLang } from '../../../i18n'
+import { img, imgSrcSet } from '../../../lib/image'
 
 /**
  * Closing band — mandap visual, "We're Here for You", profile/search
@@ -17,7 +18,7 @@ export default function ContactCta() {
     <section className="relative isolate overflow-hidden bg-cream-50 py-10 sm:py-12">
       <div aria-hidden="true" className="bg-jaali pointer-events-none absolute inset-0 opacity-60" />
       <img
-        src="/images/home/flower1_image-320.webp"
+        src={img('/images/home/flower1_image-320.webp')}
         width={320}
         height={480}
         alt="Decorative flower garland"
@@ -27,7 +28,7 @@ export default function ContactCta() {
         className="pointer-events-none absolute left-0 bottom-0 z-[1] w-20 sm:w-28 h-auto max-w-[16vw] select-none"
       />
       <img
-        src="/images/home/flower2_image-320.webp"
+        src={img('/images/home/flower2_image-320.webp')}
         width={320}
         height={480}
         alt="Decorative flower garland"
@@ -43,8 +44,8 @@ export default function ContactCta() {
               grounded at the band's base instead of floating mid-air. */}
           <Reveal variant="scale" className="lg:col-span-5 self-end">
             <img
-              src="/images/home/Mandap_image.webp"
-              srcSet="/images/home/Mandap_image-800.webp 800w, /images/home/Mandap_image.webp 1723w"
+              src={img('/images/home/Mandap_image.webp')}
+              srcSet={imgSrcSet('/images/home/Mandap_image-800.webp 800w, /images/home/Mandap_image.webp 1723w')}
               sizes="(max-width: 1024px) 92vw, 40vw"
               width={1723}
               height={913}

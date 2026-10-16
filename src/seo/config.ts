@@ -31,7 +31,7 @@ export const COMPANY_CONFIG = {
 
   siteOrigin: 'https://vivahsambandh.com',
   canonicalUrl: 'https://vivahsambandh.com/',
-  logo: 'https://vivahsambandh.com/images/common/Temple_Skyline_Divider_footer_image.webp',
+  logo: 'https://vivahsambandh.com/crmapi/public/assets/images/web_images/common/Temple_Skyline_Divider_footer_image.webp',
   ogImage: 'https://vivahsambandh.com/images/home/home_banner_image.webp',
 
   author: COMPANY.name,
@@ -108,7 +108,17 @@ export const SUPPORTED_LANGS: readonly SupportedLang[] = ['en', 'hi'] as const;
 export const SUPPORTED_SSG_ROUTES = ['/', '/hi'] as const;
 
 /** Standalone pages that carry their own SEO metadata. */
-export type PageKey = 'home' | 'about' | 'contact';
+export type PageKey =
+  | 'home'
+  | 'about'
+  | 'stories'
+  | 'membership'
+  | 'contact'
+  | 'blogs'
+  | 'privacy'
+  | 'terms'
+  | 'guidelines'
+  | 'help-center';
 
 /**
  * Per-page SEO metadata (both languages). Home entries intentionally mirror
@@ -135,6 +145,26 @@ export const PAGE_SEO: Record<PageKey, { titles: Record<SupportedLang, string>; 
       hi: 'विवाहसंबंध के बारे में जानें — परंपरा, कड़े सत्यापन और पारिवारिक मूल्यों पर आधारित अग्रवाल परिवारों के लिए विश्वसनीय वैवाहिक मंच।',
     },
   },
+  stories: {
+    titles: {
+      en: 'Success Stories — VivahSambandh | Agarwal Matrimony Weddings',
+      hi: 'सफलता की कहानियां — विवाहसंबंध | सफल अग्रवाल विवाह',
+    },
+    descriptions: {
+      en: 'Read inspiring wedding stories of 500+ Agarwal couples who found their life partner through VivahSambandh with shared values and family trust.',
+      hi: 'विवाहसंबंध के माध्यम से जुड़े 500+ अग्रवाल दंपत्तियों की सुखद विवाह गाथाएं पढ़ें और अपनी शादी की कहानी साझा करें।',
+    },
+  },
+  membership: {
+    titles: {
+      en: 'Membership Plans — VivahSambandh | Premium Agarwal Matrimony',
+      hi: 'सदस्यता योजनाएं — विवाहसंबंध | पारदर्शी एवं भरोसेमंद प्लान',
+    },
+    descriptions: {
+      en: 'Explore transparent membership plans for Agarwal families. Verified profile access, Kundali matching, and dedicated matchmaker guidance.',
+      hi: 'अग्रवाल परिवारों के लिए पारदर्शी सदस्यता योजनाएं देखें — सत्यापित प्रोफाइल, कुंडली मिलान और व्यक्तिगत परामर्शदाता सहायता।',
+    },
+  },
   contact: {
     titles: {
       en: 'Contact Us — VivahSambandh | Agarwal Matrimony Support',
@@ -143,6 +173,56 @@ export const PAGE_SEO: Record<PageKey, { titles: Record<SupportedLang, string>; 
     descriptions: {
       en: 'Have a question or need support? Contact the VivahSambandh team by phone, email or visit our office — we reply within 24 hours.',
       hi: 'कोई प्रश्न है या सहायता चाहिए? फोन, ईमेल द्वारा विवाहसंबंध टीम से संपर्क करें या हमारे कार्यालय पधारें — हम 24 घंटों के भीतर उत्तर देते हैं।',
+    },
+  },
+  blogs: {
+    titles: {
+      en: 'Blogs — VivahSambandh | Relationship Guides & Community Stories',
+      hi: 'ब्लॉग — विवाहसंबंध | रिश्तों की जानकारियां और सामुदायिक कहानियां',
+    },
+    descriptions: {
+      en: 'Browse every VivahSambandh article — relationship guidance, wedding tips and Agarwal community updates.',
+      hi: 'विवाहसंबंध के सभी लेख देखें — रिश्तों का मार्गदर्शन, शादी के टिप्स और अग्रवाल सामुदायिक अपडेट।',
+    },
+  },
+  privacy: {
+    titles: {
+      en: 'Privacy Policy — VivahSambandh | How We Protect Your Data',
+      hi: 'गोपनीयता नीति — विवाहसंबंध | आपका डेटा कैसे सुरक्षित है',
+    },
+    descriptions: {
+      en: 'Read the VivahSambandh privacy policy — what information we collect, how we use it and the choices you have.',
+      hi: 'विवाहसंबंध गोपनीयता नीति पढ़ें — हम कौन सी जानकारी लेते हैं, उसका उपयोग कैसे होता है और आपके विकल्प।',
+    },
+  },
+  terms: {
+    titles: {
+      en: 'Terms & Conditions — VivahSambandh | Terms of Use',
+      hi: 'नियम व शर्तें — विवाहसंबंध | उपयोग की शर्तें',
+    },
+    descriptions: {
+      en: 'Read the VivahSambandh terms of use — eligibility, verification, acceptable use and membership terms.',
+      hi: 'विवाहसंबंध उपयोग की शर्तें पढ़ें — पात्रता, सत्यापन, स्वीकार्य उपयोग व सदस्यता नियम।',
+    },
+  },
+  guidelines: {
+    titles: {
+      en: 'Community Guidelines — VivahSambandh | A Respectful Community',
+      hi: 'समुदाय दिशानिर्देश — विवाहसंबंध | सम्मानजनक समुदाय',
+    },
+    descriptions: {
+      en: 'VivahSambandh community guidelines — genuine profiles, respectful communication and staying safe.',
+      hi: 'विवाहसंबंध समुदाय दिशानिर्देश — वास्तविक प्रोफाइल, सम्मानजनक संवाद और सुरक्षा।',
+    },
+  },
+  'help-center': {
+    titles: {
+      en: 'Help Center — VivahSambandh | Support & FAQs',
+      hi: 'हेल्प सेंटर — विवाहसंबंध | सहायता व प्रश्न',
+    },
+    descriptions: {
+      en: 'VivahSambandh help center — profile help, match search, membership, safety and how to reach our team.',
+      hi: 'विवाहसंबंध हेल्प सेंटर — प्रोफाइल सहायता, रिश्ता खोज, सदस्यता, सुरक्षा व टीम से संपर्क।',
     },
   },
 };
@@ -155,7 +235,14 @@ export function resolvePageKey(pathname = '/'): PageKey {
   const clean = pathname.toLowerCase().replace(/\/+$/, '');
   const withoutLang = clean === '/hi' ? '' : clean.replace(/^\/hi(?=\/|$)/, '');
   if (withoutLang === '/about') return 'about';
+  if (withoutLang === '/stories' || withoutLang === '/success-stories') return 'stories';
+  if (withoutLang === '/membership') return 'membership';
   if (withoutLang === '/contact') return 'contact';
+  if (withoutLang === '/blogs' || withoutLang.startsWith('/blogs/')) return 'blogs';
+  if (withoutLang === '/privacy') return 'privacy';
+  if (withoutLang === '/terms') return 'terms';
+  if (withoutLang === '/guidelines') return 'guidelines';
+  if (withoutLang === '/help-center') return 'help-center';
   return 'home';
 }
 

@@ -5,11 +5,12 @@ import WhyBuilt from '../components/WhyBuilt'
 import StatsStrip from '../components/StatsStrip'
 import CtaBand from '../components/CtaBand'
 import PageParallax from '../../../components/motion/PageParallax'
+import { TestimonialSection } from '../../testimonial'
+import { FaqSection } from '../../faq'
 
 /**
  * About Us page — assembles the "More Than a Matrimonial Platform"
- * story exactly per the shared design (hero → mission/vision →
- * navy values → why-built → stats → closing CTA).
+ * story with common Testimonials and FAQ sections.
  */
 export default function AboutPage() {
   return (
@@ -20,6 +21,8 @@ export default function AboutPage() {
       <ValuesBand />
       <WhyBuilt />
       <StatsStrip />
+      <TestimonialSection slug="about" tone="paper" />
+      <FaqSection slug="about" tone="cream" />
       <CtaBand />
     </div>
   )

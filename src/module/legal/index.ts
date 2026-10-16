@@ -1,0 +1,6 @@
+export { default as PrivacyPage } from './pages/PrivacyPage'
+export { default as TermsPage } from './pages/TermsPage'
+export { default as GuidelinesPage } from './pages/GuidelinesPage'
+export { default as HelpCenterPage } from './pages/HelpCenterPage'
+export { default as LegalLayout } from './components/LegalLayout'
+export type { LegalLayoutProps, LegalSection } from './components/LegalLayout'

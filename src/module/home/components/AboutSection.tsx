@@ -1,31 +1,15 @@
-import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 import { COMPANY } from '../../../constants/company'
 import { pagePath } from '../../../constants/navigation'
 import type { AppLang } from '../../../i18n'
 import Reveal from '../../../components/motion/Reveal'
-import { lockPageScroll, unlockPageScroll } from '../../../lib/scroll'
+import { img, imgSrcSet } from '../../../lib/image'
 
 export default function AboutSection() {
   const { t, i18n } = useTranslation()
-  const [isVideoOpen, setIsVideoOpen] = useState(false)
   const lang: AppLang = i18n.resolvedLanguage === 'hi' || i18n.language === 'hi' ? 'hi' : 'en'
   const aboutHref = pagePath('/about', lang)
-
-  // Modal open → stop Lenis + lock background scroll (restored on close).
-  useEffect(() => {
-    if (!isVideoOpen) return
-    lockPageScroll()
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setIsVideoOpen(false)
-    }
-    document.addEventListener('keydown', onKey)
-    return () => {
-      document.removeEventListener('keydown', onKey)
-      unlockPageScroll()
-    }
-  }, [isVideoOpen])
 
   return (
     <section id="about" className="relative isolate overflow-hidden bg-cream-50 pt-4 sm:pt-6 lg:pt-8 pb-16 sm:pb-20 lg:pb-24">
@@ -33,8 +17,8 @@ export default function AboutSection() {
       {/* Decorative Floral Vines: small, behind content, edge-anchored   */}
       {/* ============================================================== */}
       <img
-        src="/images/home/flower3_image.webp"
-        srcSet="/images/home/flower3_image-320.webp 320w, /images/home/flower3_image-640.webp 640w, /images/home/flower3_image.webp 942w"
+        src={img("/images/home/flower3_image.webp")}
+        srcSet={imgSrcSet("/images/home/flower3_image-320.webp 320w, /images/home/flower3_image-640.webp 640w, /images/home/flower3_image.webp 942w")}
         sizes="(max-width: 640px) 16vw, (max-width: 1024px) 9rem, 13rem"
         width={942}
         height={1670}
@@ -45,8 +29,8 @@ export default function AboutSection() {
         aria-hidden="true"
       />
       <img
-        src="/images/home/flower4_image.webp"
-        srcSet="/images/home/flower4_image-320.webp 320w, /images/home/flower4_image-640.webp 640w, /images/home/flower4_image.webp 942w"
+        src={img("/images/home/flower4_image.webp")}
+        srcSet={imgSrcSet("/images/home/flower4_image-320.webp 320w, /images/home/flower4_image-640.webp 640w, /images/home/flower4_image.webp 942w")}
         sizes="(max-width: 640px) 16vw, (max-width: 1024px) 9rem, 13rem"
         width={942}
         height={1670}
@@ -70,8 +54,8 @@ export default function AboutSection() {
               {/* Ornate Mandap Arch PNG */}
               <div className="relative overflow-visible">
                 <img
-                  src="/images/home/Mandap_image.webp"
-                  srcSet="/images/home/Mandap_image-800.webp 800w, /images/home/Mandap_image.webp 1723w"
+                  src={img("/images/home/Mandap_image.webp")}
+                  srcSet={imgSrcSet("/images/home/Mandap_image-800.webp 800w, /images/home/Mandap_image.webp 1723w")}
                   sizes="(max-width: 1024px) 92vw, 42vw"
                   width={1723}
                   height={913}
@@ -81,21 +65,6 @@ export default function AboutSection() {
                   loading="lazy"
                 />
 
-                {/* Central Circular Play Button */}
-                <button
-                  type="button"
-                  onClick={() => setIsVideoOpen(true)}
-                  aria-label="Play introduction video"
-                  className="group absolute inset-0 m-auto flex h-14 w-14 sm:h-16 sm:w-16 md:h-18 md:w-18 items-center justify-center rounded-full bg-white text-gold-600 shadow-xl backdrop-blur-xs transition-all duration-300 hover:scale-110 hover:bg-gold-50 active:scale-95 z-20 cursor-pointer"
-                >
-                  <svg
-                    viewBox="0 0 24 24"
-                    className="ml-1 h-7 w-7 sm:h-8 sm:w-8 fill-current text-gold-500 transition-transform group-hover:scale-105"
-                    aria-hidden="true"
-                  >
-                    <path d="M8 5v14l11-7z" />
-                  </svg>
-                </button>
               </div>
 
               {/* Floating Community Member Counter Pill */}
@@ -103,7 +72,7 @@ export default function AboutSection() {
                 {/* 4 Overlapping Avatar Bubbles */}
                 <div className="flex -space-x-2 overflow-hidden">
                   <img
-                    src="/images/home/radiant-indian-bride-in-floral-glow-128.webp"
+                    src={img("/images/home/radiant-indian-bride-in-floral-glow-128.webp")}
                     width={128}
                     height={154}
                     alt="Member"
@@ -113,7 +82,7 @@ export default function AboutSection() {
                     className="inline-block h-7 w-7 sm:h-8 sm:w-8 rounded-full border-2 border-white object-cover object-top"
                   />
                   <img
-                    src="/images/home/radiant-indian-groom-in-a-golden-wedding-setting-128.webp"
+                    src={img("/images/home/radiant-indian-groom-in-a-golden-wedding-setting-128.webp")}
                     width={128}
                     height={128}
                     alt="Member"
@@ -123,7 +92,7 @@ export default function AboutSection() {
                     className="inline-block h-7 w-7 sm:h-8 sm:w-8 rounded-full border-2 border-white object-cover object-top"
                   />
                   <img
-                    src="/images/home/radiant-indian-wedding-portrait-128.webp"
+                    src={img("/images/home/radiant-indian-wedding-portrait-128.webp")}
                     width={128}
                     height={70}
                     alt="Member"
@@ -133,7 +102,7 @@ export default function AboutSection() {
                     className="inline-block h-7 w-7 sm:h-8 sm:w-8 rounded-full border-2 border-white object-cover"
                   />
                   <img
-                    src="/images/home/romantic-indian-wedding-portrait-128.webp"
+                    src={img("/images/home/romantic-indian-wedding-portrait-128.webp")}
                     width={128}
                     height={74}
                     alt="Member"
@@ -202,42 +171,6 @@ export default function AboutSection() {
         </div>
       </div>
 
-      {/* ============================================================== */}
-      {/* Video Modal                                                    */}
-      {/* ============================================================== */}
-      {isVideoOpen && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-navy-950/80 p-4 backdrop-blur-sm"
-          role="dialog"
-          aria-modal="true"
-          aria-label="Introduction video"
-          onClick={() => setIsVideoOpen(false)}
-        >
-          <div
-            className="relative w-full max-w-3xl overflow-hidden rounded-2xl bg-black shadow-2xl"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <button
-              type="button"
-              onClick={() => setIsVideoOpen(false)}
-              className="absolute right-4 top-4 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-white/20 text-white transition hover:bg-white/40 cursor-pointer"
-              aria-label="Close video"
-            >
-              ✕
-            </button>
-            <div className="relative aspect-video w-full flex items-center justify-center text-white/70">
-              <div className="text-center p-6">
-                <p className="font-display text-xl sm:text-2xl font-bold text-gold-400">
-                  {COMPANY.name}
-                </p>
-                <p className="mt-2 text-sm text-white/80">
-                  {t('about.body')}
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
     </section>
   )
 }

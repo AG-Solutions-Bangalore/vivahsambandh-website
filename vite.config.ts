@@ -91,9 +91,22 @@ function eventLoopCleanup(): Plugin {
  */
 function deferNonCriticalPreloads(): Plugin {
   const rewriteFile = (full: string): void => {
-    const html = readFileSync(full, 'utf8');
-    if (!html.includes('rel="modulepreload"')) return;
-    writeFileSync(full, html.replaceAll('rel="modulepreload"', 'rel="prefetch"'));
+    let html = readFileSync(full, 'utf8');
+    let changed = false;
+    // Demote modulepreload hints to prefetch so secondary JS chunks never contend with FCP and LCP
+    if (html.includes('rel="modulepreload"')) {
+      html = html.replaceAll('rel="modulepreload"', 'rel="prefetch"');
+      changed = true;
+    }
+    // Swiper CSS is below-the-fold: defer via print/all media swap
+    if (html.includes('/assets/swiper-') && html.includes('rel="stylesheet"')) {
+      html = html.replace(
+        /<link\s+rel="stylesheet"\s+crossorigin\s+href="(\/assets\/swiper-[^"]+\.css)">/g,
+        '<link rel="stylesheet" crossorigin href="$1" media="print" onload="this.media=\'all\'">'
+      );
+      changed = true;
+    }
+    if (changed) writeFileSync(full, html);
   };
   const walk = (dir: string): void => {
     for (const entry of readdirSync(dir)) {
@@ -167,7 +180,27 @@ export default defineConfig({
     vitePrerenderPlugin({
       prerenderScript: path.resolve(import.meta.dirname ?? '.', 'src/prerender.tsx'),
       renderTarget: '#root',
-      additionalPrerenderRoutes: ['/hi', '/about', '/hi/about', '/contact', '/hi/contact'],
+      additionalPrerenderRoutes: [
+        '/hi',
+        '/about',
+        '/hi/about',
+        '/stories',
+        '/hi/stories',
+        '/membership',
+        '/hi/membership',
+        '/contact',
+        '/hi/contact',
+        '/blogs',
+        '/hi/blogs',
+        '/privacy',
+        '/hi/privacy',
+        '/terms',
+        '/hi/terms',
+        '/guidelines',
+        '/hi/guidelines',
+        '/help-center',
+        '/hi/help-center',
+      ],
     }),
     compression({ algorithm: 'gzip', threshold: 1024 }),
     deferNonCriticalPreloads(),
@@ -187,12 +220,9 @@ export default defineConfig({
     reportCompressedSize: false,
     modulePreload: {
       resolveDependencies(_url, deps) {
-        return deps.filter(
-          (dep) =>
-            !dep.includes('gsap') &&
-            !dep.includes('lenis') &&
-            !dep.includes('prerender'),
-        );
+        // Only preload critical react core; keep mobile bandwidth 100% free
+        // for hero LCP banner image and critical CSS.
+        return deps.filter((dep) => dep.includes('react'));
       },
     },
     rollupOptions: {
@@ -209,10 +239,13 @@ export default defineConfig({
             )
           )
             return 'ssr-renderer';
+          if (/\/node_modules\/(react|react-dom|scheduler|react-is)\//.test(p)) return 'react';
           if (/gsap/.test(p)) return 'gsap';
           if (/\/lenis\//.test(p)) return 'lenis';
           if (/swiper/.test(p)) return 'swiper';
-          if (/\/node_modules\/(react|react-dom|scheduler)\//.test(p)) return 'react';
+          if (/dompurify/.test(p)) return 'dompurify';
+          if (/@tanstack/.test(p)) return 'tanstack';
+          if (/i18next/.test(p)) return 'i18n';
           return undefined;
         },
       },
