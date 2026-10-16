@@ -12,7 +12,7 @@ export default function MembershipHero() {
       {/* Side cascading garlands */}
       <img
         src="/images/home/flower1_image.webp"
-        srcSet="/images/home/flower1_image-320.webp 320w, /images/home/flower1_image-640.webp 640w, /images/home/flower1_image.webp 1024w"
+        srcSet="/images/home/flower1_image-192.webp 192w, /images/home/flower1_image-320.webp 320w, /images/home/flower1_image-640.webp 640w, /images/home/flower1_image.webp 1024w"
         sizes="(max-width: 640px) 22vw, (max-width: 768px) 10rem, (max-width: 1024px) 12rem, (max-width: 1280px) 14rem, 16rem"
         width={1024}
         height={1536}
@@ -21,12 +21,13 @@ export default function MembershipHero() {
         data-hero="flower-l"
         fetchPriority="low"
         className="pointer-events-none absolute left-0 bottom-0 z-20 w-32 sm:w-40 md:w-48 lg:w-56 xl:w-64 max-w-[22vw] h-auto object-contain object-left-bottom select-none"
-        loading="eager"
+        loading="lazy"
+        decoding="async"
         aria-hidden="true"
       />
       <img
         src="/images/home/flower2_image.webp"
-        srcSet="/images/home/flower2_image-320.webp 320w, /images/home/flower2_image-640.webp 640w, /images/home/flower2_image.webp 1024w"
+        srcSet="/images/home/flower2_image-192.webp 192w, /images/home/flower2_image-320.webp 320w, /images/home/flower2_image-640.webp 640w, /images/home/flower2_image.webp 1024w"
         sizes="(max-width: 640px) 26vw, (max-width: 768px) 11rem, (max-width: 1024px) 13rem, (max-width: 1280px) 15rem, 18rem"
         width={1024}
         height={1536}
@@ -35,7 +36,8 @@ export default function MembershipHero() {
         data-hero="flower-r"
         fetchPriority="low"
         className="pointer-events-none absolute right-0 bottom-0 z-20 w-32 sm:w-44 md:w-52 lg:w-60 xl:w-72 max-w-[26vw] h-auto object-contain object-right-top select-none"
-        loading="eager"
+        loading="lazy"
+        decoding="async"
         aria-hidden="true"
       />
 

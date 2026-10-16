@@ -91,9 +91,20 @@ function eventLoopCleanup(): Plugin {
  */
 function deferNonCriticalPreloads(): Plugin {
   const rewriteFile = (full: string): void => {
-    const html = readFileSync(full, 'utf8');
-    if (!html.includes('rel="modulepreload"')) return;
-    writeFileSync(full, html.replaceAll('rel="modulepreload"', 'rel="prefetch"'));
+    let html = readFileSync(full, 'utf8');
+    let changed = false;
+    if (html.includes('rel="modulepreload"')) {
+      html = html.replaceAll('rel="modulepreload"', 'rel="prefetch"');
+      changed = true;
+    }
+    if (html.includes('/assets/swiper-') && html.includes('rel="stylesheet"')) {
+      html = html.replace(
+        /<link\s+rel="stylesheet"\s+crossorigin\s+href="(\/assets\/swiper-[^"]+\.css)">/g,
+        '<link rel="stylesheet" crossorigin href="$1" media="print" onload="this.media=\'all\'">'
+      );
+      changed = true;
+    }
+    if (changed) writeFileSync(full, html);
   };
   const walk = (dir: string): void => {
     for (const entry of readdirSync(dir)) {

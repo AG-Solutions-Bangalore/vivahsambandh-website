@@ -119,66 +119,61 @@ export default function HeroSection() {
       const root = rootRef.current;
       if (cancelled || !root || prefersReducedMotion()) return;
 
-      // ——— Intro timeline (above the fold → play on mount, not on scroll) ———
-      const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
-      tl.fromTo(
-        '[data-hero="eyebrow"]',
-        { opacity: 0, y: 12 },
-        { opacity: 1, y: 0, duration: 0.45, clearProps: "all" },
-        0.05,
-      )
-        // Line-mask reveal: each headline line slides up from inside its overflow-hidden mask
-        .fromTo(
-          '[data-hero-line]',
-          { yPercent: 110 },
-          {
-            yPercent: 0,
-            duration: 0.75,
-            ease: "power4.out",
-            stagger: 0.09,
-            clearProps: "all",
-          },
-          0.1,
-        )
-        .fromTo(
-          '[data-hero="subtitle"]',
-          { opacity: 0, y: 14 },
-          { opacity: 1, y: 0, duration: 0.5, clearProps: "all" },
-          0.28,
-        )
-        // CTA Buttons: smooth spring bounce entrance without hard hiding
-        .fromTo(
-          '[data-hero="cta"] > *',
-          { opacity: 0, y: 16, scale: 0.95 },
-          {
-            opacity: 1,
-            y: 0,
-            scale: 1,
-            duration: 0.55,
-            stagger: 0.09,
-            ease: "back.out(1.4)",
-            clearProps: "all",
-          },
-          0.38,
-        )
-        // Trust Badges: staggered fade and lift
-        .fromTo(
-          '[data-hero="badges"] li',
-          { opacity: 0, y: 10 },
-          {
-            opacity: 1,
-            y: 0,
-            duration: 0.45,
-            stagger: 0.05,
-            clearProps: "all",
-          },
-          0.5,
-        )
-
-
-      // ——— Banner parallax (scrub, desktop only — mobile keeps static image) ———
+      // ——— Desktop: Entrance animations & Parallax (mobile stays instant & lightweight) ———
       mm = gsap.matchMedia();
       mm.add("(min-width: 768px)", () => {
+        const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
+        tl.fromTo(
+          '[data-hero="eyebrow"]',
+          { opacity: 0, y: 12 },
+          { opacity: 1, y: 0, duration: 0.45, clearProps: "all" },
+          0.05,
+        )
+          .fromTo(
+            '[data-hero-line]',
+            { yPercent: 110 },
+            {
+              yPercent: 0,
+              duration: 0.75,
+              ease: "power4.out",
+              stagger: 0.09,
+              clearProps: "all",
+            },
+            0.1,
+          )
+          .fromTo(
+            '[data-hero="subtitle"]',
+            { opacity: 0, y: 14 },
+            { opacity: 1, y: 0, duration: 0.5, clearProps: "all" },
+            0.28,
+          )
+          .fromTo(
+            '[data-hero="cta"] > *',
+            { opacity: 0, y: 16, scale: 0.95 },
+            {
+              opacity: 1,
+              y: 0,
+              scale: 1,
+              duration: 0.55,
+              stagger: 0.09,
+              ease: "back.out(1.4)",
+              clearProps: "all",
+            },
+            0.38,
+          )
+          .fromTo(
+            '[data-hero="badges"] li',
+            { opacity: 0, y: 10 },
+            {
+              opacity: 1,
+              y: 0,
+              duration: 0.45,
+              stagger: 0.05,
+              clearProps: "all",
+            },
+            0.5,
+          );
+
         gsap.to('[data-hero="banner"]', {
           yPercent: 12,
           ease: "none",
@@ -249,7 +244,7 @@ export default function HeroSection() {
       {/* ============================================================== */}
       <img
         src="/images/home/flower1_image.webp"
-        srcSet="/images/home/flower1_image-320.webp 320w, /images/home/flower1_image-640.webp 640w, /images/home/flower1_image.webp 1024w"
+        srcSet="/images/home/flower1_image-192.webp 192w, /images/home/flower1_image-320.webp 320w, /images/home/flower1_image-640.webp 640w, /images/home/flower1_image.webp 1024w"
         sizes="(max-width: 640px) 22vw, (max-width: 768px) 10rem, (max-width: 1024px) 12rem, (max-width: 1280px) 14rem, 16rem"
         width={1024}
         height={1536}
@@ -258,12 +253,13 @@ export default function HeroSection() {
         data-hero="flower-l"
         fetchPriority="low"
         className="pointer-events-none absolute left-0 bottom-0 z-20 w-32 sm:w-40 md:w-48 lg:w-56 xl:w-64 max-w-[22vw] h-auto object-contain object-left-bottom select-none"
-        loading="eager"
+        loading="lazy"
+        decoding="async"
         aria-hidden="true"
       />
       <img
         src="/images/home/flower2_image.webp"
-        srcSet="/images/home/flower2_image-320.webp 320w, /images/home/flower2_image-640.webp 640w, /images/home/flower2_image.webp 1024w"
+        srcSet="/images/home/flower2_image-192.webp 192w, /images/home/flower2_image-320.webp 320w, /images/home/flower2_image-640.webp 640w, /images/home/flower2_image.webp 1024w"
         sizes="(max-width: 640px) 26vw, (max-width: 768px) 11rem, (max-width: 1024px) 13rem, (max-width: 1280px) 15rem, 18rem"
         width={1024}
         height={1536}
@@ -272,7 +268,8 @@ export default function HeroSection() {
         data-hero="flower-r"
         fetchPriority="low"
         className="pointer-events-none absolute right-0 bottom-0 z-20 w-32 sm:w-44 md:w-52 lg:w-60 xl:w-72 max-w-[26vw] h-auto object-contain object-right-top select-none"
-        loading="eager"
+        loading="lazy"
+        decoding="async"
         aria-hidden="true"
       />
 
@@ -290,7 +287,8 @@ export default function HeroSection() {
           alt="Decorative flower garland"
           title="Decorative flower garland"
           className="pointer-events-none absolute left-0 top-0 z-[5] w-16 sm:w-20 md:w-24 lg:w-28 xl:w-32 max-w-[12vw] h-auto object-contain object-left-top select-none -scale-y-100"
-          loading="eager"
+          loading="lazy"
+          decoding="async"
           fetchPriority="low"
           aria-hidden="true"
         />
@@ -303,7 +301,8 @@ export default function HeroSection() {
           alt="Decorative flower garland"
           title="Decorative flower garland"
           className="pointer-events-none absolute right-0 top-0 z-[5] w-16 sm:w-20 md:w-24 lg:w-28 xl:w-32 max-w-[12vw] h-auto object-contain object-right-top select-none -scale-y-100"
-          loading="eager"
+          loading="lazy"
+          decoding="async"
           fetchPriority="low"
           aria-hidden="true"
         />
@@ -316,7 +315,7 @@ export default function HeroSection() {
           <img
             src="/images/home/home_banner_image.webp"
             srcSet="/images/home/home_banner_image-640.webp 640w, /images/home/home_banner_image-1024.webp 1024w, /images/home/home_banner_image-1280.webp 1280w, /images/home/home_banner_image.webp 2172w"
-            sizes="100vw"
+            sizes="(max-width: 640px) 240px, (max-width: 1024px) 640px, 100vw"
             width={2172}
             height={724}
             alt="VivahSambandh Indian wedding celebration banner"

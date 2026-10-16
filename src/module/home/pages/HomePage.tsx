@@ -39,11 +39,13 @@ const ContactSection = lazy(() => import("../components/ContactSection"));
 export default function HomePage() {
   const queryClient = useQueryClient();
 
-  // Prefetch below-fold data immediately on page load.
-  // DeferredSection still lazy-loads JS chunks on scroll (good for LCP),
-  // but the API data is already cached so sections render instantly.
+  // Prefetch below-fold data after initial load / on first scroll.
+  // This keeps the network 100% free for hero LCP and critical CSS on mobile.
   useEffect(() => {
+    let prefetched = false;
     const prefetch = () => {
+      if (prefetched) return;
+      prefetched = true;
       void queryClient.prefetchQuery({
         queryKey: testimonialKey("home"),
         queryFn: () => getTestimonialsBySlug("home"),
@@ -62,13 +64,23 @@ export default function HomePage() {
         queryFn: getFrontBlogs,
       });
     };
-    let idleId: number | undefined;
-    if ("requestIdleCallback" in window) {
-      idleId = window.requestIdleCallback(prefetch);
-      return () => window.cancelIdleCallback(idleId as number);
-    }
-    const t = setTimeout(prefetch, 0);
-    return () => clearTimeout(t);
+
+    const timer = setTimeout(prefetch, 2500);
+    const onScrollOrTouch = () => {
+      clearTimeout(timer);
+      prefetch();
+      window.removeEventListener("scroll", onScrollOrTouch);
+      window.removeEventListener("touchstart", onScrollOrTouch);
+    };
+
+    window.addEventListener("scroll", onScrollOrTouch, { passive: true, once: true });
+    window.addEventListener("touchstart", onScrollOrTouch, { passive: true, once: true });
+
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener("scroll", onScrollOrTouch);
+      window.removeEventListener("touchstart", onScrollOrTouch);
+    };
   }, [queryClient]);
 
   // Deep link on load (e.g. /#contact): mount the target first, then jump.
