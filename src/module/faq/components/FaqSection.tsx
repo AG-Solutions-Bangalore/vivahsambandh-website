@@ -67,12 +67,11 @@ export default function FaqSection({
   title,
   subtitle,
   eyebrow,
-  ctaText,
-  ctaHref = "#contact",
+  
   fallbackItems,
   tone = "cream",
   id = "faq",
-  showCta = true,
+
 }: FaqSectionProps) {
   const { t } = useTranslation();
   const [activeGroupIdx, setActiveGroupIdx] = useState<number>(0);
