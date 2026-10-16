@@ -93,10 +93,12 @@ function deferNonCriticalPreloads(): Plugin {
   const rewriteFile = (full: string): void => {
     let html = readFileSync(full, 'utf8');
     let changed = false;
+    // Demote modulepreload hints to prefetch so secondary JS chunks never contend with FCP and LCP
     if (html.includes('rel="modulepreload"')) {
       html = html.replaceAll('rel="modulepreload"', 'rel="prefetch"');
       changed = true;
     }
+    // Swiper CSS is below-the-fold: defer via print/all media swap
     if (html.includes('/assets/swiper-') && html.includes('rel="stylesheet"')) {
       html = html.replace(
         /<link\s+rel="stylesheet"\s+crossorigin\s+href="(\/assets\/swiper-[^"]+\.css)">/g,
@@ -218,14 +220,9 @@ export default defineConfig({
     reportCompressedSize: false,
     modulePreload: {
       resolveDependencies(_url, deps) {
-        return deps.filter(
-          (dep) =>
-            !dep.includes('gsap') &&
-            !dep.includes('lenis') &&
-            !dep.includes('prerender') &&
-            !dep.includes('dompurify') &&
-            !dep.includes('swiper'),
-        );
+        // Only preload critical react core; keep mobile bandwidth 100% free
+        // for hero LCP banner image and critical CSS.
+        return deps.filter((dep) => dep.includes('react'));
       },
     },
     rollupOptions: {
@@ -242,14 +239,13 @@ export default defineConfig({
             )
           )
             return 'ssr-renderer';
+          if (/\/node_modules\/(react|react-dom|scheduler|react-is)\//.test(p)) return 'react';
           if (/gsap/.test(p)) return 'gsap';
           if (/\/lenis\//.test(p)) return 'lenis';
           if (/swiper/.test(p)) return 'swiper';
           if (/dompurify/.test(p)) return 'dompurify';
-          if (/@base-ui/.test(p)) return 'base-ui';
           if (/@tanstack/.test(p)) return 'tanstack';
           if (/i18next/.test(p)) return 'i18n';
-          if (/\/node_modules\/(react|react-dom|scheduler)\//.test(p)) return 'react';
           return undefined;
         },
       },

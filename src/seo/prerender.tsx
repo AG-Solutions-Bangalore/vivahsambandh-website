@@ -10,7 +10,7 @@
 import type { PrerenderArguments, PrerenderResult } from 'vite-prerender-plugin';
 import { renderToString } from 'react-dom/server';
 import { StaticRouter } from 'react-router';
-import App from '../App';
+import App from '../App.server';
 import i18n from '../i18n';
 import {
   COMPANY_CONFIG,

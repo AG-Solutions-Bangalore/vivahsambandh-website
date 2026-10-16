@@ -1,13 +1,14 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, lazy, Suspense } from 'react'
 import { useTranslation } from 'react-i18next'
 import { COMPANY } from '../constants/company'
 import LanguageSwitcher from './LanguageSwitcher'
-import { Drawer, DrawerContent, DrawerTitle } from './ui/drawer'
 import { ensureMotion, prefersReducedMotion } from '../lib/gsap-setup'
 import { Link, useLocation } from 'react-router-dom'
 import { getNavItems, homePath } from '../constants/navigation'
 import type { AppLang } from '../i18n'
 import { lockPageScroll, unlockPageScroll } from '../lib/scroll'
+
+const MobileDrawer = lazy(() => import('./MobileDrawer'))
 
 function LotusMark() {
   return (
@@ -36,71 +37,91 @@ export default function Header() {
   const brandHref = homePath(lang)
 
   // Entrance + hide-on-scroll-down (auto-show on scroll-up / at top).
-  // Motion loads lazily (see lib/gsap-setup): identical behavior, wired
-  // after the chunk lands.
+  // Motion loads lazily: desktop enhances on mount; mobile waits for first
+  // scroll/touch or idle so header motion never steals LCP bandwidth.
   useEffect(() => {
     let trigger: { kill: () => void } | null = null
     let cancelled = false
-    void ensureMotion()
-      .then(({ gsap, ScrollTrigger }) => {
-      const header = headerRef.current
-      if (cancelled || !header || prefersReducedMotion()) return
 
-      // Entrance: slide down only on the very first view of the tab
-      // session (transform only — no layout shift). Every navigation is a
-      // full page load that remounts the header, so a session flag is what
-      // keeps the intro from replaying on each page change.
-      let firstView = true
-      try {
-        firstView = sessionStorage.getItem('vivah-header-seen') === null
-        sessionStorage.setItem('vivah-header-seen', '1')
-      } catch {
-        firstView = true
-      }
-      if (firstView) {
-        gsap.from(header, {
-          y: -72,
-          autoAlpha: 0,
-          duration: 0.8,
-          ease: 'power3.out',
-          delay: 0.1,
-          overwrite: 'auto',
-        })
-      }
+    const wireMotion = () => {
+      if (cancelled) return
+      void ensureMotion()
+        .then(({ gsap, ScrollTrigger }) => {
+          const header = headerRef.current
+          if (cancelled || !header || prefersReducedMotion()) return
 
-      // Hide on scroll down, reveal on scroll up. Disabled while the
-      // mobile drawer is open (tracked via data attribute below).
-      // State-guarded: Lenis fires scroll events every frame, so only
-      // create a tween when visibility actually flips — otherwise hundreds
-      // of killed/reborn tweens churn per scroll (jank + flicker).
-      let hidden = false
-      const setHidden = (next: boolean) => {
-        if (hidden === next) return
-        hidden = next
-        gsap.to(header, {
-          yPercent: next ? -110 : 0,
-          duration: 0.35,
-          ease: 'power3.out',
-          overwrite: 'auto',
-        })
-      }
-      trigger = ScrollTrigger.create({
-        start: 0,
-        end: 'max',
-        onUpdate: (self) => {
-          if (header.dataset.drawerOpen === 'true') return
-          if (self.scroll() <= 80) {
-            setHidden(false)
-            return
+          // Entrance: slide down only on desktop first view of the tab session
+          if (window.innerWidth >= 768) {
+            let firstView = true
+            try {
+              firstView = sessionStorage.getItem('vivah-header-seen') === null
+              sessionStorage.setItem('vivah-header-seen', '1')
+            } catch {
+              firstView = true
+            }
+            if (firstView) {
+              gsap.from(header, {
+                y: -72,
+                autoAlpha: 0,
+                duration: 0.8,
+                ease: 'power3.out',
+                delay: 0.1,
+                overwrite: 'auto',
+              })
+            }
           }
-          if (self.direction === 1) setHidden(true)
-          else if (self.direction === -1) setHidden(false)
-        },
-      })
-      })
-      .catch(() => {
-        /* motion failed to load — header stays visible and static */
-      })
+
+          // Hide on scroll down, reveal on scroll up. Disabled while the
+          // mobile drawer is open (tracked via data attribute below).
+          let hidden = false
+          const setHidden = (next: boolean) => {
+            if (hidden === next) return
+            hidden = next
+            gsap.to(header, {
+              yPercent: next ? -110 : 0,
+              duration: 0.35,
+              ease: 'power3.out',
+              overwrite: 'auto',
+            })
+          }
+          trigger = ScrollTrigger.create({
+            start: 0,
+            end: 'max',
+            onUpdate: (self) => {
+              if (header.dataset.drawerOpen === 'true') return
+              if (self.scroll() <= 80) {
+                setHidden(false)
+                return
+              }
+              if (self.direction === 1) setHidden(true)
+              else if (self.direction === -1) setHidden(false)
+            },
+          })
+        })
+        .catch(() => {
+          /* motion failed to load — header stays visible and static */
+        })
+    }
+
+    if (typeof window !== 'undefined' && window.innerWidth < 768) {
+      const timer = setTimeout(wireMotion, 6000)
+      const onMove = () => {
+        clearTimeout(timer)
+        wireMotion()
+      }
+      window.addEventListener('scroll', onMove, { once: true, passive: true })
+      window.addEventListener('touchstart', onMove, { once: true, passive: true })
+      return () => {
+        cancelled = true
+        clearTimeout(timer)
+        window.removeEventListener('scroll', onMove)
+        window.removeEventListener('touchstart', onMove)
+        trigger?.kill()
+        trigger = null
+      }
+    }
+
+    wireMotion()
     return () => {
       cancelled = true
       trigger?.kill()
@@ -192,45 +213,18 @@ export default function Header() {
         </div>
       </div>
 
-      {/* Mobile bottom-sheet menu (shadcn/base Drawer — swipe-to-dismiss,
-          backdrop tap and Escape all funnel through onOpenChange) */}
-      <Drawer open={open} onOpenChange={syncDrawer} showSwipeHandle>
-        <DrawerContent className="rounded-t-3xl border-gold-500/30 bg-cream-50 text-navy-900">
-          {/* A11y title for the dialog (visually hidden — handle implies it) */}
-          <DrawerTitle className="sr-only">Menu</DrawerTitle>
-          <nav
-            aria-label="Mobile"
-            className="max-h-[82dvh] overflow-y-auto px-4 pt-1 pb-[calc(0.75rem+env(safe-area-inset-bottom))]"
-          >
-            <ul className="grid gap-1 text-[15px] font-medium">
-              {navItems.map((item) => (
-                <li key={item.key}>
-                  <Link
-                    to={item.href}
-                    onClick={closeDrawer}
-                    title={item.label}
-                    aria-current={item.active ? 'page' : undefined}
-                    className={`flex items-center justify-between rounded-xl px-3 py-2.5 transition hover:bg-gold-100 hover:text-maroon-600 ${
-                      item.active ? 'bg-gold-100 font-bold text-maroon-600' : ''
-                    }`}
-                  >
-                    <span>{item.label}</span>
-                    <span aria-hidden="true" className="text-gold-500">→</span>
-                  </Link>
-                </li>
-              ))}
-            </ul>
-            <div className="mt-3 flex gap-2 border-t border-gold-500/20 pt-4">
-              <a href="#login" onClick={closeDrawer} title={t('header.login')} className="btn-gold flex-1 !py-2.5 text-sm">
-                {t('header.login')}
-              </a>
-              <a href="#register" onClick={closeDrawer} title={t('header.createProfile')} className="btn-primary flex-1 !py-2.5 text-sm">
-                {t('header.createProfile')}
-              </a>
-            </div>
-          </nav>
-        </DrawerContent>
-      </Drawer>
+      {/* Mobile bottom-sheet menu (lazy-loaded so @base-ui never contends with hero LCP) */}
+      {open && (
+        <Suspense fallback={null}>
+          <MobileDrawer
+            open={open}
+            onOpenChange={syncDrawer}
+            navItems={navItems}
+            closeDrawer={closeDrawer}
+            t={t}
+          />
+        </Suspense>
+      )}
     </header>
   )
 }

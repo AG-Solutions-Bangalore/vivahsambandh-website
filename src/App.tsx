@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, lazy, Suspense } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Route, Routes, useLocation } from 'react-router-dom'
 import Footer from './components/Footer'
@@ -8,14 +8,20 @@ import { getLenis, resolveHashId, scrollToAnchor } from './lib/scroll'
 import { DEFERRED_SECTION_IDS, whenSectionReady } from './lib/deferredSections'
 import { refreshScrollTriggers } from './lib/gsap-setup'
 import HomePage from './module/home/pages/HomePage'
-import AboutPage from './module/about/pages/AboutPage'
-import StoriesPage from './module/stories/pages/StoriesPage'
-import MembershipPage from './module/membership/pages/MembershipPage'
-import { BlogsPage, BlogDetailPage } from './module/blog'
-import { PrivacyPage, TermsPage, GuidelinesPage, HelpCenterPage } from './module/legal'
-import ContactPage from './module/contact/pages/ContactPage'
 import { QueryProvider } from './lib/api/queryClient'
 import type { AppLang } from './i18n'
+
+// Code-split non-home routes so the initial homepage bundle is feather-light
+const AboutPage = lazy(() => import('./module/about/pages/AboutPage'))
+const StoriesPage = lazy(() => import('./module/stories/pages/StoriesPage'))
+const MembershipPage = lazy(() => import('./module/membership/pages/MembershipPage'))
+const BlogsPage = lazy(() => import('./module/blog/pages/BlogsPage'))
+const BlogDetailPage = lazy(() => import('./module/blog/pages/BlogDetailPage'))
+const ContactPage = lazy(() => import('./module/contact/pages/ContactPage'))
+const PrivacyPage = lazy(() => import('./module/legal/pages/PrivacyPage'))
+const TermsPage = lazy(() => import('./module/legal/pages/TermsPage'))
+const GuidelinesPage = lazy(() => import('./module/legal/pages/GuidelinesPage'))
+const HelpCenterPage = lazy(() => import('./module/legal/pages/HelpCenterPage'))
 
 /**
  * URL is the source of truth for language: `/hi*` → Hindi, else English.
@@ -92,32 +98,187 @@ export default function App() {
           <Header />
           <main>
             <Routes>
+              {/* Critical Homepage routes stay static & instant */}
               <Route path="/" element={<HomePage />} />
               <Route path="/hi" element={<HomePage />} />
-              <Route path="/about" element={<AboutPage />} />
-              <Route path="/hi/about" element={<AboutPage />} />
-              <Route path="/stories" element={<StoriesPage />} />
-              <Route path="/hi/stories" element={<StoriesPage />} />
-              <Route path="/success-stories" element={<StoriesPage />} />
-              <Route path="/hi/success-stories" element={<StoriesPage />} />
-              <Route path="/membership" element={<MembershipPage />} />
-              <Route path="/hi/membership" element={<MembershipPage />} />
-              <Route path="/contact" element={<ContactPage />} />
-              <Route path="/hi/contact" element={<ContactPage />} />
-              <Route path="/blogs" element={<BlogsPage />} />
-              <Route path="/hi/blogs" element={<BlogsPage />} />
-              <Route path="/blogs/:slug" element={<BlogDetailPage />} />
-              <Route path="/hi/blogs/:slug" element={<BlogDetailPage />} />
-              <Route path="/privacy" element={<PrivacyPage />} />
-              <Route path="/hi/privacy" element={<PrivacyPage />} />
-              <Route path="/terms" element={<TermsPage />} />
-              <Route path="/hi/terms" element={<TermsPage />} />
-              <Route path="/guidelines" element={<GuidelinesPage />} />
-              <Route path="/hi/guidelines" element={<GuidelinesPage />} />
-              <Route path="/help-center" element={<HelpCenterPage />} />
-              <Route path="/hi/help-center" element={<HelpCenterPage />} />
-              {/* Unknown paths fall back home (client-side; hosts serving
-                  static files may still 404 direct hits — see README). */}
+
+              {/* Other routes split into isolated on-demand chunks */}
+              <Route
+                path="/about"
+                element={
+                  <Suspense fallback={null}>
+                    <AboutPage />
+                  </Suspense>
+                }
+              />
+              <Route
+                path="/hi/about"
+                element={
+                  <Suspense fallback={null}>
+                    <AboutPage />
+                  </Suspense>
+                }
+              />
+              <Route
+                path="/stories"
+                element={
+                  <Suspense fallback={null}>
+                    <StoriesPage />
+                  </Suspense>
+                }
+              />
+              <Route
+                path="/hi/stories"
+                element={
+                  <Suspense fallback={null}>
+                    <StoriesPage />
+                  </Suspense>
+                }
+              />
+              <Route
+                path="/success-stories"
+                element={
+                  <Suspense fallback={null}>
+                    <StoriesPage />
+                  </Suspense>
+                }
+              />
+              <Route
+                path="/hi/success-stories"
+                element={
+                  <Suspense fallback={null}>
+                    <StoriesPage />
+                  </Suspense>
+                }
+              />
+              <Route
+                path="/membership"
+                element={
+                  <Suspense fallback={null}>
+                    <MembershipPage />
+                  </Suspense>
+                }
+              />
+              <Route
+                path="/hi/membership"
+                element={
+                  <Suspense fallback={null}>
+                    <MembershipPage />
+                  </Suspense>
+                }
+              />
+              <Route
+                path="/contact"
+                element={
+                  <Suspense fallback={null}>
+                    <ContactPage />
+                  </Suspense>
+                }
+              />
+              <Route
+                path="/hi/contact"
+                element={
+                  <Suspense fallback={null}>
+                    <ContactPage />
+                  </Suspense>
+                }
+              />
+              <Route
+                path="/blogs"
+                element={
+                  <Suspense fallback={null}>
+                    <BlogsPage />
+                  </Suspense>
+                }
+              />
+              <Route
+                path="/hi/blogs"
+                element={
+                  <Suspense fallback={null}>
+                    <BlogsPage />
+                  </Suspense>
+                }
+              />
+              <Route
+                path="/blogs/:slug"
+                element={
+                  <Suspense fallback={null}>
+                    <BlogDetailPage />
+                  </Suspense>
+                }
+              />
+              <Route
+                path="/hi/blogs/:slug"
+                element={
+                  <Suspense fallback={null}>
+                    <BlogDetailPage />
+                  </Suspense>
+                }
+              />
+              <Route
+                path="/privacy"
+                element={
+                  <Suspense fallback={null}>
+                    <PrivacyPage />
+                  </Suspense>
+                }
+              />
+              <Route
+                path="/hi/privacy"
+                element={
+                  <Suspense fallback={null}>
+                    <PrivacyPage />
+                  </Suspense>
+                }
+              />
+              <Route
+                path="/terms"
+                element={
+                  <Suspense fallback={null}>
+                    <TermsPage />
+                  </Suspense>
+                }
+              />
+              <Route
+                path="/hi/terms"
+                element={
+                  <Suspense fallback={null}>
+                    <TermsPage />
+                  </Suspense>
+                }
+              />
+              <Route
+                path="/guidelines"
+                element={
+                  <Suspense fallback={null}>
+                    <GuidelinesPage />
+                  </Suspense>
+                }
+              />
+              <Route
+                path="/hi/guidelines"
+                element={
+                  <Suspense fallback={null}>
+                    <GuidelinesPage />
+                  </Suspense>
+                }
+              />
+              <Route
+                path="/help-center"
+                element={
+                  <Suspense fallback={null}>
+                    <HelpCenterPage />
+                  </Suspense>
+                }
+              />
+              <Route
+                path="/hi/help-center"
+                element={
+                  <Suspense fallback={null}>
+                    <HelpCenterPage />
+                  </Suspense>
+                }
+              />
               <Route path="*" element={<HomePage />} />
             </Routes>
           </main>

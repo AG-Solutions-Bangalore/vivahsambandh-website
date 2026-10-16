@@ -72,7 +72,7 @@ const MATCH_CARDS = [
     href: "#search-bride",
     photo: img("/images/home/radiant-indian-bride-in-floral-glow.webp"),
     photoSrcSet:
-      imgSrcSet("/images/home/radiant-indian-bride-in-floral-glow-320.webp 320w, /images/home/radiant-indian-bride-in-floral-glow-640.webp 640w, /images/home/radiant-indian-bride-in-floral-glow.webp 1145w"),
+      imgSrcSet("/images/home/radiant-indian-bride-in-floral-glow-128.webp 128w, /images/home/radiant-indian-bride-in-floral-glow-320.webp 320w, /images/home/radiant-indian-bride-in-floral-glow-640.webp 640w, /images/home/radiant-indian-bride-in-floral-glow.webp 1145w"),
     photoWidth: 1145,
     photoHeight: 1374,
     illustration: img("/images/home/woman_image.webp"),
@@ -89,7 +89,7 @@ const MATCH_CARDS = [
     href: "#search-groom",
     photo: img("/images/home/radiant-indian-groom-in-a-golden-wedding-setting.webp"),
     photoSrcSet:
-      imgSrcSet("/images/home/radiant-indian-groom-in-a-golden-wedding-setting-320.webp 320w, /images/home/radiant-indian-groom-in-a-golden-wedding-setting-640.webp 640w, /images/home/radiant-indian-groom-in-a-golden-wedding-setting.webp 1254w"),
+      imgSrcSet("/images/home/radiant-indian-groom-in-a-golden-wedding-setting-128.webp 128w, /images/home/radiant-indian-groom-in-a-golden-wedding-setting-320.webp 320w, /images/home/radiant-indian-groom-in-a-golden-wedding-setting-640.webp 640w, /images/home/radiant-indian-groom-in-a-golden-wedding-setting.webp 1254w"),
     photoWidth: 1254,
     photoHeight: 1254,
     illustration: img("/images/home/man_image.webp"),
@@ -107,9 +107,12 @@ export default function HeroSection() {
   const { t } = useTranslation();
   const rootRef = useRef<HTMLDivElement | null>(null);
 
-  // Motion loads lazily (see lib/gsap-setup): identical choreography, wired
-  // after the chunk lands. Static hero paints first; intro enhances after.
+  // Motion loads lazily (see lib/gsap-setup): desktop enhances with
+  // choreography; mobile hero paints instantly from static markup with 0 JS delay.
   useEffect(() => {
+    if (typeof window !== "undefined" && window.innerWidth < 768) {
+      return;
+    }
     let mm: {
       revert: () => void
       add: (conditions: string, callback: () => void) => void
@@ -278,7 +281,7 @@ export default function HeroSection() {
       {/* 1. HERO BANNER: Full-width, proportionally sized to 2172x724   */}
       {/* ============================================================== */}
       <section data-hero="banner-wrap" className="relative isolate z-10 w-full lg:h-[440px] xl:h-[470px]">
-        {/* Top garlands: hang from top */}
+        {/* Top garlands: hang from top on sm and up; hidden on small phones to keep mobile clean & fast */}
         <img
           src={img("/images/home/flower1_image-192.webp")}
           srcSet={imgSrcSet("/images/home/flower1_image-192.webp 192w, /images/home/flower1_image-320.webp 320w, /images/home/flower1_image-640.webp 640w")}
@@ -287,7 +290,7 @@ export default function HeroSection() {
           height={288}
           alt="Decorative flower garland"
           title="Decorative flower garland"
-          className="pointer-events-none absolute left-0 top-0 z-[5] w-16 sm:w-20 md:w-24 lg:w-28 xl:w-32 max-w-[12vw] h-auto object-contain object-left-top select-none -scale-y-100"
+          className="pointer-events-none absolute left-0 top-0 z-[5] w-16 sm:w-20 md:w-24 lg:w-28 xl:w-32 max-w-[12vw] h-auto object-contain object-left-top select-none -scale-y-100 hidden sm:block"
           loading="lazy"
           decoding="async"
           fetchPriority="low"
@@ -301,7 +304,7 @@ export default function HeroSection() {
           height={288}
           alt="Decorative flower garland"
           title="Decorative flower garland"
-          className="pointer-events-none absolute right-0 top-0 z-[5] w-16 sm:w-20 md:w-24 lg:w-28 xl:w-32 max-w-[12vw] h-auto object-contain object-right-top select-none -scale-y-100"
+          className="pointer-events-none absolute right-0 top-0 z-[5] w-16 sm:w-20 md:w-24 lg:w-28 xl:w-32 max-w-[12vw] h-auto object-contain object-right-top select-none -scale-y-100 hidden sm:block"
           loading="lazy"
           decoding="async"
           fetchPriority="low"
@@ -314,7 +317,7 @@ export default function HeroSection() {
           aria-hidden="true"
         >
           <img
-            src={img("/images/home/home_banner_image.webp")}
+            src={img("/images/home/home_banner_image-640.webp")}
             srcSet={imgSrcSet("/images/home/home_banner_image-640.webp 640w, /images/home/home_banner_image-1024.webp 1024w, /images/home/home_banner_image-1280.webp 1280w, /images/home/home_banner_image.webp 2172w")}
             sizes="(max-width: 640px) 240px, (max-width: 1024px) 640px, 100vw"
             width={2172}
@@ -323,8 +326,8 @@ export default function HeroSection() {
             title="VivahSambandh Indian wedding celebration banner"
             data-hero="banner"
             fetchPriority="high"
-            decoding="async"
-            className="h-full w-full object-cover object-[68%_25%] sm:object-[70%_30%] lg:object-[82%_center] xl:object-right will-change-transform"
+            decoding="sync"
+            className="h-full w-full object-cover object-[68%_25%] sm:object-[70%_30%] lg:object-[82%_center] xl:object-right"
             loading="eager"
           />
           {/* Mobile fade: photo melts into the cream copy below */}
@@ -454,7 +457,7 @@ export default function HeroSection() {
                 <img
                   src={card.photo}
                   srcSet={card.photoSrcSet}
-                  sizes="(max-width: 640px) 7rem, (max-width: 1024px) 10rem, 16rem"
+                  sizes="(max-width: 640px) 48px, (max-width: 1024px) 10rem, 16rem"
                   width={card.photoWidth}
                   height={card.photoHeight}
                   alt={t(card.labelKey)}

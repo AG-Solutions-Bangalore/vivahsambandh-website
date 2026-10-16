@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useLocation } from "react-router-dom";
 import { COMPANY, getCompanyAddress } from "../constants/company";
@@ -49,11 +50,25 @@ export default function Footer() {
     { label: t("footer.sitemap"), href: "/sitemap.xml" },
   ];
 
-  const { data: companyRes } = useCompanyQuery()
-  const live = companyRes?.data
-  const phoneDisplay = live?.company_mobile_no ? `+91 ${live.company_mobile_no}` : COMPANY.supportPhoneDisplay
-  const phoneLink = live?.company_mobile_no ? `tel:+91${live.company_mobile_no.replace(/\D/g, '')}` : COMPANY.supportPhoneLink
-  const emailDisplay = live?.company_email?.trim() || COMPANY.supportEmail
+  const [shouldFetch, setShouldFetch] = useState(false);
+  useEffect(() => {
+    const timer = setTimeout(() => setShouldFetch(true), 5000);
+    const onScroll = () => {
+      setShouldFetch(true);
+      window.removeEventListener("scroll", onScroll);
+    };
+    window.addEventListener("scroll", onScroll, { passive: true, once: true });
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener("scroll", onScroll);
+    };
+  }, []);
+
+  const { data: companyRes } = useCompanyQuery({ enabled: shouldFetch });
+  const live = companyRes?.data;
+  const phoneDisplay = live?.company_mobile_no ? `+91 ${live.company_mobile_no}` : COMPANY.supportPhoneDisplay;
+  const phoneLink = live?.company_mobile_no ? `tel:+91${live.company_mobile_no.replace(/\D/g, '')}` : COMPANY.supportPhoneLink;
+  const emailDisplay = live?.company_email?.trim() || COMPANY.supportEmail;
 
   return (
     <footer className="relative overflow-hidden bg-navy-pattern text-white">

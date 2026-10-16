@@ -6,14 +6,7 @@ import {
   whenSectionReady,
 } from "../../../lib/deferredSections";
 import { resolveHashId, scrollToAnchor } from "../../../lib/scroll";
-import { getFeaturedBlogs, getFrontBlogs } from "../../blog/api/blog.api";
-import { blogKeys } from "../../blog/hook/useBlogs";
-import { prefetchFaqQuery } from "../../faq/hook/useFaq";
-import { getTestimonialsBySlug } from "../../testimonial/api/testimonial.api";
-import { testimonialKey } from "../../testimonial/hook/useTestimonials";
-import { getClients } from "../api/home.api";
 import HeroSection from "../components/HeroSection";
-import { homeQueryKeys } from "../hook/useHomeData";
 
 // Below-the-fold sections split into separate chunks and mounted
 // progressively (viewport proximity or idle backstop) — the initial
@@ -43,29 +36,50 @@ export default function HomePage() {
   // This keeps the network 100% free for hero LCP and critical CSS on mobile.
   useEffect(() => {
     let prefetched = false;
-    const prefetch = () => {
+    const prefetch = async () => {
       if (prefetched) return;
       prefetched = true;
-      void queryClient.prefetchQuery({
-        queryKey: testimonialKey("home"),
-        queryFn: () => getTestimonialsBySlug("home"),
-      });
-      void prefetchFaqQuery(queryClient, "home");
-      void queryClient.prefetchQuery({
-        queryKey: homeQueryKeys.clients,
-        queryFn: getClients,
-      });
-      void queryClient.prefetchQuery({
-        queryKey: blogKeys.featured,
-        queryFn: getFeaturedBlogs,
-      });
-      void queryClient.prefetchQuery({
-        queryKey: blogKeys.front,
-        queryFn: getFrontBlogs,
-      });
+      try {
+        const [
+          { getTestimonialsBySlug },
+          { testimonialKey },
+          { prefetchFaqQuery },
+          { getClients },
+          { homeQueryKeys },
+          { getFeaturedBlogs, getFrontBlogs },
+          { blogKeys },
+        ] = await Promise.all([
+          import("../../testimonial/api/testimonial.api"),
+          import("../../testimonial/hook/useTestimonials"),
+          import("../../faq/hook/useFaq"),
+          import("../api/home.api"),
+          import("../hook/useHomeData"),
+          import("../../blog/api/blog.api"),
+          import("../../blog/hook/useBlogs"),
+        ]);
+        void queryClient.prefetchQuery({
+          queryKey: testimonialKey("home"),
+          queryFn: () => getTestimonialsBySlug("home"),
+        });
+        void prefetchFaqQuery(queryClient, "home");
+        void queryClient.prefetchQuery({
+          queryKey: homeQueryKeys.clients,
+          queryFn: getClients,
+        });
+        void queryClient.prefetchQuery({
+          queryKey: blogKeys.featured,
+          queryFn: getFeaturedBlogs,
+        });
+        void queryClient.prefetchQuery({
+          queryKey: blogKeys.front,
+          queryFn: getFrontBlogs,
+        });
+      } catch {
+        /* prefetch is best-effort */
+      }
     };
 
-    const timer = setTimeout(prefetch, 2500);
+    const timer = setTimeout(prefetch, 6000);
     const onScrollOrTouch = () => {
       clearTimeout(timer);
       prefetch();
