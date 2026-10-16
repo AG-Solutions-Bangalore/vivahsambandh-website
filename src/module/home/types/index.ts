@@ -56,10 +56,7 @@ export interface CategoryData {
   category_subs?: CategorySubData[]
 }
 
-export interface CategoryResponse {
-  data: CategoryData[]
-  image_url?: ImageUrlEntry[]
-}
+
 
 export interface ClientData {
   clients_name?: string

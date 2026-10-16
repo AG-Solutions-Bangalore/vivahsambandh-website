@@ -1,7 +1,7 @@
 /**
  * @file src/lib/api/apiClient.ts
  * Native HTTP client for VivahSambandh / CRM API endpoints.
- * Provides GET JSON parsing with failover to fallback host, and FormData POST multipart encoding.
+ * Provides GET JSON parsing and FormData POST multipart encoding.
  */
 
 import type { ImageUrlEntry } from './types'
@@ -10,22 +10,19 @@ export const API_BASE_URL: string =
   (import.meta.env.VITE_API_BASE_URL as string | undefined) ||
   'https://vivahsambandh.com/crmapi/public/api'
 
-export const API_FALLBACK_URL: string =
-  (import.meta.env.VITE_API_FALLBACK_URL as string | undefined) ||
-  'https://capitalknob.com/crmapi/public/api'
 
 export const API_SECRET_KEY: string | undefined =
   import.meta.env.VITE_SECRET_KEY as string | undefined
 
 /**
- * Executes a GET request with automatic fallback host failover.
+ * Executes a GET request against the primary API host only.
  */
 export async function apiFetch<T>(
   endpoint: string,
   options?: RequestInit,
 ): Promise<T> {
   const cleanEndpoint = endpoint.startsWith('/') ? endpoint : `/${endpoint}`
-  const primaryUrl = `${API_BASE_URL}${cleanEndpoint}`
+  const url = `${API_BASE_URL}${cleanEndpoint}`
 
   const headers: Record<string, string> = {
     Accept: 'application/json',
@@ -33,34 +30,16 @@ export async function apiFetch<T>(
     ...(options?.headers as Record<string, string> | undefined),
   }
 
-  try {
-    const res = await fetch(primaryUrl, {
-      ...options,
-      headers,
-    })
+  const res = await fetch(url, {
+    ...options,
+    headers,
+  })
 
-    if (!res.ok) {
-      throw new Error(`API HTTP Error: ${res.status} ${res.statusText}`)
-    }
-
-    return (await res.json()) as T
-  } catch (primaryError) {
-    if (API_FALLBACK_URL && API_FALLBACK_URL !== API_BASE_URL) {
-      try {
-        const fallbackUrl = `${API_FALLBACK_URL}${cleanEndpoint}`
-        const fallbackRes = await fetch(fallbackUrl, {
-          ...options,
-          headers,
-        })
-        if (fallbackRes.ok) {
-          return (await fallbackRes.json()) as T
-        }
-      } catch {
-        // Fallback also failed; throw original primary error
-      }
-    }
-    throw primaryError
+  if (!res.ok) {
+    throw new Error(`API HTTP Error: ${res.status} ${res.statusText}`)
   }
+
+  return (await res.json()) as T
 }
 
 /**

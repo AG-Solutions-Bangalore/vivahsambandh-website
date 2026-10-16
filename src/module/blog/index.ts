@@ -1,3 +1,5 @@
 export * from './api/blog.api'
 export * from './hook/useBlogs'
 export * from './types'
+export { default as BlogSection } from './components/BlogSection'
+export type { BlogSectionProps } from './components/BlogSection'
