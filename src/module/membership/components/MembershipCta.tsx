@@ -30,6 +30,7 @@ export default function MembershipCta() {
           <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
             <a
               href={COMPANY.supportPhoneLink}
+              title={COMPANY.supportPhoneDisplay}
               className="btn-gold !px-8 !py-3.5 text-sm font-bold shadow-lg inline-flex items-center gap-2"
             >
               <span>📞</span>
@@ -37,6 +38,7 @@ export default function MembershipCta() {
             </a>
             <Link
               to={pagePath('/contact', lang)}
+              title={t('membershipPage.cta.contactBtn')}
               className="rounded-full border border-gold-400/60 bg-white/10 px-8 py-3.5 text-sm font-semibold text-white transition hover:bg-white/20"
             >
               {t('membershipPage.cta.contactBtn')}

@@ -211,7 +211,9 @@ export default defineConfig({
           (dep) =>
             !dep.includes('gsap') &&
             !dep.includes('lenis') &&
-            !dep.includes('prerender'),
+            !dep.includes('prerender') &&
+            !dep.includes('dompurify') &&
+            !dep.includes('swiper'),
         );
       },
     },
@@ -232,6 +234,10 @@ export default defineConfig({
           if (/gsap/.test(p)) return 'gsap';
           if (/\/lenis\//.test(p)) return 'lenis';
           if (/swiper/.test(p)) return 'swiper';
+          if (/dompurify/.test(p)) return 'dompurify';
+          if (/@base-ui/.test(p)) return 'base-ui';
+          if (/@tanstack/.test(p)) return 'tanstack';
+          if (/i18next/.test(p)) return 'i18n';
           if (/\/node_modules\/(react|react-dom|scheduler)\//.test(p)) return 'react';
           return undefined;
         },

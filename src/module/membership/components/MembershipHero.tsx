@@ -97,7 +97,7 @@ export default function MembershipHero() {
               <nav aria-label="Breadcrumb" className="mb-3">
                 <ol className="flex items-center gap-1.5 text-xs font-semibold text-navy-900/70">
                   <li>
-                    <Link to={pagePath('/', lang)} className="transition hover:text-maroon-600">
+                    <Link to={pagePath('/', lang)} title={t('membershipPage.breadcrumbHome')} className="transition hover:text-maroon-600">
                       {t('membershipPage.breadcrumbHome')}
                     </Link>
                   </li>

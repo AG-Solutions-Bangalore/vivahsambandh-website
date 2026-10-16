@@ -82,17 +82,13 @@ export default function FaqSection({
     fallbackItems,
   });
 
-  // Keep active category index bounded if groups change dynamically
-  useEffect(() => {
-    if (activeGroupIdx >= groups.length && groups.length > 0) {
-      setActiveGroupIdx(0);
-    }
-  }, [groups.length, activeGroupIdx]);
+  const currentGroupIdx =
+    groups.length > 0 && activeGroupIdx >= groups.length ? 0 : activeGroupIdx;
 
   useEffect(() => {
     const cancel = refreshScrollTriggers(350);
     return cancel;
-  }, [openQuestionIdx, activeGroupIdx, groups.length]);
+  }, [openQuestionIdx, currentGroupIdx, groups.length]);
 
   // Hide the section entirely when the slug chain + fallbackItems yield nothing
   if (!isPending && isEmpty) {
@@ -108,7 +104,7 @@ export default function FaqSection({
     setOpenQuestionIdx((curr) => (curr === qIdx ? null : qIdx));
   };
 
-  const currentGroup = groups[activeGroupIdx] ?? groups[0];
+  const currentGroup = groups[currentGroupIdx] ?? groups[0];
   const hasMultipleCategories =
     groups.length > 1 || Boolean(groups[0]?.heading);
 
@@ -205,7 +201,7 @@ export default function FaqSection({
                 aria-label="FAQ categories"
               >
                 {groups.map((group, idx) => {
-                  const isActive = activeGroupIdx === idx;
+                  const isActive = currentGroupIdx === idx;
                   const heading =
                     group.heading ||
                     t("faq.defaultCategory", "General Information");
@@ -248,7 +244,7 @@ export default function FaqSection({
             {hasMultipleCategories && (
               <div className="lg:hidden mt-6 mb-8 -mx-4 px-4 sm:mx-0 sm:px-0 flex gap-2 overflow-x-auto pb-2 scrollbar-none">
                 {groups.map((group, idx) => {
-                  const isActive = activeGroupIdx === idx;
+                  const isActive = currentGroupIdx === idx;
                   const heading =
                     group.heading ||
                     t("faq.defaultCategory", "General Information");

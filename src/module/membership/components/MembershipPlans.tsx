@@ -93,6 +93,7 @@ export default function MembershipPlans() {
               <div className="mt-8 pt-4">
                 <a
                   href="#register"
+                  title={plan.ctaText}
                   className={`w-full inline-flex items-center justify-center rounded-full py-3 text-xs sm:text-sm font-bold transition-all shadow-md active:scale-95 ${
                     plan.isPopular
                       ? 'bg-navy-900 text-white hover:bg-navy-800 shadow-navy-950/20'
