@@ -948,5 +948,10 @@
       "advisorBtn": "Speak to an Advisor",
       "contactBtn": "Contact Support"
     }
+  },
+  "registrationPage": {
+    "eyebrow": "Trust & Sacred Bonds",
+    "title": "Matrimonial Bio-Data Registration",
+    "body": "Please provide genuine, accurate details. After volunteer committee verification (24–48 hours), your bio-data will be matched with verified families."
   }
 }

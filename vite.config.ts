@@ -200,6 +200,8 @@ export default defineConfig({
         '/hi/guidelines',
         '/help-center',
         '/hi/help-center',
+        '/registration',
+        '/hi/registration',
       ],
     }),
     compression({ algorithm: 'gzip', threshold: 1024 }),

@@ -191,9 +191,13 @@ export default function Header() {
           >
             {t('header.login')}
           </a>
-          <a href="#register" title={t('header.createProfile')} className="btn-primary !px-5 !py-2 text-[13px]">
+          <Link
+            to={lang === 'hi' ? '/hi/registration' : '/registration'}
+            title={t('header.createProfile')}
+            className="btn-primary !px-5 !py-2 text-[13px]"
+          >
             {t('header.createProfile')}
-          </a>
+          </Link>
         </div>
 
         {/* Mobile Menu Button & Language Switcher */}

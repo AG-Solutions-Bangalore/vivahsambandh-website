@@ -14,6 +14,7 @@ import MembershipPage from './module/membership/pages/MembershipPage'
 import BlogsPage from './module/blog/pages/BlogsPage'
 import { PrivacyPage, TermsPage, GuidelinesPage, HelpCenterPage } from './module/legal'
 import ContactPage from './module/contact/pages/ContactPage'
+import RegistrationPage from './module/registration/pages/RegistrationPage'
 import { QueryProvider } from './lib/api/queryClient'
 import type { AppLang } from './i18n'
 
@@ -93,6 +94,10 @@ export default function AppServer() {
               <Route path="/hi/membership" element={<MembershipPage />} />
               <Route path="/contact" element={<ContactPage />} />
               <Route path="/hi/contact" element={<ContactPage />} />
+              <Route path="/registration" element={<RegistrationPage />} />
+              <Route path="/hi/registration" element={<RegistrationPage />} />
+              <Route path="/register" element={<RegistrationPage />} />
+              <Route path="/hi/register" element={<RegistrationPage />} />
               <Route path="/blogs" element={<BlogsPage />} />
               <Route path="/hi/blogs" element={<BlogsPage />} />
               <Route
