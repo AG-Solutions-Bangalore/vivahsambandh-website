@@ -108,7 +108,17 @@ export const SUPPORTED_LANGS: readonly SupportedLang[] = ['en', 'hi'] as const;
 export const SUPPORTED_SSG_ROUTES = ['/', '/hi'] as const;
 
 /** Standalone pages that carry their own SEO metadata. */
-export type PageKey = 'home' | 'about' | 'stories' | 'membership' | 'contact' | 'blogs';
+export type PageKey =
+  | 'home'
+  | 'about'
+  | 'stories'
+  | 'membership'
+  | 'contact'
+  | 'blogs'
+  | 'privacy'
+  | 'terms'
+  | 'guidelines'
+  | 'help-center';
 
 /**
  * Per-page SEO metadata (both languages). Home entries intentionally mirror
@@ -175,6 +185,46 @@ export const PAGE_SEO: Record<PageKey, { titles: Record<SupportedLang, string>; 
       hi: 'विवाहसंबंध के सभी लेख देखें — रिश्तों का मार्गदर्शन, शादी के टिप्स और अग्रवाल सामुदायिक अपडेट।',
     },
   },
+  privacy: {
+    titles: {
+      en: 'Privacy Policy — VivahSambandh | How We Protect Your Data',
+      hi: 'गोपनीयता नीति — विवाहसंबंध | आपका डेटा कैसे सुरक्षित है',
+    },
+    descriptions: {
+      en: 'Read the VivahSambandh privacy policy — what information we collect, how we use it and the choices you have.',
+      hi: 'विवाहसंबंध गोपनीयता नीति पढ़ें — हम कौन सी जानकारी लेते हैं, उसका उपयोग कैसे होता है और आपके विकल्प।',
+    },
+  },
+  terms: {
+    titles: {
+      en: 'Terms & Conditions — VivahSambandh | Terms of Use',
+      hi: 'नियम व शर्तें — विवाहसंबंध | उपयोग की शर्तें',
+    },
+    descriptions: {
+      en: 'Read the VivahSambandh terms of use — eligibility, verification, acceptable use and membership terms.',
+      hi: 'विवाहसंबंध उपयोग की शर्तें पढ़ें — पात्रता, सत्यापन, स्वीकार्य उपयोग व सदस्यता नियम।',
+    },
+  },
+  guidelines: {
+    titles: {
+      en: 'Community Guidelines — VivahSambandh | A Respectful Community',
+      hi: 'समुदाय दिशानिर्देश — विवाहसंबंध | सम्मानजनक समुदाय',
+    },
+    descriptions: {
+      en: 'VivahSambandh community guidelines — genuine profiles, respectful communication and staying safe.',
+      hi: 'विवाहसंबंध समुदाय दिशानिर्देश — वास्तविक प्रोफाइल, सम्मानजनक संवाद और सुरक्षा।',
+    },
+  },
+  'help-center': {
+    titles: {
+      en: 'Help Center — VivahSambandh | Support & FAQs',
+      hi: 'हेल्प सेंटर — विवाहसंबंध | सहायता व प्रश्न',
+    },
+    descriptions: {
+      en: 'VivahSambandh help center — profile help, match search, membership, safety and how to reach our team.',
+      hi: 'विवाहसंबंध हेल्प सेंटर — प्रोफाइल सहायता, रिश्ता खोज, सदस्यता, सुरक्षा व टीम से संपर्क।',
+    },
+  },
 };
 
 /**
@@ -189,6 +239,10 @@ export function resolvePageKey(pathname = '/'): PageKey {
   if (withoutLang === '/membership') return 'membership';
   if (withoutLang === '/contact') return 'contact';
   if (withoutLang === '/blogs' || withoutLang.startsWith('/blogs/')) return 'blogs';
+  if (withoutLang === '/privacy') return 'privacy';
+  if (withoutLang === '/terms') return 'terms';
+  if (withoutLang === '/guidelines') return 'guidelines';
+  if (withoutLang === '/help-center') return 'help-center';
   return 'home';
 }
 

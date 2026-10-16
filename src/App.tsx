@@ -12,6 +12,7 @@ import AboutPage from './module/about/pages/AboutPage'
 import StoriesPage from './module/stories/pages/StoriesPage'
 import MembershipPage from './module/membership/pages/MembershipPage'
 import { BlogsPage, BlogDetailPage } from './module/blog'
+import { PrivacyPage, TermsPage, GuidelinesPage, HelpCenterPage } from './module/legal'
 import ContactPage from './module/contact/pages/ContactPage'
 import { QueryProvider } from './lib/api/queryClient'
 import type { AppLang } from './i18n'
@@ -107,6 +108,14 @@ export default function App() {
               <Route path="/hi/blogs" element={<BlogsPage />} />
               <Route path="/blogs/:slug" element={<BlogDetailPage />} />
               <Route path="/hi/blogs/:slug" element={<BlogDetailPage />} />
+              <Route path="/privacy" element={<PrivacyPage />} />
+              <Route path="/hi/privacy" element={<PrivacyPage />} />
+              <Route path="/terms" element={<TermsPage />} />
+              <Route path="/hi/terms" element={<TermsPage />} />
+              <Route path="/guidelines" element={<GuidelinesPage />} />
+              <Route path="/hi/guidelines" element={<GuidelinesPage />} />
+              <Route path="/help-center" element={<HelpCenterPage />} />
+              <Route path="/hi/help-center" element={<HelpCenterPage />} />
               {/* Unknown paths fall back home (client-side; hosts serving
                   static files may still 404 direct hits — see README). */}
               <Route path="*" element={<HomePage />} />

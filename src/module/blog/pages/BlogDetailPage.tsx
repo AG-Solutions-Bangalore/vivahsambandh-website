@@ -18,8 +18,23 @@ import { blogDetailPath, formatBlogDate, useBlogBySlugQuery, useFeaturedBlogsQue
 import type { BlogItem } from '../types'
 import BlogCard from '../components/BlogCard'
 
+/** Table elements whose inline sizing must not constrain the layout. */
+const TABLE_TAGS = new Set([
+  'TABLE', 'COL', 'COLGROUP', 'THEAD', 'TBODY', 'TFOOT', 'TR', 'TD', 'TH', 'CAPTION',
+]);
+
 /** Sanitize CMS HTML: allow video embeds, harden links + iframes. */
 function sanitizeRichHtml(dirty: string): string {
+  DOMPurify.addHook('uponSanitizeElement', (node) => {
+    // CKEditor emits fixed inline widths (e.g. style="width:500px") that pin
+    // tables to half the content width — strip sizing from table elements
+    // only (text colors/alignment elsewhere stay untouched).
+    if (!(node instanceof Element)) return;
+    if (TABLE_TAGS.has(node.tagName)) {
+      node.removeAttribute('style');
+      node.removeAttribute('width');
+    }
+  });
   DOMPurify.addHook('afterSanitizeAttributes', (node) => {
     if (node.tagName === 'A') {
       node.setAttribute('target', '_blank');
@@ -31,11 +46,16 @@ function sanitizeRichHtml(dirty: string): string {
     }
   });
   try {
-    return DOMPurify.sanitize(dirty, {
+    const clean = DOMPurify.sanitize(dirty, {
       ADD_TAGS: ['iframe'],
       ADD_ATTR: ['allow', 'allowfullscreen', 'frameborder', 'scrolling', 'target'],
     });
+    // Wrap every table in a full-width scroll container (mobile-safe).
+    return clean
+      .replace(/<table(\s|>)/gi, '<div class="blog-table-scroll"><table$1')
+      .replace(/<\/table>/gi, '</table></div>');
   } finally {
+    DOMPurify.removeHook('uponSanitizeElement');
     DOMPurify.removeHook('afterSanitizeAttributes');
   }
 }
@@ -109,7 +129,7 @@ export default function BlogDetailPage() {
   if (isPending) {
     return (
       <div className="section-pad animate-pulse py-14 sm:py-20" aria-hidden="true">
-        <div className="mx-auto max-w-3xl">
+        <div className="mx-auto max-w-6xl">
           <div className="h-4 w-1/4 rounded bg-slate-200" />
           <div className="mt-4 h-8 w-3/4 rounded bg-slate-200" />
           <div className="mt-6 aspect-[16/8] rounded-2xl bg-slate-100" />

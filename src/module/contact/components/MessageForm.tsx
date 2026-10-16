@@ -84,7 +84,7 @@ export default function MessageForm() {
           aria-hidden="true"
           loading="lazy"
           decoding="async"
-          className="pointer-events-none absolute -right-10 -top-10 z-0 h-56 w-auto select-none opacity-40 sm:h-72"
+          className="pointer-events-none absolute scale-125 -right-10 rotate-[-225deg] -top-10 z-0 h-56 w-auto select-none opacity-40 sm:h-72"
         />
 
         <div className="relative z-10">
@@ -183,13 +183,13 @@ export default function MessageForm() {
                 <button
                   type="submit"
                   disabled={enquiryMutation.isPending}
-                  className="group flex w-full items-center justify-center gap-2.5 rounded-full bg-gradient-to-r from-gold-300 via-gold-400 to-gold-300 px-7 py-3.5 text-sm font-bold text-navy-950 shadow-gold transition hover:brightness-105 active:scale-[0.99] disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer"
+                  className="group flex w-full items-center justify-center gap-2.5 rounded-full bg-gradient-to-r from-gold-400 via-gold-500 to-gold-300 px-7 py-3.5 text-sm font-bold text-zinc-800 shadow-gold transition hover:brightness-105 active:scale-[0.99] disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer"
                 >
                   {enquiryMutation.isPending ? (
                     <span>{t('contactPage.submitting', 'Sending...')}</span>
                   ) : (
                     <>
-                      <span aria-hidden="true">✈</span>
+                  
                       <span>{t('contactPage.send')}</span>
                       <span aria-hidden="true" className="transition-transform duration-300 group-hover:translate-x-1">→</span>
                     </>

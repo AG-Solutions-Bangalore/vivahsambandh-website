@@ -1,12 +1,23 @@
 import { useTranslation } from 'react-i18next'
 import Reveal from '../../../components/motion/Reveal'
+import { useCompanyQuery } from '../../company'
 
 /**
- * "Visit Our Office" card with a stylized map placeholder
- * (streets motif + location pin card, per design).
+ * "Visit Our Office" card with a live map pinned to the company address
+ * from the `getCompany` API (cached — shared with Footer/InfoCards).
  */
 export default function OfficeVisit() {
   const { t } = useTranslation()
+
+  const { data: companyRes } = useCompanyQuery()
+  const liveAddress = companyRes?.data?.company_address?.trim()
+  const rawAddress = liveAddress || t('contactPage.addressValue')
+  // `#` (house-number marker, e.g. "#8, ...") breaks Google geocoding and
+  // pins the map at the wrong place — strip it for map queries only.
+  // The displayed address text stays untouched.
+  const mapQuery = rawAddress.replace(/^#\s*/, '').trim() || rawAddress
+  const mapSrc = `https://www.google.com/maps?q=${encodeURIComponent(mapQuery)}&z=16&output=embed`
+  const directionsHref = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(mapQuery)}`
 
   return (
     <Reveal variant="up" delay={0.08} className="h-full">
@@ -22,7 +33,7 @@ export default function OfficeVisit() {
         <div className="relative mt-4 min-h-72 flex-1 overflow-hidden rounded-xl border border-gold-500/25 sm:min-h-80">
           <iframe
             title={`${t('contactPage.officePin')}, ${t('contactPage.officePinSub')}`}
-            src="https://www.google.com/maps?q=Bengaluru,Karnataka,India&z=13&output=embed"
+            src={mapSrc}
             loading="lazy"
             referrerPolicy="no-referrer-when-downgrade"
             allowFullScreen
@@ -31,7 +42,7 @@ export default function OfficeVisit() {
         </div>
 
         <a
-          href="https://www.google.com/maps/search/?api=1&query=Bengaluru,Karnataka,India"
+          href={directionsHref}
           target="_blank"
           rel="noopener noreferrer"
           title={t('contactPage.directions')}

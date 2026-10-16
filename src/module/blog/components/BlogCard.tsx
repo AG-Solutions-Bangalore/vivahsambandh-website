@@ -30,12 +30,6 @@ export default function BlogCard({ item, imageBase }: BlogCardProps) {
 
   return (
     <article className="group relative flex h-full flex-col overflow-hidden rounded-2xl border border-[#EADDC3] bg-white shadow-[0_2px_10px_rgba(16,24,40,0.06)] transition-all duration-300 hover:-translate-y-1.5 hover:border-gold-500/60 hover:shadow-[0_16px_40px_rgba(16,24,40,0.12)]">
-      {/* Gold top accent revealed on hover */}
-      <div
-        className="absolute inset-x-0 top-0 z-10 h-[3px] origin-left scale-x-0 bg-gradient-to-r from-gold-600 via-gold-500 to-gold-400 transition-transform duration-300 group-hover:scale-x-100"
-        aria-hidden="true"
-      />
-
       {/* Cover image with soft zoom + category/date badge overlay */}
       <Link to={href} title={item.blog_title} tabIndex={-1} aria-hidden="true">
         {imgSrc ? (

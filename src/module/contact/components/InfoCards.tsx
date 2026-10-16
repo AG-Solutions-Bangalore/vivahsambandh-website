@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next'
 import { COMPANY } from '../../../constants/company'
 import { RevealGroup } from '../../../components/motion/Reveal'
+import { useCompanyQuery } from '../../company'
 
 function CardIcon({ index }: { index: number }) {
   const cls = 'h-5 w-5'
@@ -42,6 +43,12 @@ function CardIcon({ index }: { index: number }) {
 export default function InfoCards() {
   const { t } = useTranslation()
 
+  // Live company profile (cached by query key — shared with Footer,
+  // so this adds no extra network request). Address falls back to
+  // static copy when the API is unreachable.
+  const { data: companyRes } = useCompanyQuery()
+  const liveAddress = companyRes?.data?.company_address?.trim()
+
   const cards = [
     {
       title: t('contactPage.callTitle'),
@@ -57,7 +64,7 @@ export default function InfoCards() {
     },
     {
       title: t('contactPage.addressTitle'),
-      value: t('contactPage.addressValue'),
+      value: liveAddress || t('contactPage.addressValue'),
       note: t('contactPage.addressNote'),
     },
     {

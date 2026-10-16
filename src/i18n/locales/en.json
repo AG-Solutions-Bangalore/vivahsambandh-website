@@ -232,6 +232,122 @@
     "nextArticle": "Next",
     "relatedTitle": "Related reads"
   },
+  "legal": {
+    "needHelp": "Need help?",
+    "contactUs": "Contact us",
+    "privacy": {
+      "eyebrow": "Privacy Policy",
+      "title": "Your Privacy Matters",
+      "updated": "Last updated: January 2026",
+      "intro": "VivahSambandh respects your privacy. This policy explains what information we collect, how we use it, and the choices you have.",
+      "sections": [
+        {
+          "h": "Information We Collect",
+          "body": "We collect the details you share while creating and managing your profile — name, contact information, photographs, family and education background, partner preferences and verification documents. We also record basic usage information that helps us keep the platform safe and reliable."
+        },
+        {
+          "h": "How We Use It",
+          "body": "Your information is used to operate your account, suggest suitable matches, verify profiles, prevent fraud and communicate important updates. We never sell your personal information to third parties."
+        },
+        {
+          "h": "Sharing & Visibility",
+          "body": "Profile details you mark as visible are shown to other verified members as per your privacy settings. Contact details are shared only when you choose to connect. Verification documents are used internally and never displayed publicly."
+        },
+        {
+          "h": "Security",
+          "body": "We use bank-grade encryption, strict access controls and regular monitoring to protect your data. No method is completely risk-free, so we encourage you to use a strong password and never share OTPs."
+        },
+        {
+          "h": "Your Rights",
+          "body": "You may review, correct or delete your profile information at any time from your account, or write to us at support@vivahsambandh.com and our team will assist you within a reasonable time."
+        }
+      ]
+    },
+    "terms": {
+      "eyebrow": "Terms & Conditions",
+      "title": "Terms of Use",
+      "updated": "Last updated: January 2026",
+      "intro": "By creating an account or using VivahSambandh, you agree to the following terms. Please read them carefully.",
+      "sections": [
+        {
+          "h": "Eligibility",
+          "body": "You must be legally eligible for marriage as per Indian law (21 years or above for grooms, 18 years or above for brides) to register. Accounts may be created by the individual or by their family members on their behalf."
+        },
+        {
+          "h": "Account & Verification",
+          "body": "You agree to provide true, accurate and complete information. Profiles pass manual screening and optional ID verification before going live. We may suspend accounts with false, misleading or incomplete information."
+        },
+        {
+          "h": "Acceptable Use",
+          "body": "Use the platform only for genuine matrimonial purposes. Harassment, abusive language, solicitation, spam, fake profiles or any unlawful activity will lead to immediate suspension without refund."
+        },
+        {
+          "h": "Membership & Payments",
+          "body": "Basic profile creation and browsing are free. Paid plans unlock premium features as described on the Membership page. All payments are processed through secure gateways; plan benefits begin once payment is confirmed."
+        },
+        {
+          "h": "Our Role",
+          "body": "VivahSambandh is a matchmaking platform that facilitates introductions between families. We verify profiles with care, but the final decision to proceed with any alliance rests entirely with you and your family."
+        }
+      ]
+    },
+    "guidelines": {
+      "eyebrow": "Community Guidelines",
+      "title": "A Respectful Community",
+      "updated": "Last updated: January 2026",
+      "intro": "These guidelines keep VivahSambandh safe, genuine and welcoming for every Agarwal family.",
+      "sections": [
+        {
+          "h": "Be Genuine",
+          "body": "Share real photographs, correct personal details and honest expectations. Profiles found to be fake or misleading are removed."
+        },
+        {
+          "h": "Communicate With Respect",
+          "body": "Be polite in every conversation. Abusive, offensive or threatening language towards any member or family is strictly prohibited."
+        },
+        {
+          "h": "Respect Privacy",
+          "body": "Do not share another member's personal details, photographs or conversations outside the platform without their consent."
+        },
+        {
+          "h": "No Fraud or Solicitation",
+          "body": "Never ask for money, gifts or financial favours. Do not promote businesses, schemes or any unrelated services on the platform."
+        },
+        {
+          "h": "Report & Stay Safe",
+          "body": "If someone violates these guidelines, report the profile immediately through the Contact page. Meet new connections in safe, public settings and inform your family."
+        }
+      ]
+    },
+    "help": {
+      "eyebrow": "Help Center",
+      "title": "How Can We Help?",
+      "updated": "",
+      "intro": "Answers to common questions and the fastest ways to reach our support team.",
+      "sections": [
+        {
+          "h": "Creating Your Profile",
+          "body": "Click Create Profile, fill in your details and preferences, upload photographs and verify your phone number. Your profile goes live after a quick review by our team."
+        },
+        {
+          "h": "Searching Matches",
+          "body": "Use the Search section on the home page to browse by city, gotra, profession and education. Save your preferences to receive curated matches."
+        },
+        {
+          "h": "Membership & Payments",
+          "body": "Compare plans on the Membership page. Payments are accepted through UPI, Net Banking and Credit/Debit cards with bank-grade encryption. Premium benefits activate as soon as payment is confirmed."
+        },
+        {
+          "h": "Safety & Verification",
+          "body": "Look for verified badges on profiles. Never share OTPs or send money to anyone you meet online. Report suspicious profiles through the Contact page."
+        },
+        {
+          "h": "Talk to Our Team",
+          "body": "Still stuck? Reach us through the Contact page, call us Mon – Sat (10 AM – 6 PM), or email support@vivahsambandh.com — we reply within 24 hours."
+        }
+      ]
+    }
+  },
   "contact": {
     "eyebrow": "Get in touch",
     "title": "Contact Us",
@@ -351,8 +467,8 @@
     "emailTitle": "Email Us",
     "emailNote": "We reply within 24 hours.",
     "addressTitle": "Our Address",
-    "addressValue": "Bengaluru, Karnataka, India",
-    "addressNote": "560001",
+    "addressValue": "#8, 1st Floor, 24th Main, 5th Phase, JP Nagar, Bangalore 560078",
+    "addressNote": "Karnataka, India",
     "hoursTitle": "Support Hours",
     "hoursValue": "Mon – Sat",
     "hoursNote": "10:00 AM – 6:00 PM",

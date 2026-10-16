@@ -342,13 +342,24 @@ html[lang="hi"] [data-eyebrow] {
   font-size: 0.8rem;
   color: var(--color-ink-500);
 }
-.blog-rich table {
+/* Full-width scroll wrapper injected around every CMS table at render. */
+.blog-rich .blog-table-scroll {
   width: 100%;
   margin: 1.5em 0;
+  overflow-x: auto;
+}
+.blog-rich .blog-table-scroll table {
+  width: 100% !important;
+  table-layout: fixed;
   border-collapse: collapse;
   font-size: 0.875rem;
-  display: block;
-  overflow-x: auto;
+}
+.blog-rich table {
+  width: 100% !important;
+  table-layout: fixed;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+  margin: 1.5em 0;
 }
 .blog-rich th,
 .blog-rich td {
