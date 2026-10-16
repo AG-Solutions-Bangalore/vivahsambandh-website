@@ -62,6 +62,16 @@ export function FormSelect({
 
   const isDisabled = disabled || loading
 
+  // NOTE: resolve the display label from `options` ourselves instead of
+  // relying on <SelectValue/>. Base UI unmounts the popup when closed, so
+  // the selected <SelectItem> isn't in the DOM and Value falls back to the
+  // raw value (e.g. an API id like "5"). Rendering the label directly keeps
+  // "B.Tech" visible instead of "5" at all times, including while options
+  // are still loading or filtered by search.
+  const selectedLabel = value
+    ? options.find((o) => o.value === value)?.label
+    : undefined
+
   return (
     <Select
       value={value}
@@ -78,16 +88,20 @@ export function FormSelect({
             : 'border-cream-300 bg-cream-50/70 text-navy-900 hover:bg-white focus-visible:border-gold-500 focus-visible:ring-gold-500/20 data-[placeholder]:text-ink-400',
         )}
       >
-        <SelectValue placeholder={loading ? loadingText : placeholder}>
-          {loading ? (
-            <span className="flex items-center gap-2 text-ink-400">
-              <Loader2 className="size-4 animate-spin" aria-hidden />
-              {loadingText}
-            </span>
-          ) : !value && disabledText && options.length === 0 ? (
-            disabledText
-          ) : undefined}
-        </SelectValue>
+        {loading ? (
+          <span className="flex flex-1 items-center gap-2 text-left text-ink-400">
+            <Loader2 className="size-4 animate-spin" aria-hidden />
+            {loadingText}
+          </span>
+        ) : selectedLabel ? (
+          <span className="flex flex-1 truncate text-left">{selectedLabel}</span>
+        ) : (
+          <SelectValue
+            placeholder={
+              !value && disabledText && options.length === 0 ? disabledText : placeholder
+            }
+          />
+        )}
       </SelectTrigger>
       <SelectContent className="max-h-72 rounded-xl border-cream-200 bg-white shadow-xl">
         {searchable && options.length > 5 && (
