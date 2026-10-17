@@ -40,7 +40,6 @@ export interface RegistrationFormData {
 
   // Education & Profession
   education_id: string
-  education_other?: string
   profession_id: string
   company_name: string
   company_type: string
@@ -61,7 +60,6 @@ export interface RegistrationFormData {
 
   // Address & Contacts
   user_address: string
-  num_years_at_address: string
   house_type: 'Own' | 'Rent' | ''
   user_current_city: string
   contact_name: string
@@ -82,15 +80,8 @@ export interface RegistrationFormData {
 
   // Partner Preferences
   will_marry_same_gotra: 'Yes' | 'No' | ''
-  match_ganna: 'Yes' | 'No' | ''
   is_manglik: 'Yes' | 'No' | ''
   will_marry_manglik: 'Yes' | 'No' | ''
-  older_by: string
-  younger_by: string
-  bride_budget: string
-  groom_budget?: string
-  work_after_marriage?: string
-  residence_after_marriage?: string
 
   // Additional Info / Summary
   user_summary: string
