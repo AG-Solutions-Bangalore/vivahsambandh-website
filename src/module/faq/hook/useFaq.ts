@@ -10,9 +10,12 @@ export const FAQ_DEFAULT_SLUG = 'home'
  * `membership → home` and `membership` (no fallback) never collide.
  * Single-arg calls keep the legacy `['faq', slug]` shape.
  */
-export const faqQueryKey = (slug: string, fallbackSlugs?: Array<string | null | undefined>) => {
+import { useAppLanguage } from '../../../i18n/useAppLanguage'
+import { translateText } from '../../../lib/dynamicTranslate'
+
+export const faqQueryKey = (slug: string, fallbackSlugs?: Array<string | null | undefined>, lang: string = 'en') => {
   const chain = buildFaqSlugChain(slug, fallbackSlugs)
-  return ['faq', ...chain] as const
+  return ['faq', ...chain, lang] as const
 }
 
 export interface UseFaqQueryOptions extends Omit<UseQueryOptions<FaqResponse>, 'queryKey' | 'queryFn'> {
@@ -25,13 +28,28 @@ export interface UseFaqQueryOptions extends Omit<UseQueryOptions<FaqResponse>, '
 }
 
 export function useFaqQuery(slug: string = FAQ_DEFAULT_SLUG, options?: UseFaqQueryOptions) {
-  const { fallbackSlugs, enabled, ...rest } = options ?? {}
+  const { lang } = useAppLanguage()
+  const { fallbackSlugs = slug !== 'home' ? ['home'] : undefined, enabled, ...rest } = options ?? {}
   const chain = buildFaqSlugChain(slug, fallbackSlugs ?? [])
   const [primary, ...fallbacks] = chain
 
   return useQuery({
-    queryKey: faqQueryKey(primary, fallbacks),
-    queryFn: () => getFaqWithFallback(primary, fallbackSlugs ?? []),
+    queryKey: faqQueryKey(primary, fallbacks, lang),
+    queryFn: async () => {
+      const res = await getFaqWithFallback(primary, fallbackSlugs ?? [])
+      if (lang === 'hi' && res.data && res.data.length > 0) {
+        const translatedData = await Promise.all(
+          res.data.map(async (item) => ({
+            ...item,
+            faq_heading: item.faq_heading ? await translateText(item.faq_heading, 'hi') : item.faq_heading,
+            faq_que: item.faq_que ? await translateText(item.faq_que, 'hi') : item.faq_que,
+            faq_ans: item.faq_ans ? await translateText(item.faq_ans, 'hi') : item.faq_ans,
+          }))
+        )
+        return { ...res, data: translatedData }
+      }
+      return res
+    },
     enabled: primary.length > 0 && (enabled ?? true),
     ...rest,
   })

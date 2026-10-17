@@ -125,6 +125,7 @@
     "titleB": "Real Happiness.",
     "subtitle": "Thousands of Agarwal families found their perfect match through VivahSambandh. Their stories inspire us to create more beautiful beginnings.",
     "cta": "Read Success Stories",
+    "verifiedClient": "Verified Client",
     "items": [
       {
         "quote": "VivahSambandh made our journey simple and comfortable. We are grateful to find the perfect match within our community.",
@@ -177,6 +178,7 @@
     "title": "FAQ's",
     "subtitle": "Quick answers to know more about VivahSambandh, verified profiles, membership plans, and matchmaking support.",
     "cta": "View All FAQ",
+    "defaultCategory": "General Information",
     "items": [
       {
         "q": "What is VivahSambandh?",
@@ -201,6 +203,7 @@
     ]
   },
   "blogs": {
+    "readMore": "Read More",
     "featured": {
       "eyebrow": "Featured insights",
       "titleA": "Featured",

@@ -67,11 +67,11 @@ export default function HomePage() {
           queryFn: getClients,
         });
         void queryClient.prefetchQuery({
-          queryKey: blogKeys.featured,
+          queryKey: blogKeys.featured(),
           queryFn: getFeaturedBlogs,
         });
         void queryClient.prefetchQuery({
-          queryKey: blogKeys.front,
+          queryKey: blogKeys.front(),
           queryFn: getFrontBlogs,
         });
       } catch {
