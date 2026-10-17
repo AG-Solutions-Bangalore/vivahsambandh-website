@@ -27,6 +27,7 @@ export default function PersonalDetailsSection() {
     handleSelectChange,
     handleTimeChange,
     handlePillChange,
+    handlePasteCapture,
     toggleCommunityPreference,
     selectAllCommunities,
     educationOptions,
@@ -74,6 +75,7 @@ export default function PersonalDetailsSection() {
             maxLength={45}
             value={form.name}
             onChange={handleInputChange}
+            onPaste={handlePasteCapture('name')}
             placeholder="Candidate Full Name"
             className={inputCls('name')}
             aria-invalid={Boolean(fieldErrors.name)}
@@ -141,6 +143,7 @@ export default function PersonalDetailsSection() {
             maxLength={25}
             value={form.place_of_birth}
             onChange={handleInputChange}
+            onPaste={handlePasteCapture('place_of_birth')}
             placeholder="City / District"
             className={inputCls('place_of_birth')}
             aria-invalid={Boolean(fieldErrors.place_of_birth)}
@@ -156,6 +159,7 @@ export default function PersonalDetailsSection() {
             maxLength={65}
             value={form.email}
             onChange={handleInputChange}
+            onPaste={handlePasteCapture('email')}
             placeholder="name@example.com"
             className={inputCls('email')}
             aria-invalid={Boolean(fieldErrors.email)}
@@ -204,6 +208,7 @@ export default function PersonalDetailsSection() {
                   maxLength={45}
                   value={form.company_name}
                   onChange={handleInputChange}
+                  onPaste={handlePasteCapture('company_name')}
                   placeholder="e.g. Infosys, TCS, Govt Dept"
                   className={inputCls('company_name')}
                   aria-invalid={Boolean(fieldErrors.company_name)}
@@ -219,6 +224,7 @@ export default function PersonalDetailsSection() {
                   maxLength={45}
                   value={form.company_type}
                   onChange={handleInputChange}
+                  onPaste={handlePasteCapture('company_type')}
                   placeholder="e.g. IT, Banking, PSU"
                   className={inputCls('company_type')}
                   aria-invalid={Boolean(fieldErrors.company_type)}
@@ -239,6 +245,7 @@ export default function PersonalDetailsSection() {
                   maxLength={45}
                   value={form.company_name}
                   onChange={handleInputChange}
+                  onPaste={handlePasteCapture('company_name')}
                   placeholder="e.g. Agarwal Traders"
                   className={inputCls('company_name')}
                   aria-invalid={Boolean(fieldErrors.company_name)}
@@ -254,6 +261,7 @@ export default function PersonalDetailsSection() {
                   maxLength={45}
                   value={form.company_type}
                   onChange={handleInputChange}
+                  onPaste={handlePasteCapture('company_type')}
                   placeholder="e.g. Retail, Wholesale, Manufacturing"
                   className={inputCls('company_type')}
                   aria-invalid={Boolean(fieldErrors.company_type)}
@@ -273,6 +281,7 @@ export default function PersonalDetailsSection() {
                 maxLength={45}
                 value={form.company_name}
                 onChange={handleInputChange}
+                onPaste={handlePasteCapture('company_name')}
                 placeholder="Specify Profession"
                 className={inputCls('company_name')}
                 aria-invalid={Boolean(fieldErrors.company_name)}
@@ -296,6 +305,7 @@ export default function PersonalDetailsSection() {
                 maxLength={3}
                 value={form.annual_income}
                 onChange={(e) => handleNumericInput(e, 300)}
+                onPaste={handlePasteCapture('annual_income')}
                 placeholder="e.g. 15"
                 className={inputCls('annual_income')}
                 aria-invalid={Boolean(fieldErrors.annual_income)}
@@ -527,6 +537,7 @@ export default function PersonalDetailsSection() {
                   maxLength={2}
                   value={form.children_from_prior_marriage}
                   onChange={handleNumericInput}
+                  onPaste={handlePasteCapture('children_from_prior_marriage')}
                   placeholder="Number of children (e.g. 0, 1, 2)"
                   className={inputCls('children_from_prior_marriage')}
                 />
@@ -577,6 +588,7 @@ export default function PersonalDetailsSection() {
               maxLength={25}
               value={form.father_name}
               onChange={handleInputChange}
+              onPaste={handlePasteCapture('father_name')}
               placeholder="Father's Full Name"
               className={inputCls('father_name')}
               aria-invalid={Boolean(fieldErrors.father_name)}
@@ -591,6 +603,7 @@ export default function PersonalDetailsSection() {
               maxLength={25}
               value={form.mother_name}
               onChange={handleInputChange}
+              onPaste={handlePasteCapture('mother_name')}
               placeholder="Mother's Full Name"
               className={inputCls('mother_name')}
               aria-invalid={Boolean(fieldErrors.mother_name)}
@@ -660,6 +673,7 @@ export default function PersonalDetailsSection() {
                 maxLength={500}
                 value={form.user_address}
                 onChange={handleInputChange}
+                onPaste={handlePasteCapture('user_address')}
                 placeholder="Enter full address with postal pincode"
                 className={inputCls('user_address')}
                 aria-invalid={Boolean(fieldErrors.user_address)}
@@ -725,6 +739,7 @@ export default function PersonalDetailsSection() {
               maxLength={45}
               value={form.user_current_city}
               onChange={handleInputChange}
+              onPaste={handlePasteCapture('user_current_city')}
               placeholder="e.g. Bengaluru, Delhi, Mumbai"
               className={inputCls('user_current_city')}
               aria-invalid={Boolean(fieldErrors.user_current_city)}
@@ -744,6 +759,7 @@ export default function PersonalDetailsSection() {
               maxLength={45}
               value={form.contact_name}
               onChange={handleInputChange}
+              onPaste={handlePasteCapture('contact_name')}
               placeholder="Name of contact person"
               className={inputCls('contact_name')}
               aria-invalid={Boolean(fieldErrors.contact_name)}
@@ -771,6 +787,7 @@ export default function PersonalDetailsSection() {
                 maxLength={10}
                 value={form.mobile}
                 onChange={handleNumericInput}
+                onPaste={handlePasteCapture('mobile')}
                 placeholder="10-digit mobile number"
                 className={cn(
                   inputCls('mobile'),
@@ -814,6 +831,7 @@ export default function PersonalDetailsSection() {
               maxLength={45}
               value={form.alternate_contact_name}
               onChange={handleInputChange}
+              onPaste={handlePasteCapture('alternate_contact_name')}
               placeholder="Relative / Parent contact"
               className={inputCls('alternate_contact_name')}
               aria-invalid={Boolean(fieldErrors.alternate_contact_name)}
@@ -838,6 +856,7 @@ export default function PersonalDetailsSection() {
               maxLength={10}
               value={form.alternate_mobile_no}
               onChange={handleNumericInput}
+              onPaste={handlePasteCapture('alternate_mobile_no')}
               placeholder="10-digit mobile number"
               className={inputCls('alternate_mobile_no')}
               aria-invalid={Boolean(fieldErrors.alternate_mobile_no)}

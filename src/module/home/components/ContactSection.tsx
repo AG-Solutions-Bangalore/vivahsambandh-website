@@ -10,11 +10,23 @@ import type { ContactFormData } from "../types";
 import Reveal, { RevealGroup } from "../../../components/motion/Reveal";
 import { refreshScrollTriggers } from "../../../lib/gsap-setup";
 import { img, imgSrcSet } from "../../../lib/image";
+import {
+  sanitizeName,
+  sanitizeEmail,
+  sanitizeDigits,
+  sanitizeSafeText,
+  validateName,
+  validateEmail,
+  validateIndianMobile,
+  validateSafeText,
+  handleSanitizedPaste,
+} from "@/lib/validation";
 
 export default function ContactSection() {
   const { t } = useTranslation();
   const { lang } = useAppLanguage();
   const [submitted, setSubmitted] = useState(false);
+  const [errors, setErrors] = useState<Partial<Record<keyof ContactFormData, string>>>({});
   const [formData, setFormData] = useState<ContactFormData>({
     name: "",
     email: "",
@@ -22,12 +34,50 @@ export default function ContactSection() {
     message: "",
   });
 
+  const clearFieldError = (field: keyof ContactFormData) => {
+    setErrors((prev) => {
+      if (!prev[field]) return prev;
+      const next = { ...prev };
+      delete next[field];
+      return next;
+    });
+  };
+
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    const field = name as keyof ContactFormData;
+    clearFieldError(field);
+
+    let sanitized = value;
+    if (field === "name") {
+      sanitized = sanitizeName(value);
+    } else if (field === "email") {
+      sanitized = sanitizeEmail(value);
+    } else if (field === "phone") {
+      sanitized = sanitizeDigits(value, 10);
+    } else if (field === "message") {
+      sanitized = sanitizeSafeText(value);
+    }
+
+    setFormData((prev) => ({ ...prev, [field]: sanitized }));
   };
+
+  const handlePasteCapture =
+    (field: keyof ContactFormData) =>
+    (e: React.ClipboardEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      let sanitizer = (val: string) => val;
+      if (field === "name") sanitizer = sanitizeName;
+      else if (field === "email") sanitizer = sanitizeEmail;
+      else if (field === "phone") sanitizer = (val: string) => sanitizeDigits(val, 10);
+      else if (field === "message") sanitizer = sanitizeSafeText;
+
+      handleSanitizedPaste(e, sanitizer, (cleaned) => {
+        clearFieldError(field);
+        setFormData((prev) => ({ ...prev, [field]: cleaned }));
+      });
+    };
 
   // Success card swaps form height → re-measure triggers below/above.
   useEffect(() => {
@@ -36,7 +86,25 @@ export default function ContactSection() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
+    const nameRes = validateName(formData.name, t("contact.name") || "Name", true, 2, 50);
+    const emailRes = validateEmail(formData.email, true, t("contact.email") || "Email Address");
+    const phoneRes = validateIndianMobile(formData.phone, true, t("contact.phone") || "Mobile Number");
+    const messageRes = validateSafeText(formData.message, t("contact.message") || "Message", true, 10, 500);
+
+    const newErrors: Partial<Record<keyof ContactFormData, string>> = {};
+    if (!nameRes.valid) newErrors.name = nameRes.error;
+    if (!emailRes.valid) newErrors.email = emailRes.error;
+    if (!phoneRes.valid) newErrors.phone = phoneRes.error;
+    if (!messageRes.valid) newErrors.message = messageRes.error;
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+
     setSubmitted(true);
+    setErrors({});
     setTimeout(() => {
       setFormData({ name: "", email: "", phone: "", message: "" });
       setSubmitted(false);
@@ -189,81 +257,137 @@ export default function ContactSection() {
                   </p>
                 </div>
               ) : (
-                <form onSubmit={handleSubmit} className="mt-6 space-y-4">
+                <form noValidate onSubmit={handleSubmit} className="mt-6 space-y-4">
                   {/* Name */}
-                  <div className="relative">
-                    <span className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-ink-400">
-                      <svg viewBox="0 0 24 24" className="h-5 w-5 fill-current" aria-hidden="true">
-                        <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
-                      </svg>
-                    </span>
-                    <input
-                      type="text"
-                      name="name"
-                      required
-                      value={formData.name}
-                      onChange={handleChange}
-                      aria-label={t("contact.name")}
-                      placeholder={`${t("contact.name")} *`}
-                      className="w-full rounded-xl border border-gold-500/30 bg-cream-50/50 py-3 pr-4 pl-11 text-sm text-navy-900 placeholder:text-ink-400 focus:border-gold-600 focus:bg-white focus:outline-hidden focus:ring-1 focus:ring-gold-500"
-                    />
+                  <div>
+                    <div className="relative">
+                      <span className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-ink-400">
+                        <svg viewBox="0 0 24 24" className="h-5 w-5 fill-current" aria-hidden="true">
+                          <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+                        </svg>
+                      </span>
+                      <input
+                        type="text"
+                        name="name"
+                        maxLength={50}
+                        required
+                        value={formData.name}
+                        onChange={handleChange}
+                        onPaste={handlePasteCapture("name")}
+                        aria-label={t("contact.name")}
+                        aria-invalid={Boolean(errors.name)}
+                        placeholder={`${t("contact.name")} *`}
+                        className={`w-full rounded-xl border py-3 pr-4 pl-11 text-sm text-navy-900 placeholder:text-ink-400 focus:outline-hidden focus:ring-1 ${
+                          errors.name
+                            ? "border-maroon-500 bg-maroon-50/30 focus:border-maroon-600 focus:ring-maroon-500/20"
+                            : "border-gold-500/30 bg-cream-50/50 focus:border-gold-600 focus:bg-white focus:ring-gold-500"
+                        }`}
+                      />
+                    </div>
+                    {errors.name && (
+                      <p role="alert" className="mt-1 text-xs font-semibold text-maroon-600 pl-1">
+                        {errors.name}
+                      </p>
+                    )}
                   </div>
 
                   {/* Email */}
-                  <div className="relative">
-                    <span className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-ink-400">
-                      <svg viewBox="0 0 24 24" className="h-5 w-5 fill-current" aria-hidden="true">
-                        <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z" />
-                      </svg>
-                    </span>
-                    <input
-                      type="email"
-                      name="email"
-                      required
-                      value={formData.email}
-                      onChange={handleChange}
-                      aria-label={t("contact.email")}
-                      placeholder={`${t("contact.email")} *`}
-                      className="w-full rounded-xl border border-gold-500/30 bg-cream-50/50 py-3 pr-4 pl-11 text-sm text-navy-900 placeholder:text-ink-400 focus:border-gold-600 focus:bg-white focus:outline-hidden focus:ring-1 focus:ring-gold-500"
-                    />
+                  <div>
+                    <div className="relative">
+                      <span className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-ink-400">
+                        <svg viewBox="0 0 24 24" className="h-5 w-5 fill-current" aria-hidden="true">
+                          <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z" />
+                        </svg>
+                      </span>
+                      <input
+                        type="email"
+                        name="email"
+                        maxLength={100}
+                        required
+                        value={formData.email}
+                        onChange={handleChange}
+                        onPaste={handlePasteCapture("email")}
+                        aria-label={t("contact.email")}
+                        aria-invalid={Boolean(errors.email)}
+                        placeholder={`${t("contact.email")} *`}
+                        className={`w-full rounded-xl border py-3 pr-4 pl-11 text-sm text-navy-900 placeholder:text-ink-400 focus:outline-hidden focus:ring-1 ${
+                          errors.email
+                            ? "border-maroon-500 bg-maroon-50/30 focus:border-maroon-600 focus:ring-maroon-500/20"
+                            : "border-gold-500/30 bg-cream-50/50 focus:border-gold-600 focus:bg-white focus:ring-gold-500"
+                        }`}
+                      />
+                    </div>
+                    {errors.email && (
+                      <p role="alert" className="mt-1 text-xs font-semibold text-maroon-600 pl-1">
+                        {errors.email}
+                      </p>
+                    )}
                   </div>
 
                   {/* Phone */}
-                  <div className="relative">
-                    <span className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-ink-400">
-                      <svg viewBox="0 0 24 24" className="h-5 w-5 fill-current" aria-hidden="true">
-                        <path d="M6.62 10.79a15.053 15.053 0 006.59 6.59l2.2-2.2a1 1 0 011.01-.24c1.12.37 2.33.57 3.58.57a1 1 0 011 1V20a1 1 0 01-1 1A17 17 0 013 4a1 1 0 011-1h3.5a1 1 0 011 1c0 1.25.2 2.45.57 3.57a1 1 0 01-.25 1.02l-2.2 2.2z" />
-                      </svg>
-                    </span>
-                    <input
-                      type="tel"
-                      name="phone"
-                      required
-                      value={formData.phone}
-                      onChange={handleChange}
-                      aria-label={t("contact.phone")}
-                      placeholder={`${t("contact.phone")} *`}
-                      className="w-full rounded-xl border border-gold-500/30 bg-cream-50/50 py-3 pr-4 pl-11 text-sm text-navy-900 placeholder:text-ink-400 focus:border-gold-600 focus:bg-white focus:outline-hidden focus:ring-1 focus:ring-gold-500"
-                    />
+                  <div>
+                    <div className="relative">
+                      <span className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-ink-400">
+                        <svg viewBox="0 0 24 24" className="h-5 w-5 fill-current" aria-hidden="true">
+                          <path d="M6.62 10.79a15.053 15.053 0 006.59 6.59l2.2-2.2a1 1 0 011.01-.24c1.12.37 2.33.57 3.58.57a1 1 0 011 1V20a1 1 0 01-1 1A17 17 0 013 4a1 1 0 011-1h3.5a1 1 0 011 1c0 1.25.2 2.45.57 3.57a1 1 0 01-.25 1.02l-2.2 2.2z" />
+                        </svg>
+                      </span>
+                      <input
+                        type="tel"
+                        name="phone"
+                        maxLength={10}
+                        required
+                        value={formData.phone}
+                        onChange={handleChange}
+                        onPaste={handlePasteCapture("phone")}
+                        aria-label={t("contact.phone")}
+                        aria-invalid={Boolean(errors.phone)}
+                        placeholder={`${t("contact.phone")} * (10 digits)`}
+                        className={`w-full rounded-xl border py-3 pr-4 pl-11 text-sm text-navy-900 placeholder:text-ink-400 focus:outline-hidden focus:ring-1 ${
+                          errors.phone
+                            ? "border-maroon-500 bg-maroon-50/30 focus:border-maroon-600 focus:ring-maroon-500/20"
+                            : "border-gold-500/30 bg-cream-50/50 focus:border-gold-600 focus:bg-white focus:ring-gold-500"
+                        }`}
+                      />
+                    </div>
+                    {errors.phone && (
+                      <p role="alert" className="mt-1 text-xs font-semibold text-maroon-600 pl-1">
+                        {errors.phone}
+                      </p>
+                    )}
                   </div>
 
                   {/* Message */}
-                  <div className="relative">
-                    <span className="pointer-events-none absolute top-3.5 left-0 flex items-center pl-3.5 text-ink-400">
-                      <svg viewBox="0 0 24 24" className="h-5 w-5 fill-current" aria-hidden="true">
-                        <path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 9h12v2H6V9zm8 5H6v-2h8v2zm4-6H6V6h12v2z" />
-                      </svg>
-                    </span>
-                    <textarea
-                      name="message"
-                      rows={4}
-                      required
-                      value={formData.message}
-                      onChange={handleChange}
-                      aria-label={t("contact.message")}
-                      placeholder={`${t("contact.message")} *`}
-                      className="w-full rounded-xl border border-gold-500/30 bg-cream-50/50 py-3 pr-4 pl-11 text-sm text-navy-900 placeholder:text-ink-400 focus:border-gold-600 focus:bg-white focus:outline-hidden focus:ring-1 focus:ring-gold-500"
-                    />
+                  <div>
+                    <div className="relative">
+                      <span className="pointer-events-none absolute top-3.5 left-0 flex items-center pl-3.5 text-ink-400">
+                        <svg viewBox="0 0 24 24" className="h-5 w-5 fill-current" aria-hidden="true">
+                          <path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 9h12v2H6V9zm8 5H6v-2h8v2zm4-6H6V6h12v2z" />
+                        </svg>
+                      </span>
+                      <textarea
+                        name="message"
+                        rows={4}
+                        maxLength={500}
+                        required
+                        value={formData.message}
+                        onChange={handleChange}
+                        onPaste={handlePasteCapture("message")}
+                        aria-label={t("contact.message")}
+                        aria-invalid={Boolean(errors.message)}
+                        placeholder={`${t("contact.message")} * (min. 10 chars)`}
+                        className={`w-full rounded-xl border py-3 pr-4 pl-11 text-sm text-navy-900 placeholder:text-ink-400 focus:outline-hidden focus:ring-1 ${
+                          errors.message
+                            ? "border-maroon-500 bg-maroon-50/30 focus:border-maroon-600 focus:ring-maroon-500/20"
+                            : "border-gold-500/30 bg-cream-50/50 focus:border-gold-600 focus:bg-white focus:ring-gold-500"
+                        }`}
+                      />
+                    </div>
+                    {errors.message && (
+                      <p role="alert" className="mt-1 text-xs font-semibold text-maroon-600 pl-1">
+                        {errors.message}
+                      </p>
+                    )}
                   </div>
 
                   {/* Submit Button */}

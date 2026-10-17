@@ -9,7 +9,7 @@ import { cn } from 'cn'
 import { useRegistrationForm } from '../context'
 
 export default function FamilySummarySection() {
-  const { baseId, form, fieldErrors, handleInputChange } = useRegistrationForm()
+  const { baseId, form, fieldErrors, handleInputChange, handlePasteCapture } = useRegistrationForm()
 
   const inputCls = (key: string) =>
     cn(
@@ -46,6 +46,7 @@ export default function FamilySummarySection() {
             maxLength={500}
             value={form.user_summary}
             onChange={handleInputChange}
+            onPaste={handlePasteCapture('user_summary')}
             placeholder="Provide a brief paragraph describing your family, parents' professions, and lifestyle values (min. 10 characters)."
             className={inputCls('user_summary')}
             aria-invalid={Boolean(fieldErrors.user_summary)}

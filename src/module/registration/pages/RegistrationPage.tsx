@@ -19,7 +19,7 @@ export default function RegistrationPage() {
       <PageParallax />
 
       {/* Hero Banner */}
-      <section className="relative overflow-hidden bg-navy-pattern pt-28 pb-16 text-white sm:pt-36 sm:pb-20">
+      <section className="relative overflow-hidden bg-navy-pattern rounded-b-[8rem] pt-20 pb-16 text-white">
         <div className="section-pad relative z-10 text-center">
           <span className="eyebrow !text-gold-400">
             {t('registrationPage.eyebrow')}

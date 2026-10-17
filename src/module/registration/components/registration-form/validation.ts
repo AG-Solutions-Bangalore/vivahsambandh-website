@@ -6,6 +6,15 @@
 
 import type { RegistrationFormData } from '../../types'
 import { isCandidateUnderage } from './constants'
+import {
+  validateName,
+  validateEmail,
+  validateIndianMobile,
+  validateCity,
+  validateAddress,
+  validateCompany,
+  validateSafeText,
+} from '@/lib/validation'
 
 /**
  * Dynamic condition flags derived from current form selections
@@ -57,10 +66,9 @@ export function validateRegistrationForm(
   }
 
   // --- PART 1: Personal & Family Details ---
-  if (!form.name.trim()) {
-    addError('name', `${baseId}-name`, 'Full Name', 'Candidate full name is required')
-  } else if (form.name.trim().length < 2) {
-    addError('name', `${baseId}-name`, 'Full Name', 'Please enter a valid full name')
+  const nameCheck = validateName(form.name, 'Candidate Full Name', true, 2, 50)
+  if (!nameCheck.valid && nameCheck.error) {
+    addError('name', `${baseId}-name`, 'Full Name', nameCheck.error)
   }
 
   if (!form.gender) {
@@ -82,16 +90,15 @@ export function validateRegistrationForm(
     addError('time_of_birth', `${baseId}-birthtime`, 'Time of Birth', 'Time of birth is required')
   }
 
-  if (!form.place_of_birth.trim()) {
-    addError('place_of_birth', `${baseId}-pob`, 'Place of Birth', 'Place of birth is required')
+  const pobCheck = validateCity(form.place_of_birth, 'Place of Birth', true)
+  if (!pobCheck.valid && pobCheck.error) {
+    addError('place_of_birth', `${baseId}-pob`, 'Place of Birth', pobCheck.error)
   }
 
   // Email is optional per the API spec — validated for format when provided.
-  if (
-    form.email.trim() &&
-    !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim())
-  ) {
-    addError('email', `${baseId}-email`, 'Email Address', 'Please enter a valid email address')
+  const emailCheck = validateEmail(form.email, false, 'Email Address')
+  if (!emailCheck.valid && emailCheck.error) {
+    addError('email', `${baseId}-email`, 'Email Address', emailCheck.error)
   }
 
   if (!form.education_id) {
@@ -144,17 +151,30 @@ export function validateRegistrationForm(
     )
   }
 
-  if (!form.father_name.trim()) {
-    addError('father_name', `${baseId}-father`, "Father's Name", "Father's name is required")
+  // Optional company fields checked when provided
+  const compCheck = validateCompany(form.company_name, 'Company Name', false)
+  if (!compCheck.valid && compCheck.error) {
+    addError('company_name', `${baseId}-company-name`, 'Company Name', compCheck.error)
   }
 
-  if (!form.user_address.trim()) {
-    addError(
-      'user_address',
-      `${baseId}-address`,
-      'Residential Address',
-      'Residential address is required',
-    )
+  const compTypeCheck = validateCompany(form.company_type, 'Company Type', false)
+  if (!compTypeCheck.valid && compTypeCheck.error) {
+    addError('company_type', `${baseId}-company-type`, 'Company Type', compTypeCheck.error)
+  }
+
+  const fatherCheck = validateName(form.father_name, "Father's Name", true, 2, 50)
+  if (!fatherCheck.valid && fatherCheck.error) {
+    addError('father_name', `${baseId}-father`, "Father's Name", fatherCheck.error)
+  }
+
+  const motherCheck = validateName(form.mother_name, "Mother's Name", false, 2, 50)
+  if (!motherCheck.valid && motherCheck.error) {
+    addError('mother_name', `${baseId}-mother`, "Mother's Name", motherCheck.error)
+  }
+
+  const addrCheck = validateAddress(form.user_address, 'Residential Address', true)
+  if (!addrCheck.valid && addrCheck.error) {
+    addError('user_address', `${baseId}-address`, 'Residential Address', addrCheck.error)
   }
 
   if (!form.house_type) {
@@ -166,67 +186,30 @@ export function validateRegistrationForm(
     )
   }
 
-  if (!form.user_current_city.trim()) {
-    addError(
-      'user_current_city',
-      `${baseId}-current-city`,
-      'Present City',
-      'Present city / parents location is required',
-    )
+  const cityCheck = validateCity(form.user_current_city, 'Present City', true)
+  if (!cityCheck.valid && cityCheck.error) {
+    addError('user_current_city', `${baseId}-current-city`, 'Present City', cityCheck.error)
   }
 
-  if (!form.contact_name.trim()) {
-    addError(
-      'contact_name',
-      `${baseId}-contact-name`,
-      'Main Contact Person',
-      'Main contact person name is required',
-    )
+  const contactCheck = validateName(form.contact_name, 'Main Contact Person', true, 2, 50)
+  if (!contactCheck.valid && contactCheck.error) {
+    addError('contact_name', `${baseId}-contact-name`, 'Main Contact Person', contactCheck.error)
   }
 
-  if (!form.mobile) {
-    addError(
-      'mobile',
-      `${baseId}-contact-mobile`,
-      'Main Contact Mobile',
-      'Main 10-digit mobile number is required',
-    )
-  } else if (form.mobile.length !== 10) {
-    addError(
-      'mobile',
-      `${baseId}-contact-mobile`,
-      'Main Contact Mobile',
-      'Mobile number must be exactly 10 digits',
-    )
-  } else if (!/^[6-9]\d{9}$/.test(form.mobile)) {
-    addError(
-      'mobile',
-      `${baseId}-contact-mobile`,
-      'Main Contact Mobile',
-      'Please enter a valid 10-digit Indian mobile number',
-    )
+  const mobileCheck = validateIndianMobile(form.mobile, true, 'Main Contact Mobile')
+  if (!mobileCheck.valid && mobileCheck.error) {
+    addError('mobile', `${baseId}-contact-mobile`, 'Main Contact Mobile', mobileCheck.error)
   }
 
-  if (!form.alternate_contact_name.trim()) {
-    addError(
-      'alternate_contact_name',
-      `${baseId}-alt-name`,
-      'Alternate Contact Person',
-      'Alternate contact person name is required',
-    )
+  const altContactCheck = validateName(form.alternate_contact_name, 'Alternate Contact Person', true, 2, 50)
+  if (!altContactCheck.valid && altContactCheck.error) {
+    addError('alternate_contact_name', `${baseId}-alt-name`, 'Alternate Contact Person', altContactCheck.error)
   }
 
   // Alternate mobile is optional per the API spec — validated when provided.
-  if (
-    form.alternate_mobile_no &&
-    !/^[6-9]\d{9}$/.test(form.alternate_mobile_no)
-  ) {
-    addError(
-      'alternate_mobile_no',
-      `${baseId}-alt-mobile`,
-      'Alternate Contact Mobile',
-      'Please enter a valid 10-digit Indian mobile number',
-    )
+  const altMobileCheck = validateIndianMobile(form.alternate_mobile_no, false, 'Alternate Contact Mobile')
+  if (!altMobileCheck.valid && altMobileCheck.error) {
+    addError('alternate_mobile_no', `${baseId}-alt-mobile`, 'Alternate Contact Mobile', altMobileCheck.error)
   }
 
   // --- PART 2: Partner Preferences & Horoscope ---
@@ -258,13 +241,9 @@ export function validateRegistrationForm(
   }
 
   // --- PART 3: Family Summary ---
-  if (!form.user_summary.trim()) {
-    addError(
-      'user_summary',
-      `${baseId}-summary`,
-      'Family Summary',
-      'Brief summary of family history and parents occupation is required',
-    )
+  const summaryCheck = validateSafeText(form.user_summary, 'Family Summary', true, 10, 500)
+  if (!summaryCheck.valid && summaryCheck.error) {
+    addError('user_summary', `${baseId}-summary`, 'Family Summary', summaryCheck.error)
   }
 
   // --- PART 4: Photographs ---
@@ -309,12 +288,12 @@ export function isRegistrationFormComplete(
   _conditions: RegistrationConditions,
 ): boolean {
   // Basic Details
-  if (!form.name.trim() || form.name.trim().length < 2) return false
+  if (!validateName(form.name, 'Full Name', true, 2, 50).valid) return false
   if (!form.gender) return false
   if (!form.date_of_birth || isCandidateUnderage(form.date_of_birth)) return false
   if (!form.time_of_birth) return false
-  if (!form.place_of_birth.trim()) return false
-  if (form.email.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim())) return false
+  if (!validateCity(form.place_of_birth, 'Place of Birth', true).valid) return false
+  if (!validateEmail(form.email, false, 'Email Address').valid) return false
 
   // Education & Profession
   if (!form.education_id) return false
@@ -330,16 +309,16 @@ export function isRegistrationFormComplete(
   if (!form.married_before) return false
 
   // Family & Address
-  if (!form.father_name.trim()) return false
-  if (!form.user_address.trim()) return false
+  if (!validateName(form.father_name, "Father's Name", true, 2, 50).valid) return false
+  if (!validateAddress(form.user_address, 'Residential Address', true).valid) return false
   if (!form.house_type) return false
-  if (!form.user_current_city.trim()) return false
+  if (!validateCity(form.user_current_city, 'Present City', true).valid) return false
 
   // Contacts
-  if (!form.contact_name.trim()) return false
-  if (!form.mobile || form.mobile.length !== 10) return false
-  if (!form.alternate_contact_name.trim()) return false
-  if (form.alternate_mobile_no && !/^[6-9]\d{9}$/.test(form.alternate_mobile_no)) return false
+  if (!validateName(form.contact_name, 'Main Contact Person', true, 2, 50).valid) return false
+  if (!validateIndianMobile(form.mobile, true, 'Main Contact Mobile').valid) return false
+  if (!validateName(form.alternate_contact_name, 'Alternate Contact Person', true, 2, 50).valid) return false
+  if (!validateIndianMobile(form.alternate_mobile_no, false, 'Alternate Contact Mobile').valid) return false
 
   // Preferences & Horoscope
   if (!form.will_marry_same_gotra) return false
@@ -347,7 +326,7 @@ export function isRegistrationFormComplete(
   if (!form.will_marry_manglik) return false
 
   // Summary, Photos & Terms
-  if (!form.user_summary.trim()) return false
+  if (!validateSafeText(form.user_summary, 'Family Summary', true, 10, 500).valid) return false
   if (!form.full_image || !form.face_image) return false
   if (!form.agree_terms) return false
 

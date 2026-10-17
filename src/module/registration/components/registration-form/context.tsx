@@ -41,6 +41,16 @@ import {
   isRegistrationFormComplete,
   type RegistrationConditions,
 } from './validation'
+import {
+  sanitizeName,
+  sanitizeEmail,
+  sanitizeCity,
+  sanitizeCompany,
+  sanitizeAddress,
+  sanitizeSafeText,
+  sanitizeDigits,
+  handleSanitizedPaste,
+} from '@/lib/validation'
 
 export type FieldErrors = Record<string, string>
 
@@ -67,6 +77,9 @@ export interface RegistrationFormContextValue {
   handleSelectChange: (name: string) => (value: string) => void
   handleTimeChange: (timeStr: string) => void
   handlePillChange: (name: string) => (value: string) => void
+  handlePasteCapture: (
+    fieldName: string,
+  ) => (e: React.ClipboardEvent<HTMLInputElement | HTMLTextAreaElement>) => void
   toggleCommunityPreference: (commId: string) => void
   selectAllCommunities: () => void
 
@@ -255,7 +268,7 @@ export function RegistrationFormProvider({ children }: PropsWithChildren) {
       })
   }, [])
 
-  // Input handlers
+  // Input handlers with field-specific character restrictions
   const handleInputChange = useCallback(
     (e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
       const { name, value } = e.target
@@ -266,7 +279,24 @@ export function RegistrationFormProvider({ children }: PropsWithChildren) {
         return
       }
 
-      setForm((prev) => ({ ...prev, [name]: value }))
+      let sanitized = value
+      if (
+        ['name', 'father_name', 'mother_name', 'contact_name', 'alternate_contact_name'].includes(name)
+      ) {
+        sanitized = sanitizeName(value)
+      } else if (name === 'email') {
+        sanitized = sanitizeEmail(value)
+      } else if (['place_of_birth', 'user_current_city'].includes(name)) {
+        sanitized = sanitizeCity(value)
+      } else if (['company_name', 'company_type'].includes(name)) {
+        sanitized = sanitizeCompany(value)
+      } else if (name === 'user_address') {
+        sanitized = sanitizeAddress(value)
+      } else if (name === 'user_summary') {
+        sanitized = sanitizeSafeText(value)
+      }
+
+      setForm((prev) => ({ ...prev, [name]: sanitized }))
     },
     [clearFieldError, handleCommunityChange],
   )
@@ -274,8 +304,10 @@ export function RegistrationFormProvider({ children }: PropsWithChildren) {
   const handleNumericInput = useCallback(
     (e: ChangeEvent<HTMLInputElement>, maxVal?: number) => {
       const { name, value } = e.target
-      let sanitized = value.replace(/\D/g, '')
-      if (maxVal !== undefined && sanitized !== '') {
+      let sanitized = sanitizeDigits(value)
+      if (name === 'mobile' || name === 'alternate_mobile_no') {
+        sanitized = sanitized.slice(0, 10)
+      } else if (maxVal !== undefined && sanitized !== '') {
         const num = parseInt(sanitized, 10)
         if (num > maxVal) sanitized = String(maxVal)
       }
@@ -286,6 +318,42 @@ export function RegistrationFormProvider({ children }: PropsWithChildren) {
       }
       setForm((prev) => ({ ...prev, [name]: sanitized }))
     },
+    [clearFieldError, isMobileVerified, verifiedMobileNumber],
+  )
+
+  const handlePasteCapture = useCallback(
+    (fieldName: string) =>
+      (e: React.ClipboardEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        let sanitizer = (val: string) => val
+        if (
+          ['name', 'father_name', 'mother_name', 'contact_name', 'alternate_contact_name'].includes(fieldName)
+        ) {
+          sanitizer = sanitizeName
+        } else if (fieldName === 'email') {
+          sanitizer = sanitizeEmail
+        } else if (['place_of_birth', 'user_current_city'].includes(fieldName)) {
+          sanitizer = sanitizeCity
+        } else if (['company_name', 'company_type'].includes(fieldName)) {
+          sanitizer = sanitizeCompany
+        } else if (fieldName === 'user_address') {
+          sanitizer = sanitizeAddress
+        } else if (fieldName === 'user_summary') {
+          sanitizer = sanitizeSafeText
+        } else if (
+          ['mobile', 'alternate_mobile_no', 'annual_income', 'children_from_prior_marriage'].includes(fieldName)
+        ) {
+          sanitizer = (val: string) => sanitizeDigits(val, fieldName.includes('mobile') ? 10 : undefined)
+        }
+
+        handleSanitizedPaste(e, sanitizer, (cleaned) => {
+          clearFieldError(fieldName)
+          if (fieldName === 'mobile' && isMobileVerified && cleaned !== verifiedMobileNumber) {
+            setIsMobileVerified(false)
+            setVerifiedMobileNumber('')
+          }
+          setForm((prev) => ({ ...prev, [fieldName]: cleaned }))
+        })
+      },
     [clearFieldError, isMobileVerified, verifiedMobileNumber],
   )
 
@@ -622,6 +690,7 @@ function convertTo24HourTime(timeStr: string): string {
     handleSelectChange,
     handleTimeChange,
     handlePillChange,
+    handlePasteCapture,
     toggleCommunityPreference,
     selectAllCommunities,
     setPhotoFields,
