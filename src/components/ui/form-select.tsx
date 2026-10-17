@@ -74,7 +74,7 @@ export function FormSelect({
 
   return (
     <Select
-      value={value}
+      value={value || null}
       onValueChange={(v) => onValueChange(v ?? '')}
       disabled={isDisabled}
     >

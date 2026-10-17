@@ -65,6 +65,7 @@ export interface RegistrationFormContextValue {
   ) => void
   handleNumericInput: (e: ChangeEvent<HTMLInputElement>, maxVal?: number) => void
   handleSelectChange: (name: string) => (value: string) => void
+  handleTimeChange: (timeStr: string) => void
   handlePillChange: (name: string) => (value: string) => void
   toggleCommunityPreference: (commId: string) => void
   selectAllCommunities: () => void
@@ -300,6 +301,14 @@ export function RegistrationFormProvider({ children }: PropsWithChildren) {
     [clearFieldError, handleCommunityChange],
   )
 
+  const handleTimeChange = useCallback(
+    (timeStr: string) => {
+      clearFieldError('time_of_birth')
+      setForm((prev) => ({ ...prev, time_of_birth: timeStr }))
+    },
+    [clearFieldError],
+  )
+
   const handlePillChange = useCallback(
     (name: string) => (value: string) => {
       clearFieldError(name)
@@ -513,6 +522,8 @@ function convertTo24HourTime(timeStr: string): string {
             'Your bio-data registration has been submitted successfully! Our committee will review your profile within 24 to 48 hours.',
         })
         setForm(initialFormState)
+        setGotras([])
+        setLoadingGotras(false)
         setFieldErrors({})
         setIsMobileVerified(false)
         setVerifiedMobileNumber('')
@@ -609,6 +620,7 @@ function convertTo24HourTime(timeStr: string): string {
     handleInputChange,
     handleNumericInput,
     handleSelectChange,
+    handleTimeChange,
     handlePillChange,
     toggleCommunityPreference,
     selectAllCommunities,

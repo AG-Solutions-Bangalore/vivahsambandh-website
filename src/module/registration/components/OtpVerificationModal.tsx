@@ -175,6 +175,9 @@ export default function OtpVerificationModal({
       cleanupRecaptcha();
       const firebaseError = err as { code?: string; message?: string };
       console.error("Firebase signInWithPhoneNumber error:", err);
+      setCanResend(true);
+      if (timerRef.current) clearInterval(timerRef.current);
+      setCountdown(0);
 
       if (firebaseError.code === "auth/invalid-phone-number") {
         setErrorMessage(
@@ -182,6 +185,10 @@ export default function OtpVerificationModal({
         );
       } else if (firebaseError.code === "auth/missing-phone-number") {
         setErrorMessage("Mobile number is missing.");
+      } else if (firebaseError.code === "auth/billing-not-enabled") {
+        setErrorMessage(
+          "Firebase Phone Auth requires billing (Blaze plan) enabled in Google Cloud/Firebase Console to send SMS to real numbers. For testing, please use test number +91 7777777777 with OTP 123456.",
+        );
       } else if (firebaseError.code === "auth/too-many-requests") {
         setErrorMessage(
           "Too many requests sent. Please wait a few minutes before trying again.",
@@ -462,6 +469,16 @@ export default function OtpVerificationModal({
           </div>
         )}
 
+        {/* Error Alert Box — always visible when an error occurs */}
+        {errorMessage && (
+          <div className="mt-4 flex items-start gap-2.5 rounded-2xl border border-maroon-200 bg-maroon-50/80 p-3.5 text-xs font-medium text-maroon-800 animate-fade-in text-left">
+            <AlertCircle className="size-4 shrink-0 text-maroon-600 mt-0.5" />
+            <div className="flex-1 leading-relaxed">
+              <span>{errorMessage}</span>
+            </div>
+          </div>
+        )}
+
         {/* 6-Digit PIN Inputs — shown only after security check completes */}
         {otpSent && (
         <div className="mt-5 animate-fade-in">
@@ -496,14 +513,6 @@ export default function OtpVerificationModal({
               />
             ))}
           </div>
-
-          {/* Error Message */}
-          {errorMessage && (
-            <div className="mt-3 flex items-center justify-center gap-1.5 text-xs font-semibold text-maroon-600 animate-fade-in text-center">
-              <AlertCircle className="size-3.5 shrink-0" />
-              <span>{errorMessage}</span>
-            </div>
-          )}
 
           {/* Success Message */}
           {isSuccess && (

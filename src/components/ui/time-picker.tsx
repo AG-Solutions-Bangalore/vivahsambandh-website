@@ -3,7 +3,7 @@
  * Shadcn/Base-nova styled Time of Birth picker with 12-hour format and AM/PM selector.
  */
 
-import { useMemo, useState, useEffect } from 'react'
+import { useMemo, useCallback } from 'react'
 import { cn } from 'cn'
 import { FormSelect } from '@/components/ui/form-select'
 
@@ -21,56 +21,60 @@ export function TimePicker({
   onChange,
   error = false,
 }: TimePickerProps) {
-  // Parse initial value (e.g., "10:30 AM" or "10:30")
-  const parseTime = (str: string) => {
-    if (!str) return { h: '', m: '', p: 'AM' }
-    const match = str.match(/(\d+):(\d+)\s*(AM|PM)?/i)
+  // Parse hour, minute, period purely derived from value prop
+  const { hour, minute, period } = useMemo(() => {
+    if (!value) return { hour: '', minute: '', period: 'AM' as const }
+    const match = value.match(/(\d+):(\d+)\s*(AM|PM)?/i)
     if (match) {
       let hourNum = parseInt(match[1], 10)
-      let period = match[3] ? match[3].toUpperCase() : 'AM'
-      // If 24-hr format was provided
+      let p: 'AM' | 'PM' = match[3] && match[3].toUpperCase() === 'PM' ? 'PM' : 'AM'
       if (!match[3] && hourNum >= 12) {
-        period = 'PM'
+        p = 'PM'
         if (hourNum > 12) hourNum -= 12
       } else if (!match[3] && hourNum === 0) {
         hourNum = 12
       }
       const hStr = hourNum < 10 ? `0${hourNum}` : `${hourNum}`
-      return { h: hStr, m: match[2], p: period }
+      return { hour: hStr, minute: match[2], period: p }
     }
-    return { h: '', m: '', p: 'AM' }
-  }
-
-  const initial = parseTime(value)
-  const [hour, setHour] = useState(initial.h)
-  const [minute, setMinute] = useState(initial.m)
-  const [period, setPeriod] = useState(initial.p || 'AM')
-
-  // When hour, minute, or period changes, emit formatted string
-  useEffect(() => {
-    if (hour && minute) {
-      const formatted = `${hour}:${minute} ${period}`
-      if (formatted !== value) {
-        onChange(formatted)
-      }
-    } else if (value && (!hour || !minute)) {
-      onChange('')
-    }
-  }, [hour, minute, period, onChange, value])
-
-  // Sync external changes
-  useEffect(() => {
-    if (value) {
-      const parsed = parseTime(value)
-      if (parsed.h !== hour) setHour(parsed.h)
-      if (parsed.m !== minute) setMinute(parsed.m)
-      if (parsed.p !== period) setPeriod(parsed.p)
-    } else if (hour || minute) {
-      setHour('')
-      setMinute('')
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    return { hour: '', minute: '', period: 'AM' as const }
   }, [value])
+
+  const handleHourChange = useCallback(
+    (h: string) => {
+      if (!h) {
+        onChange('')
+        return
+      }
+      const m = minute || '00'
+      onChange(`${h}:${m} ${period}`)
+    },
+    [minute, period, onChange],
+  )
+
+  const handleMinuteChange = useCallback(
+    (m: string) => {
+      if (!m) {
+        onChange('')
+        return
+      }
+      const h = hour || '12'
+      onChange(`${h}:${m} ${period}`)
+    },
+    [hour, period, onChange],
+  )
+
+  const handlePeriodChange = useCallback(
+    (p: 'AM' | 'PM') => {
+      if (!hour && !minute) {
+        return
+      }
+      const h = hour || '12'
+      const m = minute || '00'
+      onChange(`${h}:${m} ${p}`)
+    },
+    [hour, minute, onChange],
+  )
 
   const hourOptions = useMemo(
     () =>
@@ -101,7 +105,7 @@ export function TimePicker({
           <FormSelect
             id={`${id}-hour`}
             value={hour}
-            onValueChange={setHour}
+            onValueChange={handleHourChange}
             options={hourOptions}
             placeholder="Hour"
             error={error}
@@ -116,7 +120,7 @@ export function TimePicker({
           <FormSelect
             id={`${id}-min`}
             value={minute}
-            onValueChange={setMinute}
+            onValueChange={handleMinuteChange}
             options={minuteOptions}
             placeholder="Min"
             error={error}
@@ -141,7 +145,7 @@ export function TimePicker({
             type="button"
             role="radio"
             aria-checked={period === p}
-            onClick={() => setPeriod(p)}
+            onClick={() => handlePeriodChange(p)}
             className={cn(
               'rounded-lg px-3 py-1.5 text-xs font-bold transition outline-none active:scale-[0.98]',
               'focus-visible:ring-2 focus-visible:ring-gold-500/40',

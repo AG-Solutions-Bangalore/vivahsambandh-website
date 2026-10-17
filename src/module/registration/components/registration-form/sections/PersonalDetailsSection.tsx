@@ -25,6 +25,7 @@ export default function PersonalDetailsSection() {
     handleInputChange,
     handleNumericInput,
     handleSelectChange,
+    handleTimeChange,
     handlePillChange,
     toggleCommunityPreference,
     selectAllCommunities,
@@ -125,10 +126,7 @@ export default function PersonalDetailsSection() {
             <TimePicker
               id={`${baseId}-birthtime`}
               value={form.time_of_birth}
-              onChange={(timeStr) => {
-                setForm((prev) => ({ ...prev, time_of_birth: timeStr }))
-                clearFieldError('time_of_birth')
-              }}
+              onChange={handleTimeChange}
               error={Boolean(fieldErrors.time_of_birth)}
             />
           </Field>
