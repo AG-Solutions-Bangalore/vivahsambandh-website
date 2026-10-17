@@ -426,6 +426,28 @@ export function RegistrationFormProvider({ children }: PropsWithChildren) {
     }
   }, [form, conditions, baseId, focusAndScrollToField])
 
+/**
+ * Converts 12-hour AM/PM time (e.g. "03:02 PM", "10:30 AM") to 24-hour "HH:mm" (e.g. "15:02", "10:30")
+ * as required by MySQL TIME columns.
+ */
+function convertTo24HourTime(timeStr: string): string {
+  if (!timeStr) return ''
+  const trimmed = timeStr.trim()
+  const match = trimmed.match(/^(\d{1,2}):(\d{1,2})\s*(AM|PM)?$/i)
+  if (!match) return trimmed
+  let hours = parseInt(match[1], 10)
+  const minutes = match[2].padStart(2, '0')
+  const period = match[3] ? match[3].toUpperCase() : null
+
+  if (period === 'PM' && hours < 12) {
+    hours += 12
+  } else if (period === 'AM' && hours === 12) {
+    hours = 0
+  }
+
+  return `${hours.toString().padStart(2, '0')}:${minutes}`
+}
+
   // Core Form Submission to CRM Backend API
   const executeFormSubmission = useCallback(async () => {
     setIsSubmitting(true)
@@ -438,7 +460,7 @@ export function RegistrationFormProvider({ children }: PropsWithChildren) {
     formData.append('name', form.name.trim())
     formData.append('gender', form.gender)
     formData.append('date_of_birth', form.date_of_birth)
-    formData.append('time_of_birth', form.time_of_birth)
+    formData.append('time_of_birth', convertTo24HourTime(form.time_of_birth))
     formData.append('place_of_birth', form.place_of_birth.trim())
     formData.append('email', form.email.trim())
     formData.append('education_id', form.education_id)
