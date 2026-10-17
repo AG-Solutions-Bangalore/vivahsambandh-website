@@ -1,0 +1,360 @@
+{
+  "info": {
+    "_postman_id": "1d1ec185-5409-4e81-bbea-e61b51016446",
+    "name": "for form of vivahsambandh",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "37493424"
+  },
+  "item": [
+    {
+      "name": "getEducation",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "https://vivahsambandh.com/crmapi/public/api/getEducation",
+          "protocol": "https",
+          "host": [
+            "vivahsambandh",
+            "com"
+          ],
+          "path": [
+            "crmapi",
+            "public",
+            "api",
+            "getEducation"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "getCommunity",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "https://vivahsambandh.com/crmapi/public/api/getCommunity",
+          "protocol": "https",
+          "host": [
+            "vivahsambandh",
+            "com"
+          ],
+          "path": [
+            "crmapi",
+            "public",
+            "api",
+            "getCommunity"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "getGotra",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "https://vivahsambandh.com/crmapi/public/api/getGotra/1",
+          "protocol": "https",
+          "host": [
+            "vivahsambandh",
+            "com"
+          ],
+          "path": [
+            "crmapi",
+            "public",
+            "api",
+            "getGotra",
+            "1"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "getProfession",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "https://vivahsambandh.com/crmapi/public/api/getProfession",
+          "protocol": "https",
+          "host": [
+            "vivahsambandh",
+            "com"
+          ],
+          "path": [
+            "crmapi",
+            "public",
+            "api",
+            "getProfession"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "create-user-register",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "name",
+              "value": "",
+              "type": "text",
+              "description": "required"
+            },
+            {
+              "key": "gender",
+              "value": "",
+              "type": "text",
+              "description": "required radio button"
+            },
+            {
+              "key": "date_of_birth",
+              "value": "",
+              "type": "text",
+              "description": "required"
+            },
+            {
+              "key": "time_of_birth",
+              "value": "",
+              "type": "text",
+              "description": "required"
+            },
+            {
+              "key": "place_of_birth",
+              "value": "",
+              "type": "text",
+              "description": "required"
+            },
+            {
+              "key": "email",
+              "value": "",
+              "type": "text"
+            },
+            {
+              "key": "education_id",
+              "value": "1",
+              "type": "text",
+              "description": "required drop down api getEducation"
+            },
+            {
+              "key": "profession_id",
+              "value": "",
+              "type": "text",
+              "description": "required drop down api getProfession & take condition from referenc"
+            },
+            {
+              "key": "company_name",
+              "value": "",
+              "type": "text"
+            },
+            {
+              "key": "company_type",
+              "value": "",
+              "type": "text"
+            },
+            {
+              "key": "annual_income",
+              "value": "122",
+              "type": "text"
+            },
+            {
+              "key": "height_feet",
+              "value": "",
+              "type": "text",
+              "description": "required drop down"
+            },
+            {
+              "key": "height_inch",
+              "value": "",
+              "type": "text",
+              "description": "required drop down"
+            },
+            {
+              "key": "father_name",
+              "value": "",
+              "type": "text",
+              "description": "required "
+            },
+            {
+              "key": "mother_name",
+              "value": "",
+              "type": "text"
+            },
+            {
+              "key": "brother_married",
+              "value": "",
+              "type": "text",
+              "description": "required default 0"
+            },
+            {
+              "key": "brother_un_married",
+              "value": "",
+              "type": "text",
+              "description": "required default 0"
+            },
+            {
+              "key": "sister_married",
+              "value": "",
+              "type": "text",
+              "description": "required default 0"
+            },
+            {
+              "key": "sister_un_married",
+              "value": "",
+              "type": "text",
+              "description": "required default 0"
+            },
+            {
+              "key": "user_address",
+              "value": "",
+              "type": "text",
+              "description": "required "
+            },
+            {
+              "key": "house_type",
+              "value": "",
+              "type": "text",
+              "description": "required Own/Rent radio button"
+            },
+            {
+              "key": "user_current_city",
+              "value": "",
+              "type": "text",
+              "description": "required "
+            },
+            {
+              "key": "contact_name",
+              "value": "",
+              "type": "text",
+              "description": "required "
+            },
+            {
+              "key": "mobile",
+              "value": "",
+              "type": "text",
+              "description": "required firebase otp validation along with captcha"
+            },
+            {
+              "key": "alternate_contact_name",
+              "value": "",
+              "type": "text",
+              "description": "required "
+            },
+            {
+              "key": "alternate_mobile_no",
+              "value": "",
+              "type": "text",
+              "description": "required "
+            },
+            {
+              "key": "community_id",
+              "value": "",
+              "type": "text",
+              "description": "required drop down api getCommunity"
+            },
+            {
+              "key": "gotra_id",
+              "value": "",
+              "type": "text",
+              "description": "required drop down api getGotra"
+            },
+            {
+              "key": "marry_in_community",
+              "value": "",
+              "type": "text",
+              "description": "required drop down api getCommunity multiple select"
+            },
+            {
+              "key": "physical_disablity",
+              "value": "",
+              "type": "text",
+              "description": "required Yes/No"
+            },
+            {
+              "key": "married_before",
+              "value": "",
+              "type": "text",
+              "description": "required take value from reference & condition"
+            },
+            {
+              "key": "divorce_status",
+              "value": "",
+              "type": "text"
+            },
+            {
+              "key": "children_from_prior_marriage",
+              "value": "",
+              "type": "text",
+              "description": "take condition from reference"
+            },
+            {
+              "key": "children_with",
+              "value": "",
+              "type": "text",
+              "description": "take condition from reference"
+            },
+            {
+              "key": "will_marry_same_gotra",
+              "value": "",
+              "type": "text",
+              "description": "required Yes/No"
+            },
+            {
+              "key": "is_manglik",
+              "value": "",
+              "type": "text",
+              "description": "required Yes/No"
+            },
+            {
+              "key": "will_marry_manglik",
+              "value": "",
+              "type": "text",
+              "description": "required Yes/No"
+            },
+            {
+              "key": "user_summary",
+              "value": "",
+              "type": "text",
+              "description": "required textarea"
+            },
+            {
+              "key": "full_image",
+              "type": "file",
+              "description": "required & image croping",
+              "src": []
+            },
+            {
+              "key": "face_image",
+              "type": "file",
+              "description": "required & image croping",
+              "src": []
+            }
+          ]
+        },
+        "url": {
+          "raw": "https://vivahsambandh.com/crmapi/public/api/create-user-register",
+          "protocol": "https",
+          "host": [
+            "vivahsambandh",
+            "com"
+          ],
+          "path": [
+            "crmapi",
+            "public",
+            "api",
+            "create-user-register"
+          ]
+        }
+      },
+      "response": []
+    }
+  ]
+}

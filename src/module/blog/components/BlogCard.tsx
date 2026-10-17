@@ -17,10 +17,10 @@ export interface BlogCardProps {
 }
 
 export default function BlogCard({ item, imageBase }: BlogCardProps) {
-  const { i18n } = useTranslation()
+  const { t, i18n } = useTranslation()
   const lang: AppLang = i18n.resolvedLanguage === 'hi' || i18n.language === 'hi' ? 'hi' : 'en'
   const imgSrc = resolveImageUrl(item.blog_banner_image, imageBase, 'blog')
-  const date = formatBlogDate(item.blog_created_date ?? item.blog_updated_date)
+  const date = formatBlogDate(item.blog_created_date ?? item.blog_updated_date, lang)
   const excerpt = (item.blog_short_description || item.blog_description || '')
     .replace(/<[^>]*>/g, '')
     .replace(/\s+/g, ' ')
@@ -87,7 +87,7 @@ export default function BlogCard({ item, imageBase }: BlogCardProps) {
           title={item.blog_title}
           className="mt-auto inline-flex items-center gap-1.5 pt-4 text-[13px] font-bold text-maroon-700 sm:text-sm"
         >
-          Read More
+          {t('blogs.readMore', 'Read More')}
           <span
             className="inline-block transition-transform duration-300 group-hover:translate-x-1.5"
             aria-hidden="true"

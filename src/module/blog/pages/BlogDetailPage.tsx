@@ -117,7 +117,7 @@ export default function BlogDetailPage() {
   }, [post?.blog_description])
 
   const banner = resolveImageUrl(post?.blog_banner_image, imageBase, 'blog')
-  const date = formatBlogDate(post?.blog_created_date ?? post?.blog_updated_date)
+  const date = formatBlogDate(post?.blog_created_date ?? post?.blog_updated_date, lang)
 
   const related = useMemo(() => {
     const pool = (data?.featured?.length ? data.featured : (featuredQuery.data?.data ?? [])).filter(

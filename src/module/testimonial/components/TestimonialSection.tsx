@@ -9,6 +9,8 @@
 import { useTranslation } from 'react-i18next'
 import Reveal from '../../../components/motion/Reveal'
 import { parseRating, useTestimonialsQuery } from '../hook/useTestimonials'
+import { useAppLanguage } from '../../../i18n/useAppLanguage'
+import type { AppLang } from '../../../i18n'
 import type { TestimonialItem } from '../types'
 
 export interface TestimonialSectionProps {
@@ -48,22 +50,25 @@ function getCardInitials(rawName: string): string {
   return nameOnly.slice(0, 2).toUpperCase()
 }
 
-function formatDateUpper(dateStr?: string): string {
-  if (!dateStr) return '25 SEP 2026'
+function formatDateUpper(dateStr?: string, lang: AppLang = 'en'): string {
+  if (!dateStr) return lang === 'hi' ? '25 सितम्बर 2026' : '25 SEP 2026'
   const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(dateStr.trim())
   if (!m) return dateStr.toUpperCase()
-  const months = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC']
+  const enMonths = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC']
+  const hiMonths = ['जनवरी', 'फ़रवरी', 'मार्च', 'अप्रैल', 'मई', 'जून', 'जुलाई', 'अगस्त', 'सितंबर', 'अक्टूबर', 'नवंबर', 'दिसंबर']
+  const months = lang === 'hi' ? hiMonths : enMonths
   const month = months[Math.min(11, Math.max(0, parseInt(m[2], 10) - 1))]
   const day = parseInt(m[3], 10)
   const year = m[1]
   return `${day} ${month} ${year}`
 }
 
-function TestimonialCard({ item }: { item: TestimonialItem }) {
+function TestimonialCard({ item, lang }: { item: TestimonialItem; lang: AppLang }) {
+  const { t } = useTranslation()
   const rawName = (item.testimonial_client_name || '').trim()
   const initials = getCardInitials(rawName)
   const cleanQuote = (item.testimonial_description || '').trim().replace(/^[“"']+|[”"']+$/g, '')
-  const dateFormatted = formatDateUpper(item.testimonial_created_date)
+  const dateFormatted = formatDateUpper(item.testimonial_created_date, lang)
   const rating = parseRating(item.testimonial_rating)
 
   return (
@@ -110,7 +115,7 @@ function TestimonialCard({ item }: { item: TestimonialItem }) {
             </span>
           </div>
           <p className="mt-0.5 text-[11px] font-medium text-[#94A3B8] uppercase tracking-wide">
-            Verified Client · {dateFormatted}
+            {t('stories.verifiedClient', 'Verified Client')} · {dateFormatted}
           </p>
         </div>
       </div>
@@ -129,6 +134,7 @@ export default function TestimonialSection({
   fallbackItems,
 }: TestimonialSectionProps) {
   const { t } = useTranslation()
+  const { lang } = useAppLanguage()
   const { data: apiResponse } = useTestimonialsQuery(slug)
 
   // Strictly use items from API or passed fallbackItems
@@ -216,7 +222,7 @@ export default function TestimonialSection({
           {/* Continuous Horizontal Ribbon */}
           <div className="testimonial-marquee flex gap-6 px-4">
             {marqueeItems.map((item, index) => (
-              <TestimonialCard key={`${item.testimonial_client_name}-${index}`} item={item} />
+              <TestimonialCard key={`${item.testimonial_client_name}-${index}`} item={item} lang={lang} />
             ))}
           </div>
         </div>

@@ -118,7 +118,8 @@ export type PageKey =
   | 'privacy'
   | 'terms'
   | 'guidelines'
-  | 'help-center';
+  | 'help-center'
+  | 'registration';
 
 /**
  * Per-page SEO metadata (both languages). Home entries intentionally mirror
@@ -225,6 +226,16 @@ export const PAGE_SEO: Record<PageKey, { titles: Record<SupportedLang, string>; 
       hi: 'विवाहसंबंध हेल्प सेंटर — प्रोफाइल सहायता, रिश्ता खोज, सदस्यता, सुरक्षा व टीम से संपर्क।',
     },
   },
+  registration: {
+    titles: {
+      en: 'Bio-Data Registration — VivahSambandh Matrimony | Register Your Profile',
+      hi: 'विवाह संबंध पंजीकरण — बायोडाटा रजिस्टर करें | विवाहसंबंध मैट्रिमोनी',
+    },
+    descriptions: {
+      en: 'Register your verified bio-data on VivahSambandh. Trusted matrimony matchmaking for Agarwal, Jain, Khandelwal, and Maheshwari communities.',
+      hi: 'विवाह संबंध में अपना सत्यापित बायोडाटा पंजीकृत करें। अग्रवाल, जैन, खंडेलवाल और माहेश्वरी समाज के लिए विश्वसनीय वैवाहिक मंच।',
+    },
+  },
 };
 
 /**
@@ -243,6 +254,7 @@ export function resolvePageKey(pathname = '/'): PageKey {
   if (withoutLang === '/terms') return 'terms';
   if (withoutLang === '/guidelines') return 'guidelines';
   if (withoutLang === '/help-center') return 'help-center';
+  if (withoutLang === '/registration') return 'registration';
   return 'home';
 }
 

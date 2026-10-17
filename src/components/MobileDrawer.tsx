@@ -53,14 +53,14 @@ export default function MobileDrawer({
             >
               {t('header.login')}
             </a>
-            <a
-              href="#register"
+            <Link
+              to={navItems.some((n) => n.href.startsWith('/hi')) ? '/hi/registration' : '/registration'}
               onClick={closeDrawer}
               title={t('header.createProfile')}
               className="btn-primary flex-1 !py-2.5 text-sm text-center"
             >
               {t('header.createProfile')}
-            </a>
+            </Link>
           </div>
         </nav>
       </DrawerContent>
