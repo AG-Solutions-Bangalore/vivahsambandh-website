@@ -71,12 +71,15 @@ const MATCH_CARDS = [
     id: "bride",
     href: "#search-bride",
     photo: img("/images/home/radiant-indian-bride-in-floral-glow.webp"),
-    photoSrcSet:
-      imgSrcSet("/images/home/radiant-indian-bride-in-floral-glow-128.webp 128w, /images/home/radiant-indian-bride-in-floral-glow-320.webp 320w, /images/home/radiant-indian-bride-in-floral-glow-640.webp 640w, /images/home/radiant-indian-bride-in-floral-glow.webp 1145w"),
+    photoSrcSet: imgSrcSet(
+      "/images/home/radiant-indian-bride-in-floral-glow-128.webp 128w, /images/home/radiant-indian-bride-in-floral-glow-320.webp 320w, /images/home/radiant-indian-bride-in-floral-glow-640.webp 640w, /images/home/radiant-indian-bride-in-floral-glow.webp 1145w",
+    ),
     photoWidth: 1145,
     photoHeight: 1374,
     illustration: img("/images/home/woman_image.webp"),
-    illustrationSrcSet: imgSrcSet("/images/home/woman_image-160.webp 160w, /images/home/woman_image-320.webp 320w, /images/home/woman_image.webp 1355w"),
+    illustrationSrcSet: imgSrcSet(
+      "/images/home/woman_image-160.webp 160w, /images/home/woman_image-320.webp 320w, /images/home/woman_image.webp 1355w",
+    ),
     illustrationWidth: 1355,
     illustrationHeight: 1161,
     illustrationAlt: "Bride Illustration",
@@ -87,13 +90,18 @@ const MATCH_CARDS = [
   {
     id: "groom",
     href: "#search-groom",
-    photo: img("/images/home/radiant-indian-groom-in-a-golden-wedding-setting.webp"),
-    photoSrcSet:
-      imgSrcSet("/images/home/radiant-indian-groom-in-a-golden-wedding-setting-128.webp 128w, /images/home/radiant-indian-groom-in-a-golden-wedding-setting-320.webp 320w, /images/home/radiant-indian-groom-in-a-golden-wedding-setting-640.webp 640w, /images/home/radiant-indian-groom-in-a-golden-wedding-setting.webp 1254w"),
+    photo: img(
+      "/images/home/radiant-indian-groom-in-a-golden-wedding-setting.webp",
+    ),
+    photoSrcSet: imgSrcSet(
+      "/images/home/radiant-indian-groom-in-a-golden-wedding-setting-128.webp 128w, /images/home/radiant-indian-groom-in-a-golden-wedding-setting-320.webp 320w, /images/home/radiant-indian-groom-in-a-golden-wedding-setting-640.webp 640w, /images/home/radiant-indian-groom-in-a-golden-wedding-setting.webp 1254w",
+    ),
     photoWidth: 1254,
     photoHeight: 1254,
     illustration: img("/images/home/man_image.webp"),
-    illustrationSrcSet: imgSrcSet("/images/home/man_image-160.webp 160w, /images/home/man_image-320.webp 320w, /images/home/man_image.webp 1324w"),
+    illustrationSrcSet: imgSrcSet(
+      "/images/home/man_image-160.webp 160w, /images/home/man_image-320.webp 320w, /images/home/man_image.webp 1324w",
+    ),
     illustrationWidth: 1324,
     illustrationHeight: 1188,
     illustrationAlt: "Groom Illustration",
@@ -114,121 +122,121 @@ export default function HeroSection() {
       return;
     }
     let mm: {
-      revert: () => void
-      add: (conditions: string, callback: () => void) => void
-    } | null = null
-    let cancelled = false
+      revert: () => void;
+      add: (conditions: string, callback: () => void) => void;
+    } | null = null;
+    let cancelled = false;
     void ensureMotion()
       .then(({ gsap }) => {
-      const root = rootRef.current;
-      if (cancelled || !root || prefersReducedMotion()) return;
+        const root = rootRef.current;
+        if (cancelled || !root || prefersReducedMotion()) return;
 
-      // ——— Desktop: Entrance animations & Parallax (mobile stays instant & lightweight) ———
-      mm = gsap.matchMedia();
-      mm.add("(min-width: 768px)", () => {
-        const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
-        tl.fromTo(
-          '[data-hero="eyebrow"]',
-          { opacity: 0, y: 12 },
-          { opacity: 1, y: 0, duration: 0.45, clearProps: "all" },
-          0.05,
-        )
-          .fromTo(
-            '[data-hero-line]',
-            { yPercent: 110 },
-            {
-              yPercent: 0,
-              duration: 0.75,
-              ease: "power4.out",
-              stagger: 0.09,
-              clearProps: "all",
-            },
-            0.1,
+        // ——— Desktop: Entrance animations & Parallax (mobile stays instant & lightweight) ———
+        mm = gsap.matchMedia();
+        mm.add("(min-width: 768px)", () => {
+          const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
+          tl.fromTo(
+            '[data-hero="eyebrow"]',
+            { opacity: 0, y: 12 },
+            { opacity: 1, y: 0, duration: 0.45, clearProps: "all" },
+            0.05,
           )
-          .fromTo(
-            '[data-hero="subtitle"]',
-            { opacity: 0, y: 14 },
-            { opacity: 1, y: 0, duration: 0.5, clearProps: "all" },
-            0.28,
-          )
-          .fromTo(
-            '[data-hero="cta"] > *',
-            { opacity: 0, y: 16, scale: 0.95 },
-            {
-              opacity: 1,
-              y: 0,
-              scale: 1,
-              duration: 0.55,
-              stagger: 0.09,
-              ease: "back.out(1.4)",
-              clearProps: "all",
-            },
-            0.38,
-          )
-          .fromTo(
-            '[data-hero="badges"] li',
-            { opacity: 0, y: 10 },
-            {
-              opacity: 1,
-              y: 0,
-              duration: 0.45,
-              stagger: 0.05,
-              clearProps: "all",
-            },
-            0.5,
-          );
+            .fromTo(
+              "[data-hero-line]",
+              { yPercent: 110 },
+              {
+                yPercent: 0,
+                duration: 0.75,
+                ease: "power4.out",
+                stagger: 0.09,
+                clearProps: "all",
+              },
+              0.1,
+            )
+            .fromTo(
+              '[data-hero="subtitle"]',
+              { opacity: 0, y: 14 },
+              { opacity: 1, y: 0, duration: 0.5, clearProps: "all" },
+              0.28,
+            )
+            .fromTo(
+              '[data-hero="cta"] > *',
+              { opacity: 0, y: 16, scale: 0.95 },
+              {
+                opacity: 1,
+                y: 0,
+                scale: 1,
+                duration: 0.55,
+                stagger: 0.09,
+                ease: "back.out(1.4)",
+                clearProps: "all",
+              },
+              0.38,
+            )
+            .fromTo(
+              '[data-hero="badges"] li',
+              { opacity: 0, y: 10 },
+              {
+                opacity: 1,
+                y: 0,
+                duration: 0.45,
+                stagger: 0.05,
+                clearProps: "all",
+              },
+              0.5,
+            );
 
-        gsap.to('[data-hero="banner"]', {
-          yPercent: 12,
-          ease: "none",
-          scrollTrigger: {
-            trigger: '[data-hero="banner-wrap"]',
-            start: "top top",
-            end: "bottom top",
-            scrub: 0.6,
-          },
+          gsap.to('[data-hero="banner"]', {
+            yPercent: 12,
+            ease: "none",
+            scrollTrigger: {
+              trigger: '[data-hero="banner-wrap"]',
+              start: "top top",
+              end: "bottom top",
+              scrub: 0.6,
+            },
+          });
+          // Flowers drift at different rates for depth.
+          gsap.to('[data-hero="flower-l"]', {
+            y: -40,
+            ease: "none",
+            scrollTrigger: {
+              trigger: root,
+              start: "top top",
+              end: "bottom top",
+              scrub: 0.8,
+            },
+          });
+          gsap.to('[data-hero="flower-r"]', {
+            y: -56,
+            ease: "none",
+            scrollTrigger: {
+              trigger: root,
+              start: "top top",
+              end: "bottom top",
+              scrub: 0.8,
+            },
+          });
         });
-        // Flowers drift at different rates for depth.
-        gsap.to('[data-hero="flower-l"]', {
-          y: -40,
-          ease: "none",
-          scrollTrigger: {
-            trigger: root,
-            start: "top top",
-            end: "bottom top",
-            scrub: 0.8,
-          },
-        });
-        gsap.to('[data-hero="flower-r"]', {
-          y: -56,
-          ease: "none",
-          scrollTrigger: {
-            trigger: root,
-            start: "top top",
-            end: "bottom top",
-            scrub: 0.8,
-          },
-        });
-      });
 
-      // ——— Match cards entrance (just below fold → scroll-triggered, once) ———
-      gsap.fromTo(
-        '[data-hero="cards"] > *',
-        { autoAlpha: 0, y: 36 },
-        {
-          autoAlpha: 1,
-          y: 0,
-          duration: 0.8,
-          ease: "power3.out",
-          stagger: 0.12,
-          overwrite: "auto",
-          scrollTrigger: {
-            trigger: '[data-hero="cards"]',
-            start: "top 88%",
-            once: true,
+        // ——— Match cards entrance (just below fold → scroll-triggered, once) ———
+        gsap.fromTo(
+          '[data-hero="cards"] > *',
+          { autoAlpha: 0, y: 36 },
+          {
+            autoAlpha: 1,
+            y: 0,
+            duration: 0.8,
+            ease: "power3.out",
+            stagger: 0.12,
+            overwrite: "auto",
+            scrollTrigger: {
+              trigger: '[data-hero="cards"]',
+              start: "top 88%",
+              once: true,
+            },
           },
-        },
-      );
+        );
       })
       .catch(() => {
         /* motion failed to load — content stays visible (final state) */
@@ -248,7 +256,9 @@ export default function HeroSection() {
       {/* ============================================================== */}
       <img
         src={img("/images/home/flower1_image.webp")}
-        srcSet={imgSrcSet("/images/home/flower1_image-192.webp 192w, /images/home/flower1_image-320.webp 320w, /images/home/flower1_image-640.webp 640w, /images/home/flower1_image.webp 1024w")}
+        srcSet={imgSrcSet(
+          "/images/home/flower1_image-192.webp 192w, /images/home/flower1_image-320.webp 320w, /images/home/flower1_image-640.webp 640w, /images/home/flower1_image.webp 1024w",
+        )}
         sizes="(max-width: 640px) 22vw, (max-width: 768px) 10rem, (max-width: 1024px) 12rem, (max-width: 1280px) 14rem, 16rem"
         width={1024}
         height={1536}
@@ -263,7 +273,9 @@ export default function HeroSection() {
       />
       <img
         src={img("/images/home/flower2_image.webp")}
-        srcSet={imgSrcSet("/images/home/flower2_image-192.webp 192w, /images/home/flower2_image-320.webp 320w, /images/home/flower2_image-640.webp 640w, /images/home/flower2_image.webp 1024w")}
+        srcSet={imgSrcSet(
+          "/images/home/flower2_image-192.webp 192w, /images/home/flower2_image-320.webp 320w, /images/home/flower2_image-640.webp 640w, /images/home/flower2_image.webp 1024w",
+        )}
         sizes="(max-width: 640px) 26vw, (max-width: 768px) 11rem, (max-width: 1024px) 13rem, (max-width: 1280px) 15rem, 18rem"
         width={1024}
         height={1536}
@@ -280,11 +292,16 @@ export default function HeroSection() {
       {/* ============================================================== */}
       {/* 1. HERO BANNER: Full-width, proportionally sized to 2172x724   */}
       {/* ============================================================== */}
-      <section data-hero="banner-wrap" className="relative isolate z-10 w-full lg:h-[440px] xl:h-[470px]">
+      <section
+        data-hero="banner-wrap"
+        className="relative isolate z-10 w-full lg:h-[440px] xl:h-[470px]"
+      >
         {/* Top garlands: hang from top on sm and up; hidden on small phones to keep mobile clean & fast */}
         <img
           src={img("/images/home/flower1_image-192.webp")}
-          srcSet={imgSrcSet("/images/home/flower1_image-192.webp 192w, /images/home/flower1_image-320.webp 320w, /images/home/flower1_image-640.webp 640w")}
+          srcSet={imgSrcSet(
+            "/images/home/flower1_image-192.webp 192w, /images/home/flower1_image-320.webp 320w, /images/home/flower1_image-640.webp 640w",
+          )}
           sizes="(max-width: 640px) 12vw, (max-width: 768px) 5rem, 8rem"
           width={192}
           height={288}
@@ -298,7 +315,9 @@ export default function HeroSection() {
         />
         <img
           src={img("/images/home/flower2_image-192.webp")}
-          srcSet={imgSrcSet("/images/home/flower2_image-192.webp 192w, /images/home/flower2_image-320.webp 320w, /images/home/flower2_image-640.webp 640w")}
+          srcSet={imgSrcSet(
+            "/images/home/flower2_image-192.webp 192w, /images/home/flower2_image-320.webp 320w, /images/home/flower2_image-640.webp 640w",
+          )}
           sizes="(max-width: 640px) 12vw, (max-width: 768px) 5rem, 8rem"
           width={192}
           height={288}
@@ -318,7 +337,9 @@ export default function HeroSection() {
         >
           <img
             src={img("/images/home/home_banner_image-640.webp")}
-            srcSet={imgSrcSet("/images/home/home_banner_image-640.webp 640w, /images/home/home_banner_image-1024.webp 1024w, /images/home/home_banner_image-1280.webp 1280w, /images/home/home_banner_image.webp 2172w")}
+            srcSet={imgSrcSet(
+              "/images/home/home_banner_image-640.webp 640w, /images/home/home_banner_image-1024.webp 1024w, /images/home/home_banner_image-1280.webp 1280w, /images/home/home_banner_image.webp 2172w",
+            )}
             sizes="(max-width: 640px) 240px, (max-width: 1024px) 640px, 100vw"
             width={2172}
             height={724}
@@ -348,7 +369,10 @@ export default function HeroSection() {
             {/* Left Content Column */}
             <div className="lg:col-span-7 xl:col-span-6 py-2">
               {/* Eyebrow */}
-              <div data-hero="eyebrow" className="inline-flex items-center gap-2 text-[10px] sm:text-[11px] font-bold tracking-[0.22em] uppercase text-gold-700">
+              <div
+                data-hero="eyebrow"
+                className="inline-flex items-center gap-2 text-[10px] sm:text-[11px] font-bold tracking-[0.22em] uppercase text-gold-700"
+              >
                 <span className="text-gold-600 text-xs sm:text-sm font-black">
                   ✱
                 </span>
@@ -357,24 +381,47 @@ export default function HeroSection() {
               </div>
 
               {/* Headline (line masks for the mask-reveal intro) */}
-              <h1 data-hero="title" className="font-display mt-2 text-3xl sm:text-4xl lg:text-[44px] xl:text-[50px] font-bold leading-[1.12]">
-                <span data-hero-mask className="block overflow-hidden pb-[0.12em] -mb-[0.12em]">
-                  <span data-hero-line className="block text-navy-900 will-change-transform">{t("hero.titleA")}</span>
+              <h1
+                data-hero="title"
+                className="font-display mt-2 text-3xl sm:text-4xl lg:text-[44px] xl:text-[50px] font-bold leading-[1.12]"
+              >
+                <span
+                  data-hero-mask
+                  className="block overflow-hidden pb-[0.12em] -mb-[0.12em]"
+                >
+                  <span
+                    data-hero-line
+                    className="block text-navy-900 will-change-transform"
+                  >
+                    {t("hero.titleA")}
+                  </span>
                 </span>
-                <span data-hero-mask className="block overflow-hidden pb-[0.12em] -mb-[0.12em]">
-                  <span data-hero-line className="block text-gold-600 mt-0.5 will-change-transform">
+                <span
+                  data-hero-mask
+                  className="block overflow-hidden pb-[0.12em] -mb-[0.12em]"
+                >
+                  <span
+                    data-hero-line
+                    className="block text-gold-600 mt-0.5 will-change-transform"
+                  >
                     {t("hero.titleB")}
                   </span>
                 </span>
               </h1>
 
               {/* Subtitle */}
-              <p data-hero="subtitle" className="mt-2 max-w-md text-xs sm:text-sm leading-relaxed text-ink-600 font-medium">
+              <p
+                data-hero="subtitle"
+                className="mt-2 max-w-md text-xs sm:text-sm leading-relaxed text-ink-600 font-medium"
+              >
                 {t("hero.subtitle")}
               </p>
 
               {/* Buttons: stacked full-width on phones, side-by-side from sm up */}
-              <div data-hero="cta" className="mt-4 sm:mt-5 flex flex-col items-stretch gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:gap-4 relative z-20">
+              <div
+                data-hero="cta"
+                className="mt-4 sm:mt-5 flex flex-col items-stretch gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:gap-4 relative z-20"
+              >
                 <a
                   href="#register"
                   title={t("hero.createProfile")}
@@ -385,7 +432,9 @@ export default function HeroSection() {
                     aria-hidden="true"
                     className="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/20 to-transparent transition-transform duration-700 ease-out group-hover:translate-x-full"
                   />
-                  <span className="relative z-10">{t("hero.createProfile")}</span>
+                  <span className="relative z-10">
+                    {t("hero.createProfile")}
+                  </span>
                   <span
                     aria-hidden="true"
                     className="relative z-10 text-xs sm:text-sm transition-transform duration-300 group-hover:translate-x-1.5"
@@ -444,7 +493,10 @@ export default function HeroSection() {
       {/* 2. QUICK MATCH CARDS: Positioned cleanly below the hero banner */}
       {/* ============================================================== */}
       <section className="section-pad pt-4 pb-3 sm:pt-5 sm:pb-4 lg:pt-6 lg:pb-6 relative z-10">
-        <div data-hero="cards" className="grid gap-6 sm:grid-cols-2 lg:gap-8 w-full max-w-7xl mx-auto">
+        <div
+          data-hero="cards"
+          className="grid gap-6 sm:grid-cols-2 lg:gap-8 w-full max-w-7xl mx-auto"
+        >
           {MATCH_CARDS.map((card) => (
             <a
               key={card.id}
@@ -509,23 +561,6 @@ export default function HeroSection() {
                     d="M9 5l7 7-7 7"
                   />
                 </svg>
-              </div>
-
-              {/* Decorative floral spray on bottom-right corner (enlarged & visible) */}
-              <div className="pointer-events-none absolute -right-16 -bottom-3  sm:-bottom-4 h-32 w-28 sm:h-44 sm:w-36 md:h-52 md:w-44 lg:h-60 lg:w-52 opacity-95 select-none hidden sm:block">
-                <img
-                  src={img("/images/home/flower1_image-320.webp")}
-                  srcSet={imgSrcSet("/images/home/flower1_image-320.webp 320w, /images/home/flower1_image-640.webp 640w")}
-                  sizes="(max-width: 768px) 9rem, 13rem"
-                  width={320}
-                  height={480}
-                  alt="Decorative flower garland"
-                  title="Decorative flower garland"
-                  loading="lazy"
-                  decoding="async"
-                  fetchPriority="low"
-                  className="h-full w-full object-contain object-right-bottom -scale-x-100 rotate-6"
-                />
               </div>
             </a>
           ))}
