@@ -95,7 +95,12 @@ html.lenis body {
 .lenis.lenis-smooth {
   scroll-behavior: auto !important;
 }
-.lenis.lenis-smooth [data-lenis-prevent] {
+.lenis.lenis-smooth [data-lenis-prevent],
+[data-slot="select-content"],
+[data-slot="select-list"],
+[data-slot="combobox-content"],
+[data-slot="combobox-list"],
+[role="listbox"] {
   overscroll-behavior: contain;
 }
 .lenis.lenis-stopped {
@@ -256,6 +261,33 @@ html[lang="hi"] [data-eyebrow] {
   }
 }
 
+/* Infinite Auto-Scroll Cities Marquee (pre-filled, zero initial gap) */
+@keyframes cities-marquee {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  100% {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+.cities-marquee {
+  display: flex;
+  width: max-content;
+  animation: cities-marquee 32s linear infinite;
+  will-change: transform;
+}
+
+.cities-marquee:hover {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cities-marquee {
+    animation-play-state: paused;
+  }
+}
+
 /* Rich blog body (CKEditor HTML, DOMPurify-sanitized at render) */
 .blog-rich {
   color: var(--color-ink-600);
@@ -377,5 +409,7 @@ html[lang="hi"] [data-eyebrow] {
   border: none;
   border-top: 1px solid var(--color-cream-300);
 }
+
+
 
 

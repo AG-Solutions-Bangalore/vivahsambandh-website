@@ -5,7 +5,7 @@
  */
 
 import type { RegistrationFormData } from '../../types'
-import { isCandidateUnderage } from './constants'
+import { isCandidateUnderage, minAgeForGender } from './constants'
 import {
   validateName,
   validateEmail,
@@ -77,12 +77,12 @@ export function validateRegistrationForm(
 
   if (!form.date_of_birth) {
     addError('date_of_birth', `${baseId}-dob`, 'Date of Birth', 'Date of birth is required')
-  } else if (isCandidateUnderage(form.date_of_birth)) {
+  } else if (isCandidateUnderage(form.date_of_birth, form.gender)) {
     addError(
       'date_of_birth',
       `${baseId}-dob`,
       'Date of Birth',
-      'Candidate must be at least 21 years old to register',
+      `Candidate must be at least ${minAgeForGender(form.gender)} years old to register`,
     )
   }
 
@@ -290,7 +290,7 @@ export function isRegistrationFormComplete(
   // Basic Details
   if (!validateName(form.name, 'Full Name', true, 2, 50).valid) return false
   if (!form.gender) return false
-  if (!form.date_of_birth || isCandidateUnderage(form.date_of_birth)) return false
+  if (!form.date_of_birth || isCandidateUnderage(form.date_of_birth, form.gender)) return false
   if (!form.time_of_birth) return false
   if (!validateCity(form.place_of_birth, 'Place of Birth', true).valid) return false
   if (!validateEmail(form.email, false, 'Email Address').valid) return false

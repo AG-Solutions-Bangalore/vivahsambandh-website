@@ -95,10 +95,10 @@ export function TimePicker({
   )
 
   return (
-    <div className="space-y-2" id={id}>
-      <div className="grid grid-cols-2 gap-2">
+    <div className="w-full h-8 space-y-1" id={id}>
+      <div className="grid grid-cols-[1fr_1fr_1.4fr] gap-1.5 items-center h-full">
         {/* Hour (1-12) */}
-        <div>
+        <div className="min-w-0 h-full">
           <label htmlFor={`${id}-hour`} className="sr-only">
             Hour
           </label>
@@ -109,11 +109,12 @@ export function TimePicker({
             options={hourOptions}
             placeholder="Hour"
             error={error}
+            className="h-full px-2"
           />
         </div>
 
         {/* Minute (00-59) */}
-        <div>
+        <div className="min-w-0 h-full">
           <label htmlFor={`${id}-min`} className="sr-only">
             Minute
           </label>
@@ -124,39 +125,52 @@ export function TimePicker({
             options={minuteOptions}
             placeholder="Min"
             error={error}
+            className="h-full px-2"
           />
         </div>
-      </div>
 
-      {/* AM / PM Segmented Toggle — full width so it never squeezes */}
-      <div
-        role="radiogroup"
-        aria-label="AM or PM"
-        className={cn(
-          'grid grid-cols-2 gap-1 rounded-xl border p-1 transition',
-          error
-            ? 'border-maroon-500 bg-maroon-50/30'
-            : 'border-cream-300 bg-cream-50/70',
-        )}
-      >
-        {(['AM', 'PM'] as const).map((p) => (
-          <button
-            key={p}
-            type="button"
-            role="radio"
-            aria-checked={period === p}
-            onClick={() => handlePeriodChange(p)}
-            className={cn(
-              'rounded-lg px-3 py-1.5 text-xs font-bold transition outline-none active:scale-[0.98]',
-              'focus-visible:ring-2 focus-visible:ring-gold-500/40',
-              period === p
-                ? 'bg-navy-900 text-white shadow-xs'
-                : 'text-navy-900 hover:bg-white hover:text-gold-700',
-            )}
-          >
-            {p}
-          </button>
-        ))}
+        {/* AM / PM Segmented Toggle — full width so it never squeezes */}
+        <div
+          role="radiogroup"
+          aria-label="AM or PM"
+          className={cn(
+            'relative h-full grid grid-cols-2 gap-1 rounded-full border p-1 transition',
+            error
+              ? 'border-maroon-500 bg-maroon-50/30'
+              : 'border-cream-300 bg-cream-50/70',
+          )}
+        >
+          {/* Gliding active pill — AM ⇄ PM */}
+          <span
+            aria-hidden="true"
+            className="pointer-events-none absolute top-1 bottom-1 left-1 rounded-full bg-navy-900 shadow-xs transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]"
+            style={{
+              width: 'calc((100% - 0.5rem - 0.25rem) / 2)',
+              transform:
+                period === 'PM'
+                  ? 'translateX(calc(100% + 0.25rem))'
+                  : 'translateX(0)',
+            }}
+          />
+          {(['AM', 'PM'] as const).map((p) => (
+            <button
+              key={p}
+              type="button"
+              role="radio"
+              aria-checked={period === p}
+              onClick={() => handlePeriodChange(p)}
+              className={cn(
+                'relative z-10 h-full w-full inline-flex items-center justify-center rounded-full px-2 py-1 text-xs font-bold cursor-pointer transition-colors duration-200 outline-none active:scale-[0.98]',
+                'focus-visible:ring-2 focus-visible:ring-gold-500/40',
+                period === p
+                  ? 'text-white'
+                  : 'text-navy-900 hover:text-gold-700',
+              )}
+            >
+              {p}
+            </button>
+          ))}
+        </div>
       </div>
     </div>
   )

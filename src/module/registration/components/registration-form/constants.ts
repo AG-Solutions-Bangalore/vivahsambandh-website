@@ -61,8 +61,13 @@ export const initialFormState: RegistrationFormData = {
   agree_terms: false,
 }
 
-// Calculate if candidate is under 21 years old
-export function isCandidateUnderage(dobStr: string): boolean {
+// Legal marriage age in India: 21 for grooms, 18 for brides.
+export function minAgeForGender(gender: string): number {
+  return gender === 'Female' ? 18 : 21
+}
+
+// Calculate if candidate is below the legal minimum age for their gender
+export function isCandidateUnderage(dobStr: string, gender: string): boolean {
   if (!dobStr) return false
   const parts = dobStr.split('-')
   if (parts.length !== 3) return false
@@ -78,5 +83,5 @@ export function isCandidateUnderage(dobStr: string): boolean {
   if (mDiff < 0 || (mDiff === 0 && today.getDate() < birthDate.getDate())) {
     age--
   }
-  return age < 21
+  return age < minAgeForGender(gender)
 }

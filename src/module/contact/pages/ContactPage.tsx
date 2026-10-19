@@ -2,14 +2,13 @@ import ContactHero from '../components/ContactHero'
 import InfoCards from '../components/InfoCards'
 import MessageForm from '../components/MessageForm'
 import OfficeVisit from '../components/OfficeVisit'
-import QuickAnswers from '../components/QuickAnswers'
 import ContactCta from '../components/ContactCta'
 import PageParallax from '../../../components/motion/PageParallax'
 import { TestimonialSection } from '../../testimonial'
 import { FaqSection } from '../../faq'
 
 /**
- * Contact Us page — hero → channel cards → form + office/answers →
+ * Contact Us page — hero → channel cards → form + office →
  * testimonials → FAQs → closing CTA.
  */
 export default function ContactPage() {
@@ -20,9 +19,7 @@ export default function ContactPage() {
       <InfoCards />
       <section className="relative bg-cream-50 pb-10 sm:pb-12">
         <div className="section-pad">
-          {/* Row 1: form + office side by side (naturally similar height).
-              Row 2: answers full-width in two columns — nothing stretches
-              into whitespace. */}
+          {/* Form + office side by side */}
           <div className="grid items-stretch gap-5 sm:gap-6 lg:grid-cols-12">
             <div className="lg:col-span-7">
               <MessageForm />
@@ -30,9 +27,6 @@ export default function ContactPage() {
             <div className="lg:col-span-5">
               <OfficeVisit />
             </div>
-          </div>
-          <div className="mt-5 sm:mt-6">
-            <QuickAnswers />
           </div>
         </div>
       </section>

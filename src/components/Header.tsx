@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, lazy, Suspense } from 'react'
 import { useTranslation } from 'react-i18next'
-import { COMPANY } from '../constants/company'
+import { useCompanyDetails } from '../module/company'
 import LanguageSwitcher from './LanguageSwitcher'
 import { ensureMotion, prefersReducedMotion } from '../lib/gsap-setup'
 import { Link, useLocation } from 'react-router-dom'
@@ -12,7 +12,7 @@ const MobileDrawer = lazy(() => import('./MobileDrawer'))
 
 function LotusMark() {
   return (
-    <svg viewBox="0 0 32 32" className="h-8 w-8 text-gold-600" aria-hidden="true">
+    <svg viewBox="0 0 32 32" className="h-8 w-8 shrink-0 text-gold-600" aria-hidden="true">
       <path
         fill="currentColor"
         d="M16 3c2.5 3.2 4 6.4 4 9.2 2.8-.6 5.4-.4 8 .8-2.2 1.4-4.7 2-7.4 1.9 1.5 1.2 2.6 2.9 3.1 5-2.6.7-5.3.5-7.7-.5-2.4 1-5.1 1.2-7.7.5.5-2.1 1.6-3.8 3.1-5-2.7.1-5.2-.5-7.4-1.9 2.6-1.2 5.2-1.4 8-.8 0-2.8 1.5-6 4-9.2z"
@@ -24,6 +24,7 @@ function LotusMark() {
 
 export default function Header() {
   const { t, i18n } = useTranslation()
+  const company = useCompanyDetails()
   const [open, setOpen] = useState(false)
   const headerRef = useRef<HTMLElement | null>(null)
 
@@ -149,22 +150,22 @@ export default function Header() {
       data-drawer-open="false"
       className="sticky top-0 z-50 border-b border-gold-500/25 bg-cream-50/90 backdrop-blur will-change-transform"
     >
-      <div className="section-pad flex h-16 items-center justify-between gap-3">
+      <div className="section-pad flex h-16 items-center justify-between gap-2 sm:gap-3">
         {/* Brand Logo */}
-        <Link to={brandHref} title={COMPANY.name} className="flex items-center gap-2 transition hover:opacity-95">
+        <Link to={brandHref} title={company.name} className="flex min-w-0 items-center gap-2 transition hover:opacity-95">
           <LotusMark />
-          <span className="leading-none">
-            <span className="font-display block text-lg font-bold text-navy-900 sm:text-xl">
-              {COMPANY.name}
+          <span className="min-w-0 leading-none">
+            <span className="font-display block truncate text-base font-bold text-navy-900 sm:text-xl">
+              {company.name}
             </span>
-            <span className="block text-[9px] font-semibold uppercase tracking-[0.24em] text-gold-700 sm:text-[10px]">
+            <span className="block truncate text-[9px] font-semibold uppercase tracking-[0.24em] text-gold-700 sm:text-[10px]">
               {t('meta.tagline')}
             </span>
           </span>
         </Link>
 
         {/* Desktop Navigation Links */}
-        <nav className="hidden items-center gap-5 text-sm font-medium text-navy-900/80 lg:flex" aria-label="Primary">
+        <nav className="hidden items-center gap-3 text-sm font-medium text-navy-900/80 lg:flex xl:gap-5" aria-label="Primary">
           {navItems.map((item) => (
             <Link
               key={item.key}
@@ -181,16 +182,9 @@ export default function Header() {
           ))}
         </nav>
 
-        {/* Right Controls: Language Switcher, Login, Create Profile */}
+        {/* Right Controls: Language Switcher, Create Profile */}
         <div className="hidden items-center gap-2.5 lg:flex">
           <LanguageSwitcher />
-          <a
-            href="#login"
-            title={t('header.login')}
-            className="rounded-full px-3.5 py-2 text-sm font-semibold text-navy-900 transition hover:bg-gold-100"
-          >
-            {t('header.login')}
-          </a>
           <Link
             to={lang === 'hi' ? '/hi/registration' : '/registration'}
             title={t('header.createProfile')}
@@ -201,7 +195,7 @@ export default function Header() {
         </div>
 
         {/* Mobile Menu Button & Language Switcher */}
-        <div className="flex items-center gap-2 lg:hidden">
+        <div className="flex shrink-0 items-center gap-1.5 sm:gap-2 lg:hidden">
           <LanguageSwitcher compact />
           <button
             type="button"

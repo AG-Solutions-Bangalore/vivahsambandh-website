@@ -25,15 +25,15 @@ interface DatePickerProps {
   error?: boolean
   disabled?: boolean
   placeholder?: string
+  /** Legal minimum age in years (18 for brides, 21 for grooms). Defaults to 21. */
+  minAge?: number
 }
 
 const NOW = new Date()
 const CURRENT_YEAR = NOW.getFullYear()
 const CURRENT_MONTH = NOW.getMonth()
 const CURRENT_DAY = NOW.getDate()
-const MAX_YEAR = CURRENT_YEAR - 21
 const START_MONTH = new Date(1950, 0, 1)
-const END_MONTH = new Date(MAX_YEAR, 11, 31)
 
 function getAgeFromDateStr(val: string): number | null {
   if (!val) return null
@@ -58,6 +58,7 @@ export function DatePicker({
   error = false,
   disabled = false,
   placeholder = "Select Date of Birth",
+  minAge = 21,
 }: DatePickerProps) {
   const [open, setOpen] = React.useState(false)
 
@@ -69,7 +70,7 @@ export function DatePicker({
   }, [value])
 
   const age = getAgeFromDateStr(value)
-  const isUnderage = age !== null && age < 21
+  const isUnderage = age !== null && age < minAge
 
   const handleSelect = (selectedDate: Date | undefined) => {
     if (selectedDate) {
@@ -88,7 +89,7 @@ export function DatePicker({
           id={id}
           disabled={disabled}
           className={cn(
-            'flex h-8 w-full items-center justify-between rounded-xl border px-3.5 text-xs sm:text-sm text-left transition outline-none select-none focus-visible:ring-2',
+            'flex h-8 w-full items-center justify-between rounded-full border px-3.5 text-xs sm:text-sm text-left transition duration-200 outline-none select-none cursor-pointer focus-visible:ring-2',
             error || isUnderage
               ? "border-maroon-500 bg-maroon-50/30 text-navy-900 focus:border-maroon-600 focus:ring-maroon-500/20"
               : "border-cream-300 bg-cream-50/70 text-navy-900 focus:border-gold-500 focus:bg-white focus:ring-gold-500/20",
@@ -120,16 +121,16 @@ export function DatePicker({
             mode="single"
             captionLayout="dropdown"
             startMonth={START_MONTH}
-            endMonth={END_MONTH}
+            endMonth={NOW}
             selected={parsedDate}
             onSelect={handleSelect}
-            defaultMonth={parsedDate || new Date(MAX_YEAR - 4, 0, 1)}
-            disabled={(d) => d > END_MONTH || d < START_MONTH}
+            defaultMonth={parsedDate || new Date(CURRENT_YEAR - 25, 0, 1)}
+            disabled={(d) => d > NOW || d < START_MONTH}
             className="rounded-xl border border-cream-200 p-3"
           />
           {isUnderage && (
             <div className="mt-2 rounded-lg bg-maroon-50 p-2 text-center text-xs font-semibold text-maroon-700">
-              Candidate must be at least 21 years old
+              Candidate must be at least {minAge} years old
             </div>
           )}
         </PopoverContent>

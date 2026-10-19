@@ -1,4 +1,4 @@
-import { COMPANY } from '../constants/company';
+import { COMPANY } from "../constants/company";
 
 /**
  * Single source of truth for company constants and multi-language SEO metadata.
@@ -10,33 +10,34 @@ export const COMPANY_CONFIG = {
   legalName: COMPANY.legalName,
 
   taglines: {
-    en: 'Tradition Meets New Beginnings',
-    hi: 'परंपरा से जुड़ें, नए रिश्तों की शुरुआत',
+    en: "Tradition Meets New Beginnings",
+    hi: "परंपरा से जुड़ें, नए रिश्तों की शुरुआत",
   },
 
   titles: {
-    en: 'VivahSambandh — Premium Agarwal Matrimony | Tradition Meets New Beginnings',
-    hi: 'विवाहसंबंध — विश्वसनीय अग्रवाल वैवाहिक मंच | परंपरा से जुड़ें',
+    en: "VivahSambandh — Premium Agarwal Matrimony | Tradition Meets New Beginnings",
+    hi: "विवाहसंबंध — विश्वसनीय अग्रवाल वैवाहिक मंच | परंपरा से जुड़ें",
   },
 
   descriptions: {
-    en: 'VivahSambandh is India’s trusted premium Agarwal matrimonial platform connecting verified families with shared traditions, Gotra compatibility, and values for lifelong relationships.',
-    hi: 'विवाहसंबंध अग्रवाल परिवारों के लिए एक विश्वसनीय वैवाहिक मंच है, जो साझा संस्कारों, मूल्यों और परंपराओं के साथ जीवनसाथी खोजने में आपकी सहायता करता है।',
+    en: "VivahSambandh is India’s trusted premium Community platform connecting verified families with shared traditions, Gotra compatibility, and values for lifelong relationships.",
+    hi: "विवाहसंबंध अग्रवाल परिवारों के लिए एक विश्वसनीय वैवाहिक मंच है, जो साझा संस्कारों, मूल्यों और परंपराओं के साथ जीवनसाथी खोजने में आपकी सहायता करता है।",
   },
 
   keywords: {
-    en: 'Agarwal matrimony, Agarwal matrimonial, VivahSambandh, Agarwal shaadi, Agarwal brides, Agarwal grooms, Bansal gotra, Mittal gotra, Jindal gotra, Agarwal marriage bureau, premium matrimony India',
-    hi: 'अग्रवाल मैट्रिमोनी, विवाहसंबंध, अग्रवाल शादी, अग्रवाल रिश्ते, बंसल गोत्र, मित्तल गोत्र, जिंदल गोत्र, अग्रवाल वैवाहिक मंच',
+    en: "Agarwal matrimony, Community, VivahSambandh, Agarwal shaadi, Agarwal brides, Agarwal grooms, Bansal gotra, Mittal gotra, Jindal gotra, Agarwal marriage bureau, premium matrimony India",
+    hi: "अग्रवाल मैट्रिमोनी, विवाहसंबंध, अग्रवाल शादी, अग्रवाल रिश्ते, बंसल गोत्र, मित्तल गोत्र, जिंदल गोत्र, अग्रवाल वैवाहिक मंच",
   },
 
-  siteOrigin: 'https://vivahsambandh.com',
-  canonicalUrl: 'https://vivahsambandh.com/',
-  logo: 'https://vivahsambandh.com/crmapi/public/assets/images/web_images/common/Temple_Skyline_Divider_footer_image.webp',
-  ogImage: 'https://vivahsambandh.com/images/home/home_banner_image.webp',
+  siteOrigin: "https://vivahsambandh.com",
+  canonicalUrl: "https://vivahsambandh.com/",
+  logo: "https://vivahsambandh.com/crmapi/public/assets/images/web_images/common/Temple_Skyline_Divider_footer_image.webp",
+  ogImage: "https://vivahsambandh.com/images/home/home_banner_image.webp",
 
   author: COMPANY.name,
   publisher: COMPANY.name,
-  robots: 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1',
+  robots:
+    "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1",
 
   supportEmail: COMPANY.supportEmail,
   supportPhone: COMPANY.supportPhoneDisplay,
@@ -52,188 +53,216 @@ export const COMPANY_CONFIG = {
   ],
 
   community: COMPANY.community,
-  priceRange: '₹₹',
+  priceRange: "₹₹",
 
   faqs: {
     en: [
       {
-        question: 'Is my information secure on VivahSambandh?',
+        question: "Is my information secure on VivahSambandh?",
         answer:
-          'Yes. We use strict verification, privacy controls and secure communication to protect every member and family.',
+          "Yes. We use strict verification, privacy controls and secure communication to protect every member and family.",
       },
       {
-        question: 'Can I search by Agarwal gotra or city?',
+        question: "Can I search by Agarwal gotra or city?",
         answer:
-          'Yes. Browse verified matches across all 18 Agarwal Gotras (Bansal, Mittal, Jindal, Singhal, etc.), cities, professions, and education.',
+          "Yes. Browse verified matches across all 18 Agarwal Gotras (Bansal, Mittal, Jindal, Singhal, etc.), cities, professions, and education.",
       },
       {
-        question: 'Are profiles on VivahSambandh verified?',
+        question: "Are profiles on VivahSambandh verified?",
         answer:
-          'Every profile passes strict screening plus optional official ID and family background verification before going live.',
+          "Every profile passes strict screening plus optional official ID and family background verification before going live.",
       },
       {
-        question: 'How does the matching process work?',
+        question: "How does the matching process work?",
         answer:
-          'Create your profile, set your partner preferences, receive curated Agarwal matches with Kundali compatibility, and connect directly with families.',
+          "Create your profile, set your partner preferences, receive curated Agarwal matches with Kundali compatibility, and connect directly with families.",
       },
     ],
     hi: [
       {
-        question: 'क्या विवाहसंबंध पर मेरी जानकारी सुरक्षित है?',
+        question: "क्या विवाहसंबंध पर मेरी जानकारी सुरक्षित है?",
         answer:
-          'हाँ, हम हर सदस्य की सुरक्षा के लिए कड़े सत्यापन, गोपनीयता नियंत्रण और सुरक्षित संचार का उपयोग करते हैं।',
+          "हाँ, हम हर सदस्य की सुरक्षा के लिए कड़े सत्यापन, गोपनीयता नियंत्रण और सुरक्षित संचार का उपयोग करते हैं।",
       },
       {
-        question: 'क्या मैं गोत्र या शहर के अनुसार जीवनसाथी खोज सकता हूँ?',
+        question: "क्या मैं गोत्र या शहर के अनुसार जीवनसाथी खोज सकता हूँ?",
         answer:
-          'हाँ, आप शहर, सभी 18 अग्रवाल गोत्र, व्यवसाय, शिक्षा और कई अन्य फ़िल्टर के आधार पर प्रोफाइल देख सकते हैं।',
+          "हाँ, आप शहर, सभी 18 अग्रवाल गोत्र, व्यवसाय, शिक्षा और कई अन्य फ़िल्टर के आधार पर प्रोफाइल देख सकते हैं।",
       },
       {
-        question: 'क्या विवाहसंबंध पर सभी प्रोफाइल सत्यापित हैं?',
+        question: "क्या विवाहसंबंध पर सभी प्रोफाइल सत्यापित हैं?",
         answer:
-          'हर प्रोफाइल लाइव होने से पहले सख्त जांच और पहचान सत्यापन से गुजरती है।',
+          "हर प्रोफाइल लाइव होने से पहले सख्त जांच और पहचान सत्यापन से गुजरती है।",
       },
       {
-        question: 'रिश्ता खोजने की प्रक्रिया कैसे काम करती है?',
+        question: "रिश्ता खोजने की प्रक्रिया कैसे काम करती है?",
         answer:
-          'अपनी प्रोफाइल बनाएं, प्राथमिकताएं चुनें, उपयुक्त रिश्ते देखें और परिवारों से सीधे संपर्क करें।',
+          "अपनी प्रोफाइल बनाएं, प्राथमिकताएं चुनें, उपयुक्त रिश्ते देखें और परिवारों से सीधे संपर्क करें।",
       },
     ],
   },
 } as const;
 
 export type CompanyConfig = typeof COMPANY_CONFIG;
-export type SupportedLang = 'en' | 'hi';
-export const SUPPORTED_LANGS: readonly SupportedLang[] = ['en', 'hi'] as const;
-export const SUPPORTED_SSG_ROUTES = ['/', '/hi'] as const;
+export type SupportedLang = "en" | "hi";
+export const SUPPORTED_LANGS: readonly SupportedLang[] = ["en", "hi"] as const;
+export const SUPPORTED_SSG_ROUTES = ["/", "/hi"] as const;
 
 /** Standalone pages that carry their own SEO metadata. */
 export type PageKey =
-  | 'home'
-  | 'about'
-  | 'stories'
-  | 'membership'
-  | 'contact'
-  | 'blogs'
-  | 'privacy'
-  | 'terms'
-  | 'guidelines'
-  | 'help-center'
-  | 'registration';
+  | "home"
+  | "about"
+  | "stories"
+  | "membership"
+  | "contact"
+  | "blogs"
+  | "privacy"
+  | "terms"
+  | "guidelines"
+  | "help-center"
+  | "registration"
+  | "download"
+  | "admin-register";
 
 /**
  * Per-page SEO metadata (both languages). Home entries intentionally mirror
  * COMPANY_CONFIG.titles/descriptions above — single source stays here.
  */
-export const PAGE_SEO: Record<PageKey, { titles: Record<SupportedLang, string>; descriptions: Record<SupportedLang, string> }> = {
+export const PAGE_SEO: Record<
+  PageKey,
+  {
+    titles: Record<SupportedLang, string>;
+    descriptions: Record<SupportedLang, string>;
+  }
+> = {
   home: {
     titles: {
-      en: 'VivahSambandh — Premium Agarwal Matrimony | Tradition Meets New Beginnings',
-      hi: 'विवाहसंबंध — विश्वसनीय अग्रवाल वैवाहिक मंच | परंपरा से जुड़ें',
+      en: "VivahSambandh — Premium Agarwal Matrimony | Tradition Meets New Beginnings",
+      hi: "विवाहसंबंध — विश्वसनीय अग्रवाल वैवाहिक मंच | परंपरा से जुड़ें",
     },
     descriptions: {
-      en: 'VivahSambandh is India’s trusted premium Agarwal matrimonial platform connecting verified families with shared traditions, Gotra compatibility, and values for lifelong relationships.',
-      hi: 'विवाहसंबंध अग्रवाल परिवारों के लिए एक विश्वसनीय वैवाहिक मंच है, जो साझा संस्कारों, मूल्यों और परंपराओं के साथ जीवनसाथी खोजने में आपकी सहायता करता है।',
+      en: "VivahSambandh is India’s trusted premium Community platform connecting verified families with shared traditions, Gotra compatibility, and values for lifelong relationships.",
+      hi: "विवाहसंबंध अग्रवाल परिवारों के लिए एक विश्वसनीय वैवाहिक मंच है, जो साझा संस्कारों, मूल्यों और परंपराओं के साथ जीवनसाथी खोजने में आपकी सहायता करता है।",
     },
   },
   about: {
     titles: {
-      en: 'About Us — VivahSambandh | Trusted Agarwal Matrimony Platform',
-      hi: 'हमारे बारे में — विवाहसंबंध | विश्वसनीय अग्रवाल वैवाहिक मंच',
+      en: "About Us — VivahSambandh | Trusted Agarwal Matrimony Platform",
+      hi: "हमारे बारे में — विवाहसंबंध | विश्वसनीय अग्रवाल वैवाहिक मंच",
     },
     descriptions: {
-      en: 'Learn about VivahSambandh — India’s trusted Agarwal matrimonial platform built on tradition, strict verification and family values to help families find their perfect match.',
-      hi: 'विवाहसंबंध के बारे में जानें — परंपरा, कड़े सत्यापन और पारिवारिक मूल्यों पर आधारित अग्रवाल परिवारों के लिए विश्वसनीय वैवाहिक मंच।',
+      en: "Learn about VivahSambandh — India’s trusted Community platform built on tradition, strict verification and family values to help families find their perfect match.",
+      hi: "विवाहसंबंध के बारे में जानें — परंपरा, कड़े सत्यापन और पारिवारिक मूल्यों पर आधारित अग्रवाल परिवारों के लिए विश्वसनीय वैवाहिक मंच।",
     },
   },
   stories: {
     titles: {
-      en: 'Success Stories — VivahSambandh | Agarwal Matrimony Weddings',
-      hi: 'सफलता की कहानियां — विवाहसंबंध | सफल अग्रवाल विवाह',
+      en: "Success Stories — VivahSambandh | Agarwal Matrimony Weddings",
+      hi: "सफलता की कहानियां — विवाहसंबंध | सफल अग्रवाल विवाह",
     },
     descriptions: {
-      en: 'Read inspiring wedding stories of 500+ Agarwal couples who found their life partner through VivahSambandh with shared values and family trust.',
-      hi: 'विवाहसंबंध के माध्यम से जुड़े 500+ अग्रवाल दंपत्तियों की सुखद विवाह गाथाएं पढ़ें और अपनी शादी की कहानी साझा करें।',
+      en: "Read inspiring wedding stories of 500+ Agarwal couples who found their life partner through VivahSambandh with shared values and family trust.",
+      hi: "विवाहसंबंध के माध्यम से जुड़े 500+ अग्रवाल दंपत्तियों की सुखद विवाह गाथाएं पढ़ें और अपनी शादी की कहानी साझा करें।",
     },
   },
   membership: {
     titles: {
-      en: 'Membership Plans — VivahSambandh | Premium Agarwal Matrimony',
-      hi: 'सदस्यता योजनाएं — विवाहसंबंध | पारदर्शी एवं भरोसेमंद प्लान',
+      en: "Membership Plans — VivahSambandh | Premium Agarwal Matrimony",
+      hi: "सदस्यता योजनाएं — विवाहसंबंध | पारदर्शी एवं भरोसेमंद प्लान",
     },
     descriptions: {
-      en: 'Explore transparent membership plans for Agarwal families. Verified profile access, Kundali matching, and dedicated matchmaker guidance.',
-      hi: 'अग्रवाल परिवारों के लिए पारदर्शी सदस्यता योजनाएं देखें — सत्यापित प्रोफाइल, कुंडली मिलान और व्यक्तिगत परामर्शदाता सहायता।',
+      en: "Explore transparent membership plans for Agarwal,Jain,Khandelwal,Maheshwari. Verified profile access, Kundali matching, and dedicated matchmaker guidance.",
+      hi: "अग्रवाल परिवारों के लिए पारदर्शी सदस्यता योजनाएं देखें — सत्यापित प्रोफाइल, कुंडली मिलान और व्यक्तिगत परामर्शदाता सहायता।",
     },
   },
   contact: {
     titles: {
-      en: 'Contact Us — VivahSambandh | Agarwal Matrimony Support',
-      hi: 'संपर्क करें — विवाहसंबंध | अग्रवाल मैट्रिमोनी सहायता',
+      en: "Contact Us — VivahSambandh | Agarwal Matrimony Support",
+      hi: "संपर्क करें — विवाहसंबंध | अग्रवाल मैट्रिमोनी सहायता",
     },
     descriptions: {
-      en: 'Have a question or need support? Contact the VivahSambandh team by phone, email or visit our office — we reply within 24 hours.',
-      hi: 'कोई प्रश्न है या सहायता चाहिए? फोन, ईमेल द्वारा विवाहसंबंध टीम से संपर्क करें या हमारे कार्यालय पधारें — हम 24 घंटों के भीतर उत्तर देते हैं।',
+      en: "Have a question or need support? Contact the VivahSambandh team by phone, email or visit our office — we reply within 24 hours.",
+      hi: "कोई प्रश्न है या सहायता चाहिए? फोन, ईमेल द्वारा विवाहसंबंध टीम से संपर्क करें या हमारे कार्यालय पधारें — हम 24 घंटों के भीतर उत्तर देते हैं।",
     },
   },
   blogs: {
     titles: {
-      en: 'Blogs — VivahSambandh | Relationship Guides & Community Stories',
-      hi: 'ब्लॉग — विवाहसंबंध | रिश्तों की जानकारियां और सामुदायिक कहानियां',
+      en: "Blogs — VivahSambandh | Relationship Guides & Community Stories",
+      hi: "ब्लॉग — विवाहसंबंध | रिश्तों की जानकारियां और सामुदायिक कहानियां",
     },
     descriptions: {
-      en: 'Browse every VivahSambandh article — relationship guidance, wedding tips and Agarwal community updates.',
-      hi: 'विवाहसंबंध के सभी लेख देखें — रिश्तों का मार्गदर्शन, शादी के टिप्स और अग्रवाल सामुदायिक अपडेट।',
+      en: "Browse every VivahSambandh article — relationship guidance, wedding tips and Community updates.",
+      hi: "विवाहसंबंध के सभी लेख देखें — रिश्तों का मार्गदर्शन, शादी के टिप्स और अग्रवाल सामुदायिक अपडेट।",
     },
   },
   privacy: {
     titles: {
-      en: 'Privacy Policy — VivahSambandh | How We Protect Your Data',
-      hi: 'गोपनीयता नीति — विवाहसंबंध | आपका डेटा कैसे सुरक्षित है',
+      en: "Privacy Policy — VivahSambandh | How We Protect Your Data",
+      hi: "गोपनीयता नीति — विवाहसंबंध | आपका डेटा कैसे सुरक्षित है",
     },
     descriptions: {
-      en: 'Read the VivahSambandh privacy policy — what information we collect, how we use it and the choices you have.',
-      hi: 'विवाहसंबंध गोपनीयता नीति पढ़ें — हम कौन सी जानकारी लेते हैं, उसका उपयोग कैसे होता है और आपके विकल्प।',
+      en: "Read the VivahSambandh privacy policy — what information we collect, how we use it and the choices you have.",
+      hi: "विवाहसंबंध गोपनीयता नीति पढ़ें — हम कौन सी जानकारी लेते हैं, उसका उपयोग कैसे होता है और आपके विकल्प।",
     },
   },
   terms: {
     titles: {
-      en: 'Terms & Conditions — VivahSambandh | Terms of Use',
-      hi: 'नियम व शर्तें — विवाहसंबंध | उपयोग की शर्तें',
+      en: "Terms & Conditions — VivahSambandh | Terms of Use",
+      hi: "नियम व शर्तें — विवाहसंबंध | उपयोग की शर्तें",
     },
     descriptions: {
-      en: 'Read the VivahSambandh terms of use — eligibility, verification, acceptable use and membership terms.',
-      hi: 'विवाहसंबंध उपयोग की शर्तें पढ़ें — पात्रता, सत्यापन, स्वीकार्य उपयोग व सदस्यता नियम।',
+      en: "Read the VivahSambandh terms of use — eligibility, verification, acceptable use and membership terms.",
+      hi: "विवाहसंबंध उपयोग की शर्तें पढ़ें — पात्रता, सत्यापन, स्वीकार्य उपयोग व सदस्यता नियम।",
     },
   },
   guidelines: {
     titles: {
-      en: 'Community Guidelines — VivahSambandh | A Respectful Community',
-      hi: 'समुदाय दिशानिर्देश — विवाहसंबंध | सम्मानजनक समुदाय',
+      en: "Community Guidelines — VivahSambandh | A Respectful Community",
+      hi: "समुदाय दिशानिर्देश — विवाहसंबंध | सम्मानजनक समुदाय",
     },
     descriptions: {
-      en: 'VivahSambandh community guidelines — genuine profiles, respectful communication and staying safe.',
-      hi: 'विवाहसंबंध समुदाय दिशानिर्देश — वास्तविक प्रोफाइल, सम्मानजनक संवाद और सुरक्षा।',
+      en: "VivahSambandh community guidelines — genuine profiles, respectful communication and staying safe.",
+      hi: "विवाहसंबंध समुदाय दिशानिर्देश — वास्तविक प्रोफाइल, सम्मानजनक संवाद और सुरक्षा।",
     },
   },
-  'help-center': {
+  "help-center": {
     titles: {
-      en: 'Help Center — VivahSambandh | Support & FAQs',
-      hi: 'हेल्प सेंटर — विवाहसंबंध | सहायता व प्रश्न',
+      en: "Help Center — VivahSambandh | Support & FAQs",
+      hi: "हेल्प सेंटर — विवाहसंबंध | सहायता व प्रश्न",
     },
     descriptions: {
-      en: 'VivahSambandh help center — profile help, match search, membership, safety and how to reach our team.',
-      hi: 'विवाहसंबंध हेल्प सेंटर — प्रोफाइल सहायता, रिश्ता खोज, सदस्यता, सुरक्षा व टीम से संपर्क।',
+      en: "VivahSambandh help center — profile help, match search, membership, safety and how to reach our team.",
+      hi: "विवाहसंबंध हेल्प सेंटर — प्रोफाइल सहायता, रिश्ता खोज, सदस्यता, सुरक्षा व टीम से संपर्क।",
     },
   },
   registration: {
     titles: {
-      en: 'Bio-Data Registration — VivahSambandh Matrimony | Register Your Profile',
-      hi: 'विवाह संबंध पंजीकरण — बायोडाटा रजिस्टर करें | विवाहसंबंध मैट्रिमोनी',
+      en: "Bio-Data Registration — VivahSambandh Matrimony | Register Your Profile",
+      hi: "विवाह संबंध पंजीकरण — बायोडाटा रजिस्टर करें | विवाहसंबंध मैट्रिमोनी",
     },
     descriptions: {
-      en: 'Register your verified bio-data on VivahSambandh. Trusted matrimony matchmaking for Agarwal, Jain, Khandelwal, and Maheshwari communities.',
-      hi: 'विवाह संबंध में अपना सत्यापित बायोडाटा पंजीकृत करें। अग्रवाल, जैन, खंडेलवाल और माहेश्वरी समाज के लिए विश्वसनीय वैवाहिक मंच।',
+      en: "Register your verified bio-data on VivahSambandh. Trusted matrimony matchmaking for Agarwal, Jain, Khandelwal, and Maheshwari communities.",
+      hi: "विवाह संबंध में अपना सत्यापित बायोडाटा पंजीकृत करें। अग्रवाल, जैन, खंडेलवाल और माहेश्वरी समाज के लिए विश्वसनीय वैवाहिक मंच।",
+    },
+  },
+  download: {
+    titles: {
+      en: "Download VivahSambandh App — Premium Matrimony on Android & iOS",
+      hi: "विवाहसंबंध ऐप डाउनलोड करें — Android व iOS पर विश्वसनीय मैट्रिमोनी",
+    },
+    descriptions: {
+      en: "Download the VivahSambandh mobile app for Android and iOS. Connect with verified matches, receive instant alerts, and find your life partner on the go.",
+      hi: "Android और iOS के लिए विवाहसंबंध मोबाइल ऐप डाउनलोड करें। सत्यापित रिश्ते खोजें, तुरंत सूचनाएं पाएं और कहीं भी जीवनसाथी से जुड़ें।",
+    },
+  },
+  "admin-register": {
+    titles: {
+      en: "Admin Registration — VivahSambandh Matrimony Portal",
+      hi: "एडमिन पंजीकरण — विवाहसंबंध मैट्रिमोनी पोर्टल",
+    },
+    descriptions: {
+      en: "Administrative registration portal for VivahSambandh community coordinators and verified managers.",
+      hi: "विवाहसंबंध समुदाय समन्वयकों और प्रबंधकों के लिए प्रशासनिक पंजीकरण पोर्टल।",
     },
   },
 };
@@ -242,31 +271,39 @@ export const PAGE_SEO: Record<PageKey, { titles: Record<SupportedLang, string>; 
  * Maps any app pathname to its SEO page key. Language prefixes, casing
  * and trailing slashes are normalized — unknown paths fall back to home.
  */
-export function resolvePageKey(pathname = '/'): PageKey {
-  const clean = pathname.toLowerCase().replace(/\/+$/, '');
-  const withoutLang = clean === '/hi' ? '' : clean.replace(/^\/hi(?=\/|$)/, '');
-  if (withoutLang === '/about') return 'about';
-  if (withoutLang === '/stories' || withoutLang === '/success-stories') return 'stories';
-  if (withoutLang === '/membership') return 'membership';
-  if (withoutLang === '/contact') return 'contact';
-  if (withoutLang === '/blogs' || withoutLang.startsWith('/blogs/')) return 'blogs';
-  if (withoutLang === '/privacy') return 'privacy';
-  if (withoutLang === '/terms') return 'terms';
-  if (withoutLang === '/guidelines') return 'guidelines';
-  if (withoutLang === '/help-center') return 'help-center';
-  if (withoutLang === '/registration') return 'registration';
-  return 'home';
+export function resolvePageKey(pathname = "/"): PageKey {
+  const clean = pathname.toLowerCase().replace(/\/+$/, "");
+  const withoutLang = clean === "/hi" ? "" : clean.replace(/^\/hi(?=\/|$)/, "");
+  if (withoutLang === "/about") return "about";
+  if (withoutLang === "/stories" || withoutLang === "/success-stories")
+    return "stories";
+  if (withoutLang === "/membership") return "membership";
+  if (withoutLang === "/contact") return "contact";
+  if (withoutLang === "/blogs" || withoutLang.startsWith("/blogs/"))
+    return "blogs";
+  if (withoutLang === "/privacy") return "privacy";
+  if (withoutLang === "/terms") return "terms";
+  if (withoutLang === "/guidelines") return "guidelines";
+  if (withoutLang === "/help-center") return "help-center";
+  if (withoutLang === "/registration" || withoutLang === "/register")
+    return "registration";
+  if (withoutLang === "/download") return "download";
+  if (withoutLang === "/admin-register") return "admin-register";
+  return "home";
 }
 
 /** Absolute app path of a page in a language ('/about' / '/hi/about'). */
 export function getPagePath(page: PageKey, lang: SupportedLang): string {
-  const base = page === 'home' ? '' : `/${page}`;
-  return lang === 'hi' ? `/hi${base}` : base || '/';
+  const base = page === "home" ? "" : `/${page}`;
+  return lang === "hi" ? `/hi${base}` : base || "/";
 }
 
-export const LANG_METADATA: Record<SupportedLang, { label: string; nativeName: string; locale: string }> = {
-  en: { label: 'English', nativeName: 'English', locale: 'en_IN' },
-  hi: { label: 'Hindi', nativeName: 'हिन्दी', locale: 'hi_IN' },
+export const LANG_METADATA: Record<
+  SupportedLang,
+  { label: string; nativeName: string; locale: string }
+> = {
+  en: { label: "English", nativeName: "English", locale: "en_IN" },
+  hi: { label: "Hindi", nativeName: "हिन्दी", locale: "hi_IN" },
 };
 
 export const SITE_NAME = COMPANY_CONFIG.name;
@@ -279,13 +316,19 @@ export const SITE_LOGO = COMPANY_CONFIG.logo;
  * Page path is always preserved (including under the `/hi` prefix), so every
  * prerendered route and every client navigation resolves its own canonical.
  */
-export function getCanonicalUrl(pathname = '', lang: SupportedLang = 'en'): string {
-  const lower = pathname.toLowerCase().replace(/\/+$/, '');
-  const isHiPath = lower === '/hi' || lower.startsWith('/hi/');
-  const hi = lang === 'hi' || isHiPath;
-  const withoutLang = isHiPath ? lower.replace(/^\/hi(?=\/|$)/, '') : lower;
-  const page = withoutLang.replace(/^\/+/, '');
-  if (!page) return hi ? `${COMPANY_CONFIG.siteOrigin}/hi` : `${COMPANY_CONFIG.siteOrigin}/`;
+export function getCanonicalUrl(
+  pathname = "",
+  lang: SupportedLang = "en",
+): string {
+  const lower = pathname.toLowerCase().replace(/\/+$/, "");
+  const isHiPath = lower === "/hi" || lower.startsWith("/hi/");
+  const hi = lang === "hi" || isHiPath;
+  const withoutLang = isHiPath ? lower.replace(/^\/hi(?=\/|$)/, "") : lower;
+  const page = withoutLang.replace(/^\/+/, "");
+  if (!page)
+    return hi
+      ? `${COMPANY_CONFIG.siteOrigin}/hi`
+      : `${COMPANY_CONFIG.siteOrigin}/`;
   return hi
     ? `${COMPANY_CONFIG.siteOrigin}/hi/${page}`
     : `${COMPANY_CONFIG.siteOrigin}/${page}`;

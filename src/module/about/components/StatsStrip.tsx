@@ -8,10 +8,8 @@ function StatIcon({ index }: { index: number }) {
     case 0:
       return (
         <svg viewBox="0 0 24 24" className={cls} fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
-          <circle cx="9" cy="8" r="3" />
-          <path d="M3.5 19c0-2.6 2.4-4.2 5.5-4.2s5.5 1.6 5.5 4.2" strokeLinecap="round" />
-          <circle cx="17" cy="9" r="2.4" />
-          <path d="M15.5 14.6c2.9.2 5 1.7 5 4" strokeLinecap="round" />
+          <path d="M12 2l7 3v6c0 5-3.5 9.5-7 11-3.5-1.5-7-6-7-11V5l7-3z" strokeLinejoin="round" />
+          <path d="M12 9v3M12 15h.01" strokeLinecap="round" strokeWidth="2" />
         </svg>
       )
     case 1:

@@ -29,6 +29,17 @@ export interface ApiResponse<T> {
   message?: string
 }
 
+export interface AdminRegisterFormData {
+  name: string
+  gender: 'Male' | 'Female' | ''
+  email: string
+  user_address: string
+  user_current_city: string
+  mobile: string
+  face_image: File | null
+  face_image_preview: string
+}
+
 export interface RegistrationFormData {
   // Personal Details
   name: string
@@ -94,4 +105,15 @@ export interface RegistrationFormData {
 
   // Agreement
   agree_terms: boolean
+}
+
+export interface AdminRegistrationFormData {
+  name: string
+  gender: 'Male' | 'Female' | ''
+  email: string
+  user_address: string
+  user_current_city: string
+  mobile: string
+  face_image: File | null
+  face_image_preview?: string
 }

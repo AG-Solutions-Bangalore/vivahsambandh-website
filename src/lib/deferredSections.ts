@@ -9,11 +9,13 @@
 /** Anchor ids rendered inside deferred homepage sections. */
 export const DEFERRED_SECTION_IDS = new Set([
   'about',
+  'communities',
   'search',
   'explore-features',
   'stories',
   'blogs-featured',
   'blogs-front',
+  'app',
   'contact',
   'faq',
 ])

@@ -30,6 +30,86 @@ import {
  * - history.replaceState guarded (throws in sandboxed iframes)
  */
 export default function SmoothScroll({ children }: { children: React.ReactNode }) {
+  // Global scroll isolation: When ANY select dropdown or combobox is open in the page:
+  // - Prevent scrolling the global page if scrolling outside the dropdown.
+  // - Allow smooth native scrolling inside the dropdown content.
+  // - Prevent chaining at the scroll limits (top/bottom) so the background page never scrolls.
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+
+    const getOpenDropdown = (): HTMLElement | null => {
+      return document.querySelector<HTMLElement>(
+        '[data-slot="select-content"], [data-slot="combobox-content"], [role="listbox"]'
+      )
+    }
+
+    const onGlobalWheel = (e: WheelEvent) => {
+      const openDropdown = getOpenDropdown()
+      if (!openDropdown) return
+
+      const target = e.target as HTMLElement | null
+      const isInside = Boolean(
+        target &&
+          (openDropdown.contains(target) ||
+            target.closest(
+              '[data-slot="select-content"], [data-slot="combobox-content"], [role="listbox"]'
+            ))
+      )
+
+      if (!isInside) {
+        // Outside scroll: Freeze global page completely while dropdown is open
+        if (e.cancelable) e.preventDefault()
+        return
+      }
+
+      // Inside scroll: find the scrollable container inside the dropdown
+      const scroller =
+        target?.closest<HTMLElement>(
+          '[role="listbox"], [data-slot="select-list"], [data-slot="combobox-list"], [data-lenis-prevent]'
+        ) ?? openDropdown.querySelector<HTMLElement>('[role="listbox"]') ?? openDropdown
+
+      if (scroller) {
+        const { scrollTop, scrollHeight, clientHeight } = scroller
+        if (scrollHeight <= clientHeight) {
+          if (e.cancelable) e.preventDefault()
+          return
+        }
+
+        const isAtTop = scrollTop <= 0 && e.deltaY < 0
+        const isAtBottom = scrollTop + clientHeight >= scrollHeight - 1 && e.deltaY > 0
+        if (isAtTop || isAtBottom) {
+          if (e.cancelable) e.preventDefault()
+        }
+      }
+    }
+
+    const onGlobalTouchMove = (e: TouchEvent) => {
+      const openDropdown = getOpenDropdown()
+      if (!openDropdown) return
+
+      const target = e.target as HTMLElement | null
+      const isInside = Boolean(
+        target &&
+          (openDropdown.contains(target) ||
+            target.closest(
+              '[data-slot="select-content"], [data-slot="combobox-content"], [role="listbox"]'
+            ))
+      )
+
+      if (!isInside) {
+        if (e.cancelable) e.preventDefault()
+      }
+    }
+
+    window.addEventListener('wheel', onGlobalWheel, { passive: false, capture: true })
+    window.addEventListener('touchmove', onGlobalTouchMove, { passive: false, capture: true })
+
+    return () => {
+      window.removeEventListener('wheel', onGlobalWheel, { capture: true })
+      window.removeEventListener('touchmove', onGlobalTouchMove, { capture: true })
+    }
+  }, [])
+
   useEffect(() => {
     // Guard: client-only (effect never runs on server anyway).
     if (typeof window === 'undefined') return
@@ -93,6 +173,19 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
             syncTouch: false,
             touchMultiplier: 1.5,
             autoRaf: false,
+            prevent: (node: HTMLElement) => {
+              if (!node || typeof node.hasAttribute !== 'function') return false
+              if (node.hasAttribute('data-lenis-prevent')) return true
+              if (
+                node.closest?.(
+                  '[data-lenis-prevent], [data-slot="select-content"], [data-slot="select-list"], [data-slot="combobox-content"], [data-slot="combobox-list"], [data-slot="popover-content"], [role="listbox"]'
+                )
+              ) {
+                return true
+              }
+              return false
+            },
+            allowNestedScroll: true,
           })
         } catch {
           lenis = null

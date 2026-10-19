@@ -202,6 +202,17 @@ export default defineConfig({
         '/hi/help-center',
         '/registration',
         '/hi/registration',
+        // Aliases the router resolves too — without prerendered HTML the host
+        // serves the home page fallback here, which hydrates against a
+        // different route tree and crashes with React error #418.
+        '/register',
+        '/hi/register',
+        '/success-stories',
+        '/hi/success-stories',
+        '/admin-register',
+        '/hi/admin-register',
+        '/download',
+        '/hi/download',
       ],
     }),
     compression({ algorithm: 'gzip', threshold: 1024 }),
@@ -213,6 +224,12 @@ export default defineConfig({
     alias: {
       '@': path.resolve(import.meta.dirname ?? '.', './src'),
     },
+  },
+  server: {
+    // Firebase Phone Auth rejects real-number OTP sends from `localhost` origins
+    // (firebase-js-sdk#8387). Serve dev on 127.0.0.1 and keep `127.0.0.1`
+    // in Firebase Auth → Settings → Authorized domains.
+    host: '127.0.0.1',
   },
   build: {
     minify: true,

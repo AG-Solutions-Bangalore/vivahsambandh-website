@@ -13,7 +13,7 @@ export default function FamilySummarySection() {
 
   const inputCls = (key: string) =>
     cn(
-      'w-full rounded-xl border px-4 py-2.5 text-sm text-navy-900 transition outline-none focus-visible:ring-2',
+      'w-full rounded-2xl border px-4 py-2.5 text-sm text-navy-900 transition outline-none focus-visible:ring-2',
       fieldErrors[key]
         ? 'border-maroon-500 bg-maroon-50/30 focus-visible:border-maroon-600 focus-visible:ring-maroon-500/20'
         : 'border-cream-300 bg-cream-50/70 hover:bg-white focus-visible:border-gold-500 focus-visible:bg-white focus-visible:ring-gold-500/20',

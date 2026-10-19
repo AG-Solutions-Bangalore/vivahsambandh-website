@@ -1,0 +1,557 @@
+/**
+ * @file src/module/registration/components/admin-register/AdminRegisterForm.tsx
+ * Admin Registration Form — submits name, gender, email, address, city,
+ * mobile and face image to the CRM create-admin-register endpoint.
+ *
+ * Self-contained local state (small form) reusing the shared sanitizers,
+ * validators and shadcn-style UI primitives from the main registration form.
+ */
+
+import { useId, useRef, useState, type ChangeEvent, type FormEvent } from 'react'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Textarea } from '@/components/ui/textarea'
+import { Field } from '@/components/ui/field'
+import { OptionPills } from '@/components/ui/option-pills'
+import { cn } from 'cn'
+import { createAdminRegister } from '../../api/registration.api'
+import type { AdminRegisterFormData } from '../../types'
+import {
+  sanitizeName,
+  sanitizeEmail,
+  sanitizeCity,
+  sanitizeAddress,
+  sanitizeDigits,
+  handleSanitizedPaste,
+  validateName,
+  validateEmail,
+  validateIndianMobile,
+  validateCity,
+  validateAddress,
+} from '@/lib/validation'
+
+const initialAdminFormState: AdminRegisterFormData = {
+  name: '',
+  gender: '',
+  email: '',
+  user_address: '',
+  user_current_city: '',
+  mobile: '',
+  face_image: null,
+  face_image_preview: '',
+}
+
+type FieldErrors = Partial<Record<keyof AdminRegisterFormData, string>>
+
+interface SubmitResult {
+  type: 'success' | 'error'
+  message: string
+}
+
+export default function AdminRegisterForm() {
+  const inputId = useId()
+  const [form, setForm] = useState<AdminRegisterFormData>(initialAdminFormState)
+  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({})
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [submitResult, setSubmitResult] = useState<SubmitResult | null>(null)
+
+  const facePhotoInputRef = useRef<HTMLInputElement>(null)
+
+  const clearFieldError = (key: keyof AdminRegisterFormData) => {
+    setFieldErrors((prev) => {
+      if (!prev[key]) return prev
+      const next = { ...prev }
+      delete next[key]
+      return next
+    })
+  }
+
+  // Input handlers with field-specific character restrictions
+  const handleInputChange = (
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
+    const { name, value } = e.target
+    clearFieldError(name as keyof AdminRegisterFormData)
+
+    let sanitized = value
+    if (name === 'name') sanitized = sanitizeName(value)
+    else if (name === 'email') sanitized = sanitizeEmail(value)
+    else if (name === 'user_current_city') sanitized = sanitizeCity(value)
+    else if (name === 'user_address') sanitized = sanitizeAddress(value)
+
+    setForm((prev) => ({ ...prev, [name]: sanitized }))
+  }
+
+  const handleMobileChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const sanitized = sanitizeDigits(e.target.value, 10)
+    clearFieldError('mobile')
+    setForm((prev) => ({ ...prev, mobile: sanitized }))
+  }
+
+  const handlePasteCapture = (
+    fieldName: keyof AdminRegisterFormData,
+    sanitizer: (val: string) => string,
+  ) =>
+    (e: React.ClipboardEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      handleSanitizedPaste(e, sanitizer, (cleaned) => {
+        clearFieldError(fieldName)
+        setForm((prev) => ({ ...prev, [fieldName]: cleaned }))
+      })
+    }
+
+  const handleGenderChange = (value: string) => {
+    clearFieldError('gender')
+    setForm((prev) => ({ ...prev, gender: value as AdminRegisterFormData['gender'] }))
+  }
+
+  const handleFaceFileSelect = (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    if (!file.type.startsWith('image/')) {
+      setFieldErrors((prev) => ({
+        ...prev,
+        face_image: 'Please select a valid image file',
+      }))
+      return
+    }
+    clearFieldError('face_image')
+
+    const reader = new FileReader()
+    reader.onload = () => {
+      setForm((prev) => ({
+        ...prev,
+        face_image: file,
+        face_image_preview: reader.result as string,
+      }))
+    }
+    reader.readAsDataURL(file)
+    e.target.value = ''
+  }
+
+  const validateForm = (): FieldErrors => {
+    const errors: FieldErrors = {}
+
+    const nameResult = validateName(form.name, 'Full Name')
+    if (!nameResult.valid) errors.name = nameResult.error
+
+    if (!form.gender) errors.gender = 'Gender is required'
+
+    const emailResult = validateEmail(form.email)
+    if (!emailResult.valid) errors.email = emailResult.error
+
+    const addressResult = validateAddress(form.user_address)
+    if (!addressResult.valid) errors.user_address = addressResult.error
+
+    const cityResult = validateCity(form.user_current_city)
+    if (!cityResult.valid) errors.user_current_city = cityResult.error
+
+    const mobileResult = validateIndianMobile(form.mobile)
+    if (!mobileResult.valid) errors.mobile = mobileResult.error
+
+    if (!form.face_image) errors.face_image = 'Please upload a face photograph'
+
+    return errors
+  }
+
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault()
+    setSubmitResult(null)
+
+    const errors = validateForm()
+    setFieldErrors(errors)
+    if (Object.keys(errors).length > 0) {
+      const firstKey = Object.keys(errors)[0]
+      const el = document.getElementById(`${inputId}-${firstKey}`)
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      return
+    }
+
+    setIsSubmitting(true)
+
+    // FormData matching the create-admin-register API spec exactly:
+    // name, gender, email, user_address, user_current_city, mobile, face_image
+    const formData = new FormData()
+    formData.append('name', form.name.trim())
+    formData.append('gender', form.gender)
+    formData.append('email', form.email.trim())
+    formData.append('user_address', form.user_address.trim())
+    formData.append('user_current_city', form.user_current_city.trim())
+    formData.append('mobile', form.mobile)
+    if (form.face_image) {
+      formData.append('face_image', form.face_image)
+    }
+
+    try {
+      const res = await createAdminRegister(formData)
+      setSubmitResult({
+        type: res.success ? 'success' : 'error',
+        message: res.message || 'Submission could not be completed.',
+      })
+      if (res.success) {
+        setForm(initialAdminFormState)
+        setFieldErrors({})
+      }
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+    } catch (err) {
+      setSubmitResult({
+        type: 'error',
+        message:
+          err instanceof Error
+            ? err.message
+            : 'An error occurred during submission.',
+      })
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
+
+  const inputCls = (key: keyof AdminRegisterFormData) =>
+    cn(
+      'w-full rounded-full border px-4 py-2.5 text-sm text-navy-900 transition outline-none focus-visible:ring-2',
+      fieldErrors[key]
+        ? 'border-maroon-500 bg-maroon-50/30 focus-visible:border-maroon-600 focus-visible:ring-maroon-500/20'
+        : 'border-cream-300 bg-cream-50/70 hover:bg-white focus-visible:border-gold-500 focus-visible:bg-white focus-visible:ring-gold-500/20',
+    )
+
+  if (submitResult?.type === 'success') {
+    return (
+      <div className="mx-auto max-w-3xl min-h-[50vh] flex flex-col items-center justify-center py-16 text-center">
+        <div className="w-full rounded-2xl border border-emerald-500/30 bg-emerald-50/90 p-8 shadow-lift text-emerald-950">
+          <svg
+            className="mx-auto h-10 w-10 text-emerald-600"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+            />
+          </svg>
+          <h4 className="mt-3 font-bold text-lg">Admin Registration Completed</h4>
+          <p className="mt-1 text-sm">{submitResult.message}</p>
+        </div>
+        <Button
+          type="button"
+          onClick={() => {
+            setSubmitResult(null)
+            setForm(initialAdminFormState)
+            setFieldErrors({})
+          }}
+          className="mt-8 px-8 py-3 text-sm font-bold bg-navy-900 text-white hover:bg-navy-800 shadow-md"
+        >
+          Submit another registration
+        </Button>
+      </div>
+    )
+  }
+
+  return (
+    <div className="mx-auto max-w-3xl">
+      {submitResult?.type === 'error' && (
+        <div
+          className="mb-8 rounded-2xl border border-maroon-500/30 bg-maroon-50/90 p-6 shadow-lift text-maroon-950"
+          role="alert"
+        >
+          <div className="flex items-start gap-3">
+            <svg
+              className="h-6 w-6 text-maroon-600 shrink-0"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+              />
+            </svg>
+            <div>
+              <h4 className="font-bold text-base">Submission Note</h4>
+              <p className="mt-1 text-sm">{submitResult.message}</p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <form
+        noValidate
+        onSubmit={handleSubmit}
+        className="rounded-[1.5rem] border border-gold-500/30 bg-white p-6 sm:p-8 lg:p-10 shadow-card space-y-5"
+      >
+        {/* Header */}
+        <div className="border-b border-cream-200 pb-4">
+          <span className="eyebrow">Admin Register</span>
+          <h2 className="text-xl sm:text-2xl font-bold font-display text-navy-900">
+            Admin Registration Details
+          </h2>
+          <p className="mt-1 text-xs text-ink-500">
+            Basic identification, contact details and a face photograph for the admin record.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+          {/* Full Name */}
+          <Field
+            id={`${inputId}-name`}
+            label="Full Name"
+            required
+            error={fieldErrors.name}
+          >
+            <Input
+              id={`${inputId}-name`}
+              type="text"
+              name="name"
+              maxLength={45}
+              value={form.name}
+              onChange={handleInputChange}
+              onPaste={handlePasteCapture('name', sanitizeName)}
+              placeholder="Admin Full Name"
+              className={inputCls('name')}
+              aria-invalid={Boolean(fieldErrors.name)}
+              aria-describedby={fieldErrors.name ? `${inputId}-name-error` : undefined}
+            />
+          </Field>
+
+          {/* Gender (radio pill selection) */}
+          <div id={`${inputId}-gender`}>
+            <span className="mb-1.5 block text-xs font-bold text-navy-900">
+              Gender <span className="text-maroon-600">*</span>
+            </span>
+            <OptionPills
+              id={`${inputId}-gender-pills`}
+              name="gender"
+              value={form.gender}
+              onChange={handleGenderChange}
+              options={[
+                { value: 'Male', label: 'Male' },
+                { value: 'Female', label: 'Female' },
+              ]}
+              error={Boolean(fieldErrors.gender)}
+              ariaLabel="Gender"
+            />
+            {fieldErrors.gender && (
+              <p
+                role="alert"
+                className="mt-1.5 text-[11px] font-semibold text-maroon-600"
+              >
+                {fieldErrors.gender}
+              </p>
+            )}
+          </div>
+
+          {/* Mobile */}
+          <Field
+            id={`${inputId}-mobile`}
+            label="Mobile Number"
+            required
+            error={fieldErrors.mobile}
+          >
+            <Input
+              id={`${inputId}-mobile`}
+              type="tel"
+              name="mobile"
+              inputMode="numeric"
+              maxLength={10}
+              value={form.mobile}
+              onChange={handleMobileChange}
+              onPaste={handlePasteCapture(
+                'mobile',
+                (val) => sanitizeDigits(val, 10),
+              )}
+              placeholder="10-digit mobile number"
+              className={inputCls('mobile')}
+              aria-invalid={Boolean(fieldErrors.mobile)}
+              aria-describedby={fieldErrors.mobile ? `${inputId}-mobile-error` : undefined}
+            />
+          </Field>
+
+          {/* Email */}
+          <Field
+            id={`${inputId}-email`}
+            label="Email Address"
+            required
+            error={fieldErrors.email}
+          >
+            <Input
+              id={`${inputId}-email`}
+              type="text"
+              name="email"
+              maxLength={100}
+              value={form.email}
+              onChange={handleInputChange}
+              onPaste={handlePasteCapture('email', sanitizeEmail)}
+              placeholder="name@example.com"
+              className={inputCls('email')}
+              aria-invalid={Boolean(fieldErrors.email)}
+              aria-describedby={fieldErrors.email ? `${inputId}-email-error` : undefined}
+            />
+          </Field>
+
+          {/* Current City */}
+          <Field
+            id={`${inputId}-city`}
+            label="Current City"
+            required
+            error={fieldErrors.user_current_city}
+          >
+            <Input
+              id={`${inputId}-city`}
+              type="text"
+              name="user_current_city"
+              maxLength={50}
+              value={form.user_current_city}
+              onChange={handleInputChange}
+              onPaste={handlePasteCapture('user_current_city', sanitizeCity)}
+              placeholder="City / District"
+              className={inputCls('user_current_city')}
+              aria-invalid={Boolean(fieldErrors.user_current_city)}
+              aria-describedby={
+                fieldErrors.user_current_city ? `${inputId}-city-error` : undefined
+              }
+            />
+          </Field>
+
+          {/* Address */}
+          <div className="sm:col-span-2">
+            <Field
+              id={`${inputId}-address`}
+              label="Residential Address"
+              required
+              error={fieldErrors.user_address}
+            >
+              <Textarea
+                id={`${inputId}-address`}
+                name="user_address"
+                maxLength={250}
+                rows={3}
+                value={form.user_address}
+                onChange={handleInputChange}
+                onPaste={handlePasteCapture('user_address', sanitizeAddress)}
+                placeholder="House / Street / Area"
+                className={cn(inputCls('user_address'), 'rounded-2xl')}
+                aria-invalid={Boolean(fieldErrors.user_address)}
+                aria-describedby={
+                  fieldErrors.user_address ? `${inputId}-address-error` : undefined
+                }
+              />
+            </Field>
+          </div>
+
+          {/* Face Photograph */}
+          <div className="sm:col-span-2">
+            <div
+              id={`${inputId}-face_image`}
+              className={cn(
+                'rounded-2xl border p-5 transition',
+                fieldErrors.face_image
+                  ? 'border-maroon-500 bg-maroon-50/20'
+                  : 'border-cream-200 bg-cream-50/50',
+              )}
+            >
+              <span className="block text-sm font-bold text-navy-900 mb-1">
+                Face Photograph <span className="text-maroon-600">*</span>
+              </span>
+              <p className="text-xs text-ink-500 mb-4">
+                Recent clear face photograph for the admin profile.
+              </p>
+
+              <div className="flex flex-col items-center gap-4">
+                <div className="h-40 w-40 overflow-hidden rounded-xl border-2 border-dashed border-gold-500/50 bg-white flex items-center justify-center shadow-inner">
+                  {form.face_image_preview ? (
+                    <img
+                      src={form.face_image_preview}
+                      alt="Face photograph preview"
+                      className="h-full w-full object-cover"
+                    />
+                  ) : (
+                    <div className="text-center p-4">
+                      <svg
+                        className="mx-auto h-10 w-10 text-gold-500/60"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="1.5"
+                          d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                        />
+                      </svg>
+                      <span className="mt-2 block text-xs text-ink-500">
+                        No photo selected
+                      </span>
+                    </div>
+                  )}
+                </div>
+
+                <input
+                  ref={facePhotoInputRef}
+                  type="file"
+                  accept="image/*"
+                  onChange={handleFaceFileSelect}
+                  className="sr-only"
+                  aria-label="Select face photograph"
+                />
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => facePhotoInputRef.current?.click()}
+                >
+                  <span>{form.face_image ? 'Change Photo' : 'Upload Photo'}</span>
+                </Button>
+              </div>
+              {fieldErrors.face_image && (
+                <p
+                  role="alert"
+                  className="mt-3 flex items-center gap-1.5 text-xs font-semibold text-maroon-600"
+                >
+                  {fieldErrors.face_image}
+                </p>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Submit */}
+        <div className="flex justify-center border-t border-cream-200 pt-6">
+          <Button
+            type="submit"
+            disabled={isSubmitting}
+            className="w-full px-8 py-3 text-sm font-bold bg-navy-900 text-white hover:bg-navy-800 shadow-md sm:w-auto"
+          >
+            {isSubmitting ? (
+              <span className="flex items-center gap-2">
+                <svg className="h-4 w-4 animate-spin text-white" viewBox="0 0 24 24">
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                    fill="none"
+                  />
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                  />
+                </svg>
+                Submitting Registration...
+              </span>
+            ) : (
+              'Submit Admin Registration'
+            )}
+          </Button>
+        </div>
+      </form>
+    </div>
+  )
+}

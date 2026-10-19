@@ -1,5 +1,6 @@
 import { Drawer, DrawerContent, DrawerTitle } from './ui/drawer'
 import { Link } from 'react-router-dom'
+import StoreBadge from './StoreBadge'
 import type { NavItem } from '../constants/navigation'
 import type { TFunction } from 'i18next'
 
@@ -44,20 +45,29 @@ export default function MobileDrawer({
               </li>
             ))}
           </ul>
-          <div className="mt-3 flex gap-2 border-t border-gold-500/20 pt-4">
-            <a
-              href="#login"
-              onClick={closeDrawer}
-              title={t('header.login')}
-              className="btn-gold flex-1 !py-2.5 text-sm text-center"
-            >
-              {t('header.login')}
-            </a>
+          <div className="mt-3 space-y-2.5 border-t border-gold-500/20 pt-4">
+            <div className="px-1">
+              <span className="text-gold-600 text-xs font-bold block" aria-hidden="true">
+                ✦
+              </span>
+              <p className="font-display text-sm font-bold text-navy-950">
+                {t('app.eyebrow')}
+              </p>
+              <p className="text-[11px] text-ink-600 font-medium">
+                {t('app.title')}
+              </p>
+            </div>
+            <div className="flex gap-2">
+              <StoreBadge store="play" className="flex-1 justify-center !px-3" />
+              <StoreBadge store="apple" className="flex-1 justify-center !px-3" />
+            </div>
+          </div>
+          <div className="mt-3 border-t border-gold-500/20 pt-4">
             <Link
               to={navItems.some((n) => n.href.startsWith('/hi')) ? '/hi/registration' : '/registration'}
               onClick={closeDrawer}
               title={t('header.createProfile')}
-              className="btn-primary flex-1 !py-2.5 text-sm text-center"
+              className="btn-primary block w-full !py-3 text-sm font-bold text-center"
             >
               {t('header.createProfile')}
             </Link>

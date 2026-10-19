@@ -93,11 +93,13 @@ export default function LanguageSwitcher({ compact = false }: { compact?: boolea
             aria-pressed={active}
             aria-busy={isPending}
             disabled={isPending}
-            className={`relative z-10 rounded-full px-3 py-1.5 transition-colors disabled:cursor-wait ${
+            className={`relative z-10 rounded-full py-1.5 transition-colors disabled:cursor-wait ${
+              compact ? 'px-2 sm:px-2.5' : 'px-3'
+            } ${
               active
                 ? 'text-white'
                 : 'text-navy-900/70 hover:bg-gold-100 hover:text-navy-900'
-            }${isPending ? ' animate-pulse' : ''} ${compact ? 'px-2.5' : ''}`}
+            }${isPending ? ' animate-pulse' : ''}`}
           >
             {lng === 'en' ? t('lang.en') : t('lang.hi')}
           </button>

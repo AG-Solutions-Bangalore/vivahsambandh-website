@@ -24,7 +24,7 @@ export default function AboutSection() {
         height={1670}
         alt="Decorative flower garland"
         title="Decorative flower garland"
-        className="pointer-events-none absolute left-0 bottom-0 z-0 w-24 sm:w-28 md:w-36 lg:w-44 xl:w-52 max-w-[16vw] h-auto object-contain object-left-bottom select-none opacity-95"
+        className="pointer-events-none absolute left-0 -bottom-6 z-0 w-24 sm:w-28 md:w-36 lg:w-44 xl:w-52 max-w-[16vw] h-auto object-contain object-left-bottom  select-none opacity-95"
         loading="lazy"
         aria-hidden="true"
       />

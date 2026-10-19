@@ -46,12 +46,15 @@ export async function getProfession(): Promise<ProfessionItem[]> {
 }
 
 /**
- * Submits the completed registration form with cropped photo files to CRM.
+ * Shared multipart POST for registration submissions with Laravel-style
+ * validation error parsing — used by both user and admin register endpoints.
  */
-export async function createUserRegister(
+async function postRegistrationForm(
+  endpoint: string,
   formData: FormData,
+  fallbackMessage: string,
 ): Promise<{ success: boolean; message: string; data?: unknown }> {
-  const url = `${API_BASE_URL}/create-user-register`
+  const url = `${API_BASE_URL}/${endpoint.replace(/^\//, '')}`
   const headers: Record<string, string> = {
     Accept: 'application/json',
     ...(API_SECRET_KEY ? { Authorization: API_SECRET_KEY } : {}),
@@ -66,7 +69,10 @@ export async function createUserRegister(
 
     const data = await res.json().catch(() => null)
 
-    if (!res.ok) {
+    const payloadCode = data && typeof data === 'object' && 'code' in data ? Number(data.code) : undefined
+    const isErrorCode = payloadCode != null && payloadCode >= 400
+
+    if (!res.ok || isErrorCode) {
       // Laravel-style validation error payloads surface field-level messages:
       // { message, errors: { field: ["Fix this", ...], ... } }
       const validationErrors = (
@@ -85,15 +91,42 @@ export async function createUserRegister(
 
     return {
       success: true,
-      message: data?.message || 'Registration submitted successfully!',
+      message: data?.message || fallbackMessage,
       data,
     }
   } catch (err) {
     const errorMsg =
-      err instanceof Error ? err.message : 'Registration submission failed.'
+      err instanceof Error ? err.message : fallbackMessage
     return {
       success: false,
       message: errorMsg,
     }
   }
+}
+
+/**
+ * Submits the completed registration form with cropped photo files to CRM.
+ */
+export async function createUserRegister(
+  formData: FormData,
+): Promise<{ success: boolean; message: string; data?: unknown }> {
+  return postRegistrationForm(
+    '/create-user-register',
+    formData,
+    'Registration submitted successfully!',
+  )
+}
+
+/**
+ * Submits the admin registration form (name, gender, email, address, city,
+ * mobile, face image) to the CRM create-admin-register endpoint.
+ */
+export async function createAdminRegister(
+  formData: FormData,
+): Promise<{ success: boolean; message: string; data?: unknown }> {
+  return postRegistrationForm(
+    '/create-admin-register',
+    formData,
+    'Admin registration submitted successfully!',
+  )
 }

@@ -15,6 +15,7 @@ import {
   useMemo,
   useId,
   useCallback,
+  useRef,
   type PropsWithChildren,
   type ChangeEvent,
   type FormEvent,
@@ -114,10 +115,12 @@ export interface RegistrationFormContextValue {
   isFormFullyFilled: boolean
   isSubmitting: boolean
   submitResult: { type: 'success' | 'error'; message: string } | null
+  resetRegistration: () => void
 
   // OTP modal control
   isOtpModalOpen: boolean
   setIsOtpModalOpen: React.Dispatch<React.SetStateAction<boolean>>
+  otpTriggerSource: 'inline' | 'submit'
 
   // Terms modal control
   termsOpen: boolean
@@ -152,6 +155,8 @@ export function RegistrationFormProvider({ children }: PropsWithChildren) {
   // Modals state
   const [termsOpen, setTermsOpen] = useState(false)
   const [isOtpModalOpen, setIsOtpModalOpen] = useState(false)
+  const [otpTriggerSource, setOtpTriggerSource] = useState<'inline' | 'submit'>('inline')
+  const otpTriggerSourceRef = useRef<'inline' | 'submit'>('inline')
 
   // Mobile OTP Verification State
   const [isMobileVerified, setIsMobileVerified] = useState(false)
@@ -634,6 +639,8 @@ function convertTo24HourTime(timeStr: string): string {
       const isCurrentMobileVerified =
         isMobileVerified && form.mobile === verifiedMobileNumber
       if (!isCurrentMobileVerified) {
+        otpTriggerSourceRef.current = 'submit'
+        setOtpTriggerSource('submit')
         setIsOtpModalOpen(true)
         return
       }
@@ -649,9 +656,19 @@ function convertTo24HourTime(timeStr: string): string {
     setIsMobileVerified(true)
     setVerifiedMobileNumber(form.mobile)
     setIsOtpModalOpen(false)
-    // Automatically submit now that mobile is verified
-    executeFormSubmission()
-  }, [form.mobile, executeFormSubmission])
+    clearFieldError('mobile')
+    setSubmitResult(null)
+
+    if (otpTriggerSourceRef.current === 'submit') {
+      // Automatically submit now that mobile is verified as part of the submission flow
+      executeFormSubmission()
+    } else {
+      // User verified inline while filling Part 1: focus next field (Alternate Contact Person)
+      setTimeout(() => {
+        focusAndScrollToField(`${baseId}-alt-name`)
+      }, 150)
+    }
+  }, [form.mobile, executeFormSubmission, focusAndScrollToField, baseId, clearFieldError])
 
   // Select option lists (memoized from API data)
   const educationOptions = useMemo(
@@ -676,7 +693,23 @@ function convertTo24HourTime(timeStr: string): string {
   const isMobileComplete = form.mobile.length === 10
 
   const openOtpModal = useCallback(() => {
+    otpTriggerSourceRef.current = 'inline'
+    setOtpTriggerSource('inline')
     setIsOtpModalOpen(true)
+  }, [])
+
+  // Reset all form state so the user can submit another response
+  const resetRegistration = useCallback(() => {
+    setForm(initialFormState)
+    setGotras([])
+    setLoadingGotras(false)
+    setFieldErrors({})
+    setIsMobileVerified(false)
+    setVerifiedMobileNumber('')
+    setSubmitResult(null)
+    otpTriggerSourceRef.current = 'inline'
+    setOtpTriggerSource('inline')
+    window.scrollTo({ top: 0, behavior: 'smooth' })
   }, [])
 
   const value: RegistrationFormContextValue = {
@@ -711,8 +744,10 @@ function convertTo24HourTime(timeStr: string): string {
     isFormFullyFilled,
     isSubmitting,
     submitResult,
+    resetRegistration,
     isOtpModalOpen,
     setIsOtpModalOpen,
+    otpTriggerSource,
     termsOpen,
     setTermsOpen,
   }

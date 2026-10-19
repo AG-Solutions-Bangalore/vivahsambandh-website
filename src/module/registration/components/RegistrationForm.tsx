@@ -12,6 +12,7 @@
  */
 
 import { TooltipProvider } from '@/components/ui/tooltip'
+import { Button } from '@/components/ui/button'
 import TermsModal from './TermsModal'
 import OtpVerificationModal from './OtpVerificationModal'
 import {
@@ -36,7 +37,30 @@ function RegistrationFormInner() {
     baseId,
     termsOpen,
     setTermsOpen,
+    submitResult,
+    resetRegistration,
+    otpTriggerSource,
   } = useRegistrationForm()
+
+  // Once submitted successfully, show only the centered success message
+  // with a "Submit other response" button instead of the form.
+  if (submitResult?.type === 'success') {
+    return (
+      <TooltipProvider delay={150}>
+        <div className="mx-auto max-w-5xl min-h-[70vh] flex flex-col items-center justify-center py-20 text-center">
+          <SubmitResultBanner />
+
+          <Button
+            type="button"
+            onClick={resetRegistration}
+            className="mt-8 px-8 py-3 text-sm font-bold bg-navy-900 text-white hover:bg-navy-800 shadow-md"
+          >
+            Submit other response
+          </Button>
+        </div>
+      </TooltipProvider>
+    )
+  }
 
   return (
     <TooltipProvider delay={150}>
@@ -59,6 +83,7 @@ function RegistrationFormInner() {
         <OtpVerificationModal
           isOpen={isOtpModalOpen}
           mobile={form.mobile}
+          mode={otpTriggerSource}
           onVerified={handleOtpVerified}
           onClose={() => setIsOtpModalOpen(false)}
           onChangeNumber={() => {

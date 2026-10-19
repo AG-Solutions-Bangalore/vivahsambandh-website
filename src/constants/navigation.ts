@@ -29,16 +29,24 @@ export interface NavEntry {
 export const NAV_ENTRIES: readonly NavEntry[] = [
   { key: 'home', i18nKey: 'header.home', kind: 'home' },
   { key: 'about', i18nKey: 'header.about', kind: 'page', page: '/about' },
-  { key: 'stories', i18nKey: 'header.successStories', kind: 'page', page: '/stories' },
-  { key: 'membership', i18nKey: 'header.membership', kind: 'page', page: '/membership' },
+  // Temporarily hidden from navigation (routes still reachable directly).
+  // { key: 'stories', i18nKey: 'header.successStories', kind: 'page', page: '/stories' },
+  // { key: 'membership', i18nKey: 'header.membership', kind: 'page', page: '/membership' },
   { key: 'blogs', i18nKey: 'header.blogs', kind: 'page', page: '/blogs' },
   { key: 'contact', i18nKey: 'header.contact', kind: 'page', page: '/contact' },
+  { key: 'download', i18nKey: 'header.download', kind: 'page', page: '/download' },
 ]
 
 /** Every standalone page route (without lang prefix). Used by App + i18n. */
-export const PAGE_ROUTES: readonly string[] = NAV_ENTRIES.filter((e) => e.kind === 'page').map(
-  (e) => e.page as string,
-)
+export const PAGE_ROUTES: readonly string[] = [
+  '/about',
+  '/stories',
+  '/membership',
+  '/blogs',
+  '/contact',
+  '/download',
+  '/admin-register',
+]
 
 /** Site root for a language: '/' (en) or '/hi' (hi). */
 export function homePath(lang: AppLang): string {
