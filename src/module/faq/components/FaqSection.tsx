@@ -92,11 +92,11 @@ const DIAL_NODES: DialNodeConfig[] = [
 function FaqSkeleton() {
   return (
     <div className="w-full flex items-center justify-center min-h-[380px] animate-pulse">
-      <div className="w-[300px] h-[300px] rounded-full bg-rose-50/70 border border-rose-200/50 flex flex-col items-center justify-center p-6 space-y-3">
-        <div className="w-8 h-8 rounded-full bg-rose-200/60" />
-        <div className="w-3/4 h-4 rounded bg-rose-200/60" />
-        <div className="w-1/2 h-3 rounded bg-rose-200/40" />
-        <div className="w-full h-12 rounded bg-rose-100/60" />
+      <div className="w-[300px] h-[300px] rounded-full bg-cream-100/70 border border-gold-500/30 flex flex-col items-center justify-center p-6 space-y-3">
+        <div className="w-8 h-8 rounded-full bg-maroon-100/60" />
+        <div className="w-3/4 h-4 rounded bg-maroon-100/60" />
+        <div className="w-1/2 h-3 rounded bg-maroon-100/40" />
+        <div className="w-full h-12 rounded bg-cream-200/60" />
       </div>
     </div>
   );
@@ -169,7 +169,7 @@ export default function FaqSection({
   return (
     <section
       id={id}
-      className="pt-10 sm:pt-14 pb-12 sm:pb-16 bg-[#FFFDF9] text-[#2D2626] relative overflow-x-clip select-none"
+      className="pt-10 sm:pt-14 pb-12 sm:pb-16 bg-cream-50 text-ink-600 relative overflow-x-clip select-none"
     >
       {/* Top right bridal floral garland artwork */}
       <img
@@ -193,18 +193,18 @@ export default function FaqSection({
           {/* Left Column: Eyebrow, Motif Icon, Title, Divider, Subtitle, and Optional Category Tabs */}
           <div className="lg:col-span-4 flex flex-col items-start text-left relative z-20">
             {/* Pill Badge */}
-            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#FFF1EB] border border-[#F5D8CA] text-[#9F1239] text-[11px] font-bold tracking-[0.2em] uppercase shadow-2xs mb-3">
-              <span className="text-[#C5A059] text-xs">❖</span>
+            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-maroon-50 border border-maroon-200 text-maroon-700 text-[11px] font-bold tracking-[0.2em] uppercase shadow-2xs mb-3">
+              <span className="text-gold-500 text-xs">❖</span>
               <span>{eyebrow || t("faq.eyebrow", "FAQ")}</span>
-              <span className="text-[#C5A059] text-xs">❖</span>
+              <span className="text-gold-500 text-xs">❖</span>
             </div>
 
             {/* Heart with Question Mark Ornament */}
             <div className="relative mb-3.5">
-              <div className="w-13 h-13 rounded-full bg-gradient-to-br from-[#FFE8ED] via-[#FFF1F4] to-white border-2 border-[#F6B6C4] p-1 flex items-center justify-center shadow-sm shadow-[#9F1239]/10">
-                <div className="w-full h-full rounded-full border border-dashed border-[#E11D48]/50 flex items-center justify-center relative">
+              <div className="w-13 h-13 rounded-full bg-gradient-to-br from-maroon-100 via-maroon-50 to-white border-2 border-maroon-300 p-1 flex items-center justify-center shadow-sm shadow-maroon-600/10">
+                <div className="w-full h-full rounded-full border border-dashed border-maroon-500/50 flex items-center justify-center relative">
                   <svg
-                    className="w-6 h-6 text-[#9F1239]"
+                    className="w-6 h-6 text-maroon-700"
                     viewBox="0 0 24 24"
                     fill="none"
                     stroke="currentColor"
@@ -212,7 +212,7 @@ export default function FaqSection({
                   >
                     <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
                   </svg>
-                  <span className="absolute font-serif text-sm font-bold text-[#9F1239] -mt-0.5">
+                  <span className="absolute font-serif text-sm font-bold text-maroon-700 -mt-0.5">
                     ?
                   </span>
                 </div>
@@ -220,26 +220,26 @@ export default function FaqSection({
             </div>
 
             {/* Section Heading */}
-            <h2 className="text-2xl sm:text-3xl lg:text-[34px] font-serif font-bold text-[#2A1D1D] leading-[1.18] mb-2.5">
+            <h2 className="text-2xl sm:text-3xl lg:text-[34px] font-serif font-bold text-navy-900 leading-[1.18] mb-2.5">
               {title ? (
                 title
               ) : (
                 <>
                   Frequently <br />
-                  <span className="text-[#9F1239]">Asked Questions</span>
+                  <span className="text-maroon-600">Asked Questions</span>
                 </>
               )}
             </h2>
 
             {/* Ornate Gold Heart Divider */}
-            <div className="flex items-center gap-2 text-[#D4AF37] mb-2.5">
-              <span className="w-6 h-[1px] bg-[#D4AF37]/60" />
+            <div className="flex items-center gap-2 text-gold-600 mb-2.5">
+              <span className="w-6 h-[1px] bg-gold-500/60" />
               <span className="text-xs leading-none">♡</span>
-              <span className="w-6 h-[1px] bg-[#D4AF37]/60" />
+              <span className="w-6 h-[1px] bg-gold-500/60" />
             </div>
 
             {/* Subtitle */}
-            <p className="text-xs sm:text-[13px] text-[#5A4E4D] leading-relaxed max-w-[280px] mb-4 sm:mb-6">
+            <p className="text-xs sm:text-[13px] text-ink-600 leading-relaxed max-w-[280px] mb-4 sm:mb-6">
               {subtitle ||
                 t(
                   "faq.subtitle",
@@ -265,7 +265,7 @@ export default function FaqSection({
                       <path
                         d="M 140,285 A 215,215 0 0,1 600,285"
                         fill="none"
-                        stroke="#D4AF37"
+                        stroke="var(--color-gold-500)"
                         strokeWidth="1.3"
                         strokeDasharray="4 4"
                         opacity="0.8"
@@ -278,7 +278,7 @@ export default function FaqSection({
                               cx={node.circleCx}
                               cy={node.circleCy}
                               r="4"
-                              fill="#9F1239"
+                              fill="var(--color-maroon-600)"
                             />
                             <circle
                               cx={node.circleCx}
@@ -293,7 +293,7 @@ export default function FaqSection({
                               cx={node.circleCx}
                               cy={node.circleCy}
                               r="2.5"
-                              fill="#D4AF37"
+                              fill="var(--color-gold-500)"
                               opacity="0.75"
                             />
                           </g>
@@ -320,19 +320,19 @@ export default function FaqSection({
                             <div
                               className={`relative px-3 py-1.5 rounded-xl bg-white shadow-sm text-center max-w-[130px] border transition-all ${
                                 isActive
-                                  ? "border-[#FDA4AF] shadow-md shadow-[#9F1239]/12 scale-105"
-                                  : "border-[#F1E8E2] hover:border-[#D4AF37]/50 opacity-90 hover:opacity-100"
+                                  ? "border-maroon-300 shadow-md shadow-maroon-600/12 scale-105"
+                                  : "border-cream-300 hover:border-gold-500/50 opacity-90 hover:opacity-100"
                               }`}
                             >
                               <p
                                 className={`text-[11px] font-semibold leading-snug line-clamp-2 ${
-                                  isActive ? "text-[#1E1B18]" : "text-[#443838]"
+                                  isActive ? "text-navy-900" : "text-ink-600"
                                 }`}
                               >
                                 {q}
                               </p>
                               {isActive && (
-                                <div className="w-5 h-[2px] bg-[#9F1239] rounded-full mx-auto mt-1" />
+                                <div className="w-5 h-[2px] bg-maroon-600 rounded-full mx-auto mt-1" />
                               )}
                               <div className={node.arrowClass} />
                             </div>
@@ -346,8 +346,8 @@ export default function FaqSection({
                             style={node.buttonStyle}
                             className={`w-9 h-9 rounded-full flex items-center justify-center transition-all duration-300 cursor-pointer -translate-x-1/2 -translate-y-1/2 z-30 ${
                               isActive
-                                ? "bg-[#9F1239] text-white shadow-md shadow-[#9F1239]/30 scale-110 ring-4 ring-[#FFF0F3]"
-                                : "bg-white text-[#9F1239] border border-[#F1E8E2] hover:border-[#D4AF37]/60 shadow-sm hover:scale-105"
+                                ? "bg-maroon-600 text-white shadow-md shadow-maroon-600/30 scale-110 ring-4 ring-maroon-50"
+                                : "bg-white text-maroon-600 border border-cream-300 hover:border-gold-500/60 shadow-sm hover:scale-105"
                             }`}
                           >
                             <Icon
@@ -362,13 +362,13 @@ export default function FaqSection({
 
                     {/* Center Circular Spotlight Card */}
                     <div className="absolute left-[370px] top-[295px] -translate-x-1/2 -translate-y-1/2 z-20 pointer-events-none">
-                      <div className="relative w-[310px] h-[310px] lg:w-[325px] lg:h-[325px] rounded-full bg-white shadow-[0_12px_40px_rgba(225,29,72,0.16)] ring-6 ring-[#FFF0F3]/80 border border-[#FEE2E2]/60 flex flex-col items-center justify-center p-6 text-center pointer-events-auto">
+                      <div className="relative w-[310px] h-[310px] lg:w-[325px] lg:h-[325px] rounded-full bg-white shadow-[0_12px_40px_rgb(158_27_50/0.16)] ring-6 ring-maroon-50/80 border border-maroon-100/60 flex flex-col items-center justify-center p-6 text-center pointer-events-auto">
                         {/* Prev Button */}
                         <button
                           type="button"
                           aria-label="Previous question"
                           onClick={handlePrev}
-                          className="absolute -left-4 top-1/2 -translate-y-1/2 w-8 h-8 lg:w-9 lg:h-9 rounded-full bg-white shadow-md border border-[#F3E8E2] text-[#9F1239] hover:bg-[#FFF5F7] flex items-center justify-center cursor-pointer transition-transform hover:scale-110 active:scale-95 z-40"
+                          className="absolute -left-4 top-1/2 -translate-y-1/2 w-8 h-8 lg:w-9 lg:h-9 rounded-full bg-white shadow-md border border-cream-300 text-maroon-600 hover:bg-maroon-50 flex items-center justify-center cursor-pointer transition-transform hover:scale-110 active:scale-95 z-40"
                         >
                           <ChevronLeft className="w-4 h-4 stroke-[2.5]" />
                         </button>
@@ -378,38 +378,38 @@ export default function FaqSection({
                           type="button"
                           aria-label="Next question"
                           onClick={handleNext}
-                          className="absolute -right-4 top-1/2 -translate-y-1/2 w-8 h-8 lg:w-9 lg:h-9 rounded-full bg-white shadow-md border border-[#F3E8E2] text-[#9F1239] hover:bg-[#FFF5F7] flex items-center justify-center cursor-pointer transition-transform hover:scale-110 active:scale-95 z-40"
+                          className="absolute -right-4 top-1/2 -translate-y-1/2 w-8 h-8 lg:w-9 lg:h-9 rounded-full bg-white shadow-md border border-cream-300 text-maroon-600 hover:bg-maroon-50 flex items-center justify-center cursor-pointer transition-transform hover:scale-110 active:scale-95 z-40"
                         >
                           <ChevronRight className="w-4 h-4 stroke-[2.5]" />
                         </button>
 
                         {/* Inside Spotlight Content */}
                         <div className="flex flex-col items-center text-center max-w-[235px]">
-                          <div className="text-[#9F1239] mb-1.5">
+                          <div className="text-maroon-600 mb-1.5">
                             <ActiveIcon className="w-5 h-5 stroke-[1.8]" />
                           </div>
 
-                          <h3 className="font-serif font-bold text-sm lg:text-[16px] text-[#1E1B18] leading-tight line-clamp-2 max-w-[230px] mb-1.5">
+                          <h3 className="font-serif font-bold text-sm lg:text-[16px] text-navy-900 leading-tight line-clamp-2 max-w-[230px] mb-1.5">
                             {activeQuestion}
                           </h3>
 
                           <div
-                            className="flex items-center justify-center gap-1 text-[#D4AF37] mb-2"
+                            className="flex items-center justify-center gap-1 text-gold-600 mb-2"
                             aria-hidden="true"
                           >
-                            <span className="w-4 h-[1px] bg-[#D4AF37]/60" />
+                            <span className="w-4 h-[1px] bg-gold-500/60" />
                             <span className="text-[10px]">♡</span>
-                            <span className="w-4 h-[1px] bg-[#D4AF37]/60" />
+                            <span className="w-4 h-[1px] bg-gold-500/60" />
                           </div>
 
-                          <p className="text-[11px] lg:text-[11.5px] text-[#554444] leading-relaxed max-w-[230px] line-clamp-4 mb-3.5">
+                          <p className="text-[11px] lg:text-[11.5px] text-ink-600 leading-relaxed max-w-[230px] line-clamp-4 mb-3.5">
                             {activeAnswer}
                           </p>
 
                           {showCta !== false && (
                             <Link
                               to={contactHref}
-                              className="bg-[#9F1239] hover:bg-[#881337] text-white text-[11px] lg:text-xs font-medium px-5 py-1.5 rounded-full shadow-md shadow-[#9F1239]/20 hover:shadow-lg transition-all hover:scale-105 inline-flex items-center gap-1.5 cursor-pointer"
+                              className="bg-maroon-600 hover:bg-maroon-700 text-white text-[11px] lg:text-xs font-medium px-5 py-1.5 rounded-full shadow-md shadow-maroon-600/20 hover:shadow-lg transition-all hover:scale-105 inline-flex items-center gap-1.5 cursor-pointer"
                             >
                               <span>{ctaLabel}</span>
                               <ArrowRight className="w-3 h-3" />
@@ -428,8 +428,8 @@ export default function FaqSection({
                             onClick={() => setActiveQuestionIdx(dotIdx)}
                             className={`transition-all duration-300 rounded-full cursor-pointer ${
                               safeActiveIdx === dotIdx
-                                ? "w-2.5 h-2 bg-[#9F1239]"
-                                : "w-2 h-2 bg-[#FBCFE8] hover:bg-[#FDA4AF]"
+                                ? "w-2.5 h-2 bg-maroon-600"
+                                : "w-2 h-2 bg-maroon-200 hover:bg-maroon-300"
                             }`}
                           />
                         ))}
@@ -453,8 +453,8 @@ export default function FaqSection({
                           onClick={() => setActiveQuestionIdx(idx)}
                           className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] whitespace-nowrap cursor-pointer transition-all shrink-0 ${
                             isActive
-                              ? "bg-[#9F1239] text-white font-semibold shadow-xs"
-                              : "bg-white text-[#443838] border border-[#E8DED8] hover:bg-[#FFF5F7]"
+                              ? "bg-maroon-600 text-white font-semibold shadow-xs"
+                              : "bg-white text-ink-600 border border-cream-300 hover:bg-maroon-50"
                           }`}
                         >
                           <Icon className="w-3 h-3" />
@@ -465,12 +465,12 @@ export default function FaqSection({
                   </div>
 
                   {/* Circular Spotlight Card for Mobile */}
-                  <div className="relative w-[280px] h-[280px] sm:w-[310px] sm:h-[310px] rounded-full bg-white shadow-[0_12px_35px_rgba(225,29,72,0.16)] ring-5 ring-[#FFF0F3] border border-[#FEE2E2] flex flex-col items-center justify-center p-5 text-center">
+                  <div className="relative w-[280px] h-[280px] sm:w-[310px] sm:h-[310px] rounded-full bg-white shadow-[0_12px_35px_rgb(158_27_50/0.16)] ring-5 ring-maroon-50 border border-maroon-100 flex flex-col items-center justify-center p-5 text-center">
                     <button
                       type="button"
                       aria-label="Previous question"
                       onClick={handlePrev}
-                      className="absolute -left-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-white shadow-md border border-[#F3E8E2] text-[#9F1239] flex items-center justify-center cursor-pointer"
+                      className="absolute -left-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-white shadow-md border border-cream-300 text-maroon-600 flex items-center justify-center cursor-pointer"
                     >
                       <ChevronLeft className="w-3.5 h-3.5 stroke-[2.5]" />
                     </button>
@@ -478,37 +478,37 @@ export default function FaqSection({
                       type="button"
                       aria-label="Next question"
                       onClick={handleNext}
-                      className="absolute -right-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-white shadow-md border border-[#F3E8E2] text-[#9F1239] flex items-center justify-center cursor-pointer"
+                      className="absolute -right-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-white shadow-md border border-cream-300 text-maroon-600 flex items-center justify-center cursor-pointer"
                     >
                       <ChevronRight className="w-3.5 h-3.5 stroke-[2.5]" />
                     </button>
 
                     <div className="flex flex-col items-center text-center max-w-[210px]">
-                      <div className="text-[#9F1239] mb-1">
+                      <div className="text-maroon-600 mb-1">
                         <ActiveIcon className="w-4 h-4 stroke-[1.8]" />
                       </div>
 
-                      <h3 className="font-serif font-bold text-sm sm:text-base text-[#1E1B18] leading-tight line-clamp-2 max-w-[210px] mb-1">
+                      <h3 className="font-serif font-bold text-sm sm:text-base text-navy-900 leading-tight line-clamp-2 max-w-[210px] mb-1">
                         {activeQuestion}
                       </h3>
 
                       <div
-                        className="flex items-center justify-center gap-1 text-[#D4AF37] mb-1.5"
+                        className="flex items-center justify-center gap-1 text-gold-600 mb-1.5"
                         aria-hidden="true"
                       >
-                        <span className="w-3 h-[1px] bg-[#D4AF37]/60" />
+                        <span className="w-3 h-[1px] bg-gold-500/60" />
                         <span className="text-[9px]">♡</span>
-                        <span className="w-3 h-[1px] bg-[#D4AF37]/60" />
+                        <span className="w-3 h-[1px] bg-gold-500/60" />
                       </div>
 
-                      <p className="text-[10.5px] sm:text-[11px] text-[#554444] leading-relaxed line-clamp-4 max-w-[210px] mb-3">
+                      <p className="text-[10.5px] sm:text-[11px] text-ink-600 leading-relaxed line-clamp-4 max-w-[210px] mb-3">
                         {activeAnswer}
                       </p>
 
                       {showCta !== false && (
                         <Link
                           to={contactHref}
-                          className="bg-[#9F1239] text-white text-[11px] font-medium px-4 py-1.5 rounded-full shadow-md shadow-[#9F1239]/20 inline-flex items-center gap-1 cursor-pointer"
+                          className="bg-maroon-600 text-white text-[11px] font-medium px-4 py-1.5 rounded-full shadow-md shadow-maroon-600/20 inline-flex items-center gap-1 cursor-pointer"
                         >
                           <span>{ctaLabel}</span>
                           <ArrowRight className="w-2.5 h-2.5" />
@@ -527,8 +527,8 @@ export default function FaqSection({
                         onClick={() => setActiveQuestionIdx(dotIdx)}
                         className={`transition-all rounded-full cursor-pointer ${
                           safeActiveIdx === dotIdx
-                            ? "w-2.5 h-2 bg-[#9F1239]"
-                            : "w-2 h-2 bg-[#FBCFE8]"
+                            ? "w-2.5 h-2 bg-maroon-600"
+                            : "w-2 h-2 bg-maroon-200"
                         }`}
                       />
                     ))}

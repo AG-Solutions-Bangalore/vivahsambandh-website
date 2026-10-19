@@ -1,13 +1,14 @@
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 import Reveal from '../../../components/motion/Reveal'
-import { COMPANY } from '../../../constants/company'
+import { useCompanyDetails } from '../../company'
 import { pagePath } from '../../../constants/navigation'
 import type { AppLang } from '../../../i18n'
 
 export default function MembershipCta() {
   const { t, i18n } = useTranslation()
   const lang: AppLang = i18n.resolvedLanguage === 'hi' || i18n.language === 'hi' ? 'hi' : 'en'
+  const company = useCompanyDetails()
 
   return (
     <section className="relative overflow-hidden bg-navy-pattern py-14 sm:py-16 text-white">
@@ -29,8 +30,8 @@ export default function MembershipCta() {
 
           <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
             <a
-              href={COMPANY.supportPhoneLink}
-              title={COMPANY.supportPhoneDisplay}
+              href={company.phoneLink}
+              title={company.phone}
               className="btn-gold !px-8 !py-3.5 text-sm font-bold shadow-lg inline-flex items-center gap-2"
             >
               <span>📞</span>

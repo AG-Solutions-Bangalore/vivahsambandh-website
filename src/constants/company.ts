@@ -14,14 +14,16 @@ export const COMPANY = {
     hi: 'अग्रवाल मैट्रिमोनी',
   },
 
-  supportPhoneDisplay: '+91 98765 43210',
-  supportPhoneLink: 'tel:+919876543210',
+  supportPhoneDisplay: '+91 83107 82820',
+  supportPhoneLink: 'tel:+918310782820',
+  landlineDisplay: '080-48531999',
+  landlineLink: 'tel:08048531999',
   supportHours: {
     en: '(Mon – Sat, 10 AM – 6 PM)',
     hi: '(सोम – शनि, 10 AM – 6 PM)',
   },
 
-  supportEmail: 'support@vivahsambandh.com',
+  supportEmail: 'info@vivahsambandh.com',
 
   address: {
     en: '#8, 1st Floor, 24th Main, 5th Phase, JP Nagar, Bangalore 560078',

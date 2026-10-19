@@ -309,7 +309,7 @@
         },
         {
           "h": "Your Rights",
-          "body": "You may review, correct or delete your profile information at any time from your account, or write to us at support@vivahsambandh.com and our team will assist you within a reasonable time."
+          "body": "You may review, correct or delete your profile information at any time from your account, or write to us at info@vivahsambandh.com and our team will assist you within a reasonable time."
         }
       ]
     },
@@ -393,7 +393,7 @@
         },
         {
           "h": "Talk to Our Team",
-          "body": "Still stuck? Reach us through the Contact page, call us Mon – Sat (10 AM – 6 PM), or email support@vivahsambandh.com — we reply within 24 hours."
+          "body": "Still stuck? Reach us through the Contact page, call us Mon – Sat (10 AM – 6 PM), or email info@vivahsambandh.com — we reply within 24 hours."
         }
       ]
     }
@@ -403,13 +403,13 @@
     "title": "Contact Us",
     "subtitle": "We are here to help you. Feel free to reach out to us for any queries, suggestions or support. Our team will get back to you as soon as possible.",
     "callTitle": "Call Us",
-    "callValue": "+91 98765 43210",
+    "callValue": "+91 83107 82820",
     "callHours": "(Mon – Sat, 10 AM – 6 PM)",
     "emailTitle": "Email Us",
-    "emailValue": "support@vivahsambandh.com",
+    "emailValue": "info@vivahsambandh.com",
     "emailNote": "We reply within 24 hours.",
     "addressTitle": "Our Address",
-    "addressValue": "Bengaluru, Karnataka, India 560001",
+    "addressValue": "#8, 1st Floor, 24th Main, 5th Phase, JP Nagar, Bangalore 560078",
     "formTitle": "Send Us a Message",
     "formSubtitle": "Fill in the details below and our team will get back to you.",
     "name": "Your Name",
@@ -568,7 +568,7 @@
       },
       {
         "q": "How can I contact support?",
-        "a": "Call us at +91 98765 43210 (Mon – Sat, 10 AM – 6 PM) or email support@vivahsambandh.com — we reply within 24 hours."
+        "a": "Call us at +91 83107 82820 (Mon – Sat, 10 AM – 6 PM) or email info@vivahsambandh.com — we reply within 24 hours."
       }
     ],
     "ctaEyebrow": "Still Have Questions?",

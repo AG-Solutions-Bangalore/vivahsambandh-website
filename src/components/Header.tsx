@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, lazy, Suspense } from 'react'
 import { useTranslation } from 'react-i18next'
-import { COMPANY } from '../constants/company'
+import { useCompanyDetails } from '../module/company'
 import LanguageSwitcher from './LanguageSwitcher'
 import DownloadNavDropdown from './DownloadNavDropdown'
 import { ensureMotion, prefersReducedMotion } from '../lib/gsap-setup'
@@ -25,6 +25,7 @@ function LotusMark() {
 
 export default function Header() {
   const { t, i18n } = useTranslation()
+  const company = useCompanyDetails()
   const [open, setOpen] = useState(false)
   const headerRef = useRef<HTMLElement | null>(null)
 
@@ -152,11 +153,11 @@ export default function Header() {
     >
       <div className="section-pad flex h-16 items-center justify-between gap-2 sm:gap-3">
         {/* Brand Logo */}
-        <Link to={brandHref} title={COMPANY.name} className="flex min-w-0 items-center gap-2 transition hover:opacity-95">
+        <Link to={brandHref} title={company.name} className="flex min-w-0 items-center gap-2 transition hover:opacity-95">
           <LotusMark />
           <span className="min-w-0 leading-none">
             <span className="font-display block truncate text-base font-bold text-navy-900 sm:text-xl">
-              {COMPANY.name}
+              {company.name}
             </span>
             <span className="block truncate text-[9px] font-semibold uppercase tracking-[0.24em] text-gold-700 sm:text-[10px]">
               {t('meta.tagline')}

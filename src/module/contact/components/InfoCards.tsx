@@ -1,7 +1,6 @@
 import { useTranslation } from 'react-i18next'
-import { COMPANY } from '../../../constants/company'
 import { RevealGroup } from '../../../components/motion/Reveal'
-import { useCompanyQuery } from '../../company'
+import { useCompanyDetails } from '../../company'
 
 function CardIcon({ index }: { index: number }) {
   const cls = 'h-5 w-5'
@@ -41,30 +40,26 @@ function CardIcon({ index }: { index: number }) {
  * cream cards, gold icon medallions, per design.
  */
 export default function InfoCards() {
-  const { t } = useTranslation()
-
-  // Live company profile (cached by query key — shared with Footer,
-  // so this adds no extra network request). Address falls back to
-  // static copy when the API is unreachable.
-  const { data: companyRes } = useCompanyQuery()
-  const liveAddress = companyRes?.data?.company_address?.trim()
+  const { t, i18n } = useTranslation()
+  const lang = i18n.resolvedLanguage === 'hi' || i18n.language === 'hi' ? 'hi' : 'en'
+  const { phone, phoneLink, email, address } = useCompanyDetails(lang)
 
   const cards = [
     {
       title: t('contactPage.callTitle'),
-      value: COMPANY.supportPhoneDisplay,
-      href: COMPANY.supportPhoneLink,
+      value: phone,
+      href: phoneLink,
       note: t('contactPage.callNote'),
     },
     {
       title: t('contactPage.emailTitle'),
-      value: COMPANY.supportEmail,
-      href: `mailto:${COMPANY.supportEmail}`,
+      value: email,
+      href: `mailto:${email}`,
       note: t('contactPage.emailNote'),
     },
     {
       title: t('contactPage.addressTitle'),
-      value: liveAddress || t('contactPage.addressValue'),
+      value: address,
       note: t('contactPage.addressNote'),
     },
     {

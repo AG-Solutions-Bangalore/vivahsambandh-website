@@ -1,12 +1,11 @@
-import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useLocation } from "react-router-dom";
-import { COMPANY, getCompanyAddress } from "../constants/company";
+import { COMPANY } from "../constants/company";
 import { getNavItems, pagePath } from "../constants/navigation";
 import type { AppLang } from "../i18n";
 import { useAppLanguage } from "../i18n/useAppLanguage";
 import Reveal from "./motion/Reveal";
-import { useCompanyQuery } from "../module/company";
+import { useCompanyDetails } from "../module/company";
 import { img, imgSrcSet } from "../lib/image";
 
 function LotusMark() {
@@ -50,25 +49,8 @@ export default function Footer() {
     { label: t("footer.sitemap"), href: "/sitemap.xml" },
   ];
 
-  const [shouldFetch, setShouldFetch] = useState(false);
-  useEffect(() => {
-    const timer = setTimeout(() => setShouldFetch(true), 5000);
-    const onScroll = () => {
-      setShouldFetch(true);
-      window.removeEventListener("scroll", onScroll);
-    };
-    window.addEventListener("scroll", onScroll, { passive: true, once: true });
-    return () => {
-      clearTimeout(timer);
-      window.removeEventListener("scroll", onScroll);
-    };
-  }, []);
-
-  const { data: companyRes } = useCompanyQuery({ enabled: shouldFetch });
-  const live = companyRes?.data;
-  const phoneDisplay = live?.company_mobile_no ? `+91 ${live.company_mobile_no}` : COMPANY.supportPhoneDisplay;
-  const phoneLink = live?.company_mobile_no ? `tel:+91${live.company_mobile_no.replace(/\D/g, '')}` : COMPANY.supportPhoneLink;
-  const emailDisplay = live?.company_email?.trim() || COMPANY.supportEmail;
+  const company = useCompanyDetails(appLang);
+  const { phone, phoneLink, email, address } = company;
 
   return (
     <footer className="relative overflow-hidden bg-navy-pattern text-white">
@@ -99,7 +81,7 @@ export default function Footer() {
             <LotusMark />
             <div>
               <p className="font-display text-xl font-bold leading-none text-white">
-                {COMPANY.name}
+                {company.name}
               </p>
               <p className="mt-1 text-[10px] font-sans font-semibold uppercase tracking-[0.24em] text-gold-300">
                 {t("meta.tagline")}
@@ -215,26 +197,26 @@ export default function Footer() {
           <ul className="mt-3.5 space-y-2.5 text-xs text-white/75 sm:text-sm">
             <li className="flex items-start gap-2">
               <span className="text-gold-400 mt-0.5">📍</span>
-              <span>{getCompanyAddress(lang)}</span>
+              <span>{address}</span>
             </li>
             <li className="flex items-center gap-2">
               <span className="text-gold-400">📞</span>
               <a
                 href={phoneLink}
-                title={phoneDisplay}
+                title={phone}
                 className="transition hover:text-gold-300"
               >
-                {phoneDisplay}
+                {phone}
               </a>
             </li>
             <li className="flex items-center gap-2">
               <span className="text-gold-400">✉️</span>
               <a
-                href={`mailto:${emailDisplay}`}
-                title={emailDisplay}
+                href={`mailto:${email}`}
+                title={email}
                 className="transition hover:text-gold-300"
               >
-                {emailDisplay}
+                {email}
               </a>
             </li>
           </ul>
@@ -246,12 +228,12 @@ export default function Footer() {
       <div className="relative z-10 border-t py-6 border-gold-500/30">
         <div className="section-pad flex flex-col items-center justify-between gap-2 py-3 text-xs text-white/60 sm:flex-row">
           <p>
-            © {COMPANY.copyrightYear} {COMPANY.name}.{" "}
+            © {COMPANY.copyrightYear} {company.name}.{" "}
             {t("footer.rights").replace(/© \d+ [^.]+\./, "")}
           </p>
           <p className="font-semibold tracking-wide text-gold-300/90">
             {t("footer.madeWith")} <span className="text-maroon-500">♥</span>{" "}
-            {COMPANY.name}
+            {company.name}
           </p>
         </div>
       </div>

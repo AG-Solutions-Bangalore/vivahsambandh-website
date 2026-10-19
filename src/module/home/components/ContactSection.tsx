@@ -1,8 +1,6 @@
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
-  COMPANY,
-  getCompanyAddress,
   getCompanyHours,
 } from "../../../constants/company";
 import { useAppLanguage } from "../../../i18n/useAppLanguage";
@@ -10,6 +8,7 @@ import type { ContactFormData } from "../types";
 import Reveal, { RevealGroup } from "../../../components/motion/Reveal";
 import { refreshScrollTriggers } from "../../../lib/gsap-setup";
 import { img, imgSrcSet } from "../../../lib/image";
+import { useCompanyDetails } from "../../company";
 import {
   sanitizeName,
   sanitizeEmail,
@@ -25,6 +24,7 @@ import {
 export default function ContactSection() {
   const { t } = useTranslation();
   const { lang } = useAppLanguage();
+  const { phone, phoneLink, email, address } = useCompanyDetails(lang);
   const [submitted, setSubmitted] = useState(false);
   const [errors, setErrors] = useState<Partial<Record<keyof ContactFormData, string>>>({});
   const [formData, setFormData] = useState<ContactFormData>({
@@ -165,11 +165,11 @@ export default function ContactSection() {
                     {t("contact.callTitle")}
                   </p>
                   <a
-                    href={COMPANY.supportPhoneLink}
-                    title={COMPANY.supportPhoneDisplay}
+                    href={phoneLink}
+                    title={phone}
                     className="font-display text-base font-bold text-navy-900 transition hover:text-gold-600 sm:text-lg"
                   >
-                    {COMPANY.supportPhoneDisplay}
+                    {phone}
                   </a>
                   <p className="text-xs text-ink-500">
                     {getCompanyHours(lang)}
@@ -194,11 +194,11 @@ export default function ContactSection() {
                     {t("contact.emailTitle")}
                   </p>
                   <a
-                    href={`mailto:${COMPANY.supportEmail}`}
-                    title={COMPANY.supportEmail}
+                    href={`mailto:${email}`}
+                    title={email}
                     className="font-display text-base font-bold text-navy-900 transition hover:text-gold-600 sm:text-lg"
                   >
-                    {COMPANY.supportEmail}
+                    {email}
                   </a>
                   <p className="text-xs text-ink-500">
                     {t("contact.emailNote")}
@@ -223,7 +223,7 @@ export default function ContactSection() {
                     {t("contact.addressTitle")}
                   </p>
                   <p className="font-display text-sm font-bold text-navy-900 sm:text-base">
-                    {getCompanyAddress(lang)}
+                    {address}
                   </p>
                 </div>
               </div>
