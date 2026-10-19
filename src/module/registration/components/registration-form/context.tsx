@@ -114,6 +114,7 @@ export interface RegistrationFormContextValue {
   isFormFullyFilled: boolean
   isSubmitting: boolean
   submitResult: { type: 'success' | 'error'; message: string } | null
+  resetRegistration: () => void
 
   // OTP modal control
   isOtpModalOpen: boolean
@@ -679,6 +680,18 @@ function convertTo24HourTime(timeStr: string): string {
     setIsOtpModalOpen(true)
   }, [])
 
+  // Reset all form state so the user can submit another response
+  const resetRegistration = useCallback(() => {
+    setForm(initialFormState)
+    setGotras([])
+    setLoadingGotras(false)
+    setFieldErrors({})
+    setIsMobileVerified(false)
+    setVerifiedMobileNumber('')
+    setSubmitResult(null)
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }, [])
+
   const value: RegistrationFormContextValue = {
     baseId,
     form,
@@ -711,6 +724,7 @@ function convertTo24HourTime(timeStr: string): string {
     isFormFullyFilled,
     isSubmitting,
     submitResult,
+    resetRegistration,
     isOtpModalOpen,
     setIsOtpModalOpen,
     termsOpen,

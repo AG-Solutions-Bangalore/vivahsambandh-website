@@ -187,7 +187,7 @@ export default function OtpVerificationModal({
         setErrorMessage("Mobile number is missing.");
       } else if (firebaseError.code === "auth/billing-not-enabled") {
         setErrorMessage(
-          "Firebase Phone Auth requires billing (Blaze plan) enabled in Google Cloud/Firebase Console to send SMS to real numbers. For testing, please use test number +91 7777777777 with OTP 123456.",
+          "Firebase Phone Auth requires billing (Blaze plan) enabled in Google Cloud/Firebase Console to send SMS to real numbers.",
         );
       } else if (firebaseError.code === "auth/too-many-requests") {
         setErrorMessage(

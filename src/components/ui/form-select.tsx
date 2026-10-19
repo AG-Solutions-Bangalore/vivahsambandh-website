@@ -34,6 +34,7 @@ interface FormSelectProps {
   disabledText?: string
   searchable?: boolean
   searchPlaceholder?: string
+  className?: string
   'aria-invalid'?: boolean
 }
 
@@ -50,6 +51,7 @@ export function FormSelect({
   disabledText,
   searchable = false,
   searchPlaceholder = 'Search...',
+  className,
   'aria-invalid': ariaInvalid,
 }: FormSelectProps) {
   const [query, setQuery] = useState('')
@@ -82,10 +84,11 @@ export function FormSelect({
         id={id}
         aria-invalid={ariaInvalid ?? error}
         className={cn(
-          'h-auto w-full rounded-xl border px-3.5 py-2.5 text-sm transition focus:outline-none focus-visible:ring-2',
+          'h-8 w-full rounded-full border px-3.5 py-1 text-sm cursor-pointer transition duration-200 focus:outline-none focus-visible:ring-2',
           error
             ? 'border-maroon-500 bg-maroon-50/30 text-navy-900 focus-visible:border-maroon-600 focus-visible:ring-maroon-500/20'
             : 'border-cream-300 bg-cream-50/70 text-navy-900 hover:bg-white focus-visible:border-gold-500 focus-visible:ring-gold-500/20 data-[placeholder]:text-ink-400',
+          className,
         )}
       >
         {loading ? (
