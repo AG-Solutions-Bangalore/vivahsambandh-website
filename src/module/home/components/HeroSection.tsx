@@ -184,27 +184,6 @@ export default function HeroSection() {
               scrub: 0.6,
             },
           });
-          // Flowers drift at different rates for depth.
-          gsap.to('[data-hero="flower-l"]', {
-            y: -40,
-            ease: "none",
-            scrollTrigger: {
-              trigger: root,
-              start: "top top",
-              end: "bottom top",
-              scrub: 0.8,
-            },
-          });
-          gsap.to('[data-hero="flower-r"]', {
-            y: -56,
-            ease: "none",
-            scrollTrigger: {
-              trigger: root,
-              start: "top top",
-              end: "bottom top",
-              scrub: 0.8,
-            },
-          });
         });
 
         // ——— Match cards entrance (just below fold → scroll-triggered, once) ———
@@ -238,45 +217,6 @@ export default function HeroSection() {
 
   return (
     <div ref={rootRef} className="relative isolate bg-cream-50">
-      {/* ============================================================== */}
-      {/* Real Flower Images: Left & Right cascading garlands             */}
-      {/* Small + in front                                                */}
-      {/* ============================================================== */}
-      <img
-        src={img("/images/home/flower1_image.webp")}
-        srcSet={imgSrcSet(
-          "/images/home/flower1_image-192.webp 192w, /images/home/flower1_image-320.webp 320w, /images/home/flower1_image-640.webp 640w, /images/home/flower1_image.webp 1024w",
-        )}
-        sizes="(max-width: 640px) 22vw, (max-width: 768px) 10rem, (max-width: 1024px) 12rem, (max-width: 1280px) 14rem, 16rem"
-        width={1024}
-        height={1536}
-        alt="Decorative flower garland"
-        title="Decorative flower garland"
-        data-hero="flower-l"
-        fetchPriority="low"
-        className="pointer-events-none absolute left-0 bottom-0 z-20 w-32 sm:w-40 md:w-48 lg:w-56 xl:w-64 max-w-[22vw] h-auto object-contain object-left-bottom select-none"
-        loading="lazy"
-        decoding="async"
-        aria-hidden="true"
-      />
-      <img
-        src={img("/images/home/flower2_image.webp")}
-        srcSet={imgSrcSet(
-          "/images/home/flower2_image-192.webp 192w, /images/home/flower2_image-320.webp 320w, /images/home/flower2_image-640.webp 640w, /images/home/flower2_image.webp 1024w",
-        )}
-        sizes="(max-width: 640px) 26vw, (max-width: 768px) 11rem, (max-width: 1024px) 13rem, (max-width: 1280px) 15rem, 18rem"
-        width={1024}
-        height={1536}
-        alt="Decorative flower garland"
-        title="Decorative flower garland"
-        data-hero="flower-r"
-        fetchPriority="low"
-        className="pointer-events-none absolute right-0 bottom-0 z-20 w-32 sm:w-44 md:w-52 lg:w-60 xl:w-72 max-w-[26vw] h-auto object-contain object-right-top select-none"
-        loading="lazy"
-        decoding="async"
-        aria-hidden="true"
-      />
-
       {/* ============================================================== */}
       {/* 1. HERO BANNER: Full-width, proportionally sized to 2172x724   */}
       {/* ============================================================== */}
