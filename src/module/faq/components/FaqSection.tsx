@@ -1,21 +1,21 @@
-import { useState } from "react";
-import { useTranslation } from "react-i18next";
 import {
-  Users,
-  FileText,
-  UserPlus,
-  ShieldCheck,
+  ArrowRight,
   BadgeCheck,
   ChevronLeft,
   ChevronRight,
-  ArrowRight,
+  FileText,
+  ShieldCheck,
+  UserPlus,
+  Users,
 } from "lucide-react";
+import { useState } from "react";
+import { useTranslation } from "react-i18next";
+import { Link } from "react-router-dom";
+import { pagePath } from "../../../constants/navigation";
+import { useAppLanguage } from "../../../i18n/useAppLanguage";
+import { img, imgSrcSet } from "../../../lib/image";
 import { getFaqAnswer, getFaqQuestion, useGroupedFaqs } from "../hook/useFaq";
 import type { FaqFallbackItem } from "../types";
-import { img, imgSrcSet } from "../../../lib/image";
-import { useAppLanguage } from "../../../i18n/useAppLanguage";
-import { pagePath } from "../../../constants/navigation";
-import { Link } from "react-router-dom";
 
 export interface FaqSectionProps {
   slug?: string;
@@ -199,25 +199,6 @@ export default function FaqSection({
               <span className="text-gold-500 text-xs">❖</span>
             </div>
 
-            {/* Heart with Question Mark Ornament */}
-            <div className="relative mb-3.5">
-              <div className="w-13 h-13 rounded-full bg-gradient-to-br from-maroon-100 via-maroon-50 to-white border-2 border-maroon-300 p-1 flex items-center justify-center shadow-sm shadow-maroon-600/10">
-                <div className="w-full h-full rounded-full border border-dashed border-maroon-500/50 flex items-center justify-center relative">
-                  <svg
-                    className="w-6 h-6 text-maroon-700"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="1.8"
-                  >
-                    <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
-                  </svg>
-                  <span className="absolute font-serif text-sm font-bold text-maroon-700 -mt-0.5">
-                    ?
-                  </span>
-                </div>
-              </div>
-            </div>
 
             {/* Section Heading */}
             <h2 className="text-2xl sm:text-3xl lg:text-[34px] font-serif font-bold text-navy-900 leading-[1.18] mb-2.5">
