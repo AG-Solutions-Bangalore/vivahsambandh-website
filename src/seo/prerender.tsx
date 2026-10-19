@@ -57,7 +57,9 @@ export async function prerender(args?: PrerenderArguments): Promise<PrerenderRes
   const description = PAGE_SEO[page].descriptions[lang];
   const keywords = COMPANY_CONFIG.keywords[lang];
   const keywordCount = keywords.split(',').length;
-  const canonicalUrl = getCanonicalUrl(url, lang);
+  // Canonical always uses the page's primary path, so alias URLs
+  // (/register, /success-stories) canonicalize to /registration, /stories.
+  const canonicalUrl = getCanonicalUrl(getPagePath(page, lang), lang);
   const enHref = `${COMPANY_CONFIG.siteOrigin}${getPagePath(page, 'en')}`;
   const hiHref = `${COMPANY_CONFIG.siteOrigin}${getPagePath(page, 'hi')}`;
   const graph = createCompositeGraph(lang, page);
@@ -177,7 +179,13 @@ export async function prerender(args?: PrerenderArguments): Promise<PrerenderRes
   // the LCP banner for bandwidth. Strip them; the banner keeps its dedicated
   // head preload (with responsive candidates), everything else loads in place.
   const bodyHtml = markup.replace(/<link rel="preload" as="image"[^>]*>/g, '');
-  const html = `<!--ssg:${lang}-->${bodyHtml}`;
+  // Language-stamped AND route-stamped so main.tsx's hydrate gate can verify
+  // the served HTML was rendered for THIS route — a host fallback serving the
+  // home page under an unprefetched path must never hydrate (#418).
+  const prerenderPath = url.split(/[?#]/)[0];
+  const markerRoute =
+    prerenderPath.length > 1 ? prerenderPath.replace(/\/+$/, '') || '/' : prerenderPath;
+  const html = `<!--ssg:${lang}:${markerRoute}-->${bodyHtml}`;
   console.log(
     `  \x1b[1m🖨️  Prerendered body\x1b[0m ${(Buffer.byteLength(html, 'utf8') / 1024).toFixed(1)} KB HTML (${lang})`,
   );

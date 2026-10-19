@@ -202,6 +202,13 @@ export default defineConfig({
         '/hi/help-center',
         '/registration',
         '/hi/registration',
+        // Aliases the router resolves too — without prerendered HTML the host
+        // serves the home page fallback here, which hydrates against a
+        // different route tree and crashes with React error #418.
+        '/register',
+        '/hi/register',
+        '/success-stories',
+        '/hi/success-stories',
         '/admin-register',
         '/hi/admin-register',
         '/download',

@@ -142,6 +142,7 @@ const installOtpNetworkTap = () => {
 interface OtpVerificationModalProps {
   isOpen: boolean;
   mobile: string; // 10-digit mobile number
+  mode?: 'inline' | 'submit';
   onVerified: () => void;
   onClose: () => void;
   onChangeNumber?: () => void;
@@ -150,6 +151,7 @@ interface OtpVerificationModalProps {
 export default function OtpVerificationModal({
   isOpen,
   mobile,
+  mode = 'inline',
   onVerified,
   onClose,
   onChangeNumber,
@@ -754,7 +756,11 @@ export default function OtpVerificationModal({
             {isSuccess && (
               <div className="mt-3 flex items-center justify-center gap-1.5 text-xs font-semibold text-emerald-700 animate-fade-in">
                 <CheckCircle2 className="size-4 shrink-0 text-emerald-600" />
-                <span>Verification confirmed! Completing submission...</span>
+                <span>
+                  {mode === 'submit'
+                    ? 'Verification confirmed! Completing submission...'
+                    : 'Mobile number verified successfully!'}
+                </span>
               </div>
             )}
 
@@ -778,7 +784,11 @@ export default function OtpVerificationModal({
                   </span>
                 ) : (
                   <>
-                    <span>Verify &amp; Complete Registration</span>
+                    <span>
+                      {mode === 'submit'
+                        ? 'Verify & Complete Registration'
+                        : 'Verify OTP'}
+                    </span>
                     <ArrowRight className="size-4" />
                   </>
                 )}

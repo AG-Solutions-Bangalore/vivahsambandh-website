@@ -39,6 +39,7 @@ function RegistrationFormInner() {
     setTermsOpen,
     submitResult,
     resetRegistration,
+    otpTriggerSource,
   } = useRegistrationForm()
 
   // Once submitted successfully, show only the centered success message
@@ -82,6 +83,7 @@ function RegistrationFormInner() {
         <OtpVerificationModal
           isOpen={isOtpModalOpen}
           mobile={form.mobile}
+          mode={otpTriggerSource}
           onVerified={handleOtpVerified}
           onClose={() => setIsOtpModalOpen(false)}
           onChangeNumber={() => {

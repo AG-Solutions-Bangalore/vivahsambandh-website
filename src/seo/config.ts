@@ -285,7 +285,8 @@ export function resolvePageKey(pathname = "/"): PageKey {
   if (withoutLang === "/terms") return "terms";
   if (withoutLang === "/guidelines") return "guidelines";
   if (withoutLang === "/help-center") return "help-center";
-  if (withoutLang === "/registration") return "registration";
+  if (withoutLang === "/registration" || withoutLang === "/register")
+    return "registration";
   if (withoutLang === "/download") return "download";
   if (withoutLang === "/admin-register") return "admin-register";
   return "home";
