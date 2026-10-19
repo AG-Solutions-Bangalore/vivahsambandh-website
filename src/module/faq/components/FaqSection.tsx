@@ -89,17 +89,6 @@ const DIAL_NODES: DialNodeConfig[] = [
   },
 ];
 
-const FLOATING_PETALS = [
-  { top: "46%", left: "9%", width: 28, height: 18, rotate: 2.7, fill: "#F43F5E", opacity: 0.85 },
-  { top: "67%", left: "27%", width: 26, height: 17, rotate: -16.4, fill: "#F43F5E", opacity: 0.9 },
-  { top: "79%", left: "37%", width: 28, height: 18, rotate: 7.4, fill: "#FB7185", opacity: 0.92 },
-  { top: "82%", left: "49%", width: 26, height: 17, rotate: -6.9, fill: "#F43F5E", opacity: 0.88 },
-  { top: "28%", left: "68%", width: 22, height: 15, rotate: 8.6, fill: "#E11D48", opacity: 0.85 },
-  { top: "68%", left: "88%", width: 26, height: 17, rotate: 7.6, fill: "#FB7185", opacity: 0.9 },
-  { top: "18%", left: "44%", width: 24, height: 16, rotate: 2.2, fill: "#F43F5E", opacity: 0.85 },
-  { top: "86%", left: "76%", width: 22, height: 15, rotate: -3.9, fill: "#FB7185", opacity: 0.9 },
-];
-
 function FaqSkeleton() {
   return (
     <div className="w-full flex items-center justify-center min-h-[380px] animate-pulse">
@@ -127,7 +116,6 @@ export default function FaqSection({
 }: FaqSectionProps) {
   const { t } = useTranslation();
   const { lang } = useAppLanguage();
-  const [activeGroupIdx, setActiveGroupIdx] = useState<number>(0);
   const [activeQuestionIdx, setActiveQuestionIdx] = useState<number>(0);
 
   const contactHref =
@@ -149,10 +137,8 @@ export default function FaqSection({
     return null;
   }
 
-  const currentGroupIdx =
-    groups.length > 0 && activeGroupIdx >= groups.length ? 0 : activeGroupIdx;
-  const currentGroup = groups[currentGroupIdx] ?? groups[0];
-  const currentItems = currentGroup?.items ?? [];
+  const currentItems =
+    groups.length > 0 ? groups[0]?.items ?? [] : [];
 
   // 5 questions mapped to the 5 arc nodes
   const displayItems = currentItems.length > 0 ? currentItems.slice(0, 5) : [];
@@ -201,38 +187,6 @@ export default function FaqSection({
         className="pointer-events-none absolute -right-14 rotate-[160deg] top-0 z-10 w-32 sm:w-44 md:w-56 lg:w-64 max-w-[28vw] h-auto object-contain object-right-top select-none opacity-90"
         aria-hidden="true"
       />
-
-      {/* Background Floating Rose Petals */}
-      <div
-        className="absolute inset-0 pointer-events-none select-none z-10 overflow-hidden"
-        aria-hidden="true"
-      >
-        {FLOATING_PETALS.map((petal, i) => (
-          <div
-            key={i}
-            className="absolute"
-            style={{
-              top: petal.top,
-              left: petal.left,
-              width: `${petal.width}px`,
-              height: `${petal.height}px`,
-              transform: `rotate(${petal.rotate}deg)`,
-            }}
-          >
-            <svg
-              viewBox="0 0 30 20"
-              fill="none"
-              className="w-full h-full drop-shadow-xs"
-            >
-              <path
-                d="M5 10 C5 2, 22 2, 28 8 C30 16, 12 18, 5 10 Z"
-                fill={petal.fill}
-                opacity={petal.opacity}
-              />
-            </svg>
-          </div>
-        ))}
-      </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-20">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-4 items-center">
@@ -292,40 +246,6 @@ export default function FaqSection({
                   "Find answers to common questions about VivahSambandh."
                 )}
             </p>
-
-            {/* Multi-category switch pills */}
-            {groups.length > 1 && (
-              <div className="w-full max-w-[320px] pt-1">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-[#9F1239]/70 block mb-2">
-                  {t("faq.categories", "Categories")}
-                </span>
-                <div className="flex flex-wrap gap-1.5">
-                  {groups.map((group, idx) => {
-                    const isActive = currentGroupIdx === idx;
-                    const heading =
-                      group.heading ||
-                      t("faq.defaultCategory", "General Information");
-                    return (
-                      <button
-                        key={idx}
-                        type="button"
-                        onClick={() => {
-                          setActiveGroupIdx(idx);
-                          setActiveQuestionIdx(0);
-                        }}
-                        className={`px-3 py-1 rounded-full text-[11px] font-medium transition-all cursor-pointer text-left ${
-                          isActive
-                            ? "bg-[#9F1239] text-white shadow-xs font-semibold"
-                            : "bg-white text-[#443838] border border-[#F1E8E2] hover:border-[#D4AF37]/60 hover:bg-[#FFF5F7]"
-                        }`}
-                      >
-                        {heading}
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
           </div>
 
           {/* Right Column: Semicircular Arc Dial on Desktop & Carousel on Mobile */}
@@ -618,24 +538,6 @@ export default function FaqSection({
             )}
           </div>
         </div>
-      </div>
-
-      {/* Elegant Bottom Maroon Ribbon Wave */}
-      <div
-        className="pointer-events-none absolute -bottom-4 left-0 right-0 z-10 overflow-hidden leading-none select-none"
-        aria-hidden="true"
-      >
-        <svg
-          viewBox="0 0 1440 48"
-          fill="none"
-          preserveAspectRatio="none"
-          className="w-full h-5 sm:h-8 md:h-10 text-[#520B1D]"
-        >
-          <path
-            d="M0,24 C360,48 720,0 1080,28 C1240,40 1360,16 1440,20 L1440,48 L0,48 Z"
-            fill="currentColor"
-          />
-        </svg>
       </div>
     </section>
   );
