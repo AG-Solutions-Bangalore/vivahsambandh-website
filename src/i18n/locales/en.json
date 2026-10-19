@@ -14,9 +14,15 @@
     "blogs": "Blogs",
     "faq": "FAQ",
     "contact": "Contact Us",
-    "login": "Login",
+    "download": "Download",
     "createProfile": "Create Profile",
-    "language": "Language"
+    "language": "Language",
+    "downloadApp": "Download App",
+    "getOnPlayStore": "Google Play",
+    "getOnAppStore": "App Store",
+    "appAvailable": "Available on iOS & Android",
+    "getItOn": "GET IT ON",
+    "downloadOn": "Download on the"
   },
   "hero": {
     "eyebrow": "A Premium Community Platform",
@@ -29,7 +35,12 @@
     "privacy": "100% Privacy",
     "secure": "Secure",
     "sideNote": "Same Values Brighter Futures",
-    "sideBadge": ["Same", "Values", "Brighter", "Futures"]
+    "sideBadge": [
+      "Same",
+      "Values",
+      "Brighter",
+      "Futures"
+    ]
   },
   "matchCards": {
     "bride": "Looking for a",
@@ -181,6 +192,8 @@
   "app": {
     "eyebrow": "VivahSambandh App",
     "title": "Your Match, Always With You",
+    "getItOn": "GET IT ON",
+    "downloadOn": "Download on the",
     "body": "Download the VivahSambandh app and explore verified profiles, get instant notifications and stay connected with your potential life partner.",
     "googlePlay": "Get it on Google Play",
     "appStore": "Download on the App Store",

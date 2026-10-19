@@ -2,6 +2,7 @@ import { useEffect, useRef, useState, lazy, Suspense } from 'react'
 import { useTranslation } from 'react-i18next'
 import { COMPANY } from '../constants/company'
 import LanguageSwitcher from './LanguageSwitcher'
+import DownloadNavDropdown from './DownloadNavDropdown'
 import { ensureMotion, prefersReducedMotion } from '../lib/gsap-setup'
 import { Link, useLocation } from 'react-router-dom'
 import { getNavItems, homePath } from '../constants/navigation'
@@ -165,32 +166,35 @@ export default function Header() {
 
         {/* Desktop Navigation Links */}
         <nav className="hidden items-center gap-3 text-sm font-medium text-navy-900/80 lg:flex xl:gap-5" aria-label="Primary">
-          {navItems.map((item) => (
-            <Link
-              key={item.key}
-              to={item.href}
-              title={item.label}
-              className={`transition hover:text-maroon-600 ${
-                item.active
-                  ? 'font-bold text-maroon-600 underline decoration-gold-500 decoration-2 underline-offset-8'
-                  : ''
-              }`}
-            >
-              {item.label}
-            </Link>
-          ))}
+          {navItems.map((item) => {
+            const linkClass = `transition hover:text-maroon-600 ${
+              item.active
+                ? 'font-bold text-maroon-600 underline decoration-gold-500 decoration-2 underline-offset-8'
+                : ''
+            }`
+
+            if (item.key === 'download') {
+              return (
+                <DownloadNavDropdown
+                  key={item.key}
+                  label={item.label}
+                  active={item.active}
+                  href={item.href}
+                />
+              )
+            }
+
+            return (
+              <Link key={item.key} to={item.href} title={item.label} className={linkClass}>
+                {item.label}
+              </Link>
+            )
+          })}
         </nav>
 
-        {/* Right Controls: Language Switcher, Login, Create Profile */}
+        {/* Right Controls: Language Switcher, Create Profile */}
         <div className="hidden items-center gap-2.5 lg:flex">
           <LanguageSwitcher />
-          <a
-            href="#login"
-            title={t('header.login')}
-            className="rounded-full px-3.5 py-2 text-sm font-semibold text-navy-900 transition hover:bg-gold-100"
-          >
-            {t('header.login')}
-          </a>
           <Link
             to={lang === 'hi' ? '/hi/registration' : '/registration'}
             title={t('header.createProfile')}

@@ -15,6 +15,7 @@ export const DEFERRED_SECTION_IDS = new Set([
   'stories',
   'blogs-featured',
   'blogs-front',
+  'app',
   'contact',
   'faq',
 ])
