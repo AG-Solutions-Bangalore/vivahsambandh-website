@@ -2,7 +2,6 @@ import { useEffect, useRef, useState, lazy, Suspense } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useCompanyDetails } from '../module/company'
 import LanguageSwitcher from './LanguageSwitcher'
-import DownloadNavDropdown from './DownloadNavDropdown'
 import { ensureMotion, prefersReducedMotion } from '../lib/gsap-setup'
 import { Link, useLocation } from 'react-router-dom'
 import { getNavItems, homePath } from '../constants/navigation'
@@ -167,30 +166,20 @@ export default function Header() {
 
         {/* Desktop Navigation Links */}
         <nav className="hidden items-center gap-3 text-sm font-medium text-navy-900/80 lg:flex xl:gap-5" aria-label="Primary">
-          {navItems.map((item) => {
-            const linkClass = `transition hover:text-maroon-600 ${
-              item.active
-                ? 'font-bold text-maroon-600 underline decoration-gold-500 decoration-2 underline-offset-8'
-                : ''
-            }`
-
-            if (item.key === 'download') {
-              return (
-                <DownloadNavDropdown
-                  key={item.key}
-                  label={item.label}
-                  active={item.active}
-                  href={item.href}
-                />
-              )
-            }
-
-            return (
-              <Link key={item.key} to={item.href} title={item.label} className={linkClass}>
-                {item.label}
-              </Link>
-            )
-          })}
+          {navItems.map((item) => (
+            <Link
+              key={item.key}
+              to={item.href}
+              title={item.label}
+              className={`transition hover:text-maroon-600 ${
+                item.active
+                  ? 'font-bold text-maroon-600 underline decoration-gold-500 decoration-2 underline-offset-8'
+                  : ''
+              }`}
+            >
+              {item.label}
+            </Link>
+          ))}
         </nav>
 
         {/* Right Controls: Language Switcher, Create Profile */}

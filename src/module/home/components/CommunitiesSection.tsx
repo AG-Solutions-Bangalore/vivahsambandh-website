@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 import { cn } from 'cn'
-import Reveal from '../../../components/motion/Reveal'
+import Reveal, { RevealGroup } from '../../../components/motion/Reveal'
 import { pagePath } from '../../../constants/navigation'
 import type { AppLang } from '../../../i18n'
 
@@ -93,11 +93,17 @@ export default function CommunitiesSection() {
     <section
       id="communities"
       aria-label="Communities We Serve"
-      className="relative overflow-hidden bg-cream-50 pt-8 pb-12 sm:pt-10 sm:pb-16"
+      className="relative overflow-hidden bg-cream-50 pt-10 pb-14 sm:pt-12 sm:pb-18"
     >
+      {/* Ambient warmth: soft gold glow above, faint maroon glow below */}
+      <div aria-hidden="true" className="pointer-events-none absolute inset-0">
+        <div className="absolute top-[-6rem] left-1/2 h-72 w-[46rem] max-w-full -translate-x-1/2 rounded-full bg-gold-400/10 blur-3xl" />
+        <div className="absolute right-[-6rem] bottom-[-8rem] size-72 rounded-full bg-maroon-400/[0.06] blur-3xl" />
+      </div>
+
       <div className="section-pad relative z-10">
         {/* ============================================================== */}
-        {/* Section Header: Eyebrow, Title, Subtitle                       */}
+        {/* Section Header: Eyebrow, Title, Subtitle, Register CTA         */}
         {/* ============================================================== */}
         <Reveal variant="up">
           <div className="flex flex-col justify-between gap-4 md:flex-row md:items-end">
@@ -136,18 +142,18 @@ export default function CommunitiesSection() {
               </p>
             </div>
 
-            {/* Quick CTA */}
+            {/* Register CTA: bordered pill that fills maroon on hover */}
             <div className="shrink-0">
               <Link
                 to={registerHref}
                 title={t('communities.register', { defaultValue: 'Register Free Bio-Data' })}
-                className="group inline-flex items-center gap-1.5 text-xs sm:text-sm font-bold text-maroon-700 transition hover:text-maroon-800"
+                className="group inline-flex items-center gap-2 rounded-full border border-maroon-600/25 bg-white/70 px-4 py-2 text-xs font-bold text-maroon-700 shadow-xs transition-all duration-300 hover:-translate-y-0.5 hover:border-maroon-600 hover:bg-maroon-600 hover:text-white hover:shadow-lg sm:px-5 sm:py-2.5 sm:text-sm"
               >
                 <span>
                   {t('communities.register', { defaultValue: 'Register Free Bio-Data' })}
                 </span>
                 <span
-                  className="transition-transform duration-300 group-hover:translate-x-1"
+                  className="transition-transform duration-300 group-hover:translate-x-0.5"
                   aria-hidden="true"
                 >
                   →
@@ -158,13 +164,13 @@ export default function CommunitiesSection() {
         </Reveal>
 
         {/* ============================================================== */}
-        {/* 4 Community Pills: Exactly Matching Design Mockup              */}
+        {/* Community Filter Pills: dot indicator, navy when active        */}
         {/* ============================================================== */}
         <Reveal variant="up" delay={0.1}>
           <div
             role="group"
             aria-label="Community selection pills"
-            className="mt-6 sm:mt-7 flex flex-wrap items-center gap-3 sm:gap-3.5"
+            className="mt-6 flex flex-wrap items-center gap-2.5 sm:mt-7 sm:gap-3"
           >
             {communities.map((comm) => {
               const isSelected = selectedCommunity === comm.id
@@ -176,22 +182,22 @@ export default function CommunitiesSection() {
                   aria-pressed={isSelected}
                   onClick={() => handleToggle(comm.id)}
                   className={cn(
-                    'group inline-flex items-center gap-2 rounded-full px-5 py-2.5 sm:px-6 sm:py-3 text-sm sm:text-base font-semibold transition-all duration-300 outline-none cursor-pointer select-none',
+                    'group inline-flex cursor-pointer items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold transition-all duration-300 outline-none select-none sm:px-5 sm:py-2.5',
                     'focus-visible:ring-2 focus-visible:ring-gold-500/60',
                     isSelected
-                      ? 'bg-navy-950 text-white border border-navy-950 shadow-md ring-2 ring-gold-500/50 -translate-y-0.5'
-                      : 'border border-[#E8DFC8] bg-[#FAF6EE] text-navy-950 hover:border-gold-500 hover:bg-gold-50/70 hover:shadow-xs hover:-translate-y-0.5 active:scale-95',
+                      ? '-translate-y-0.5 border border-navy-950 bg-navy-950 text-white shadow-md ring-2 ring-gold-500/40'
+                      : 'border border-cream-300 bg-white/70 text-navy-950 hover:-translate-y-0.5 hover:border-gold-500 hover:bg-gold-50/60 active:scale-95',
                   )}
                 >
                   <span
                     className={cn(
-                      'text-base sm:text-lg font-bold transition-colors leading-none',
-                      isSelected ? 'text-gold-400' : 'text-navy-950 group-hover:text-gold-700',
+                      'size-1.5 rounded-full transition-colors duration-300',
+                      isSelected
+                        ? 'bg-gold-400'
+                        : 'bg-gold-500/40 group-hover:bg-gold-600',
                     )}
                     aria-hidden="true"
-                  >
-                    {isSelected ? '✓' : '+'}
-                  </span>
+                  />
                   <span>{comm.name}</span>
                 </button>
               )
@@ -201,7 +207,7 @@ export default function CommunitiesSection() {
               <button
                 type="button"
                 onClick={() => setSelectedCommunity(null)}
-                className="text-xs font-semibold text-ink-600 underline hover:text-navy-950 transition cursor-pointer ml-1"
+                className="ml-1 cursor-pointer rounded-full border border-cream-300 bg-white/70 px-3 py-2 text-xs font-semibold text-ink-600 transition-all duration-300 hover:border-maroon-400 hover:text-maroon-700"
               >
                 {t('communities.clearFilter', { defaultValue: 'Show All' })}
               </button>
@@ -210,85 +216,100 @@ export default function CommunitiesSection() {
         </Reveal>
 
         {/* ============================================================== */}
-        {/* Community Cards Grid: Visual Representation of the 4          */}
+        {/* Community Cards: centered monogram medallion breaking the      */}
+        {/* top border — wedding-invite composition, gold hairline         */}
+        {/* ornament divider, CTA row that inverts to navy on hover        */}
         {/* ============================================================== */}
-        <Reveal variant="up" delay={0.18}>
-          <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4 sm:gap-5">
-            {communities.map((comm) => {
-              const isSelected = selectedCommunity === comm.id
-              const isFilteredOut = selectedCommunity !== null && !isSelected
+        <RevealGroup
+          className="mt-8 grid grid-cols-1 gap-5 pt-7 sm:mt-10 sm:grid-cols-2 sm:gap-6 lg:grid-cols-4"
+          stagger={0.08}
+        >
+          {communities.map((comm) => {
+            const isSelected = selectedCommunity === comm.id
+            const isFilteredOut = selectedCommunity !== null && !isSelected
 
-              return (
-                <div
-                  key={comm.id}
+            return (
+              <article
+                key={comm.id}
+                data-reveal-item
+                className={cn(
+                  'group relative flex flex-col items-center rounded-2xl border bg-white pt-11 pb-3 text-center shadow-xs transition-all duration-300',
+                  isSelected
+                    ? '-translate-y-1 border-gold-500 bg-gradient-to-b from-gold-50/50 via-white to-white ring-2 ring-gold-500/40 shadow-lift'
+                    : 'border-gold-500/25 hover:-translate-y-1.5 hover:border-gold-500/70 hover:shadow-lift',
+                  isFilteredOut && 'opacity-40 saturate-50',
+                )}
+              >
+                {/* Monogram medallion: first letter of the community name,
+                    breaks the card's top border like a seal */}
+                <span
+                  aria-hidden="true"
                   className={cn(
-                    'relative flex flex-col justify-between overflow-hidden rounded-2xl border bg-white p-5 sm:p-6 transition-all duration-300',
+                    'font-display absolute -top-7 left-1/2 flex size-14 -translate-x-1/2 items-center justify-center rounded-full border text-2xl font-bold ring-4 ring-white transition-all duration-300',
                     isSelected
-                      ? 'border-gold-500 ring-2 ring-gold-500/40 shadow-xl -translate-y-1 bg-gradient-to-b from-gold-50/40 via-white to-white'
-                      : 'border-gold-500/25 hover:border-gold-500/60 hover:shadow-lg hover:-translate-y-1',
-                    isFilteredOut ? 'opacity-40 grayscale-[25%]' : 'opacity-100',
+                      ? 'border-navy-800 bg-navy-950 text-gold-400 shadow-gold group-hover:scale-105'
+                      : 'border-gold-500/50 bg-gradient-to-b from-gold-100 to-gold-50 text-gold-800 shadow-[0_6px_16px_-6px_rgb(183_121_31/0.5)] group-hover:scale-105',
                   )}
                 >
-                  {/* Top: Header & Badge */}
-                  <div>
-                    <div className="flex items-center justify-between gap-2">
-                      <span className="inline-flex items-center rounded-full bg-gold-50 px-2.5 py-1 text-[11px] font-bold tracking-wide text-gold-700 border border-gold-500/20">
-                        {comm.count}
-                      </span>
-                      <span className="text-gold-600 font-display text-sm font-bold">
-                        ✦
-                      </span>
-                    </div>
+                  {comm.name.charAt(0)}
+                </span>
 
-                    <h3 className="font-display mt-3 text-xl sm:text-2xl font-bold text-navy-950">
-                      {comm.name}
-                    </h3>
-                    <p className="mt-0.5 text-xs font-semibold text-gold-700">
-                      {comm.tag}
-                    </p>
+                {/* Profile count */}
+                <span className="absolute top-3.5 right-3.5 inline-flex items-center rounded-full border border-gold-500/25 bg-gold-50 px-2.5 py-1 text-[10px] font-bold tracking-wide text-gold-800 tabular-nums">
+                  {comm.count}
+                </span>
 
-                    <p className="mt-3 text-xs leading-relaxed text-ink-600 font-medium">
-                      {comm.heritage}
-                    </p>
+                <h3 className="font-display text-2xl font-bold text-navy-950 sm:text-[1.7rem]">
+                  {comm.name}
+                </h3>
+                <p className="mt-1 text-xs font-bold text-gold-700">{comm.tag}</p>
 
-                    {/* Key Gotras / Subgroups */}
-                    <div className="mt-3 rounded-xl bg-cream-50/80 border border-gold-500/15 p-2.5">
-                      <p className="text-[10px] font-bold uppercase tracking-wider text-navy-800">
-                        {t('communities.gotrasLabel', { defaultValue: 'Key Gotras / Traditions' })}
-                      </p>
-                      <p className="mt-0.5 text-[11px] text-ink-700 leading-snug">
-                        {comm.gotras}
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Bottom: Direct Action */}
-                  <div className="mt-5 pt-3 border-t border-cream-200">
-                    <Link
-                      to={registerHref}
-                      className={cn(
-                        'flex items-center justify-between rounded-xl px-3.5 py-2 text-xs font-bold transition-all duration-200',
-                        isSelected
-                          ? 'bg-navy-950 text-white shadow-xs hover:bg-navy-900'
-                          : 'bg-gold-50 text-navy-950 hover:bg-gold-100 hover:text-navy-900',
-                      )}
-                    >
-                      <span>
-                        {t('communities.findMatches', {
-                          defaultValue: `Find ${comm.name} Matches`,
-                          name: comm.name,
-                        })}
-                      </span>
-                      <span aria-hidden="true" className="text-gold-600 font-bold">
-                        →
-                      </span>
-                    </Link>
-                  </div>
+                {/* Ornament divider */}
+                <div
+                  aria-hidden="true"
+                  className="mt-3 flex items-center gap-1.5 text-gold-500/70"
+                >
+                  <span className="h-px w-6 bg-gold-500/50" />
+                  <span className="text-[8px]">◆</span>
+                  <span className="h-px w-6 bg-gold-500/50" />
                 </div>
-              )
-            })}
-          </div>
-        </Reveal>
+
+                <p className="mt-3 px-5 text-xs leading-relaxed font-medium text-ink-600">
+                  {comm.heritage}
+                </p>
+
+                {/* Key Gotras / Traditions — anchored to card bottom */}
+                <div className="mt-auto w-full px-5 pt-4">
+                  <p className="text-[10px] font-bold tracking-[0.16em] uppercase text-navy-800">
+                    {t('communities.gotrasLabel', { defaultValue: 'Key Gotras / Traditions' })}
+                  </p>
+                  <p className="mt-1 text-[11px] leading-snug text-ink-500">{comm.gotras}</p>
+                </div>
+
+                {/* Direct action — inverts to navy on hover */}
+                <div className="mt-4 w-full border-t border-cream-200 p-3">
+                  <Link
+                    to={registerHref}
+                    className="group/cta flex w-full items-center justify-between rounded-xl bg-cream-100 px-4 py-2.5 text-xs font-bold text-navy-950 transition-all duration-300 hover:bg-navy-950 hover:text-white hover:shadow-gold"
+                  >
+                    <span>
+                      {t('communities.findMatches', {
+                        defaultValue: `Find ${comm.name} Matches`,
+                        name: comm.name,
+                      })}
+                    </span>
+                    <span
+                      aria-hidden="true"
+                      className="flex size-6 shrink-0 items-center justify-center rounded-full bg-gold-500/15 text-gold-700 transition-all duration-300 group-hover/cta:translate-x-0.5 group-hover/cta:bg-gold-400 group-hover/cta:text-navy-950"
+                    >
+                      →
+                    </span>
+                  </Link>
+                </div>
+              </article>
+            )
+          })}
+        </RevealGroup>
       </div>
     </section>
   )

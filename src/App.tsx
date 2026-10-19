@@ -23,6 +23,8 @@ const TermsPage = lazy(() => import('./module/legal/pages/TermsPage'))
 const GuidelinesPage = lazy(() => import('./module/legal/pages/GuidelinesPage'))
 const HelpCenterPage = lazy(() => import('./module/legal/pages/HelpCenterPage'))
 const RegistrationPage = lazy(() => import('./module/registration/pages/RegistrationPage'))
+const AdminRegisterPage = lazy(() => import('./module/registration/pages/AdminRegisterPage'))
+const DownloadPage = lazy(() => import('./module/download/pages/DownloadPage'))
 
 /**
  * URL is the source of truth for language: `/hi*` → Hindi, else English.
@@ -185,6 +187,22 @@ export default function App() {
                 }
               />
               <Route
+                path="/download"
+                element={
+                  <Suspense fallback={null}>
+                    <DownloadPage />
+                  </Suspense>
+                }
+              />
+              <Route
+                path="/hi/download"
+                element={
+                  <Suspense fallback={null}>
+                    <DownloadPage />
+                  </Suspense>
+                }
+              />
+              <Route
                 path="/registration"
                 element={
                   <Suspense fallback={null}>
@@ -213,6 +231,22 @@ export default function App() {
                 element={
                   <Suspense fallback={null}>
                     <RegistrationPage />
+                  </Suspense>
+                }
+              />
+              <Route
+                path="/admin-register"
+                element={
+                  <Suspense fallback={null}>
+                    <AdminRegisterPage />
+                  </Suspense>
+                }
+              />
+              <Route
+                path="/hi/admin-register"
+                element={
+                  <Suspense fallback={null}>
+                    <AdminRegisterPage />
                   </Suspense>
                 }
               />

@@ -14,8 +14,7 @@ export default function DownloadNavDropdown({
   active = false,
   href = '#app',
 }: DownloadNavDropdownProps) {
-  const { t, i18n } = useTranslation()
-  const isHi = i18n.resolvedLanguage === 'hi' || i18n.language === 'hi'
+  const { t } = useTranslation()
   const [open, setOpen] = useState(false)
   const dropdownRef = useRef<HTMLDivElement | null>(null)
   const closeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -100,16 +99,14 @@ export default function DownloadNavDropdown({
                   ✦
                 </span>
                 <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-gold-800">
-                  {t('app.eyebrow', { defaultValue: 'विवाहसंबंध ऐप' })}
+                  {t('app.eyebrow')}
                 </span>
               </div>
               <p className="font-display mt-2 text-base font-bold text-navy-950 leading-tight">
-                {t('app.title', { defaultValue: 'आपका जीवनसाथी, हमेशा आपके साथ' })}
+                {t('app.title')}
               </p>
               <p className="mt-1 text-[11px] text-ink-600 font-medium">
-                {isHi
-                  ? 'सत्यापित रिश्ते एवं तत्काल सूचनाएं अपने मोबाइल पर पाएं'
-                  : 'Connect with verified matches on iOS and Android'}
+                {t('app.subtitle')}
               </p>
             </div>
 
@@ -121,6 +118,7 @@ export default function DownloadNavDropdown({
                 target="_blank"
                 rel="noopener noreferrer"
                 title="Google Play"
+                aria-label={t('app.googlePlay')}
                 className="group/btn flex items-center justify-between rounded-2xl border border-gold-500/30 bg-[#0A1629] p-3 text-white shadow-md transition-all duration-300 hover:border-gold-500 hover:bg-[#0E203C] hover:shadow-lg hover:-translate-y-0.5 active:scale-98"
               >
                 <div className="flex items-center gap-3">
@@ -130,13 +128,13 @@ export default function DownloadNavDropdown({
                       width={48}
                       height={48}
                       className="h-full w-full object-contain"
-                      alt="Google Play"
+                      alt={t('app.googlePlay')}
                       loading="lazy"
                     />
                   </div>
                   <div className="text-left leading-tight">
                     <span className="block text-[9.5px] uppercase tracking-wider text-gold-300/90 font-semibold">
-                      {t('app.getItOn', { defaultValue: 'GET IT ON' })}
+                      {t('app.getItOn')}
                     </span>
                     <span className="block text-sm font-bold text-white tracking-wide mt-0.5">
                       Google Play
@@ -157,6 +155,7 @@ export default function DownloadNavDropdown({
                 target="_blank"
                 rel="noopener noreferrer"
                 title="App Store"
+                aria-label={t('app.appStore')}
                 className="group/btn flex items-center justify-between rounded-2xl border border-gold-500/30 bg-[#0A1629] p-3 text-white shadow-md transition-all duration-300 hover:border-gold-500 hover:bg-[#0E203C] hover:shadow-lg hover:-translate-y-0.5 active:scale-98"
               >
                 <div className="flex items-center gap-3">
@@ -166,13 +165,13 @@ export default function DownloadNavDropdown({
                       width={48}
                       height={48}
                       className="h-full w-full object-contain"
-                      alt="App Store"
+                      alt={t('app.appStore')}
                       loading="lazy"
                     />
                   </div>
                   <div className="text-left leading-tight">
                     <span className="block text-[9.5px] uppercase tracking-wider text-gold-300/90 font-semibold">
-                      {t('app.downloadOn', { defaultValue: 'Download on the' })}
+                      {t('app.downloadOn')}
                     </span>
                     <span className="block text-sm font-bold text-white tracking-wide mt-0.5">
                       App Store
@@ -192,17 +191,17 @@ export default function DownloadNavDropdown({
             <div className="mt-3.5 flex items-center justify-between rounded-xl bg-gold-500/10 px-3 py-1.5 text-[10.5px] font-semibold text-navy-900 border border-gold-500/20">
               <span className="flex items-center gap-1">
                 <span className="text-gold-700">✓</span>
-                {isHi ? '100% सत्यापित' : '100% Verified'}
+                {t('app.verified')}
               </span>
               <span className="text-gold-400">•</span>
               <span className="flex items-center gap-1">
                 <span className="text-gold-700">✓</span>
-                {isHi ? 'त्वरित सूचनाएं' : 'Instant Alerts'}
+                {t('app.instantAlerts')}
               </span>
               <span className="text-gold-400">•</span>
               <span className="flex items-center gap-1">
                 <span className="text-gold-700">✓</span>
-                {isHi ? 'पूर्णतः सुरक्षित' : 'Privacy Safe'}
+                {t('app.privacySafe')}
               </span>
             </div>
 
@@ -213,7 +212,7 @@ export default function DownloadNavDropdown({
                 onClick={() => setOpen(false)}
                 className="group/link inline-flex items-center gap-1 text-[11px] font-bold text-maroon-700 hover:text-maroon-800 transition"
               >
-                <span>{isHi ? 'ऐप के फीचर्स विस्तार से देखें' : 'Explore App Features on Web'}</span>
+                <span>{t('app.exploreFeatures')}</span>
                 <span className="transition-transform duration-200 group-hover/link:translate-x-1">→</span>
               </a>
             </div>

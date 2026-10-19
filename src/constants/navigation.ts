@@ -34,7 +34,7 @@ export const NAV_ENTRIES: readonly NavEntry[] = [
   // { key: 'membership', i18nKey: 'header.membership', kind: 'page', page: '/membership' },
   { key: 'blogs', i18nKey: 'header.blogs', kind: 'page', page: '/blogs' },
   { key: 'contact', i18nKey: 'header.contact', kind: 'page', page: '/contact' },
-  { key: 'download', i18nKey: 'header.download', kind: 'section', hash: '#app' },
+  { key: 'download', i18nKey: 'header.download', kind: 'page', page: '/download' },
 ]
 
 /** Every standalone page route (without lang prefix). Used by App + i18n. */
@@ -44,6 +44,8 @@ export const PAGE_ROUTES: readonly string[] = [
   '/membership',
   '/blogs',
   '/contact',
+  '/download',
+  '/admin-register',
 ]
 
 /** Site root for a language: '/' (en) or '/hi' (hi). */

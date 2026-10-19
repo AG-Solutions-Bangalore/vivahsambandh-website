@@ -43,23 +43,23 @@ export default function StoreBadge({ store, className = '' }: StoreBadgeProps) {
       rel="noopener noreferrer"
       title={name}
       aria-label={t(labelKey)}
-      className={`inline-flex items-center gap-3 rounded-xl border border-navy-900 bg-navy-900 px-4 py-2.5 text-white shadow-md transition hover:bg-navy-800 ${className}`}
+      className={`group/btn inline-flex items-center gap-3 rounded-xl border border-navy-900 bg-navy-900 px-4 py-2.5 text-white shadow-md transition-all duration-200 hover:border-gold-500/40 hover:bg-[#0E203C] hover:shadow-lg hover:-translate-y-0.5 active:scale-98 ${className}`}
     >
       <img
         src={image}
         width={48}
         height={48}
-        alt={alt}
+        alt={t(labelKey, { defaultValue: alt })}
         title={name}
         aria-hidden="true"
         className="h-6 w-6 object-contain shrink-0"
         loading="lazy"
       />
       <span className="text-left leading-none">
-        <span className="block text-[9px] uppercase tracking-wider text-white/70">
+        <span className="block text-[9px] uppercase tracking-wider text-gold-300/90 font-semibold">
           {t(captionKey)}
         </span>
-        <span className="block text-xs font-bold text-white sm:text-sm mt-0.5">{name}</span>
+        <span className="block text-xs font-bold text-white sm:text-sm mt-0.5 tracking-wide">{name}</span>
       </span>
     </a>
   )

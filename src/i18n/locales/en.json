@@ -192,11 +192,16 @@
   "app": {
     "eyebrow": "VivahSambandh App",
     "title": "Your Match, Always With You",
+    "subtitle": "Connect with verified matches on iOS and Android",
     "getItOn": "GET IT ON",
     "downloadOn": "Download on the",
     "body": "Download the VivahSambandh app and explore verified profiles, get instant notifications and stay connected with your potential life partner.",
     "googlePlay": "Get it on Google Play",
     "appStore": "Download on the App Store",
+    "verified": "100% Verified",
+    "instantAlerts": "Instant Alerts",
+    "privacySafe": "Privacy Safe",
+    "exploreFeatures": "Explore App Features on Web",
     "features": [
       {
         "title": "Instant Notifications",
@@ -219,6 +224,103 @@
         "desc": "Simple and easy to use"
       }
     ]
+  },
+  "downloadPage": {
+    "eyebrow": "VivahSambandh Mobile App",
+    "titleA": "Your Perfect Match,",
+    "titleB": "Always With You",
+    "subtitle": "Download India's trusted Community matrimonial app. Search verified profiles, receive instant match notifications, and connect directly with prospective families on iOS and Android.",
+    "scanQr": "Scan to Download",
+    "scanHelp": "Open your phone camera to install instantly",
+    "rating": "4.8 ★ Rated App",
+    "downloadsCount": "50,000+ Agarwal Families",
+    "previewCards": {
+      "matchTitle": "New Match Found",
+      "matchDesc": "98% Kundali Compatibility • Bansal Gotra",
+      "alertTitle": "Instant Notification",
+      "alertDesc": "Interest accepted by Agarwal family",
+      "privacyTitle": "100% Privacy Safe",
+      "privacyDesc": "Photo and contact visible only on approval"
+    },
+    "badges": {
+      "verified": "100% Verified Profiles",
+      "instant": "Instant Match Alerts",
+      "secure": "Safe & Private Chat"
+    },
+    "featuresEyebrow": "Built for Modern Agarwal Families",
+    "featuresTitle": "Key Features of the VivahSambandh App",
+    "featuresSubtitle": "Experience effortless matchmaking engineered for tradition, strict privacy, and modern convenience.",
+    "features": [
+      {
+        "title": "Instant Notifications",
+        "desc": "Never miss a match proposal or interest request with real-time push alerts on your phone."
+      },
+      {
+        "title": "Smart Community Filters",
+        "desc": "Filter matches easily by Gotra, city, education, profession, and family background."
+      },
+      {
+        "title": "Verified Bio-Data",
+        "desc": "Every profile is verified with background and ID checks for absolute peace of mind."
+      },
+      {
+        "title": "Secure & Private Chat",
+        "desc": "Connect and converse safely with privacy controls tailored for families."
+      },
+      {
+        "title": "Kundali & Gotra Compatibility",
+        "desc": "Detailed horoscope matching and gotra verification respecting age-old traditions."
+      },
+      {
+        "title": "User Friendly Interface",
+        "desc": "Intuitive, seamless design designed for all generations — parents and candidates alike."
+      }
+    ],
+    "experienceEyebrow": "Mobile Advantage",
+    "experienceTitle": "Engineered for Families on the Move",
+    "experienceSubtitle": "Why our mobile app delivers the highest response rates and fastest matches",
+    "experienceItems": [
+      {
+        "title": "Instant Push Notifications",
+        "desc": "Receive instant alerts the moment a compatible family views your bio-data or accepts your interest proposal."
+      },
+      {
+        "title": "On-the-Go Kundali Matching",
+        "desc": "Calculate Guna Milan, check Manglik status, and review planetary alignments immediately from anywhere."
+      },
+      {
+        "title": "Direct Family Messaging",
+        "desc": "Chat directly with candidates and family elders in a protected, spam-free environment."
+      },
+      {
+        "title": "One-Touch Photo Privacy",
+        "desc": "Keep your pictures visible to all, or allow access only to profiles you specifically approve."
+      }
+    ],
+    "stepsEyebrow": "Quick Setup",
+    "stepsTitle": "How to Get Started in 3 Easy Steps",
+    "stepsSubtitle": "Start connecting with verified matches in less than 2 minutes.",
+    "steps": [
+      {
+        "step": "01",
+        "title": "Download the App",
+        "desc": "Get VivahSambandh from Google Play Store or Apple App Store for free."
+      },
+      {
+        "step": "02",
+        "title": "Complete Your Bio-Data",
+        "desc": "Add photos, education, profession, family background, and Gotra details."
+      },
+      {
+        "step": "03",
+        "title": "Connect with Matches",
+        "desc": "Browse curated profiles, express interest, and chat safely with families."
+      }
+    ],
+    "ctaEyebrow": "Get Started Today",
+    "ctaTitle": "Your Life Partner is Just a Tap Away",
+    "ctaSubtitle": "Join thousands of verified Agarwal, Jain, Khandelwal, and Maheshwari families on India's premier matrimonial app.",
+    "getAppNow": "Get the App Now"
   },
   "faq": {
     "eyebrow": "Frequently asked",
@@ -427,9 +529,15 @@
     "privacy": "Privacy Policy",
     "terms": "Terms & Conditions",
     "guidelines": "Community Guidelines",
+    "adminRegister": "Admin Register",
     "sitemap": "Sitemap",
     "rights": "© 2026 VivahSambandh. All rights reserved.",
     "madeWith": "Traditions Connect Hearts"
+  },
+  "adminRegisterPage": {
+    "eyebrow": "Admin Register",
+    "title": "Admin Registration",
+    "body": "Register an admin record with basic identification, contact details and a face photograph."
   },
   "aboutPage": {
     "breadcrumbHome": "Home",

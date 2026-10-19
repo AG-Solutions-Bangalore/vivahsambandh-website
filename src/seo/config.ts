@@ -120,7 +120,9 @@ export type PageKey =
   | "terms"
   | "guidelines"
   | "help-center"
-  | "registration";
+  | "registration"
+  | "download"
+  | "admin-register";
 
 /**
  * Per-page SEO metadata (both languages). Home entries intentionally mirror
@@ -243,6 +245,26 @@ export const PAGE_SEO: Record<
       hi: "विवाह संबंध में अपना सत्यापित बायोडाटा पंजीकृत करें। अग्रवाल, जैन, खंडेलवाल और माहेश्वरी समाज के लिए विश्वसनीय वैवाहिक मंच।",
     },
   },
+  download: {
+    titles: {
+      en: "Download VivahSambandh App — Premium Matrimony on Android & iOS",
+      hi: "विवाहसंबंध ऐप डाउनलोड करें — Android व iOS पर विश्वसनीय मैट्रिमोनी",
+    },
+    descriptions: {
+      en: "Download the VivahSambandh mobile app for Android and iOS. Connect with verified matches, receive instant alerts, and find your life partner on the go.",
+      hi: "Android और iOS के लिए विवाहसंबंध मोबाइल ऐप डाउनलोड करें। सत्यापित रिश्ते खोजें, तुरंत सूचनाएं पाएं और कहीं भी जीवनसाथी से जुड़ें।",
+    },
+  },
+  "admin-register": {
+    titles: {
+      en: "Admin Registration — VivahSambandh Matrimony Portal",
+      hi: "एडमिन पंजीकरण — विवाहसंबंध मैट्रिमोनी पोर्टल",
+    },
+    descriptions: {
+      en: "Administrative registration portal for VivahSambandh community coordinators and verified managers.",
+      hi: "विवाहसंबंध समुदाय समन्वयकों और प्रबंधकों के लिए प्रशासनिक पंजीकरण पोर्टल।",
+    },
+  },
 };
 
 /**
@@ -264,6 +286,8 @@ export function resolvePageKey(pathname = "/"): PageKey {
   if (withoutLang === "/guidelines") return "guidelines";
   if (withoutLang === "/help-center") return "help-center";
   if (withoutLang === "/registration") return "registration";
+  if (withoutLang === "/download") return "download";
+  if (withoutLang === "/admin-register") return "admin-register";
   return "home";
 }
 
