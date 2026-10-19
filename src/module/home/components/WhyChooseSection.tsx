@@ -114,12 +114,12 @@ export default function WhyChooseSection() {
         className="pointer-events-none absolute inset-y-0 -right-4 scale-105 opacity-65 z-0 h-full w-auto max-w-none rotate-180 select-none hidden lg:block"
       />
 
-      <div className="section-pad relative z-10 !max-w-[1440px] !pl-5 !pr-5 sm:!pl-[84px] sm:!pr-[84px] lg:!pl-[104px] lg:!pr-[104px]">
-        <div className="grid items-center gap-10 lg:grid-cols-12 lg:gap-8 xl:gap-12">
+      <div className="section-pad relative z-10 !max-w-[1440px] !pl-5 !pr-5 sm:!pl-12 lg:!pl-[72px] lg:!pr-[72px] xl:!pl-[88px] xl:!pr-[88px]">
+        <div className="grid items-center gap-8 lg:grid-cols-12 lg:gap-8 xl:gap-12">
           {/* ========================================================== */}
           {/* Left Column: Eyebrow, Heading, Subtitle, and Gold CTA Button*/}
           {/* ========================================================== */}
-          <Reveal variant="left" className="lg:col-span-4 xl:col-span-4">
+          <Reveal variant="left" className="lg:col-span-4 xl:col-span-4 min-w-0 z-10">
             {/* Eyebrow */}
             <div className="inline-flex items-center gap-2">
               <span className="text-gold-400 text-sm font-bold" aria-hidden="true">
@@ -131,7 +131,7 @@ export default function WhyChooseSection() {
             </div>
 
             {/* Title */}
-            <h2 className="font-display mt-3 text-3xl sm:text-4xl lg:text-[42px] xl:text-[46px] font-bold leading-[1.15] text-white">
+            <h2 className="font-display mt-3 text-2xl sm:text-3xl lg:text-[32px] xl:text-[38px] font-bold leading-[1.2] text-white break-words [overflow-wrap:anywhere]">
               {t('why.title')}
             </h2>
 
@@ -161,7 +161,7 @@ export default function WhyChooseSection() {
           {/* ========================================================== */}
           {/* Right Column: 3-column x 2-row Grid of Feature Cards       */}
           {/* ========================================================== */}
-          <div className="lg:col-span-8 xl:col-span-8">
+          <div className="lg:col-span-8 xl:col-span-8 min-w-0 z-10">
             <RevealGroup className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-4.5 lg:gap-5">
               {rawFeatures.map((f, i) => {
                 const words = f.title.split(' ')
