@@ -95,7 +95,12 @@ html.lenis body {
 .lenis.lenis-smooth {
   scroll-behavior: auto !important;
 }
-.lenis.lenis-smooth [data-lenis-prevent] {
+.lenis.lenis-smooth [data-lenis-prevent],
+[data-slot="select-content"],
+[data-slot="select-list"],
+[data-slot="combobox-content"],
+[data-slot="combobox-list"],
+[role="listbox"] {
   overscroll-behavior: contain;
 }
 .lenis.lenis-stopped {
