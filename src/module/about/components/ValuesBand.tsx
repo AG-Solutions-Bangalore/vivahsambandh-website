@@ -70,27 +70,7 @@ export default function ValuesBand() {
         decoding="async"
         className="pointer-events-none absolute inset-y-0 -right-4 z-0 h-full w-auto max-w-none select-none rotate-180 scale-105 opacity-60 hidden lg:block"
       />
-      {/* Corner florals */}
-      <img
-        src={img("/images/home/flower1_image-320.webp")}
-        width={320}
-        height={480}
-        alt="Decorative flower garland"
-        title="Decorative flower garland"
-        aria-hidden="true"
-        loading="lazy"
-        className="pointer-events-none absolute -left-3 bottom-0 z-[1] w-16 sm:w-24 h-auto select-none opacity-90"
-      />
-      <img
-        src={img("/images/home/flower2_image-320.webp")}
-        width={320}
-        height={480}
-        alt="Decorative flower garland"
-        title="Decorative flower garland"
-        aria-hidden="true"
-        loading="lazy"
-        className="pointer-events-none absolute -right-3 bottom-0 z-[1] w-16 sm:w-24 h-auto select-none opacity-90"
-      />
+
 
       <div className="section-pad relative z-10 !max-w-6xl text-center">
         <Reveal variant="up">
