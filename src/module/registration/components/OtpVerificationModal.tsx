@@ -25,6 +25,7 @@ import {
 import {
   RecaptchaVerifier,
   signInWithPhoneNumber,
+  initializeRecaptchaConfig,
   type ConfirmationResult,
 } from "firebase/auth";
 import { getFirebaseAuth } from "@/lib/firebase";
@@ -36,6 +37,107 @@ import {
   CheckCircle2,
   X,
 } from "lucide-react";
+
+/* ------------------------------------------------------------------ */
+/* [OTP-DIAG] Temporary diagnostics — remove after root cause is found */
+/* ------------------------------------------------------------------ */
+const otpDiag = (step: string, data?: unknown) =>
+  console.log(`[OTP-DIAG] ${step}`, data ?? "");
+
+const maskKey = (key?: string) =>
+  key && key.length > 12 ? `${key.slice(0, 8)}…${key.slice(-4)}` : "(missing)";
+
+const msSince = (t: number | null) =>
+  t === null ? null : Math.round(performance.now() - t);
+
+const attemptsStorageKey = "otp-diag-attempts";
+const getAttemptCount = () => {
+  try {
+    return Number(sessionStorage.getItem(attemptsStorageKey) || 0);
+  } catch {
+    return 0;
+  }
+};
+const bumpAttemptCount = () => {
+  const next = getAttemptCount() + 1;
+  try {
+    sessionStorage.setItem(attemptsStorageKey, String(next));
+  } catch {
+    /* ignore */
+  }
+  return next;
+};
+
+const snapshotGrecaptcha = () => {
+  const g = (
+    window as unknown as {
+      grecaptcha?: { render?: unknown; enterprise?: { render?: unknown } };
+    }
+  ).grecaptcha;
+  return {
+    exists: !!g,
+    hasRender: typeof g?.render === "function",
+    hasEnterprise: !!g?.enterprise,
+    hasEnterpriseRender: typeof g?.enterprise?.render === "function",
+  };
+};
+
+const summarizeAuthBody = (raw: unknown) => {
+  if (typeof raw !== "string") return null;
+  try {
+    const parsed = JSON.parse(raw) as Record<string, unknown>;
+    const summary: Record<string, unknown> = {};
+    for (const [key, value] of Object.entries(parsed)) {
+      if (typeof value !== "string") {
+        summary[key] = value;
+        continue;
+      }
+      const lower = key.toLowerCase();
+      if (lower.includes("token") || lower.includes("captcha")) {
+        summary[key] = `len:${value.length}`;
+      } else if (lower.includes("phone")) {
+        summary[key] = "***masked***";
+      } else {
+        summary[key] = value.length > 40 ? `${value.slice(0, 24)}…` : value;
+      }
+    }
+    return summary;
+  } catch {
+    return "unparseable";
+  }
+};
+
+let otpNetworkTapInstalled = false;
+const installOtpNetworkTap = () => {
+  if (otpNetworkTapInstalled || typeof window === "undefined") return;
+  otpNetworkTapInstalled = true;
+  const originalFetch = window.fetch.bind(window);
+  window.fetch = (async (input: RequestInfo | URL, init?: RequestInit) => {
+    const url =
+      typeof input === "string"
+        ? input
+        : input instanceof Request
+          ? input.url
+          : String(input);
+    const isAuthApi =
+      url.includes("identitytoolkit.googleapis.com") ||
+      url.includes("securetoken.googleapis.com");
+    if (!isAuthApi) return originalFetch(input, init);
+
+    const requestBody = summarizeAuthBody(init?.body);
+    const response = await originalFetch(input, init);
+    otpDiag(`auth-api ${response.status} ${url.split("?")[0]}`, { requestBody });
+    if (!response.ok) {
+      try {
+        const text = await response.clone().text();
+        otpDiag("auth-api error body", text.slice(0, 600));
+      } catch {
+        /* ignore */
+      }
+    }
+    return response;
+  }) as typeof fetch;
+};
 
 interface OtpVerificationModalProps {
   isOpen: boolean;
@@ -66,7 +168,8 @@ export default function OtpVerificationModal({
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const isExecutingRef = useRef(false);
-  const hasSentRef = useRef(false);
+  const modalOpenedAtRef = useRef<number | null>(null);
+  const captchaSolvedAtRef = useRef<number | null>(null);
 
   // Start 30-second countdown for Resend OTP
   const startCountdown = useCallback(() => {
@@ -87,6 +190,7 @@ export default function OtpVerificationModal({
 
   // Clean up reCAPTCHA verifier instance and reset parent DOM
   const cleanupRecaptcha = useCallback(() => {
+    otpDiag("cleanup-recaptcha");
     if (recaptchaVerifierRef.current) {
       try {
         recaptchaVerifierRef.current.clear();
@@ -101,10 +205,116 @@ export default function OtpVerificationModal({
     }
   }, []);
 
-  // Automatically sends OTP via Firebase and triggers Google reCAPTCHA challenge
-  const handleSendOtp = useCallback(async () => {
+  const handleFirebaseSendError = useCallback(
+    (err: unknown) => {
+      cleanupRecaptcha();
+      const firebaseError = err as {
+        code?: string;
+        message?: string;
+        customData?: { serverResponse?: string };
+      };
+      console.error("[OTP-DIAG] Firebase signInWithPhoneNumber error:", err);
+      otpDiag("send-error details", {
+        code: firebaseError.code,
+        message: firebaseError.message,
+        serverResponse: firebaseError.customData?.serverResponse ?? null,
+        attempts: getAttemptCount(),
+        msSinceCaptchaSolved: msSince(captchaSolvedAtRef.current),
+        msSinceModalOpen: msSince(modalOpenedAtRef.current),
+        grecaptcha: snapshotGrecaptcha(),
+        origin: typeof window !== "undefined" ? window.location.origin : null,
+      });
+      setCanResend(true);
+      if (timerRef.current) clearInterval(timerRef.current);
+      setCountdown(0);
+
+      const code = firebaseError.code || "";
+      const msg = firebaseError.message || "";
+
+      if (
+        code === "auth/too-many-requests" ||
+        msg.includes("TOO_MANY_ATTEMPTS_TRY_LATER") ||
+        msg.includes("too-many-requests")
+      ) {
+        console.warn(
+          "TOO_MANY_ATTEMPTS_TRY_LATER — Google temporarily blocks repeated verification attempts. Dev: wait a few minutes or verify with a different number; check App Check / reCAPTCHA config if this keeps happening.",
+        );
+        setErrorMessage(
+          "Too many attempts for this number. For security, please wait 10-15 minutes before requesting another code.",
+        );
+      } else if (code === "auth/invalid-phone-number") {
+        setErrorMessage(
+          "Invalid phone number format. Please check your 10-digit mobile number.",
+        );
+      } else if (code === "auth/missing-phone-number") {
+        setErrorMessage("Mobile number is missing.");
+      } else if (code === "auth/billing-not-enabled") {
+        console.warn(
+          "auth/billing-not-enabled — Enable billing (Blaze plan) on the Google Cloud/Firebase project so Phone Auth can send real SMS.",
+        );
+        setErrorMessage(
+          "We couldn't send the verification code right now. Please try again later or contact support.",
+        );
+      } else if (code === "auth/quota-exceeded") {
+        console.warn(
+          "auth/quota-exceeded — Firebase project daily SMS quota exhausted.",
+        );
+        setErrorMessage(
+          "We've reached today's SMS limit. Please try again tomorrow or contact support.",
+        );
+      } else if (code === "auth/operation-not-allowed") {
+        console.warn(
+          "auth/operation-not-allowed — Enable the Phone sign-in provider in the Firebase Console.",
+        );
+        setErrorMessage(
+          "SMS verification is temporarily unavailable. Please try again later or contact support.",
+        );
+      } else if (
+        code === "auth/unauthorized-domain" ||
+        code === "auth/app-not-authorized"
+      ) {
+        console.warn(
+          "auth/unauthorized-domain — Add this domain (localhost / production domain) to Authorized Domains in Firebase Auth.",
+        );
+        setErrorMessage(
+          "Security verification is temporarily unavailable. Please try again later or contact support.",
+        );
+      } else if (code === "auth/captcha-check-failed") {
+        setErrorMessage(
+          "Security challenge failed or was cancelled. Please check the box again.",
+        );
+      } else if (code === "auth/invalid-app-credential") {
+        console.warn(
+          "auth/invalid-app-credential — known Firebase bug: real-number sends fail when the origin host is 'localhost' (test numbers bypass reCAPTCHA, that's why they work). Run dev on 127.0.0.1 (vite.config server.host) and add '127.0.0.1' to Auth → Settings → Authorized domains — the console may warn 'not a valid host name', still click Add. Also: repeated attempts make Google temporarily block verification.",
+        );
+        setErrorMessage(
+          "Security verification could not be completed. Please wait a few minutes and try again.",
+        );
+      } else if (code === "auth/network-request-failed") {
+        setErrorMessage(
+          "Network error. Please check your internet connection and try again.",
+        );
+      } else {
+        setErrorMessage(
+          "Unable to send the verification code right now. Please try again in a moment.",
+        );
+      }
+    },
+    [cleanupRecaptcha],
+  );
+
+  // Automatically mounts visible Google reCAPTCHA checkbox ("I'm not a robot")
+  const initVisibleRecaptcha = useCallback(async () => {
     if (isExecutingRef.current) return;
     isExecutingRef.current = true;
+
+    installOtpNetworkTap();
+    otpDiag("init-recaptcha", {
+      attempts: getAttemptCount(),
+      msSinceModalOpen: msSince(modalOpenedAtRef.current),
+      origin: window.location.origin,
+      hostname: window.location.hostname,
+    });
 
     const cleanMobile = mobile.replace(/\D/g, "");
     if (!cleanMobile || cleanMobile.length !== 10) {
@@ -115,149 +325,152 @@ export default function OtpVerificationModal({
 
     const auth = getFirebaseAuth();
     if (!auth) {
-      setErrorMessage("Firebase Authentication is not available.");
+      console.warn(
+        "Firebase Auth is not initialized — check the Firebase config env vars.",
+      );
+      setErrorMessage(
+        "Verification service is temporarily unavailable. Please try again later or contact support.",
+      );
       isExecutingRef.current = false;
       return;
     }
 
-    setSending(true);
+    const authConfig = (
+      auth as { config?: { apiKey?: string; authDomain?: string } }
+    ).config;
+    otpDiag("auth-instance", {
+      appName: auth.app.name,
+      projectId: auth.app.options.projectId,
+      authDomain: authConfig?.authDomain ?? auth.app.options.authDomain,
+      apiKey: maskKey(authConfig?.apiKey ?? auth.app.options.apiKey),
+      grecaptcha: snapshotGrecaptcha(),
+    });
+
+    const configFetchStarted = performance.now();
+    try {
+      await initializeRecaptchaConfig(auth);
+      otpDiag("recaptcha-config ok", {
+        ms: Math.round(performance.now() - configFetchStarted),
+        grecaptcha: snapshotGrecaptcha(),
+      });
+    } catch (configErr) {
+      otpDiag("recaptcha-config FAILED", {
+        ms: Math.round(performance.now() - configFetchStarted),
+        error: configErr,
+      });
+    }
+
     setErrorMessage(null);
 
     try {
       cleanupRecaptcha();
 
-      // Create a brand-new container DOM element inside the parent wrapper.
-      // This completely prevents Google reCAPTCHA's "already been rendered in this element" error.
+      // Fresh container inside parent prevents "already been rendered" error
       const parent = document.getElementById("firebase-recaptcha-parent");
-      if (parent) {
-        parent.innerHTML = "";
+      if (!parent) {
+        isExecutingRef.current = false;
+        return;
       }
+      parent.innerHTML = "";
+
       const uniqueContainer = document.createElement("div");
       uniqueContainer.id = `firebase-recaptcha-${Date.now()}`;
-      if (parent) {
-        parent.appendChild(uniqueContainer);
-      } else {
-        document.body.appendChild(uniqueContainer);
-      }
+      parent.appendChild(uniqueContainer);
 
-      // Invisible reCAPTCHA: NO "I'm not a robot" checkbox.
-      // Automatically launches Google image challenge (crosswalk, bicycle, etc.) when needed.
+      // Visible "I'm not a robot" reCAPTCHA Checkbox
       const verifier = new RecaptchaVerifier(auth, uniqueContainer, {
-        size: "invisible",
-        callback: () => {
-          // reCAPTCHA solved
+        size: "normal",
+        callback: async () => {
+          captchaSolvedAtRef.current = performance.now();
+          otpDiag("captcha-solved", {
+            msSinceModalOpen: msSince(modalOpenedAtRef.current),
+          });
+          // As soon as user checks the checkbox, dispatch real SMS OTP
+          setSending(true);
+          setErrorMessage(null);
+          try {
+            const fullPhoneNumber = `+91${cleanMobile}`;
+            otpDiag("sending-sms", {
+              attempt: bumpAttemptCount(),
+              msSinceCaptchaSolved: msSince(captchaSolvedAtRef.current),
+            });
+            const confirmation = await signInWithPhoneNumber(
+              auth,
+              fullPhoneNumber,
+              verifier,
+            );
+            confirmationResultRef.current = confirmation;
+            setOtpSent(true);
+            startCountdown();
+
+            setTimeout(() => {
+              inputRefs.current[0]?.focus();
+            }, 150);
+          } catch (err: unknown) {
+            handleFirebaseSendError(err);
+          } finally {
+            setSending(false);
+          }
         },
         "expired-callback": () => {
+          otpDiag("captcha-expired", {
+            msSinceCaptchaSolved: msSince(captchaSolvedAtRef.current),
+          });
           setErrorMessage(
-            "Security challenge expired. Please click Resend Code.",
+            "Security challenge expired. Please check the box again.",
           );
         },
       });
 
       recaptchaVerifierRef.current = verifier;
-
-      const fullPhoneNumber = `+91${cleanMobile}`;
-      const confirmation = await signInWithPhoneNumber(
-        auth,
-        fullPhoneNumber,
-        verifier,
-      );
-      confirmationResultRef.current = confirmation;
-      setOtpSent(true);
-      setErrorMessage(null); // clear any transient error
-      startCountdown();
-
-      // Focus first PIN input
-      setTimeout(() => {
-        inputRefs.current[0]?.focus();
-      }, 150);
+      const widgetId = await verifier.render();
+      otpDiag("recaptcha-rendered", {
+        widgetId,
+        containerId: uniqueContainer.id,
+        iframes: Array.from(uniqueContainer.querySelectorAll("iframe")).map(
+          (f) => ({ title: f.title, src: f.src.slice(0, 140) }),
+        ),
+      });
     } catch (err: unknown) {
-      cleanupRecaptcha();
-      const firebaseError = err as { code?: string; message?: string };
-      console.error("Firebase signInWithPhoneNumber error:", err);
-      setCanResend(true);
-      if (timerRef.current) clearInterval(timerRef.current);
-      setCountdown(0);
-
-      if (firebaseError.code === "auth/invalid-phone-number") {
-        setErrorMessage(
-          "Invalid phone number format. Please check your 10-digit mobile number.",
-        );
-      } else if (firebaseError.code === "auth/missing-phone-number") {
-        setErrorMessage("Mobile number is missing.");
-      } else if (firebaseError.code === "auth/billing-not-enabled") {
-        setErrorMessage(
-          "Firebase Phone Auth requires billing (Blaze plan) enabled in Google Cloud/Firebase Console to send SMS to real numbers.",
-        );
-      } else if (firebaseError.code === "auth/too-many-requests") {
-        setErrorMessage(
-          "Too many requests sent. Please wait a few minutes before trying again.",
-        );
-      } else if (firebaseError.code === "auth/quota-exceeded") {
-        setErrorMessage(
-          "SMS daily quota reached. Please try again later or contact support.",
-        );
-      } else if (firebaseError.code === "auth/operation-not-allowed") {
-        setErrorMessage(
-          "Phone sign-in is currently unavailable in Firebase. Please enable it in the Firebase Console.",
-        );
-      } else if (
-        firebaseError.code === "auth/unauthorized-domain" ||
-        firebaseError.code === "auth/app-not-authorized"
-      ) {
-        setErrorMessage(
-          "This domain is not authorized in Firebase Auth. Add localhost to Authorized Domains in Firebase Console.",
-        );
-      } else if (firebaseError.code === "auth/captcha-check-failed") {
-        setErrorMessage(
-          "Security verification was cancelled or failed. Please click Resend Code to try again.",
-        );
-      } else if (firebaseError.code === "auth/invalid-app-credential") {
-        setErrorMessage("App verification failed. Please click Resend Code.");
-      } else if (firebaseError.code === "auth/network-request-failed") {
-        setErrorMessage(
-          "Network error while contacting Firebase. Check your internet connection.",
-        );
-      } else {
-        setErrorMessage(
-          firebaseError.message ||
-            "Unable to send verification code. Please try again.",
-        );
-      }
+      handleFirebaseSendError(err);
     } finally {
-      setSending(false);
       isExecutingRef.current = false;
     }
-  }, [mobile, cleanupRecaptcha, startCountdown]);
+  }, [mobile, cleanupRecaptcha, handleFirebaseSendError, startCountdown]);
 
-  // Automatically start phone auth / reCAPTCHA once when modal opens
+  // Mount visible reCAPTCHA when modal opens
   useEffect(() => {
     if (!isOpen) {
-      hasSentRef.current = false;
-      isExecutingRef.current = false;
       cleanupRecaptcha();
       if (timerRef.current) clearInterval(timerRef.current);
       return;
     }
 
-    if (hasSentRef.current) return;
-    hasSentRef.current = true;
+    modalOpenedAtRef.current = performance.now();
+    otpDiag("modal-open", {
+      hostname: window.location.hostname,
+      attempts: getAttemptCount(),
+      grecaptcha: snapshotGrecaptcha(),
+    });
 
+    let active = true;
     const timer = setTimeout(() => {
+      if (!active) return;
       setDigits(["", "", "", "", "", ""]);
       setOtpSent(false);
       setErrorMessage(null);
       setIsSuccess(false);
       setCanResend(false);
-      handleSendOtp();
-    }, 50);
+      initVisibleRecaptcha();
+    }, 100);
 
     return () => {
+      active = false;
       clearTimeout(timer);
       cleanupRecaptcha();
       if (timerRef.current) clearInterval(timerRef.current);
     };
-  }, [isOpen, handleSendOtp, cleanupRecaptcha]);
+  }, [isOpen, initVisibleRecaptcha, cleanupRecaptcha]);
 
   // Handle single digit entry
   const handleDigitChange = (index: number, value: string) => {
@@ -341,11 +554,8 @@ export default function OtpVerificationModal({
     setErrorMessage(null);
 
     try {
-      const userCredential = await confirmationResultRef.current.confirm(code);
-      console.log(
-        "Firebase Phone Auth verified successfully for user:",
-        userCredential.user.phoneNumber,
-      );
+      await confirmationResultRef.current.confirm(code);
+      console.log("Firebase Phone Auth verified successfully.");
       setIsSuccess(true);
       // Brief delightful confirmation delay before auto-submitting
       setTimeout(() => {
@@ -369,7 +579,7 @@ export default function OtpVerificationModal({
         );
       } else {
         setErrorMessage(
-          firebaseError.message || "Failed to verify code. Please try again.",
+          "Something went wrong while verifying the code. Please try again.",
         );
       }
     } finally {
@@ -379,13 +589,12 @@ export default function OtpVerificationModal({
 
   // Resend code handler
   const handleResend = useCallback(() => {
-    hasSentRef.current = false;
     setDigits(["", "", "", "", "", ""]);
     setOtpSent(false);
     setErrorMessage(null);
     setCanResend(false);
-    handleSendOtp();
-  }, [handleSendOtp]);
+    initVisibleRecaptcha();
+  }, [initVisibleRecaptcha]);
 
   if (!isOpen) return null;
 
@@ -404,7 +613,7 @@ export default function OtpVerificationModal({
       aria-labelledby="otp-modal-title"
       className="fixed inset-0 z-50 flex items-center justify-center bg-navy-950/75 p-4 backdrop-blur-xs animate-fade-in"
     >
-      <div className="relative w-full max-w-md overflow-hidden rounded-3xl bg-white p-6 sm:p-8 shadow-2xl ring-1 ring-gold-500/20">
+      <div className="relative w-full max-w-md max-h-[92vh] overflow-y-auto rounded-3xl bg-white p-6 sm:p-8 shadow-2xl ring-1 ring-gold-500/20">
         {/* Close Button */}
         <button
           type="button"
@@ -430,19 +639,23 @@ export default function OtpVerificationModal({
             id="otp-modal-title"
             className="mt-4 text-xl font-bold font-display text-navy-900"
           >
-            {isSuccess ? "Mobile Verified!" : "Verify Mobile Number"}
+            {isSuccess
+              ? "Mobile Verified!"
+              : otpSent
+                ? "Enter Verification Code"
+                : "Security Check"}
           </h3>
 
           <p className="mt-1.5 text-xs text-ink-600 max-w-xs">
             {otpSent
               ? "Enter the 6-digit verification code sent via SMS to"
-              : "Verifying security check to send code to"}{" "}
+              : "Complete the check below to send verification SMS to"}{" "}
             <span className="font-bold font-mono text-navy-900">
               +91 {formattedMobile}
             </span>
           </p>
 
-          {onChangeNumber && (
+          {onChangeNumber && !otpSent && (
             <button
               type="button"
               onClick={onChangeNumber}
@@ -454,12 +667,21 @@ export default function OtpVerificationModal({
           )}
         </div>
 
-        {/* Dynamic Parent Wrapper for reCAPTCHA (never causes "already rendered" error) */}
+        {/* Dynamic Parent Wrapper for Visible reCAPTCHA */}
         <div
           id="firebase-recaptcha-parent"
-          className="flex justify-center"
+          className={`flex justify-center transition-all duration-300 ${
+            otpSent ? "hidden" : "my-5 min-h-[78px] items-center"
+          }`}
         ></div>
 
+        {/* Sending SMS Spinner */}
+        {sending && (
+          <div className="my-3 flex items-center justify-center gap-2 rounded-xl bg-gold-50/70 border border-gold-200/60 p-2.5 text-xs font-semibold text-navy-900 animate-fade-in">
+            <RotateCw className="size-4 animate-spin text-gold-600" />
+            <span>Sending verification code to +91 {formattedMobile}...</span>
+          </div>
+        )}
 
         {/* Sent Confirmation Badge */}
         {otpSent && !sending && !isSuccess && (
@@ -479,104 +701,114 @@ export default function OtpVerificationModal({
           </div>
         )}
 
-        {/* 6-Digit PIN Inputs — shown only after security check completes */}
-        {otpSent && (
-        <div className="mt-5 animate-fade-in">
-          <div
-            className="flex justify-center gap-2 sm:gap-3"
-            onPaste={handlePaste}
-          >
-            {digits.map((digit, idx) => (
-              <input
-                key={idx}
-                ref={(el) => {
-                  inputRefs.current[idx] = el;
-                }}
-                type="text"
-                inputMode="numeric"
-                pattern="[0-9]*"
-                maxLength={1}
-                value={digit}
-                disabled={loading || isSuccess || sending || !otpSent}
-                onChange={(e) => handleDigitChange(idx, e.target.value)}
-                onKeyDown={(e) => handleKeyDown(idx, e)}
-                className={`h-12 w-11 sm:h-14 sm:w-12 rounded-xl text-center font-mono text-xl font-bold transition outline-none shadow-2xs ${
-                  isSuccess
-                    ? "border-emerald-500 bg-emerald-50/50 text-emerald-900"
-                    : errorMessage
-                      ? "border-maroon-400 bg-maroon-50/40 text-maroon-900 focus:border-maroon-600 focus:ring-2 focus:ring-maroon-400/20"
-                      : digit
-                        ? "border-gold-500 bg-gold-50/30 text-navy-900 focus:border-gold-600 focus:ring-2 focus:ring-gold-500/20"
-                        : "border-cream-300 bg-cream-50/60 text-navy-900 hover:bg-white focus:border-gold-500 focus:bg-white focus:ring-2 focus:ring-gold-500/20"
-                } ${!otpSent ? "opacity-40 cursor-not-allowed" : ""}`}
-                aria-label={`Digit ${idx + 1}`}
-              />
-            ))}
-          </div>
-
-          {/* Success Message */}
-          {isSuccess && (
-            <div className="mt-3 flex items-center justify-center gap-1.5 text-xs font-semibold text-emerald-700 animate-fade-in">
-              <CheckCircle2 className="size-4 shrink-0 text-emerald-600" />
-              <span>Verification confirmed! Completing submission...</span>
-            </div>
-          )}
-        </div>
-        )}
-
-        {/* Action Button */}
-        <div className="mt-6">
-          <button
-            type="button"
-            disabled={
-              !isComplete || loading || sending || isSuccess || !otpSent
-            }
-            onClick={() => verifyOtpCode()}
-            className="flex w-full items-center justify-center gap-2 rounded-xl bg-navy-900 px-5 py-3.5 text-sm font-bold text-white shadow-md hover:bg-navy-800 transition active:scale-98 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
-          >
-            {loading ? (
-              <span className="flex items-center gap-2">
-                <RotateCw className="size-4 animate-spin text-white" />
-                <span>Verifying Code...</span>
-              </span>
-            ) : sending ? (
-              <span className="flex items-center gap-2">
-                <RotateCw className="size-4 animate-spin text-white" />
-                <span>Waiting for Security Check...</span>
-              </span>
-            ) : isSuccess ? (
-              <span className="flex items-center gap-2">
-                <CheckCircle2 className="size-4 text-emerald-400" />
-                <span>Verified!</span>
-              </span>
-            ) : (
-              <>
-                <span>Verify &amp; Complete Registration</span>
-                <ArrowRight className="size-4" />
-              </>
-            )}
-          </button>
-        </div>
-
-        {/* Resend Code Section */}
-        <div className="mt-5 text-center text-xs text-ink-600">
-          <span>Didn&apos;t receive the code? </span>
-          {canResend ? (
+        {/* Retry Security Check if error occurred before sending */}
+        {!otpSent && errorMessage && (
+          <div className="mt-4 flex justify-center">
             <button
               type="button"
-              disabled={loading || sending || isSuccess}
               onClick={handleResend}
-              className="font-bold text-gold-700 hover:text-gold-900 underline transition inline-flex items-center gap-1 disabled:opacity-50 cursor-pointer"
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold bg-cream-100 text-navy-900 hover:bg-cream-200 transition cursor-pointer shadow-xs"
             >
-              <RotateCw className={`size-3 ${sending ? "animate-spin" : ""}`} />
-              <span>Resend Code</span>
+              <RotateCw className="size-3.5 text-gold-600" />
+              <span>Retry Security Check</span>
             </button>
-          ) : (
-            <span className="font-mono text-ink-400">
-              Resend in <strong className="text-navy-900">{countdown}s</strong>
-            </span>
-          )}
-        </div>
+          </div>
+        )}
+
+        {/* 6-Digit PIN Inputs — shown only after security check completes and OTP is sent */}
+        {otpSent && (
+          <div className="mt-5 animate-fade-in">
+            <div
+              className="flex justify-center gap-2 sm:gap-3"
+              onPaste={handlePaste}
+            >
+              {digits.map((digit, idx) => (
+                <input
+                  key={idx}
+                  ref={(el) => {
+                    inputRefs.current[idx] = el;
+                  }}
+                  type="text"
+                  inputMode="numeric"
+                  pattern="[0-9]*"
+                  maxLength={1}
+                  value={digit}
+                  disabled={loading || isSuccess || sending}
+                  onChange={(e) => handleDigitChange(idx, e.target.value)}
+                  onKeyDown={(e) => handleKeyDown(idx, e)}
+                  className={`h-12 w-11 sm:h-14 sm:w-12 rounded-xl text-center font-mono text-xl font-bold transition outline-none shadow-2xs ${
+                    isSuccess
+                      ? "border-emerald-500 bg-emerald-50/50 text-emerald-900"
+                      : errorMessage
+                        ? "border-maroon-400 bg-maroon-50/40 text-maroon-900 focus:border-maroon-600 focus:ring-2 focus:ring-maroon-400/20"
+                        : digit
+                          ? "border-gold-500 bg-gold-50/30 text-navy-900 focus:border-gold-600 focus:ring-2 focus:ring-gold-500/20"
+                          : "border-cream-300 bg-cream-50/60 text-navy-900 hover:bg-white focus:border-gold-500 focus:bg-white focus:ring-2 focus:ring-gold-500/20"
+                  }`}
+                  aria-label={`Digit ${idx + 1}`}
+                />
+              ))}
+            </div>
+
+            {/* Success Message */}
+            {isSuccess && (
+              <div className="mt-3 flex items-center justify-center gap-1.5 text-xs font-semibold text-emerald-700 animate-fade-in">
+                <CheckCircle2 className="size-4 shrink-0 text-emerald-600" />
+                <span>Verification confirmed! Completing submission...</span>
+              </div>
+            )}
+
+            {/* Action Button */}
+            <div className="mt-6">
+              <button
+                type="button"
+                disabled={!isComplete || loading || sending || isSuccess}
+                onClick={() => verifyOtpCode()}
+                className="flex w-full items-center justify-center gap-2 rounded-xl bg-navy-900 px-5 py-3.5 text-sm font-bold text-white shadow-md hover:bg-navy-800 transition active:scale-98 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+              >
+                {loading ? (
+                  <span className="flex items-center gap-2">
+                    <RotateCw className="size-4 animate-spin text-white" />
+                    <span>Verifying Code...</span>
+                  </span>
+                ) : isSuccess ? (
+                  <span className="flex items-center gap-2">
+                    <CheckCircle2 className="size-4 text-emerald-400" />
+                    <span>Verified!</span>
+                  </span>
+                ) : (
+                  <>
+                    <span>Verify &amp; Complete Registration</span>
+                    <ArrowRight className="size-4" />
+                  </>
+                )}
+              </button>
+            </div>
+
+            {/* Resend Code Section */}
+            <div className="mt-5 text-center text-xs text-ink-600">
+              <span>Didn&apos;t receive the code? </span>
+              {canResend ? (
+                <button
+                  type="button"
+                  disabled={loading || sending || isSuccess}
+                  onClick={handleResend}
+                  className="font-bold text-gold-700 hover:text-gold-900 underline transition inline-flex items-center gap-1 disabled:opacity-50 cursor-pointer"
+                >
+                  <RotateCw
+                    className={`size-3 ${sending ? "animate-spin" : ""}`}
+                  />
+                  <span>Resend Code</span>
+                </button>
+              ) : (
+                <span className="font-mono text-ink-400">
+                  Resend in{" "}
+                  <strong className="text-navy-900">{countdown}s</strong>
+                </span>
+              )}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

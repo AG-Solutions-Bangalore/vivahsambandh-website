@@ -214,6 +214,12 @@ export default defineConfig({
       '@': path.resolve(import.meta.dirname ?? '.', './src'),
     },
   },
+  server: {
+    // Firebase Phone Auth rejects real-number OTP sends from `localhost` origins
+    // (firebase-js-sdk#8387). Serve dev on 127.0.0.1 and keep `127.0.0.1`
+    // in Firebase Auth → Settings → Authorized domains.
+    host: '127.0.0.1',
+  },
   build: {
     minify: true,
     cssMinify: true,

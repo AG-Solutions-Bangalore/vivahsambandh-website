@@ -794,9 +794,7 @@ export default function PersonalDetailsSection() {
                   inputCls('mobile'),
                   isMobileVerifiedNow
                     ? 'border-emerald-500 bg-emerald-50/20 pr-28 text-emerald-950 focus-visible:border-emerald-600 focus-visible:ring-emerald-500/20'
-                    : isMobileComplete
-                    ? 'pr-24'
-                    : '',
+                    : 'pr-24',
                 )}
                 aria-invalid={Boolean(fieldErrors.mobile)}
               />
@@ -804,15 +802,22 @@ export default function PersonalDetailsSection() {
                 <span className="absolute right-2.5 top-1/2 -translate-y-1/2 inline-flex items-center gap-1 rounded-full bg-emerald-100 border border-emerald-300 px-2.5 py-0.5 text-[11px] font-bold text-emerald-800">
                   ✓ Verified
                 </span>
-              ) : isMobileComplete ? (
+              ) : (
                 <button
                   type="button"
                   onClick={openOtpModal}
-                  className="absolute right-2.5 top-1/2 -translate-y-1/2 rounded-lg bg-gold-100 hover:bg-gold-200 border border-gold-300 px-2.5 py-1 text-[11px] font-bold text-navy-900 transition active:scale-95 shadow-2xs"
+                  disabled={!isMobileComplete}
+                  className={cn(
+                    "absolute right-2.5 top-1/2 -translate-y-1/2 rounded-lg border px-2.5 py-1 text-[11px] font-bold transition active:scale-95 shadow-2xs",
+                    isMobileComplete
+                      ? "bg-gold-100 hover:bg-gold-200 border-gold-300 text-navy-900 cursor-pointer"
+                      : "bg-cream-100/70 border-cream-200 text-ink-400 cursor-not-allowed opacity-60",
+                  )}
+                  title={isMobileComplete ? "Verify mobile number via OTP" : "Enter 10-digit mobile number to verify"}
                 >
                   Verify OTP
                 </button>
-              ) : null}
+              )}
             </div>
           </Field>
         </div>
