@@ -12,6 +12,9 @@ import HeroSection from "../components/HeroSection";
 // progressively (viewport proximity or idle backstop) — the initial
 // bundle stays hero-focused. Module scope = created once, never re-made.
 const AboutSection = lazy(() => import("../components/AboutSection"));
+const CommunitiesSection = lazy(
+  () => import("../components/CommunitiesSection"),
+);
 const CityMatchesSection = lazy(
   () => import("../components/CityMatchesSection"),
 );
@@ -114,6 +117,12 @@ export default function HomePage() {
         id="about"
         component={AboutSection}
         minHeight={640}
+        tone="cream"
+      />
+      <DeferredSection
+        id="communities"
+        component={CommunitiesSection}
+        minHeight={340}
         tone="cream"
       />
       <DeferredSection

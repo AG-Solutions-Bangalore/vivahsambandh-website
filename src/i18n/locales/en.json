@@ -46,8 +46,48 @@
     "community": "Our Community",
     "members": "50K+ Happy Members"
   },
-  "cities": {
+  "communities": {
     "eyebrow": "Browse by community",
+    "title": "Find Matches by Community",
+    "subtitle": "Explore verified matrimonial profiles across Agarwal, Jain, Khandelwal, and Maheshwari families.",
+    "register": "Register Free Bio-Data",
+    "explore": "Explore Matches",
+    "clearFilter": "Show All",
+    "gotrasLabel": "Key Gotras / Traditions",
+    "findMatches": "Find {{name}} Matches",
+    "list": [
+      {
+        "name": "Agarwal",
+        "tag": "18 Sacred Gotras",
+        "gotras": "Bansal, Mittal, Jindal, Singhal, Garg, Goyal, Kansal & more",
+        "count": "22,000+ Profiles",
+        "heritage": "Maharaja Agrasen Lineage & Heritage"
+      },
+      {
+        "name": "Jain",
+        "tag": "Digambar & Svetambar Traditions",
+        "gotras": "Murtipujak, Terapanthi, Sthanakvasi & Deravasi",
+        "count": "12,000+ Profiles",
+        "heritage": "Ahimsa, Simplicity & Spiritual Values"
+      },
+      {
+        "name": "Khandelwal",
+        "tag": "Vaishya Heritage",
+        "gotras": "Kulshreshtha, Dhamani, Dangayach, Rawat, Dusad & more",
+        "count": "8,500+ Profiles",
+        "heritage": "Sage Khandela Lineage & Business Ethics"
+      },
+      {
+        "name": "Maheshwari",
+        "tag": "72 Sacred Khams",
+        "gotras": "Didwana & Marwari Lineage, Deep Cultural Values",
+        "count": "9,500+ Profiles",
+        "heritage": "Lord Mahesh Heritage & Philanthropy"
+      }
+    ]
+  },
+  "cities": {
+    "eyebrow": "Browse by city",
     "title": "Find Matches in Your City",
     "subtitle": "Explore profiles from Agarwal communities across India and worldwide.",
     "viewAll": "View All Cities",
