@@ -65,8 +65,10 @@ function renderFeatureIcon(index: number) {
 // Bespoke golden Mughal/Indian arched icons matching the design screenshot
 function FeatureArchedIcon({ index }: { index: number }) {
   return (
-    <div className="relative -mb-3.5 flex w-[68px] shrink-0 items-center justify-center self-stretch rounded-t-full rounded-b-none border border-b-0 border-gold-500/40 bg-gold-50/90 text-gold-700 shadow-2xs transition-colors group-hover:border-gold-600 group-hover:bg-gold-100 sm:-mb-4 sm:w-[60px]">
-      {renderFeatureIcon(index)}
+    <div className="relative -mb-5 sm:-mb-5.5 lg:-mb-6 flex w-[68px] sm:w-[74px] lg:w-[78px] shrink-0 items-center justify-center self-stretch rounded-t-[28px] sm:rounded-t-[32px] rounded-b-none border border-b-0 border-gold-500/40 bg-gradient-to-b from-[#FFF7E8] to-[#FCEECC] text-gold-700 shadow-2xs transition-all duration-300 group-hover:border-gold-600 group-hover:from-[#FFF2D6] group-hover:to-[#FBE2A4] group-hover:shadow-xs">
+      <div className="transition-transform duration-300 group-hover:scale-105">
+        {renderFeatureIcon(index)}
+      </div>
     </div>
   )
 }
@@ -160,27 +162,33 @@ export default function WhyChooseSection() {
           {/* Right Column: 3-column x 2-row Grid of Feature Cards       */}
           {/* ========================================================== */}
           <div className="lg:col-span-8 xl:col-span-8">
-            <RevealGroup className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5 sm:gap-4">
+            <RevealGroup className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-4.5 lg:gap-5">
               {rawFeatures.map((f, i) => {
+                const words = f.title.split(' ')
+                const allExceptLast = words.slice(0, -1).join(' ')
+                const lastWord = words[words.length - 1]
+
                 return (
                   <div
                     key={f.title}
                     data-reveal-item
-                    className="group relative overflow-hidden flex items-center gap-3 sm:gap-3.5 rounded-2xl border border-gold-500/25 bg-white p-3.5 sm:p-4 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-gold-500 hover:shadow-md"
+                    className="group relative overflow-hidden flex items-center gap-3.5 sm:gap-4 rounded-2xl sm:rounded-3xl border border-gold-500/30 bg-white p-5 sm:p-5.5 lg:p-6 min-h-[108px] sm:min-h-[116px] lg:min-h-[120px] shadow-sm transition-all duration-300 hover:-translate-y-1.5 hover:border-gold-500 hover:shadow-xl hover:shadow-gold-500/10 cursor-pointer"
                   >
                     {/* Bespoke Arched Icon */}
                     <FeatureArchedIcon index={i} />
 
-                    {/* Title flows on ONE line when space allows (no forced
-                        break) — wraps naturally only on narrow cards */}
-                    <div className="flex-1 min-w-0 py-1.5">
-                      <h3 className="font-sans text-xs sm:text-[13px] lg:text-[13.5px] font-bold text-navy-950 leading-snug transition-colors group-hover:text-maroon-700">
-                        {f.title}{' '}
-                        <span
-                          className="inline-block text-gold-600 font-bold transition-transform duration-300 group-hover:translate-x-1"
-                          aria-hidden="true"
-                        >
-                          →
+                    {/* Title with protected arrow to prevent orphan wraps */}
+                    <div className="flex-1 min-w-0 py-1">
+                      <h3 className="font-sans text-xs sm:text-[13.5px] lg:text-[14.5px] font-bold text-navy-950 leading-snug transition-colors group-hover:text-maroon-700">
+                        {allExceptLast}{' '}
+                        <span className="inline-block whitespace-nowrap">
+                          {lastWord}
+                          <span
+                            className="ml-1.5 inline-block text-gold-600 font-bold transition-transform duration-300 group-hover:translate-x-1"
+                            aria-hidden="true"
+                          >
+                            →
+                          </span>
                         </span>
                       </h3>
                     </div>
