@@ -3,7 +3,7 @@
  * Overview dashboard displaying aggregated metrics, recent registrations, and quick admin actions.
  */
 
-import { useEffect, useState } from 'react'
+import { useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import {
   Users,
@@ -22,71 +22,43 @@ import { StatusBadge } from '../components/StatusBadge'
 import { PanelCard, PanelCardHeader } from '../components/PanelCard'
 import { PanelPageHeader } from '../components/PanelPageHeader'
 import { PanelListSkeleton, Skeleton, SkeletonText } from '../components/PanelSkeleton'
-import {
-  fetchAdminMembers,
-  fetchBlockProfiles,
-  fetchFeedbacks,
-  fetchMembers,
-  fetchNotifications,
-  fetchPendingAdminMembers,
-  fetchPendingMembers,
-} from '../services/adminApi'
-import type { AdminMember, Member, NotificationRecord } from '../types'
+import { PanelError } from '../components/PanelState'
+import { useDashboardOverview } from '../hook/useDashboardOverview'
+import { errorMessage } from '../hook/errors'
+import toast from 'react-hot-toast'
 
 export default function DashboardOverviewPage() {
-  const [isLoading, setIsLoading] = useState(true)
-  const [adminCount, setAdminCount] = useState(0)
-  const [pendingAdminCount, setPendingAdminCount] = useState(0)
-  const [memberCount, setMemberCount] = useState(0)
-  const [pendingMemberCount, setPendingMemberCount] = useState(0)
-  const [feedbackCount, setFeedbackCount] = useState(0)
-  const [blockCount, setBlockCount] = useState(0)
-  const [notificationCount, setNotificationCount] = useState(0)
+  const {
+    adminCount,
+    pendingAdminCount,
+    memberCount,
+    pendingMemberCount,
+    feedbackCount,
+    blockCount,
+    notificationCount,
+    recentAdmins,
+    recentMembers,
+    recentNotifications,
+    isLoading,
+    isFetching,
+    error,
+    failedCount,
+    totalCount,
+    refetch,
+  } = useDashboardOverview()
 
-  const [recentAdmins, setRecentAdmins] = useState<AdminMember[]>([])
-  const [recentMembers, setRecentMembers] = useState<Member[]>([])
-  const [recentNotifications, setRecentNotifications] = useState<NotificationRecord[]>([])
-
-  const loadDashboardData = async () => {
-    setIsLoading(true)
-    try {
-      const [
-        adminsRes,
-        pendingAdminsRes,
-        membersRes,
-        pendingMembersRes,
-        feedbacksRes,
-        blocksRes,
-        notificationsRes,
-      ] = await Promise.all([
-        fetchAdminMembers(),
-        fetchPendingAdminMembers(),
-        fetchMembers(),
-        fetchPendingMembers(),
-        fetchFeedbacks(),
-        fetchBlockProfiles(),
-        fetchNotifications(),
-      ])
-
-      setAdminCount(adminsRes.data.length)
-      setPendingAdminCount(pendingAdminsRes.data.length)
-      setMemberCount(membersRes.data.length)
-      setPendingMemberCount(pendingMembersRes.data.length)
-      setFeedbackCount(feedbacksRes.data.length)
-      setBlockCount(blocksRes.data.length)
-      setNotificationCount(notificationsRes.data.length)
-
-      setRecentAdmins(adminsRes.data.slice(0, 4))
-      setRecentMembers(membersRes.data.slice(0, 4))
-      setRecentNotifications(notificationsRes.data.slice(0, 3))
-    } finally {
-      setIsLoading(false)
-    }
-  }
-
+  // Surface a partial-failure notice once per failure burst instead of
+  // spamming a toast for every refetch.
+  const reportedError = useRef<Error | null>(null)
   useEffect(() => {
-    void loadDashboardData()
-  }, [])
+    if (!error) {
+      reportedError.current = null
+      return
+    }
+    if (reportedError.current?.message === error.message) return
+    reportedError.current = error
+    toast.error(errorMessage(error, 'Some dashboard data could not be loaded.'))
+  }, [error])
 
   /* Queues the admin has to work through — these carry the visual weight. */
   const attentionMetrics = [
@@ -141,6 +113,25 @@ export default function DashboardOverviewPage() {
     },
   ]
 
+  /* Every source failed — there is nothing trustworthy to render. */
+  if (error && failedCount === totalCount && !isLoading) {
+    return (
+      <div className="space-y-6">
+        <PanelPageHeader
+          title="Dashboard Overview"
+          description="Moderation queues, platform totals, and recent activity across every module."
+        />
+        <PanelCard flush>
+          <PanelError
+            title="Could not load the dashboard"
+            message={errorMessage(error, 'The panel backend is unreachable right now.')}
+            onRetry={() => void refetch()}
+          />
+        </PanelCard>
+      </div>
+    )
+  }
+
   return (
     <div className="space-y-6">
       <PanelPageHeader
@@ -152,12 +143,12 @@ export default function DashboardOverviewPage() {
               type="button"
               variant="outline"
               size="sm"
-              onClick={() => void loadDashboardData()}
-              disabled={isLoading}
+              onClick={() => void refetch()}
+              disabled={isFetching}
               className="cursor-pointer rounded-full border-cream-300 bg-white text-xs font-semibold hover:border-gold-500/60 hover:bg-cream-50"
             >
               <RefreshCw
-                className={cn('size-3.5', isLoading && 'animate-spin')}
+                className={cn('size-3.5', isFetching && 'animate-spin')}
                 aria-hidden
               />
               <span>Refresh</span>

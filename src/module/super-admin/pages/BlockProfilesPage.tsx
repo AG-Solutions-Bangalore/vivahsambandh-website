@@ -3,17 +3,16 @@
  * Blocked Profiles moderation: inspect flagged or blocked member accounts and delete records.
  */
 
-import { useEffect, useState, useMemo } from 'react'
+import { useState, useMemo } from 'react'
 import { Ban, RefreshCw, Trash2, Calendar, ShieldAlert } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { ConfirmDialog } from '../components/ConfirmDialog'
 import { PanelCard } from '../components/PanelCard'
 import { PanelPageHeader } from '../components/PanelPageHeader'
 import { panelDescription } from '../navigation'
-import { PanelBanner } from '../components/PanelBanner'
 import { PanelSearch } from '../components/PanelSearch'
 import { PanelToolbar } from '../components/PanelToolbar'
-import { PanelEmpty } from '../components/PanelState'
+import { PanelEmpty, PanelError } from '../components/PanelState'
 import { PanelTableSkeleton } from '../components/PanelSkeleton'
 import {
   PanelTable,
@@ -21,40 +20,31 @@ import {
   PanelTableHeadCell,
 } from '../components/PanelTable'
 import {
-  deleteBlockProfileRecord,
-  fetchBlockProfiles,
-} from '../services/adminApi'
-import type { BlockProfileRecord } from '../types'
+  useBlockProfilesQuery,
+  useDeleteBlockProfileMutation,
+} from '../hook/useBlockProfiles'
+import { errorMessage } from '../hook/errors'
 import { formatDate } from '../utils/format'
 
 export default function BlockProfilesPage() {
-  const [records, setRecords] = useState<BlockProfileRecord[]>([])
-  const [isLoading, setIsLoading] = useState(true)
-  const [errorMessage, setErrorMessage] = useState<string | null>(null)
-  const [successBanner, setSuccessBanner] = useState<string | null>(null)
+  const {
+    data: records = [],
+    isLoading,
+    isFetching,
+    error,
+    refetch,
+  } = useBlockProfilesQuery()
+  const deleteMutation = useDeleteBlockProfileMutation()
+
   const [searchQuery, setSearchQuery] = useState('')
 
   // Delete Target
-  const [deleteTarget, setDeleteTarget] = useState<BlockProfileRecord | null>(null)
-  const [isDeleting, setIsDeleting] = useState(false)
+  const [deleteTargetId, setDeleteTargetId] = useState<number | null>(null)
 
-  const loadData = async () => {
-    setIsLoading(true)
-    setErrorMessage(null)
-    try {
-      const res = await fetchBlockProfiles()
-      setRecords(res.data)
-      if (res.error) setErrorMessage(res.error)
-    } catch (err) {
-      setErrorMessage(err instanceof Error ? err.message : 'Failed to load blocked profiles.')
-    } finally {
-      setIsLoading(false)
-    }
-  }
-
-  useEffect(() => {
-    void loadData()
-  }, [])
+  const deleteTarget = useMemo(
+    () => records.find((rec) => rec.id === deleteTargetId) ?? null,
+    [records, deleteTargetId],
+  )
 
   const filtered = useMemo(() => {
     return records.filter((rec) => {
@@ -68,23 +58,19 @@ export default function BlockProfilesPage() {
     })
   }, [records, searchQuery])
 
-  const handleDelete = async () => {
+  const handleDelete = () => {
     if (!deleteTarget) return
-    setIsDeleting(true)
-    try {
-      const res = await deleteBlockProfileRecord(deleteTarget.id)
-      if (res.success) {
-        setSuccessBanner(`Blocked profile record #${deleteTarget.id} deleted.`)
-        setDeleteTarget(null)
-        setRecords((prev) => prev.filter((r) => r.id !== deleteTarget.id))
-      } else {
-        setErrorMessage(res.message)
-      }
-    } catch (err) {
-      setErrorMessage(err instanceof Error ? err.message : 'Failed to delete record.')
-    } finally {
-      setIsDeleting(false)
-    }
+    const targetId = deleteTarget.id
+
+    deleteMutation.mutate(
+      {
+        id: targetId,
+        successMessage: `Blocked profile record #${targetId} deleted.`,
+      },
+      {
+        onSuccess: () => setDeleteTargetId(null),
+      },
+    )
   }
 
   return (
@@ -97,31 +83,15 @@ export default function BlockProfilesPage() {
             type="button"
             variant="outline"
             size="sm"
-            onClick={() => void loadData()}
-            disabled={isLoading}
+            onClick={() => void refetch()}
+            disabled={isFetching}
             className="cursor-pointer rounded-full border-cream-300 text-xs font-semibold"
           >
-            <RefreshCw className={isLoading ? 'size-3.5 animate-spin' : 'size-3.5'} aria-hidden />
+            <RefreshCw className={isFetching ? 'size-3.5 animate-spin' : 'size-3.5'} aria-hidden />
             <span>Refresh Records</span>
           </Button>
         }
       />
-
-      {successBanner && (
-        <PanelBanner
-          tone="success"
-          message={successBanner}
-          onDismiss={() => setSuccessBanner(null)}
-        />
-      )}
-
-      {errorMessage && (
-        <PanelBanner
-          tone="error"
-          message={errorMessage}
-          onDismiss={() => setErrorMessage(null)}
-        />
-      )}
 
       {/* Blocked Profiles Table */}
       <PanelCard flush>
@@ -137,6 +107,12 @@ export default function BlockProfilesPage() {
 
         {isLoading ? (
           <PanelTableSkeleton rows={6} columns={5} />
+        ) : error ? (
+          <PanelError
+            title="Could not load blocked profiles"
+            message={errorMessage(error, 'Failed to load blocked profile records.')}
+            onRetry={() => void refetch()}
+          />
         ) : filtered.length === 0 ? (
           <PanelEmpty
             icon={<Ban className="size-6" />}
@@ -214,7 +190,7 @@ export default function BlockProfilesPage() {
                       type="button"
                       size="xs"
                       variant="outline"
-                      onClick={() => setDeleteTarget(rec)}
+                      onClick={() => setDeleteTargetId(rec.id)}
                       title="Delete Block Record"
                       className="cursor-pointer rounded-full border-maroon-200 bg-maroon-50 text-[0.7rem] text-maroon-800 hover:bg-maroon-100"
                     >
@@ -246,9 +222,9 @@ export default function BlockProfilesPage() {
           confirmText="Yes, Delete Record"
           cancelText="Cancel"
           variant="danger"
-          isLoading={isDeleting}
+          isLoading={deleteMutation.isPending}
           onConfirm={handleDelete}
-          onClose={() => setDeleteTarget(null)}
+          onClose={() => setDeleteTargetId(null)}
         />
       )}
     </div>

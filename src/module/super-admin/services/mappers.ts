@@ -5,8 +5,15 @@
  * The API returns reference tables as nested objects (`community.community_name`)
  * and moderation records as `from_user` / `to_user` pairs. The UI should not
  * know that, so every payload is flattened once, here.
+ *
+ * Image columns arrive as bare filenames (`1_20261021_141116.jpeg`). The real
+ * URL is only knowable from the `image_url` metadata block that every endpoint
+ * returns next to `data`, so the mappers resolve filenames to absolute URLs
+ * here instead of leaving broken `src` values in the DOM.
  */
 
+import { resolveImageUrl } from '@/lib/api/apiClient'
+import type { ImageUrlEntry } from '@/lib/api/types'
 import type {
   AdminMember,
   AdminMemberStatus,
@@ -20,6 +27,32 @@ import type {
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 type Raw = Record<string, any>
+
+/** Pulls the `image_url` metadata block out of an API envelope. */
+export function extractImageEntries(payload: unknown): ImageUrlEntry[] {
+  if (!payload || typeof payload !== 'object') return []
+  const entries = (payload as Raw).image_url
+  return Array.isArray(entries) ? (entries as ImageUrlEntry[]) : []
+}
+
+/**
+ * Resolves a stored image filename against the endpoint's `image_url` metadata.
+ *
+ * Returns `null` when there is no attachment, or when the endpoint did not
+ * supply the metadata needed to build a URL — the UI then renders a
+ * placeholder instead of a broken image.
+ */
+function resolveImage(
+  filename: string | null | undefined,
+  entries: ImageUrlEntry[],
+  imageFor: string,
+): string | null {
+  if (!filename || !filename.trim()) return null
+  if (entries.length === 0) return null
+
+  const resolved = resolveImageUrl(filename.trim(), entries, imageFor)
+  return resolved && resolved.trim() ? resolved.trim() : null
+}
 
 /** Reads a display name from a nested reference object. */
 function referenceName(value: unknown): string | null {
@@ -61,7 +94,9 @@ function adminStatus(value: unknown): AdminMemberStatus {
 }
 
 /** Normalises a `/member` or `/getPendingMember` row. */
-export function toMember(raw: Raw): Member {
+export function toMember(raw: Raw, entries: ImageUrlEntry[] = []): Member {
+  const faceImageName = text(raw.face_image)
+
   return {
     id: Number(raw.id ?? 0),
     name: text(raw.name) ?? 'Unknown',
@@ -78,7 +113,8 @@ export function toMember(raw: Raw): Member {
     marry_in_community: text(raw.marry_in_community),
     marry_multi_community: text(raw.marry_multi_community),
     register_date: text(raw.register_date),
-    face_image: text(raw.face_image),
+    face_image: resolveImage(faceImageName, entries, 'Member'),
+    face_image_name: faceImageName,
     user_type: raw.user_type ?? null,
     community_name: referenceName(raw.community),
     gotra_name: referenceName(raw.gotra),
@@ -88,7 +124,9 @@ export function toMember(raw: Raw): Member {
 }
 
 /** Normalises a `/getAdminMember` or `/getPendingAdminMember` row. */
-export function toAdminMember(raw: Raw): AdminMember {
+export function toAdminMember(raw: Raw, entries: ImageUrlEntry[] = []): AdminMember {
+  const faceImageName = text(raw.face_image)
+
   return {
     id: Number(raw.id ?? 0),
     name: text(raw.name) ?? 'Unknown',
@@ -100,7 +138,8 @@ export function toAdminMember(raw: Raw): AdminMember {
     user_current_city: text(raw.user_current_city),
     multiple_city: raw.multiple_city ?? null,
     register_date: text(raw.register_date),
-    face_image: text(raw.face_image),
+    face_image: resolveImage(faceImageName, entries, 'Admin'),
+    face_image_name: faceImageName,
     user_type: raw.user_type ?? null,
   }
 }
@@ -131,7 +170,9 @@ export function toBlockProfile(raw: Raw): BlockProfileRecord {
 }
 
 /** Normalises a `/notification` row. */
-export function toNotification(raw: Raw): NotificationRecord {
+export function toNotification(raw: Raw, entries: ImageUrlEntry[] = []): NotificationRecord {
+  const imageName = text(raw.notification_image)
+
   return {
     id: Number(raw.id ?? 0),
     notification_date: text(raw.notification_date) ?? '',
@@ -140,20 +181,27 @@ export function toNotification(raw: Raw): NotificationRecord {
       | 'Admin',
     notification_heading: text(raw.notification_heading) ?? '',
     notification_message: text(raw.notification_message) ?? '',
-    notification_image: text(raw.notification_image),
+    notification_image: resolveImage(imageName, entries, 'Notification'),
+    notification_image_name: imageName,
     created_at: text(raw.created_at),
   }
 }
 
 /**
- * Unwraps the API envelope. Every list endpoint answers with `{ data: [...] }`,
- * but a few older ones answer with a bare array.
+ * Unwraps the API envelope. Every list endpoint answers with
+ * `{ data: [...], image_url: [...] }`, but a few older ones answer with a
+ * bare array. The `image_url` block travels with the rows so the mapper can
+ * turn stored filenames into absolute URLs.
  */
-export function toList<T>(payload: unknown, mapper: (row: Raw) => T): T[] {
+export function toList<T>(
+  payload: unknown,
+  mapper: (row: Raw, entries: ImageUrlEntry[]) => T,
+): T[] {
   const rows = Array.isArray(payload)
     ? payload
     : Array.isArray((payload as Raw)?.data)
       ? (payload as Raw).data
       : []
-  return rows.map((row: Raw) => mapper(row))
+  const entries = extractImageEntries(payload)
+  return rows.map((row: Raw) => mapper(row, entries))
 }

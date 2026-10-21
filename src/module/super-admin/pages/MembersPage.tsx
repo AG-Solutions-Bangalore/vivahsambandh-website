@@ -3,7 +3,7 @@
  * Matrimonial Members directory: search, filter, view complete biodata profile, and update status.
  */
 
-import { useEffect, useState, useMemo } from 'react'
+import { useState, useMemo } from 'react'
 import {
   Users,
   RefreshCw,
@@ -19,11 +19,10 @@ import { ConfirmDialog } from '../components/ConfirmDialog'
 import { PanelCard } from '../components/PanelCard'
 import { PanelPageHeader } from '../components/PanelPageHeader'
 import { panelDescription } from '../navigation'
-import { PanelBanner } from '../components/PanelBanner'
 import { PanelModal } from '../components/PanelModal'
 import { PanelSearch } from '../components/PanelSearch'
 import { PanelToolbar } from '../components/PanelToolbar'
-import { PanelEmpty } from '../components/PanelState'
+import { PanelEmpty, PanelError } from '../components/PanelState'
 import { PanelTableSkeleton } from '../components/PanelSkeleton'
 import {
   PanelTable,
@@ -33,50 +32,44 @@ import {
 import { PanelFilterSelect } from '../components/PanelFilterSelect'
 import { ProfileDetails } from '../components/ProfileDetails'
 import { StatusActionGroup } from '../components/StatusActionGroup'
-import { fetchMembers, updateMemberStatus } from '../services/adminApi'
+import { useMembersQuery } from '../hook/useMembers'
+import { useUpdateMemberStatusMutation } from '../hook/useAdminMembers'
+import { errorMessage } from '../hook/errors'
 import { formatDate } from '../utils/format'
-import type { Member, MemberStatus } from '../types'
+import type { MemberStatus } from '../types'
 
 const STATUS_FILTERS = ['All', 'Approved', 'Pending', 'Hold', 'Married', 'Cancel'] as const
 const GENDER_FILTERS = ['All', 'Male', 'Female'] as const
 
 export default function MembersPage() {
-  const [members, setMembers] = useState<Member[]>([])
-  const [isLoading, setIsLoading] = useState(true)
-  const [errorMessage, setErrorMessage] = useState<string | null>(null)
-  const [successBanner, setSuccessBanner] = useState<string | null>(null)
+  const {
+    data: members = [],
+    isLoading,
+    isFetching,
+    error,
+    refetch,
+  } = useMembersQuery()
+  const statusMutation = useUpdateMemberStatusMutation()
 
   const [searchQuery, setSearchQuery] = useState('')
   const [statusFilter, setStatusFilter] = useState<string>('All')
   const [genderFilter, setGenderFilter] = useState<string>('All')
 
-  // Profile Detail Modal State
-  const [activeProfile, setActiveProfile] = useState<Member | null>(null)
+  // Profile Detail Modal State — only the id is stored so the modal always
+  // renders the freshest record from the query cache.
+  const [activeProfileId, setActiveProfileId] = useState<number | null>(null)
 
   // Status Change State
   const [statusChangeTarget, setStatusChangeTarget] = useState<{
-    member: Member
+    memberId: number
+    memberName: string
     nextStatus: MemberStatus
   } | null>(null)
-  const [isUpdatingStatus, setIsUpdatingStatus] = useState(false)
 
-  const loadData = async () => {
-    setIsLoading(true)
-    setErrorMessage(null)
-    try {
-      const res = await fetchMembers()
-      setMembers(res.data)
-      if (res.error) setErrorMessage(res.error)
-    } catch (err) {
-      setErrorMessage(err instanceof Error ? err.message : 'Failed to load members.')
-    } finally {
-      setIsLoading(false)
-    }
-  }
-
-  useEffect(() => {
-    void loadData()
-  }, [])
+  const activeProfile = useMemo(
+    () => members.find((m) => m.id === activeProfileId) ?? null,
+    [members, activeProfileId],
+  )
 
   const filteredMembers = useMemo(() => {
     return members.filter((m) => {
@@ -104,30 +97,20 @@ export default function MembersPage() {
     })
   }, [members, searchQuery, statusFilter, genderFilter])
 
-  const handleConfirmStatusChange = async () => {
+  const handleConfirmStatusChange = () => {
     if (!statusChangeTarget) return
-    const { member, nextStatus } = statusChangeTarget
-    setIsUpdatingStatus(true)
-    try {
-      const res = await updateMemberStatus(member.id, nextStatus)
-      if (res.success) {
-        setSuccessBanner(`Member ${member.name} status updated to ${nextStatus}.`)
-        setStatusChangeTarget(null)
-        // If modal was open for this member, update it as well
-        if (activeProfile?.id === member.id) {
-          setActiveProfile((prev) => (prev ? { ...prev, status: nextStatus } : null))
-        }
-        setMembers((prev) =>
-          prev.map((m) => (m.id === member.id ? { ...m, status: nextStatus } : m)),
-        )
-      } else {
-        setErrorMessage(res.message)
-      }
-    } catch (err) {
-      setErrorMessage(err instanceof Error ? err.message : 'Failed to update member status.')
-    } finally {
-      setIsUpdatingStatus(false)
-    }
+    const { memberId, memberName, nextStatus } = statusChangeTarget
+
+    statusMutation.mutate(
+      {
+        id: memberId,
+        status: nextStatus,
+        successMessage: `Member ${memberName} status updated to ${nextStatus}.`,
+      },
+      {
+        onSuccess: () => setStatusChangeTarget(null),
+      },
+    )
   }
 
   return (
@@ -140,31 +123,15 @@ export default function MembersPage() {
             type="button"
             variant="outline"
             size="sm"
-            onClick={() => void loadData()}
-            disabled={isLoading}
+            onClick={() => void refetch()}
+            disabled={isFetching}
             className="cursor-pointer rounded-full border-cream-300 text-xs font-semibold"
           >
-            <RefreshCw className={isLoading ? 'size-3.5 animate-spin' : 'size-3.5'} aria-hidden />
+            <RefreshCw className={isFetching ? 'size-3.5 animate-spin' : 'size-3.5'} aria-hidden />
             <span>Refresh List</span>
           </Button>
         }
       />
-
-      {successBanner && (
-        <PanelBanner
-          tone="success"
-          message={successBanner}
-          onDismiss={() => setSuccessBanner(null)}
-        />
-      )}
-
-      {errorMessage && (
-        <PanelBanner
-          tone="error"
-          message={errorMessage}
-          onDismiss={() => setErrorMessage(null)}
-        />
-      )}
 
       {/* Members Table */}
       <PanelCard flush>
@@ -196,6 +163,12 @@ export default function MembersPage() {
 
         {isLoading ? (
           <PanelTableSkeleton rows={7} columns={6} />
+        ) : error ? (
+          <PanelError
+            title="Could not load members"
+            message={errorMessage(error, 'Failed to load the member directory.')}
+            onRetry={() => void refetch()}
+          />
         ) : filteredMembers.length === 0 ? (
           <PanelEmpty
             icon={<Users className="size-6" />}
@@ -286,7 +259,7 @@ export default function MembersPage() {
                       type="button"
                       size="xs"
                       variant="outline"
-                      onClick={() => setActiveProfile(member)}
+                      onClick={() => setActiveProfileId(member.id)}
                       title="View Full Profile Details"
                       className="cursor-pointer rounded-full border-navy-200 text-[0.7rem] text-navy-900 hover:bg-navy-50"
                     >
@@ -299,7 +272,8 @@ export default function MembersPage() {
                       currentStatus={member.status}
                       onSelect={(next) =>
                         setStatusChangeTarget({
-                          member,
+                          memberId: member.id,
+                          memberName: member.name,
                           nextStatus: next as MemberStatus,
                         })
                       }
@@ -364,7 +338,7 @@ export default function MembersPage() {
           </span>
         }
         size="lg"
-        onClose={() => setActiveProfile(null)}
+        onClose={() => setActiveProfileId(null)}
         footer={
           activeProfile ? (
             <>
@@ -376,7 +350,8 @@ export default function MembersPage() {
                 currentStatus={activeProfile.status}
                 onSelect={(next) =>
                   setStatusChangeTarget({
-                    member: activeProfile,
+                    memberId: activeProfile.id,
+                    memberName: activeProfile.name,
                     nextStatus: next as MemberStatus,
                   })
                 }
@@ -408,7 +383,7 @@ export default function MembersPage() {
         <ConfirmDialog
           isOpen={true}
           title={`Update Member Status to "${statusChangeTarget.nextStatus}"`}
-          description={`Are you sure you want to change the status of ${statusChangeTarget.member.name} to ${statusChangeTarget.nextStatus}?`}
+          description={`Are you sure you want to change the status of ${statusChangeTarget.memberName} to ${statusChangeTarget.nextStatus}?`}
           confirmText={`Yes, Set Status to ${statusChangeTarget.nextStatus}`}
           variant={
             statusChangeTarget.nextStatus === 'Cancel'
@@ -417,7 +392,7 @@ export default function MembersPage() {
                 ? 'success'
                 : 'primary'
           }
-          isLoading={isUpdatingStatus}
+          isLoading={statusMutation.isPending}
           onConfirm={handleConfirmStatusChange}
           onClose={() => setStatusChangeTarget(null)}
         />

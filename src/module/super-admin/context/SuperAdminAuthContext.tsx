@@ -1,6 +1,10 @@
 /**
  * @file src/module/super-admin/context/SuperAdminAuthContext.tsx
  * Authentication state provider and route guard for Super Admin Panel.
+ *
+ * The login request runs as a TanStack Query mutation so the pending state
+ * (button spinner, disabled submit) is owned by React Query instead of a
+ * second hand-rolled flag.
  */
 
 import {
@@ -11,6 +15,7 @@ import {
   useState,
   type ReactNode,
 } from 'react'
+import { useMutation } from '@tanstack/react-query'
 import { Navigate, useLocation } from 'react-router-dom'
 import {
   clearSession,
@@ -19,14 +24,18 @@ import {
 } from '../services/adminApi'
 import type { SuperAdminSession } from '../types'
 
+export interface SuperAdminLoginResult {
+  success: boolean
+  message: string
+  isInactiveProfile?: boolean
+}
+
 interface SuperAdminAuthContextValue {
   session: SuperAdminSession | null
   isAuthenticated: boolean
-  login: (username: string, password: string) => Promise<{
-    success: boolean
-    message: string
-    isInactiveProfile?: boolean
-  }>
+  /** True while a sign-in request is in flight. */
+  isPending: boolean
+  login: (username: string, password: string) => Promise<SuperAdminLoginResult>
   logout: () => void
 }
 
@@ -43,15 +52,20 @@ export function SuperAdminAuthProvider({ children }: { children: ReactNode }) {
     return () => window.removeEventListener('storage', handleStorageChange)
   }, [])
 
-  const login = useCallback(
-    async (username: string, password: string) => {
-      const result = await superAdminLogin(username, password)
+  const loginMutation = useMutation({
+    mutationFn: async (credentials: { username: string; password: string }) => {
+      const result = await superAdminLogin(credentials.username, credentials.password)
       if (result.success && result.session) {
         setSession(result.session)
       }
       return result
     },
-    [],
+  })
+
+  const login = useCallback(
+    async (username: string, password: string) =>
+      loginMutation.mutateAsync({ username, password }),
+    [loginMutation],
   )
 
   const logout = useCallback(() => {
@@ -62,6 +76,7 @@ export function SuperAdminAuthProvider({ children }: { children: ReactNode }) {
   const value: SuperAdminAuthContextValue = {
     session,
     isAuthenticated: Boolean(session?.token),
+    isPending: loginMutation.isPending,
     login,
     logout,
   }

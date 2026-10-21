@@ -45,7 +45,10 @@ export interface Member {
   marry_in_community?: string | null
   marry_multi_community?: string | null
   register_date?: string | null
+  /** Absolute URL of the member photograph, resolved from the API metadata. */
   face_image?: string | null
+  /** Stored file name of the member photograph, as returned by the API. */
+  face_image_name?: string | null
   user_type?: number | null
   community_name?: string | null
   gotra_name?: string | null
@@ -65,7 +68,10 @@ export interface AdminMember {
   user_current_city?: string | null
   multiple_city?: string | string[] | null
   register_date?: string | null
+  /** Absolute URL of the administrator photograph, resolved from the API metadata. */
   face_image?: string | null
+  /** Stored file name of the administrator photograph, as returned by the API. */
+  face_image_name?: string | null
   user_type?: number | null
 }
 
@@ -95,7 +101,10 @@ export interface NotificationRecord {
   notification_for: NotificationTarget
   notification_heading: string
   notification_message: string
+  /** Absolute URL of the banner image, resolved from the API metadata. */
   notification_image?: string | null
+  /** Stored file name of the banner image, as returned by the API. */
+  notification_image_name?: string | null
   created_at?: string | null
 }
 

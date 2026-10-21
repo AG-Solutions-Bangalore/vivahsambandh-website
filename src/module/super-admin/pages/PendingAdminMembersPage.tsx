@@ -3,7 +3,7 @@
  * Dedicated queue for reviewing, assigning cities, and approving pending admin members.
  */
 
-import { useEffect, useState, useMemo } from 'react'
+import { useState, useMemo } from 'react'
 import {
   UserCheck,
   RefreshCw,
@@ -19,10 +19,9 @@ import { ConfirmDialog } from '../components/ConfirmDialog'
 import { PanelCard } from '../components/PanelCard'
 import { PanelPageHeader } from '../components/PanelPageHeader'
 import { panelDescription } from '../navigation'
-import { PanelBanner } from '../components/PanelBanner'
 import { PanelSearch } from '../components/PanelSearch'
 import { PanelToolbar } from '../components/PanelToolbar'
-import { PanelEmpty } from '../components/PanelState'
+import { PanelEmpty, PanelError } from '../components/PanelState'
 import { PanelTableSkeleton } from '../components/PanelSkeleton'
 import {
   PanelTable,
@@ -32,48 +31,41 @@ import {
 import { StatusActionGroup } from '../components/StatusActionGroup'
 import { CityAssignmentModal } from '../components/CityAssignmentModal'
 import {
-  fetchPendingAdminMembers,
-  updateMemberCity,
-  updateMemberStatus,
-} from '../services/adminApi'
-import type { AdminMember, AdminMemberStatus } from '../types'
+  usePendingAdminMembersQuery,
+  useUpdateMemberCityMutation,
+  useUpdateMemberStatusMutation,
+} from '../hook/useAdminMembers'
+import { errorMessage } from '../hook/errors'
+import type { AdminMemberStatus } from '../types'
 
 export default function PendingAdminMembersPage() {
-  const [pendingAdmins, setPendingAdmins] = useState<AdminMember[]>([])
-  const [isLoading, setIsLoading] = useState(true)
-  const [errorMessage, setErrorMessage] = useState<string | null>(null)
-  const [successBanner, setSuccessBanner] = useState<string | null>(null)
+  const {
+    data: pendingAdmins = [],
+    isLoading,
+    isFetching,
+    error,
+    refetch,
+  } = usePendingAdminMembersQuery()
+  const cityMutation = useUpdateMemberCityMutation()
+  const statusMutation = useUpdateMemberStatusMutation()
+
   const [searchQuery, setSearchQuery] = useState('')
 
   // City Assignment State
-  const [editingCityAdmin, setEditingCityAdmin] = useState<AdminMember | null>(null)
+  const [editingCityAdminId, setEditingCityAdminId] = useState<number | null>(null)
   const [selectedCities, setSelectedCities] = useState<string[]>([])
-  const [isUpdatingCity, setIsUpdatingCity] = useState(false)
 
   // Status Action State
   const [actionTarget, setActionTarget] = useState<{
-    admin: AdminMember
+    adminId: number
+    adminName: string
     nextStatus: AdminMemberStatus
   } | null>(null)
-  const [isUpdatingStatus, setIsUpdatingStatus] = useState(false)
 
-  const loadData = async () => {
-    setIsLoading(true)
-    setErrorMessage(null)
-    try {
-      const res = await fetchPendingAdminMembers()
-      setPendingAdmins(res.data)
-      if (res.error) setErrorMessage(res.error)
-    } catch (err) {
-      setErrorMessage(err instanceof Error ? err.message : 'Failed to load pending admin members.')
-    } finally {
-      setIsLoading(false)
-    }
-  }
-
-  useEffect(() => {
-    void loadData()
-  }, [])
+  const editingCityAdmin = useMemo(
+    () => pendingAdmins.find((a) => a.id === editingCityAdminId) ?? null,
+    [pendingAdmins, editingCityAdminId],
+  )
 
   const filtered = useMemo(() => {
     return pendingAdmins.filter(
@@ -86,8 +78,11 @@ export default function PendingAdminMembersPage() {
     )
   }, [pendingAdmins, searchQuery])
 
-  const handleOpenCityModal = (admin: AdminMember) => {
-    setEditingCityAdmin(admin)
+  const handleOpenCityModal = (adminId: number) => {
+    const admin = pendingAdmins.find((a) => a.id === adminId)
+    if (!admin) return
+
+    setEditingCityAdminId(adminId)
     let initial: string[] = []
     if (Array.isArray(admin.multiple_city)) {
       initial = [...admin.multiple_city]
@@ -113,50 +108,37 @@ export default function PendingAdminMembersPage() {
     }
   }
 
-  const handleSaveCity = async () => {
+  const handleSaveCity = () => {
     if (!editingCityAdmin) return
-    setIsUpdatingCity(true)
-    try {
-      const res = await updateMemberCity(editingCityAdmin.id, selectedCities)
-      if (res.success) {
-        setSuccessBanner(`Cities updated for ${editingCityAdmin.name}.`)
-        setEditingCityAdmin(null)
-        setPendingAdmins((prev) =>
-          prev.map((a) =>
-            a.id === editingCityAdmin.id
-              ? { ...a, multiple_city: selectedCities }
-              : a,
-          ),
-        )
-      } else {
-        setErrorMessage(res.message)
-      }
-    } catch (err) {
-      setErrorMessage(err instanceof Error ? err.message : 'Failed to update cities.')
-    } finally {
-      setIsUpdatingCity(false)
-    }
+    const adminId = editingCityAdmin.id
+    const adminName = editingCityAdmin.name
+
+    cityMutation.mutate(
+      {
+        id: adminId,
+        cities: selectedCities,
+        successMessage: `Cities updated for ${adminName}.`,
+      },
+      {
+        onSuccess: () => setEditingCityAdminId(null),
+      },
+    )
   }
 
-  const handleConfirmStatus = async () => {
+  const handleConfirmStatus = () => {
     if (!actionTarget) return
-    const { admin, nextStatus } = actionTarget
-    setIsUpdatingStatus(true)
-    try {
-      const res = await updateMemberStatus(admin.id, nextStatus)
-      if (res.success) {
-        setSuccessBanner(`Admin ${admin.name} has been ${nextStatus}.`)
-        setActionTarget(null)
-        // Remove from pending queue
-        setPendingAdmins((prev) => prev.filter((a) => a.id !== admin.id))
-      } else {
-        setErrorMessage(res.message)
-      }
-    } catch (err) {
-      setErrorMessage(err instanceof Error ? err.message : 'Failed to update status.')
-    } finally {
-      setIsUpdatingStatus(false)
-    }
+    const { adminId, adminName, nextStatus } = actionTarget
+
+    statusMutation.mutate(
+      {
+        id: adminId,
+        status: nextStatus,
+        successMessage: `Admin ${adminName} has been ${nextStatus}.`,
+      },
+      {
+        onSuccess: () => setActionTarget(null),
+      },
+    )
   }
 
   return (
@@ -174,31 +156,15 @@ export default function PendingAdminMembersPage() {
             type="button"
             variant="outline"
             size="sm"
-            onClick={() => void loadData()}
-            disabled={isLoading}
+            onClick={() => void refetch()}
+            disabled={isFetching}
             className="cursor-pointer rounded-full border-cream-300 text-xs font-semibold"
           >
-            <RefreshCw className={isLoading ? 'size-3.5 animate-spin' : 'size-3.5'} aria-hidden />
+            <RefreshCw className={isFetching ? 'size-3.5 animate-spin' : 'size-3.5'} aria-hidden />
             <span>Refresh Queue</span>
           </Button>
         }
       />
-
-      {successBanner && (
-        <PanelBanner
-          tone="success"
-          message={successBanner}
-          onDismiss={() => setSuccessBanner(null)}
-        />
-      )}
-
-      {errorMessage && (
-        <PanelBanner
-          tone="error"
-          message={errorMessage}
-          onDismiss={() => setErrorMessage(null)}
-        />
-      )}
 
       {/* Table */}
       <PanelCard flush>
@@ -214,6 +180,12 @@ export default function PendingAdminMembersPage() {
 
         {isLoading ? (
           <PanelTableSkeleton rows={6} columns={6} />
+        ) : error ? (
+          <PanelError
+            title="Could not load the approval queue"
+            message={errorMessage(error, 'Failed to load pending admin members.')}
+            onRetry={() => void refetch()}
+          />
         ) : filtered.length === 0 ? (
           <PanelEmpty
             icon={<UserCheck className="size-6" />}
@@ -300,7 +272,7 @@ export default function PendingAdminMembersPage() {
                       )}
                       <button
                         type="button"
-                        onClick={() => handleOpenCityModal(admin)}
+                        onClick={() => handleOpenCityModal(admin.id)}
                         className="ml-1 inline-flex cursor-pointer items-center gap-1 text-[0.68rem] font-bold text-gold-700 transition-colors hover:text-gold-600 focus-visible:ring-2 focus-visible:ring-gold-500 focus-visible:outline-none"
                       >
                         <MapPin className="size-3" aria-hidden />
@@ -320,7 +292,8 @@ export default function PendingAdminMembersPage() {
                       currentStatus="Pending"
                       onSelect={(next) =>
                         setActionTarget({
-                          admin,
+                          adminId: admin.id,
+                          adminName: admin.name,
                           nextStatus: next as AdminMemberStatus,
                         })
                       }
@@ -358,11 +331,11 @@ export default function PendingAdminMembersPage() {
         isOpen={Boolean(editingCityAdmin)}
         adminName={editingCityAdmin?.name ?? ''}
         selectedCities={selectedCities}
-        isSaving={isUpdatingCity}
+        isSaving={cityMutation.isPending}
         onToggleCity={handleToggleCity}
         onAddCustomCity={handleAddCustomCity}
-        onSave={() => void handleSaveCity()}
-        onClose={() => setEditingCityAdmin(null)}
+        onSave={handleSaveCity}
+        onClose={() => setEditingCityAdminId(null)}
       />
 
       {/* Confirmation Dialog */}
@@ -371,17 +344,17 @@ export default function PendingAdminMembersPage() {
           isOpen={true}
           title={
             actionTarget.nextStatus === 'Approved'
-              ? `Approve Admin: ${actionTarget.admin.name}`
-              : `Reject Admin Application: ${actionTarget.admin.name}`
+              ? `Approve Admin: ${actionTarget.adminName}`
+              : `Reject Admin Application: ${actionTarget.adminName}`
           }
           description={
             actionTarget.nextStatus === 'Approved'
-              ? `This will activate administrator privileges for ${actionTarget.admin.name}. They will be able to log in and manage member registrations in assigned cities.`
+              ? `This will activate administrator privileges for ${actionTarget.adminName}. They will be able to log in and manage member registrations in assigned cities.`
               : 'Are you sure you want to reject this admin application? The status will be set to Cancel.'
           }
           confirmText={actionTarget.nextStatus === 'Approved' ? 'Confirm Approval' : 'Confirm Rejection'}
           variant={actionTarget.nextStatus === 'Approved' ? 'success' : 'danger'}
-          isLoading={isUpdatingStatus}
+          isLoading={statusMutation.isPending}
           onConfirm={handleConfirmStatus}
           onClose={() => setActionTarget(null)}
         />

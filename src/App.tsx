@@ -13,6 +13,7 @@ import {
   SuperAdminAuthProvider,
   SuperAdminGuard,
 } from './module/super-admin/context/SuperAdminAuthContext'
+import { Toaster } from 'react-hot-toast'
 import type { AppLang } from './i18n'
 
 // Code-split non-home routes so the initial homepage bundle is feather-light
@@ -129,6 +130,7 @@ export default function App() {
   return (
     <QueryProvider>
       <SuperAdminAuthProvider>
+        <Toaster />
         {isPanelRoute ? (
           <div className="min-h-screen bg-cream-50">
             <Routes>

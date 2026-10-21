@@ -4,7 +4,7 @@
  * inspection using GET /notification/{id}, and deletion.
  */
 
-import { useEffect, useState, useMemo, useRef, type ChangeEvent, type FormEvent } from 'react'
+import { useState, useMemo, useRef, type ChangeEvent, type FormEvent } from 'react'
 import {
   Bell,
   RefreshCw,
@@ -25,11 +25,10 @@ import { ConfirmDialog } from '../components/ConfirmDialog'
 import { PanelCard } from '../components/PanelCard'
 import { PanelPageHeader } from '../components/PanelPageHeader'
 import { panelDescription } from '../navigation'
-import { PanelBanner } from '../components/PanelBanner'
 import { PanelModal } from '../components/PanelModal'
 import { PanelSearch } from '../components/PanelSearch'
 import { PanelToolbar } from '../components/PanelToolbar'
-import { PanelEmpty } from '../components/PanelState'
+import { PanelEmpty, PanelError } from '../components/PanelState'
 import { PanelTableSkeleton, SkeletonText } from '../components/PanelSkeleton'
 import {
   PanelTable,
@@ -39,75 +38,61 @@ import {
 import { PanelFilterSelect } from '../components/PanelFilterSelect'
 import { cn } from 'cn'
 import {
-  createNotification,
-  deleteNotificationRecord,
-  fetchNotificationById,
-  fetchNotifications,
-  resolveImageUrl,
-} from '../services/adminApi'
-import type {
-  CreateNotificationPayload,
-  NotificationRecord,
-  NotificationTarget,
-} from '../types'
+  useCreateNotificationMutation,
+  useDeleteNotificationMutation,
+  useNotificationsQuery,
+  useNotificationQuery,
+} from '../hook/useNotifications'
+import { errorMessage } from '../hook/errors'
+import type { NotificationTarget } from '../types'
 
 const AUDIENCE_FILTERS = ['All', 'User', 'Admin'] as const
 
+/** Fresh composer state — the date is recomputed on every reset. */
+const emptyCreateForm = () => ({
+  notification_date: new Date().toISOString().split('T')[0],
+  notification_for: 'User' as NotificationTarget,
+  notification_heading: '',
+  notification_message: '',
+  notification_image: null as File | null,
+  imagePreview: '',
+})
+
 export default function NotificationsPage() {
-  const [notifications, setNotifications] = useState<NotificationRecord[]>([])
-  const [isLoading, setIsLoading] = useState(true)
-  const [errorMessage, setErrorMessage] = useState<string | null>(null)
-  const [successBanner, setSuccessBanner] = useState<string | null>(null)
+  const {
+    data: notifications = [],
+    isLoading,
+    isFetching,
+    error,
+    refetch,
+  } = useNotificationsQuery()
+  const createMutation = useCreateNotificationMutation()
+  const deleteMutation = useDeleteNotificationMutation()
+
   const [searchQuery, setSearchQuery] = useState('')
   const [targetFilter, setTargetFilter] = useState<string>('All')
 
   // Create Modal State
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
-  const [createForm, setCreateForm] = useState<{
-    notification_date: string
-    notification_for: NotificationTarget
-    notification_heading: string
-    notification_message: string
-    notification_image: File | null
-    imagePreview: string
-  }>(() => ({
-    notification_date: new Date().toISOString().split('T')[0],
-    notification_for: 'User',
-    notification_heading: '',
-    notification_message: '',
-    notification_image: null,
-    imagePreview: '',
-  }))
+  const [createForm, setCreateForm] = useState(emptyCreateForm)
   const [formErrors, setFormErrors] = useState<Record<string, string>>({})
-  const [isSubmitting, setIsSubmitting] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   // Details Modal State (using GET /notification/{id})
   const [inspectingId, setInspectingId] = useState<number | null>(null)
-  const [inspectedRecord, setInspectedRecord] = useState<NotificationRecord | null>(null)
-  const [isLoadingDetail, setIsLoadingDetail] = useState(false)
+  const {
+    data: inspectedRecord,
+    isLoading: isLoadingDetail,
+    error: inspectError,
+  } = useNotificationQuery(inspectingId)
 
   // Delete State
-  const [deleteTarget, setDeleteTarget] = useState<NotificationRecord | null>(null)
-  const [isDeleting, setIsDeleting] = useState(false)
+  const [deleteTargetId, setDeleteTargetId] = useState<number | null>(null)
 
-  const loadData = async () => {
-    setIsLoading(true)
-    setErrorMessage(null)
-    try {
-      const res = await fetchNotifications()
-      setNotifications(res.data)
-      if (res.error) setErrorMessage(res.error)
-    } catch (err) {
-      setErrorMessage(err instanceof Error ? err.message : 'Failed to load notifications.')
-    } finally {
-      setIsLoading(false)
-    }
-  }
-
-  useEffect(() => {
-    void loadData()
-  }, [])
+  const deleteTarget = useMemo(
+    () => notifications.find((n) => n.id === deleteTargetId) ?? null,
+    [notifications, deleteTargetId],
+  )
 
   const filtered = useMemo(() => {
     return notifications.filter((item) => {
@@ -167,8 +152,19 @@ export default function NotificationsPage() {
     }
   }
 
+  const resetCreateForm = () => {
+    if (createForm.imagePreview) {
+      URL.revokeObjectURL(createForm.imagePreview)
+    }
+    setCreateForm(emptyCreateForm())
+    setFormErrors({})
+    if (fileInputRef.current) {
+      fileInputRef.current.value = ''
+    }
+  }
+
   // Handle Create Submit
-  const handleCreateSubmit = async (e: FormEvent) => {
+  const handleCreateSubmit = (e: FormEvent) => {
     e.preventDefault()
     const errors: Record<string, string> = {}
 
@@ -188,81 +184,44 @@ export default function NotificationsPage() {
     }
 
     setFormErrors({})
-    setIsSubmitting(true)
 
-    try {
-      const payload: CreateNotificationPayload = {
-        notification_date: createForm.notification_date,
-        notification_for: createForm.notification_for,
-        notification_heading: createForm.notification_heading.trim(),
-        notification_message: createForm.notification_message.trim(),
-        notification_image: createForm.notification_image,
-      }
-
-      const res = await createNotification(payload)
-
-      if (res.success) {
-        setSuccessBanner('Notification broadcast created successfully!')
-        setIsCreateModalOpen(false)
-        handleClearImage()
-        setCreateForm({
-          notification_date: new Date().toISOString().split('T')[0],
-          notification_for: 'User',
-          notification_heading: '',
-          notification_message: '',
-          notification_image: null,
-          imagePreview: '',
-        })
-        // Refresh list
-        void loadData()
-      } else {
-        setErrorMessage(res.message)
-      }
-    } catch (err) {
-      setErrorMessage(err instanceof Error ? err.message : 'Failed to create notification.')
-    } finally {
-      setIsSubmitting(false)
-    }
-  }
-
-  // Open Detail modal using GET /notification/{id}
-  const handleInspect = async (id: number) => {
-    setInspectingId(id)
-    setIsLoadingDetail(true)
-    setInspectedRecord(null)
-    try {
-      const res = await fetchNotificationById(id)
-      setInspectedRecord(res.data)
-      if (res.error) setErrorMessage(res.error)
-    } catch (err) {
-      setErrorMessage(err instanceof Error ? err.message : 'Failed to retrieve notification details.')
-    } finally {
-      setIsLoadingDetail(false)
-    }
+    createMutation.mutate(
+      {
+        payload: {
+          notification_date: createForm.notification_date,
+          notification_for: createForm.notification_for,
+          notification_heading: createForm.notification_heading.trim(),
+          notification_message: createForm.notification_message.trim(),
+          notification_image: createForm.notification_image,
+        },
+        successMessage: 'Notification broadcast created successfully!',
+      },
+      {
+        onSuccess: () => {
+          setIsCreateModalOpen(false)
+          resetCreateForm()
+        },
+      },
+    )
   }
 
   // Handle Delete
-  const handleDelete = async () => {
+  const handleDelete = () => {
     if (!deleteTarget) return
-    setIsDeleting(true)
-    try {
-      const res = await deleteNotificationRecord(deleteTarget.id)
-      if (res.success) {
-        setSuccessBanner(`Notification #${deleteTarget.id} deleted successfully.`)
-        setDeleteTarget(null)
-        if (inspectedRecord?.id === deleteTarget.id) {
+    const targetId = deleteTarget.id
+
+    deleteMutation.mutate(
+      {
+        id: targetId,
+        successMessage: `Notification #${targetId} deleted successfully.`,
+      },
+      {
+        onSuccess: () => {
+          setDeleteTargetId(null)
           setInspectingId(null)
-          setInspectedRecord(null)
-        }
-        setNotifications((prev) => prev.filter((n) => n.id !== deleteTarget.id))
-      } else {
-        setErrorMessage(res.message)
-      }
-    } catch (err) {
-      setErrorMessage(err instanceof Error ? err.message : 'Failed to delete notification.')
-    } finally {
-      setIsDeleting(false)
-    }
+        },
+      },
+    )
   }
 
   return (
@@ -276,11 +235,11 @@ export default function NotificationsPage() {
               type="button"
               variant="outline"
               size="sm"
-              onClick={() => void loadData()}
-              disabled={isLoading}
+              onClick={() => void refetch()}
+              disabled={isFetching}
               className="cursor-pointer rounded-full border-cream-300 text-xs font-semibold"
             >
-              <RefreshCw className={isLoading ? 'size-3.5 animate-spin' : 'size-3.5'} aria-hidden />
+              <RefreshCw className={isFetching ? 'size-3.5 animate-spin' : 'size-3.5'} aria-hidden />
               <span>Refresh</span>
             </Button>
 
@@ -296,22 +255,6 @@ export default function NotificationsPage() {
           </>
         }
       />
-
-      {successBanner && (
-        <PanelBanner
-          tone="success"
-          message={successBanner}
-          onDismiss={() => setSuccessBanner(null)}
-        />
-      )}
-
-      {errorMessage && (
-        <PanelBanner
-          tone="error"
-          message={errorMessage}
-          onDismiss={() => setErrorMessage(null)}
-        />
-      )}
 
       {/* Notifications Table */}
       <PanelCard flush>
@@ -335,6 +278,12 @@ export default function NotificationsPage() {
 
         {isLoading ? (
           <PanelTableSkeleton rows={6} columns={5} />
+        ) : error ? (
+          <PanelError
+            title="Could not load notifications"
+            message={errorMessage(error, 'Failed to load broadcast notifications.')}
+            onRetry={() => void refetch()}
+          />
         ) : filtered.length === 0 ? (
           <PanelEmpty
             icon={<Bell className="size-6" />}
@@ -427,7 +376,7 @@ export default function NotificationsPage() {
                       type="button"
                       size="xs"
                       variant="outline"
-                      onClick={() => void handleInspect(item.id)}
+                      onClick={() => setInspectingId(item.id)}
                       title="View notification details"
                       className="cursor-pointer rounded-full border-navy-200 text-[0.7rem] text-navy-900 hover:bg-navy-50"
                     >
@@ -439,7 +388,7 @@ export default function NotificationsPage() {
                       type="button"
                       size="xs"
                       variant="outline"
-                      onClick={() => setDeleteTarget(item)}
+                      onClick={() => setDeleteTargetId(item.id)}
                       title="Delete Notification"
                       className="cursor-pointer rounded-full border-maroon-200 bg-maroon-50 text-[0.7rem] text-maroon-800 hover:bg-maroon-100"
                     >
@@ -466,9 +415,9 @@ export default function NotificationsPage() {
         description="Send a structured announcement to the selected audience."
         icon={<Bell className="size-5" />}
         onClose={() => {
-          if (!isSubmitting) {
+          if (!createMutation.isPending) {
             setIsCreateModalOpen(false)
-            handleClearImage()
+            resetCreateForm()
           }
         }}
         footer={
@@ -478,9 +427,9 @@ export default function NotificationsPage() {
               variant="outline"
               onClick={() => {
                 setIsCreateModalOpen(false)
-                handleClearImage()
+                resetCreateForm()
               }}
-              disabled={isSubmitting}
+              disabled={createMutation.isPending}
               className="cursor-pointer rounded-full border-cream-300 text-xs font-semibold"
             >
               Cancel
@@ -491,10 +440,10 @@ export default function NotificationsPage() {
                 event.preventDefault()
                 void handleCreateSubmit(event as unknown as FormEvent)
               }}
-              disabled={isSubmitting}
+              disabled={createMutation.isPending}
               className="cursor-pointer rounded-full bg-navy-900 px-5 text-xs font-bold text-white hover:bg-navy-700"
             >
-              {isSubmitting ? (
+              {createMutation.isPending ? (
                 <span className="flex items-center gap-2">
                   <span className="size-3.5 animate-spin rounded-full border-2 border-white border-t-transparent" />
                   Broadcasting…
@@ -655,7 +604,7 @@ export default function NotificationsPage() {
             ) : (
               <label
                 htmlFor="notification-file-input"
-                className="flex cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-cream-300 bg-cream-50/50 p-4 text-center transition-colors hover:border-gold-500/60 hover:bg-cream-100/70"
+                className="flex cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-cream-300 bg-cream-50/50 p-4 text-center transition-colors hover:border-gold-500/60 hover:bg-gold-100/70"
               >
                 <Upload className="mb-1 size-6 text-gold-600" aria-hidden />
                 <span className="text-xs font-semibold text-navy-900">
@@ -685,10 +634,7 @@ export default function NotificationsPage() {
         }
         description="Broadcast record retrieved from the notification endpoint."
         icon={<FileText className="size-5" />}
-        onClose={() => {
-          setInspectingId(null)
-          setInspectedRecord(null)
-        }}
+        onClose={() => setInspectingId(null)}
         footer={
           inspectedRecord ? (
             <>
@@ -697,7 +643,7 @@ export default function NotificationsPage() {
                 variant="destructive"
                 size="sm"
                 onClick={() => {
-                  setDeleteTarget(inspectedRecord)
+                  setDeleteTargetId(inspectedRecord.id)
                 }}
                 className="mr-auto cursor-pointer rounded-full text-xs font-semibold"
               >
@@ -708,10 +654,7 @@ export default function NotificationsPage() {
                 type="button"
                 variant="outline"
                 size="sm"
-                onClick={() => {
-                  setInspectingId(null)
-                  setInspectedRecord(null)
-                }}
+                onClick={() => setInspectingId(null)}
                 className="cursor-pointer rounded-full border-cream-300 text-xs font-semibold"
               >
                 Close
@@ -722,6 +665,10 @@ export default function NotificationsPage() {
       >
         {isLoadingDetail ? (
           <SkeletonText lines={5} className="py-6" />
+        ) : inspectError ? (
+          <p className="py-8 text-center text-xs text-maroon-600">
+            {errorMessage(inspectError, 'Could not retrieve the notification record.')}
+          </p>
         ) : inspectedRecord ? (
           <div className="space-y-4 text-xs">
             <div className="flex items-center gap-2">
@@ -765,14 +712,16 @@ export default function NotificationsPage() {
                 </span>
                 <div className="max-h-48 overflow-hidden rounded-2xl border border-cream-300 bg-navy-900">
                   <img
-                    src={
-                      resolveImageUrl(inspectedRecord.notification_image) ||
-                      inspectedRecord.notification_image
-                    }
-                    alt="Notification attachment"
+                    src={inspectedRecord.notification_image}
+                    alt={inspectedRecord.notification_image_name ?? 'Notification attachment'}
                     className="h-44 w-full object-contain"
                   />
                 </div>
+                {inspectedRecord.notification_image_name ? (
+                  <p className="mt-1.5 text-[0.68rem] text-ink-400">
+                    File: {inspectedRecord.notification_image_name}
+                  </p>
+                ) : null}
               </div>
             )}
           </div>
@@ -792,9 +741,9 @@ export default function NotificationsPage() {
           confirmText="Yes, Delete Notification"
           cancelText="Cancel"
           variant="danger"
-          isLoading={isDeleting}
+          isLoading={deleteMutation.isPending}
           onConfirm={handleDelete}
-          onClose={() => setDeleteTarget(null)}
+          onClose={() => setDeleteTargetId(null)}
         />
       )}
     </div>

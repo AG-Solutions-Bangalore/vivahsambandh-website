@@ -3,59 +3,57 @@
  * Member feedback and inquiry management: view, search, and delete records with confirmation dialog.
  */
 
-import { useEffect, useState, useMemo } from 'react'
+import { useState, useMemo } from 'react'
 import { MessageSquare, RefreshCw, Trash2, Calendar, Eye } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { ConfirmDialog } from '../components/ConfirmDialog'
 import { PanelCard } from '../components/PanelCard'
 import { PanelPageHeader } from '../components/PanelPageHeader'
 import { panelDescription } from '../navigation'
-import { PanelBanner } from '../components/PanelBanner'
 import { PanelModal } from '../components/PanelModal'
 import { PanelSearch } from '../components/PanelSearch'
 import { PanelToolbar } from '../components/PanelToolbar'
-import { PanelEmpty } from '../components/PanelState'
+import { PanelEmpty, PanelError } from '../components/PanelState'
 import { PanelTableSkeleton } from '../components/PanelSkeleton'
 import {
   PanelTable,
   PanelTableFooter,
   PanelTableHeadCell,
 } from '../components/PanelTable'
-import { deleteFeedbackRecord, fetchFeedbacks } from '../services/adminApi'
+import {
+  useDeleteFeedbackMutation,
+  useFeedbacksQuery,
+} from '../hook/useFeedbacks'
+import { errorMessage } from '../hook/errors'
 import { formatDate } from '../utils/format'
-import type { FeedbackRecord } from '../types'
 
 export default function FeedbackPage() {
-  const [feedbacks, setFeedbacks] = useState<FeedbackRecord[]>([])
-  const [isLoading, setIsLoading] = useState(true)
-  const [errorMessage, setErrorMessage] = useState<string | null>(null)
-  const [successBanner, setSuccessBanner] = useState<string | null>(null)
+  const {
+    data: feedbacks = [],
+    isLoading,
+    isFetching,
+    error,
+    refetch,
+  } = useFeedbacksQuery()
+  const deleteMutation = useDeleteFeedbackMutation()
+
   const [searchQuery, setSearchQuery] = useState('')
 
-  // View Modal
-  const [viewingFeedback, setViewingFeedback] = useState<FeedbackRecord | null>(null)
+  // View Modal — only the id is kept so the modal renders the cached record.
+  const [viewingFeedbackId, setViewingFeedbackId] = useState<number | null>(null)
 
   // Delete Modal
-  const [deleteTarget, setDeleteTarget] = useState<FeedbackRecord | null>(null)
-  const [isDeleting, setIsDeleting] = useState(false)
+  const [deleteTargetId, setDeleteTargetId] = useState<number | null>(null)
 
-  const loadData = async () => {
-    setIsLoading(true)
-    setErrorMessage(null)
-    try {
-      const res = await fetchFeedbacks()
-      setFeedbacks(res.data)
-      if (res.error) setErrorMessage(res.error)
-    } catch (err) {
-      setErrorMessage(err instanceof Error ? err.message : 'Failed to load feedbacks.')
-    } finally {
-      setIsLoading(false)
-    }
-  }
+  const viewingFeedback = useMemo(
+    () => feedbacks.find((fb) => fb.id === viewingFeedbackId) ?? null,
+    [feedbacks, viewingFeedbackId],
+  )
 
-  useEffect(() => {
-    void loadData()
-  }, [])
+  const deleteTarget = useMemo(
+    () => feedbacks.find((fb) => fb.id === deleteTargetId) ?? null,
+    [feedbacks, deleteTargetId],
+  )
 
   const filtered = useMemo(() => {
     return feedbacks.filter((fb) => {
@@ -67,27 +65,22 @@ export default function FeedbackPage() {
     })
   }, [feedbacks, searchQuery])
 
-  const handleDelete = async () => {
+  const handleDelete = () => {
     if (!deleteTarget) return
-    setIsDeleting(true)
-    try {
-      const res = await deleteFeedbackRecord(deleteTarget.id)
-      if (res.success) {
-        setSuccessBanner(`Feedback #${deleteTarget.id} deleted successfully.`)
-        setDeleteTarget(null)
-        if (viewingFeedback?.id === deleteTarget.id) {
-          setViewingFeedback(null)
-        }
-        // Remove from list without reload
-        setFeedbacks((prev) => prev.filter((f) => f.id !== deleteTarget.id))
-      } else {
-        setErrorMessage(res.message)
-      }
-    } catch (err) {
-      setErrorMessage(err instanceof Error ? err.message : 'Failed to delete feedback.')
-    } finally {
-      setIsDeleting(false)
-    }
+    const targetId = deleteTarget.id
+
+    deleteMutation.mutate(
+      {
+        id: targetId,
+        successMessage: `Feedback #${targetId} deleted successfully.`,
+      },
+      {
+        onSuccess: () => {
+          setDeleteTargetId(null)
+          setViewingFeedbackId(null)
+        },
+      },
+    )
   }
 
   return (
@@ -100,31 +93,15 @@ export default function FeedbackPage() {
             type="button"
             variant="outline"
             size="sm"
-            onClick={() => void loadData()}
-            disabled={isLoading}
+            onClick={() => void refetch()}
+            disabled={isFetching}
             className="cursor-pointer rounded-full border-cream-300 text-xs font-semibold"
           >
-            <RefreshCw className={isLoading ? 'size-3.5 animate-spin' : 'size-3.5'} aria-hidden />
+            <RefreshCw className={isFetching ? 'size-3.5 animate-spin' : 'size-3.5'} aria-hidden />
             <span>Refresh List</span>
           </Button>
         }
       />
-
-      {successBanner && (
-        <PanelBanner
-          tone="success"
-          message={successBanner}
-          onDismiss={() => setSuccessBanner(null)}
-        />
-      )}
-
-      {errorMessage && (
-        <PanelBanner
-          tone="error"
-          message={errorMessage}
-          onDismiss={() => setErrorMessage(null)}
-        />
-      )}
 
       {/* Feedback Records Table */}
       <PanelCard flush>
@@ -140,6 +117,12 @@ export default function FeedbackPage() {
 
         {isLoading ? (
           <PanelTableSkeleton rows={6} columns={5} />
+        ) : error ? (
+          <PanelError
+            title="Could not load feedback"
+            message={errorMessage(error, 'Failed to load feedback records.')}
+            onRetry={() => void refetch()}
+          />
         ) : filtered.length === 0 ? (
           <PanelEmpty
             icon={<MessageSquare className="size-6" />}
@@ -209,7 +192,7 @@ export default function FeedbackPage() {
                       type="button"
                       size="xs"
                       variant="outline"
-                      onClick={() => setViewingFeedback(fb)}
+                      onClick={() => setViewingFeedbackId(fb.id)}
                       className="cursor-pointer rounded-full border-navy-200 text-[0.7rem] text-navy-900 hover:bg-navy-50"
                     >
                       <Eye className="size-3 text-navy-700" aria-hidden />
@@ -220,7 +203,7 @@ export default function FeedbackPage() {
                       type="button"
                       size="xs"
                       variant="outline"
-                      onClick={() => setDeleteTarget(fb)}
+                      onClick={() => setDeleteTargetId(fb.id)}
                       title="Delete Feedback Record"
                       className="cursor-pointer rounded-full border-maroon-200 bg-maroon-50 text-[0.7rem] text-maroon-800 hover:bg-maroon-100"
                     >
@@ -250,7 +233,7 @@ export default function FeedbackPage() {
             : undefined
         }
         icon={<MessageSquare className="size-5" />}
-        onClose={() => setViewingFeedback(null)}
+        onClose={() => setViewingFeedbackId(null)}
         footer={
           <>
             <Button
@@ -258,7 +241,7 @@ export default function FeedbackPage() {
               variant="destructive"
               size="sm"
               onClick={() => {
-                if (viewingFeedback) setDeleteTarget(viewingFeedback)
+                if (viewingFeedback) setDeleteTargetId(viewingFeedback.id)
               }}
               className="mr-auto cursor-pointer rounded-full text-xs font-semibold"
             >
@@ -269,7 +252,7 @@ export default function FeedbackPage() {
               type="button"
               variant="outline"
               size="sm"
-              onClick={() => setViewingFeedback(null)}
+              onClick={() => setViewingFeedbackId(null)}
               className="cursor-pointer rounded-full border-cream-300 text-xs font-semibold"
             >
               Close
@@ -293,9 +276,9 @@ export default function FeedbackPage() {
           confirmText="Yes, Delete Feedback"
           cancelText="Cancel"
           variant="danger"
-          isLoading={isDeleting}
+          isLoading={deleteMutation.isPending}
           onConfirm={handleDelete}
-          onClose={() => setDeleteTarget(null)}
+          onClose={() => setDeleteTargetId(null)}
         />
       )}
     </div>

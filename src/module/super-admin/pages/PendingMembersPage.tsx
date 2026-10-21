@@ -3,7 +3,7 @@
  * Moderation queue for reviewing and approving newly registered matrimonial members.
  */
 
-import { useEffect, useState, useMemo } from 'react'
+import { useState, useMemo } from 'react'
 import {
   UserPlus,
   RefreshCw,
@@ -18,11 +18,10 @@ import { ConfirmDialog } from '../components/ConfirmDialog'
 import { PanelCard } from '../components/PanelCard'
 import { PanelPageHeader } from '../components/PanelPageHeader'
 import { panelDescription } from '../navigation'
-import { PanelBanner } from '../components/PanelBanner'
 import { PanelModal } from '../components/PanelModal'
 import { PanelSearch } from '../components/PanelSearch'
 import { PanelToolbar } from '../components/PanelToolbar'
-import { PanelEmpty } from '../components/PanelState'
+import { PanelEmpty, PanelError } from '../components/PanelState'
 import { PanelTableSkeleton } from '../components/PanelSkeleton'
 import {
   PanelTable,
@@ -31,44 +30,39 @@ import {
 } from '../components/PanelTable'
 import { ProfileDetails } from '../components/ProfileDetails'
 import { StatusActionGroup } from '../components/StatusActionGroup'
-import { fetchPendingMembers, updateMemberStatus } from '../services/adminApi'
+import { usePendingMembersQuery } from '../hook/useMembers'
+import { useUpdateMemberStatusMutation } from '../hook/useAdminMembers'
+import { errorMessage } from '../hook/errors'
 import { formatDate } from '../utils/format'
-import type { Member, MemberStatus } from '../types'
+import type { MemberStatus } from '../types'
 
 export default function PendingMembersPage() {
-  const [pendingMembers, setPendingMembers] = useState<Member[]>([])
-  const [isLoading, setIsLoading] = useState(true)
-  const [errorMessage, setErrorMessage] = useState<string | null>(null)
-  const [successBanner, setSuccessBanner] = useState<string | null>(null)
+  const {
+    data: pendingMembers = [],
+    isLoading,
+    isFetching,
+    error,
+    refetch,
+  } = usePendingMembersQuery()
+  const statusMutation = useUpdateMemberStatusMutation()
+
   const [searchQuery, setSearchQuery] = useState('')
 
-  // Profile Drawer / Modal
-  const [activeProfile, setActiveProfile] = useState<Member | null>(null)
+  // Profile Drawer / Modal — only the id is kept so the modal always renders
+  // the freshest record from the query cache.
+  const [activeProfileId, setActiveProfileId] = useState<number | null>(null)
 
   // Decision Modal
   const [decisionTarget, setDecisionTarget] = useState<{
-    member: Member
+    memberId: number
+    memberName: string
     nextStatus: MemberStatus
   } | null>(null)
-  const [isUpdatingStatus, setIsUpdatingStatus] = useState(false)
 
-  const loadData = async () => {
-    setIsLoading(true)
-    setErrorMessage(null)
-    try {
-      const res = await fetchPendingMembers()
-      setPendingMembers(res.data)
-      if (res.error) setErrorMessage(res.error)
-    } catch (err) {
-      setErrorMessage(err instanceof Error ? err.message : 'Failed to load pending members.')
-    } finally {
-      setIsLoading(false)
-    }
-  }
-
-  useEffect(() => {
-    void loadData()
-  }, [])
+  const activeProfile = useMemo(
+    () => pendingMembers.find((m) => m.id === activeProfileId) ?? null,
+    [pendingMembers, activeProfileId],
+  )
 
   const filtered = useMemo(() => {
     return pendingMembers.filter(
@@ -82,28 +76,23 @@ export default function PendingMembersPage() {
     )
   }, [pendingMembers, searchQuery])
 
-  const handleConfirmDecision = async () => {
+  const handleConfirmDecision = () => {
     if (!decisionTarget) return
-    const { member, nextStatus } = decisionTarget
-    setIsUpdatingStatus(true)
-    try {
-      const res = await updateMemberStatus(member.id, nextStatus)
-      if (res.success) {
-        setSuccessBanner(`Profile for ${member.name} marked as ${nextStatus}.`)
-        setDecisionTarget(null)
-        if (activeProfile?.id === member.id) {
-          setActiveProfile(null)
-        }
-        // Remove from pending list
-        setPendingMembers((prev) => prev.filter((m) => m.id !== member.id))
-      } else {
-        setErrorMessage(res.message)
-      }
-    } catch (err) {
-      setErrorMessage(err instanceof Error ? err.message : 'Failed to update status.')
-    } finally {
-      setIsUpdatingStatus(false)
-    }
+    const { memberId, memberName, nextStatus } = decisionTarget
+
+    statusMutation.mutate(
+      {
+        id: memberId,
+        status: nextStatus,
+        successMessage: `Profile for ${memberName} marked as ${nextStatus}.`,
+      },
+      {
+        onSuccess: () => {
+          setDecisionTarget(null)
+          setActiveProfileId(null)
+        },
+      },
+    )
   }
 
   return (
@@ -121,31 +110,15 @@ export default function PendingMembersPage() {
             type="button"
             variant="outline"
             size="sm"
-            onClick={() => void loadData()}
-            disabled={isLoading}
+            onClick={() => void refetch()}
+            disabled={isFetching}
             className="cursor-pointer rounded-full border-cream-300 text-xs font-semibold"
           >
-            <RefreshCw className={isLoading ? 'size-3.5 animate-spin' : 'size-3.5'} aria-hidden />
+            <RefreshCw className={isFetching ? 'size-3.5 animate-spin' : 'size-3.5'} aria-hidden />
             <span>Refresh Queue</span>
           </Button>
         }
       />
-
-      {successBanner && (
-        <PanelBanner
-          tone="success"
-          message={successBanner}
-          onDismiss={() => setSuccessBanner(null)}
-        />
-      )}
-
-      {errorMessage && (
-        <PanelBanner
-          tone="error"
-          message={errorMessage}
-          onDismiss={() => setErrorMessage(null)}
-        />
-      )}
 
       {/* Table */}
       <PanelCard flush>
@@ -161,6 +134,12 @@ export default function PendingMembersPage() {
 
         {isLoading ? (
           <PanelTableSkeleton rows={7} columns={6} />
+        ) : error ? (
+          <PanelError
+            title="Could not load the moderation queue"
+            message={errorMessage(error, 'Failed to load pending member profiles.')}
+            onRetry={() => void refetch()}
+          />
         ) : filtered.length === 0 ? (
           <PanelEmpty
             icon={<UserPlus className="size-6" />}
@@ -236,7 +215,7 @@ export default function PendingMembersPage() {
                       type="button"
                       size="xs"
                       variant="outline"
-                      onClick={() => setActiveProfile(member)}
+                      onClick={() => setActiveProfileId(member.id)}
                       title="Inspect full biodata"
                       className="cursor-pointer rounded-full border-navy-200 text-[0.7rem] text-navy-900 hover:bg-navy-50"
                     >
@@ -249,7 +228,8 @@ export default function PendingMembersPage() {
                       currentStatus="Pending"
                       onSelect={(next) =>
                         setDecisionTarget({
-                          member,
+                          memberId: member.id,
+                          memberName: member.name,
                           nextStatus: next as MemberStatus,
                         })
                       }
@@ -303,7 +283,7 @@ export default function PendingMembersPage() {
           </span>
         }
         size="lg"
-        onClose={() => setActiveProfile(null)}
+        onClose={() => setActiveProfileId(null)}
         footer={
           activeProfile ? (
             <StatusActionGroup
@@ -311,7 +291,8 @@ export default function PendingMembersPage() {
               currentStatus="Pending"
               onSelect={(next) =>
                 setDecisionTarget({
-                  member: activeProfile,
+                  memberId: activeProfile.id,
+                  memberName: activeProfile.name,
                   nextStatus: next as MemberStatus,
                 })
               }
@@ -340,12 +321,12 @@ export default function PendingMembersPage() {
           isOpen={true}
           title={
             decisionTarget.nextStatus === 'Approved'
-              ? `Approve Profile: ${decisionTarget.member.name}`
-              : `Set Status to ${decisionTarget.nextStatus} for ${decisionTarget.member.name}`
+              ? `Approve Profile: ${decisionTarget.memberName}`
+              : `Set Status to ${decisionTarget.nextStatus} for ${decisionTarget.memberName}`
           }
           description={
             decisionTarget.nextStatus === 'Approved'
-              ? `This will publish and verify the profile of ${decisionTarget.member.name} on the VivahSambandh platform, making it discoverable by matching candidates.`
+              ? `This will publish and verify the profile of ${decisionTarget.memberName} on the VivahSambandh platform, making it discoverable by matching candidates.`
               : `Are you sure you want to mark this candidate profile as ${decisionTarget.nextStatus}?`
           }
           confirmText={
@@ -360,7 +341,7 @@ export default function PendingMembersPage() {
                 ? 'success'
                 : 'primary'
           }
-          isLoading={isUpdatingStatus}
+          isLoading={statusMutation.isPending}
           onConfirm={handleConfirmDecision}
           onClose={() => setDecisionTarget(null)}
         />

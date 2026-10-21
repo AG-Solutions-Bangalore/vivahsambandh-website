@@ -3,7 +3,7 @@
  * Admin Members management: view administrators, update city assignments (multiple_city), and update status.
  */
 
-import { useEffect, useState, useMemo } from 'react'
+import { useState, useMemo } from 'react'
 import {
   ShieldCheck,
   RefreshCw,
@@ -20,10 +20,9 @@ import { ConfirmDialog } from '../components/ConfirmDialog'
 import { PanelCard } from '../components/PanelCard'
 import { PanelPageHeader } from '../components/PanelPageHeader'
 import { panelDescription } from '../navigation'
-import { PanelBanner } from '../components/PanelBanner'
 import { PanelSearch } from '../components/PanelSearch'
 import { PanelToolbar } from '../components/PanelToolbar'
-import { PanelEmpty } from '../components/PanelState'
+import { PanelEmpty, PanelError } from '../components/PanelState'
 import { PanelTableSkeleton } from '../components/PanelSkeleton'
 import {
   PanelTable,
@@ -34,53 +33,44 @@ import { PanelFilterSelect } from '../components/PanelFilterSelect'
 import { StatusActionGroup } from '../components/StatusActionGroup'
 import { CityAssignmentModal } from '../components/CityAssignmentModal'
 import {
-  fetchAdminMembers,
-  updateMemberCity,
-  updateMemberStatus,
-} from '../services/adminApi'
-import type { AdminMember, AdminMemberStatus } from '../types'
+  useAdminMembersQuery,
+  useUpdateMemberCityMutation,
+  useUpdateMemberStatusMutation,
+} from '../hook/useAdminMembers'
+import { errorMessage } from '../hook/errors'
+import type { AdminMemberStatus } from '../types'
 
 const STATUS_FILTERS = ['All', 'Approved', 'Pending', 'Cancel'] as const
 
 export default function AdminMembersPage() {
-  const [admins, setAdmins] = useState<AdminMember[]>([])
-  const [isLoading, setIsLoading] = useState(true)
-  const [errorMessage, setErrorMessage] = useState<string | null>(null)
-  const [successBanner, setSuccessBanner] = useState<string | null>(null)
+  const {
+    data: admins = [],
+    isLoading,
+    isFetching,
+    error,
+    refetch,
+  } = useAdminMembersQuery()
+  const cityMutation = useUpdateMemberCityMutation()
+  const statusMutation = useUpdateMemberStatusMutation()
+
   const [searchQuery, setSearchQuery] = useState('')
   const [statusFilter, setStatusFilter] = useState<string>('All')
 
   // Edit City Modal State
-  const [editingCityAdmin, setEditingCityAdmin] = useState<AdminMember | null>(null)
+  const [editingCityAdminId, setEditingCityAdminId] = useState<number | null>(null)
   const [selectedCities, setSelectedCities] = useState<string[]>([])
-  const [isUpdatingCity, setIsUpdatingCity] = useState(false)
 
   // Status Change Confirmation Modal State
   const [statusChangeTarget, setStatusChangeTarget] = useState<{
-    admin: AdminMember
+    adminId: number
+    adminName: string
     nextStatus: AdminMemberStatus
   } | null>(null)
-  const [isUpdatingStatus, setIsUpdatingStatus] = useState(false)
 
-  const loadData = async () => {
-    setIsLoading(true)
-    setErrorMessage(null)
-    try {
-      const res = await fetchAdminMembers()
-      setAdmins(res.data)
-      if (res.error) {
-        setErrorMessage(res.error)
-      }
-    } catch (err) {
-      setErrorMessage(err instanceof Error ? err.message : 'Failed to load admin members.')
-    } finally {
-      setIsLoading(false)
-    }
-  }
-
-  useEffect(() => {
-    void loadData()
-  }, [])
+  const editingCityAdmin = useMemo(
+    () => admins.find((a) => a.id === editingCityAdminId) ?? null,
+    [admins, editingCityAdminId],
+  )
 
   // Filtered admin records
   const filteredAdmins = useMemo(() => {
@@ -101,8 +91,11 @@ export default function AdminMembersPage() {
   }, [admins, searchQuery, statusFilter])
 
   // Open Edit City modal
-  const handleOpenCityModal = (admin: AdminMember) => {
-    setEditingCityAdmin(admin)
+  const handleOpenCityModal = (adminId: number) => {
+    const admin = admins.find((a) => a.id === adminId)
+    if (!admin) return
+
+    setEditingCityAdminId(adminId)
     let initial: string[] = []
     if (Array.isArray(admin.multiple_city)) {
       initial = [...admin.multiple_city]
@@ -131,54 +124,38 @@ export default function AdminMembersPage() {
   }
 
   // Save City Assignments
-  const handleSaveCity = async () => {
+  const handleSaveCity = () => {
     if (!editingCityAdmin) return
-    setIsUpdatingCity(true)
-    try {
-      const res = await updateMemberCity(editingCityAdmin.id, selectedCities)
-      if (res.success) {
-        setSuccessBanner(`Cities updated successfully for ${editingCityAdmin.name}.`)
-        setEditingCityAdmin(null)
-        // Optimistically update local list
-        setAdmins((prev) =>
-          prev.map((a) =>
-            a.id === editingCityAdmin.id
-              ? { ...a, multiple_city: selectedCities }
-              : a,
-          ),
-        )
-      } else {
-        setErrorMessage(res.message)
-      }
-    } catch (err) {
-      setErrorMessage(err instanceof Error ? err.message : 'Failed to update city.')
-    } finally {
-      setIsUpdatingCity(false)
-    }
+    const adminId = editingCityAdmin.id
+    const adminName = editingCityAdmin.name
+
+    cityMutation.mutate(
+      {
+        id: adminId,
+        cities: selectedCities,
+        successMessage: `Cities updated successfully for ${adminName}.`,
+      },
+      {
+        onSuccess: () => setEditingCityAdminId(null),
+      },
+    )
   }
 
   // Execute Status Change
-  const handleConfirmStatusChange = async () => {
+  const handleConfirmStatusChange = () => {
     if (!statusChangeTarget) return
-    const { admin, nextStatus } = statusChangeTarget
-    setIsUpdatingStatus(true)
-    try {
-      const res = await updateMemberStatus(admin.id, nextStatus)
-      if (res.success) {
-        setSuccessBanner(`Status of ${admin.name} updated to ${nextStatus}.`)
-        setStatusChangeTarget(null)
-        // Optimistically update local list
-        setAdmins((prev) =>
-          prev.map((a) => (a.id === admin.id ? { ...a, status: nextStatus } : a)),
-        )
-      } else {
-        setErrorMessage(res.message)
-      }
-    } catch (err) {
-      setErrorMessage(err instanceof Error ? err.message : 'Failed to update status.')
-    } finally {
-      setIsUpdatingStatus(false)
-    }
+    const { adminId, adminName, nextStatus } = statusChangeTarget
+
+    statusMutation.mutate(
+      {
+        id: adminId,
+        status: nextStatus,
+        successMessage: `Status of ${adminName} updated to ${nextStatus}.`,
+      },
+      {
+        onSuccess: () => setStatusChangeTarget(null),
+      },
+    )
   }
 
   return (
@@ -191,31 +168,15 @@ export default function AdminMembersPage() {
             type="button"
             variant="outline"
             size="sm"
-            onClick={() => void loadData()}
-            disabled={isLoading}
+            onClick={() => void refetch()}
+            disabled={isFetching}
             className="cursor-pointer rounded-full border-cream-300 text-xs font-semibold"
           >
-            <RefreshCw className={isLoading ? 'size-3.5 animate-spin' : 'size-3.5'} aria-hidden />
+            <RefreshCw className={isFetching ? 'size-3.5 animate-spin' : 'size-3.5'} aria-hidden />
             <span>Refresh</span>
           </Button>
         }
       />
-
-      {successBanner && (
-        <PanelBanner
-          tone="success"
-          message={successBanner}
-          onDismiss={() => setSuccessBanner(null)}
-        />
-      )}
-
-      {errorMessage && (
-        <PanelBanner
-          tone="error"
-          message={errorMessage}
-          onDismiss={() => setErrorMessage(null)}
-        />
-      )}
 
       {/* Data Table Card */}
       <PanelCard flush>
@@ -240,6 +201,12 @@ export default function AdminMembersPage() {
 
         {isLoading ? (
           <PanelTableSkeleton rows={6} columns={6} />
+        ) : error ? (
+          <PanelError
+            title="Could not load admin members"
+            message={errorMessage(error, 'Failed to load the admin directory.')}
+            onRetry={() => void refetch()}
+          />
         ) : filteredAdmins.length === 0 ? (
           <PanelEmpty
             icon={<ShieldCheck className="size-6" />}
@@ -342,7 +309,7 @@ export default function AdminMembersPage() {
                       )}
                       <button
                         type="button"
-                        onClick={() => handleOpenCityModal(admin)}
+                        onClick={() => handleOpenCityModal(admin.id)}
                         title="Edit City Assignments"
                         className="ml-1 inline-flex cursor-pointer items-center gap-1 text-[0.68rem] font-bold text-gold-700 transition-colors hover:text-gold-600 focus-visible:ring-2 focus-visible:ring-gold-500 focus-visible:outline-none"
                       >
@@ -362,7 +329,8 @@ export default function AdminMembersPage() {
                       currentStatus={admin.status}
                       onSelect={(next) =>
                         setStatusChangeTarget({
-                          admin,
+                          adminId: admin.id,
+                          adminName: admin.name,
                           nextStatus: next as AdminMemberStatus,
                         })
                       }
@@ -407,11 +375,11 @@ export default function AdminMembersPage() {
         isOpen={Boolean(editingCityAdmin)}
         adminName={editingCityAdmin?.name ?? ''}
         selectedCities={selectedCities}
-        isSaving={isUpdatingCity}
+        isSaving={cityMutation.isPending}
         onToggleCity={handleToggleCity}
         onAddCustomCity={handleAddCustomCity}
-        onSave={() => void handleSaveCity()}
-        onClose={() => setEditingCityAdmin(null)}
+        onSave={handleSaveCity}
+        onClose={() => setEditingCityAdminId(null)}
       />
 
       {/* Status Change Confirmation Dialog */}
@@ -419,7 +387,7 @@ export default function AdminMembersPage() {
         <ConfirmDialog
           isOpen={true}
           title={`Update Status to "${statusChangeTarget.nextStatus}"`}
-          description={`Are you sure you want to change the status of ${statusChangeTarget.admin.name} to ${statusChangeTarget.nextStatus}?`}
+          description={`Are you sure you want to change the status of ${statusChangeTarget.adminName} to ${statusChangeTarget.nextStatus}?`}
           confirmText={`Yes, Set to ${statusChangeTarget.nextStatus}`}
           variant={
             statusChangeTarget.nextStatus === 'Cancel'
@@ -428,7 +396,7 @@ export default function AdminMembersPage() {
                 ? 'success'
                 : 'primary'
           }
-          isLoading={isUpdatingStatus}
+          isLoading={statusMutation.isPending}
           onConfirm={handleConfirmStatusChange}
           onClose={() => setStatusChangeTarget(null)}
         />

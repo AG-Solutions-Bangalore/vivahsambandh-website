@@ -4,32 +4,22 @@
  */
 
 import { useState, type FormEvent, useEffect } from "react";
-import { useNavigate, useLocation, Link } from "react-router-dom";
-import {
-  Lock,
-  User,
-  Eye,
-  EyeOff,
-  CircleAlert,
-  ArrowRight,
-  ArrowLeft,
-  CircleCheck,
-} from "lucide-react";
+import { useNavigate, useLocation } from "react-router-dom";
+import { Lock, User, Eye, EyeOff, ArrowRight } from "lucide-react";
+import toast from "react-hot-toast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import LotusMark from "@/components/LotusMark";
+
 import { useSuperAdminAuth } from "../context/SuperAdminAuthContext";
 
 export default function PanelLoginPage() {
-  const { isAuthenticated, login } = useSuperAdminAuth();
+  const { isAuthenticated, isPending, login } = useSuperAdminAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   // Redirect if already authenticated
   useEffect(() => {
@@ -43,37 +33,33 @@ export default function PanelLoginPage() {
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    setErrorMessage(null);
 
     if (!username.trim()) {
-      setErrorMessage("Enter your admin username or mobile number.");
+      toast.error("Enter your admin username or mobile number.");
       return;
     }
 
     if (!password) {
-      setErrorMessage("Enter your password.");
+      toast.error("Enter your password.");
       return;
     }
-
-    setIsLoading(true);
 
     try {
       const result = await login(username.trim(), password);
 
       if (result.success) {
+        toast.success("Welcome back to Super Admin Panel!");
         const target =
           (location.state as { from?: { pathname?: string } })?.from
             ?.pathname || "/panel/dashboard";
         navigate(target, { replace: true });
       } else {
-        setErrorMessage(result.message);
+        toast.error(result.message);
       }
     } catch (err) {
-      setErrorMessage(
+      toast.error(
         err instanceof Error ? err.message : "An unexpected error occurred.",
       );
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -91,20 +77,6 @@ export default function PanelLoginPage() {
               Authorized access to VivahSambandh management and moderation
             </p>
           </div>
-
-          {/* Error Message */}
-          {errorMessage && (
-            <div
-              role="alert"
-              className="animate-panel-fade mb-5 flex items-start gap-2.5 rounded-2xl border border-maroon-200 bg-maroon-50 p-3.5 text-xs text-maroon-800"
-            >
-              <CircleAlert
-                className="mt-px size-4 shrink-0 text-maroon-600"
-                aria-hidden
-              />
-              <div className="flex-1 leading-relaxed">{errorMessage}</div>
-            </div>
-          )}
 
           {/* Login Card */}
           <div className="rounded-[1.25rem] border border-gold-500/25 bg-white p-6 shadow-card sm:p-7">
@@ -179,10 +151,10 @@ export default function PanelLoginPage() {
 
               <Button
                 type="submit"
-                disabled={isLoading}
+                disabled={isPending}
                 className="mt-2 h-11 w-full cursor-pointer rounded-xl bg-gold-600 text-sm font-bold tracking-wide text-white shadow-gold transition-colors duration-200 hover:bg-gold-700"
               >
-                {isLoading ? (
+                {isPending ? (
                   <span className="flex items-center justify-center gap-2">
                     <span className="size-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
                     Verifying with CRM…

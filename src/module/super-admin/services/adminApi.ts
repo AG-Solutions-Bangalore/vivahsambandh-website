@@ -5,7 +5,7 @@
  * supports multipart form data, and provides resilient state handling.
  */
 
-import { API_BASE_URL, API_SECRET_KEY, resolveImageUrl } from '@/lib/api/apiClient'
+import { API_BASE_URL, API_SECRET_KEY } from '@/lib/api/apiClient'
 import type {
   AdminMember,
   AdminMemberStatus,
@@ -19,6 +19,7 @@ import type {
   SuperAdminSession,
 } from '../types'
 import {
+  extractImageEntries,
   toAdminMember,
   toBlockProfile,
   toFeedback,
@@ -395,7 +396,10 @@ export async function fetchNotificationById(
   if (res.ok && res.data) {
     const payload = res.data as Record<string, unknown>
     const raw = (Array.isArray(payload.data) ? payload.data[0] : payload.data) ?? payload
-    return { data: toNotification(raw as Record<string, unknown>) }
+    // The `image_url` block sits next to `data` in the envelope — without it
+    // the stored file name cannot be turned into a loadable URL.
+    const entries = extractImageEntries(res.data)
+    return { data: toNotification(raw as Record<string, unknown>, entries) }
   }
   return { data: null, error: res.message }
 }
@@ -431,10 +435,16 @@ export async function createNotification(
       }
     }
 
+    const created = (json?.data ?? json) as Record<string, unknown> | null
+
     return {
       success: true,
       message: json?.message || 'Notification broadcast created successfully.',
-      data: json?.data || json,
+      // Map the created record so its banner image is already an absolute URL.
+      data:
+        created && typeof created === 'object'
+          ? toNotification(created, extractImageEntries(json))
+          : undefined,
     }
   } catch (err) {
     return {
@@ -456,6 +466,4 @@ export async function deleteNotificationRecord(
   }
   return { success: false, message: res.message || 'Failed to remove notification.' }
 }
-
-export { resolveImageUrl }
 
