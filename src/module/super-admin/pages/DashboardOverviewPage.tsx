@@ -23,6 +23,8 @@ import { PanelCard, PanelCardHeader } from '../components/PanelCard'
 import { PanelPageHeader } from '../components/PanelPageHeader'
 import { PanelListSkeleton, Skeleton, SkeletonText } from '../components/PanelSkeleton'
 import { PanelError } from '../components/PanelState'
+import { ProfileAvatar } from '../components/ProfileAvatar'
+import { RemoteImage } from '../components/RemoteImage'
 import { useDashboardOverview } from '../hook/useDashboardOverview'
 import { errorMessage } from '../hook/errors'
 import toast from 'react-hot-toast'
@@ -303,9 +305,12 @@ export default function DashboardOverviewPage() {
                   className="flex items-center justify-between gap-3 rounded-xl border border-cream-300/70 bg-cream-50/60 p-3"
                 >
                   <div className="flex min-w-0 items-center gap-3">
-                    <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-navy-100 text-xs font-bold text-navy-800">
-                      {admin.name.charAt(0)}
-                    </span>
+                    <ProfileAvatar
+                      src={admin.face_image}
+                      name={admin.name}
+                      size="md"
+                      tone="navy"
+                    />
                     <div className="min-w-0">
                       <p className="truncate text-xs font-bold text-navy-900">
                         {admin.name}
@@ -352,9 +357,12 @@ export default function DashboardOverviewPage() {
                   className="flex items-center justify-between gap-3 rounded-xl border border-cream-300/70 bg-cream-50/60 p-3"
                 >
                   <div className="flex min-w-0 items-center gap-3">
-                    <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-gold-100 text-xs font-bold text-gold-800">
-                      {member.name.charAt(0)}
-                    </span>
+                    <ProfileAvatar
+                      src={member.face_image}
+                      name={member.name}
+                      size="md"
+                      tone="gold"
+                    />
                     <div className="min-w-0">
                       <p className="truncate text-xs font-bold text-navy-900">
                         {member.name} ({member.gender})
@@ -431,6 +439,21 @@ export default function DashboardOverviewPage() {
                     {notif.notification_message}
                   </p>
                 </div>
+                {notif.notification_image ? (
+                  <a
+                    href={notif.notification_image}
+                    target="_blank"
+                    rel="noreferrer"
+                    title="Open the attachment in a new tab"
+                    className="shrink-0 overflow-hidden rounded-lg"
+                  >
+                    <RemoteImage
+                      src={notif.notification_image}
+                      alt={notif.notification_image_name ?? 'Notification attachment'}
+                      className="size-10 rounded-lg border border-cream-300 object-cover"
+                    />
+                  </a>
+                ) : null}
                 <span className="shrink-0 text-[0.68rem] text-ink-400">
                   {notif.notification_date}
                 </span>

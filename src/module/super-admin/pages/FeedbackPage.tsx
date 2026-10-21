@@ -16,6 +16,7 @@ import { PanelSearch } from '../components/PanelSearch'
 import { PanelToolbar } from '../components/PanelToolbar'
 import { PanelEmpty, PanelError } from '../components/PanelState'
 import { PanelTableSkeleton } from '../components/PanelSkeleton'
+import { ProfileAvatar } from '../components/ProfileAvatar'
 import {
   PanelTable,
   PanelTableFooter,
@@ -161,9 +162,12 @@ export default function FeedbackPage() {
               <tr key={fb.id} className="transition-colors hover:bg-cream-50/70">
                 <td className="px-4 py-3.5">
                   <div className="flex items-center gap-2.5">
-                    <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-navy-100 text-xs font-bold text-navy-900">
-                      {fb.name?.charAt(0) || 'U'}
-                    </span>
+                    <ProfileAvatar
+                      src={fb.face_image}
+                      name={fb.name}
+                      size="sm"
+                      tone="navy"
+                    />
                     <div>
                       <p className="font-bold text-navy-900">
                         {fb.name || 'Anonymous User'}

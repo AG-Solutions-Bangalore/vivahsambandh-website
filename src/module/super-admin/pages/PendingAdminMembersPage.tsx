@@ -29,6 +29,7 @@ import {
   PanelTableFooter,
   PanelTableHeadCell,
 } from '../components/PanelTable'
+import { ProfileAvatar } from '../components/ProfileAvatar'
 import { StatusActionGroup } from '../components/StatusActionGroup'
 import { CityAssignmentModal } from '../components/CityAssignmentModal'
 import {
@@ -220,9 +221,12 @@ export default function PendingAdminMembersPage() {
                 <tr key={admin.id} className="transition-colors hover:bg-cream-50/70">
                   <td className="px-4 py-3.5">
                     <div className="flex items-center gap-3">
-                      <span className="flex size-9 shrink-0 items-center justify-center rounded-full border border-gold-200 bg-gold-100 text-xs font-bold text-gold-900">
-                        {admin.name.charAt(0)}
-                      </span>
+                      <ProfileAvatar
+                        src={admin.face_image}
+                        name={admin.name}
+                        size="md"
+                        tone="gold"
+                      />
                       <div>
                         <p className="font-bold text-navy-900">{admin.name}</p>
                         <p className="text-[0.68rem] text-ink-400">

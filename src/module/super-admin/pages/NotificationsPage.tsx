@@ -37,6 +37,7 @@ import {
   PanelTableHeadCell,
 } from '../components/PanelTable'
 import { PanelFilterSelect } from '../components/PanelFilterSelect'
+import { RemoteImage } from '../components/RemoteImage'
 import { cn } from 'cn'
 import {
   useCreateNotificationMutation,
@@ -356,10 +357,34 @@ export default function NotificationsPage() {
 
                 <td className="px-4 py-3.5">
                   {item.notification_image ? (
-                    <span className="inline-flex items-center gap-1 rounded-md border border-gold-200 bg-gold-50 px-2 py-0.5 text-[0.7rem] font-semibold text-gold-800">
-                      <ImageIcon className="size-3" aria-hidden />
-                      Image Attached
-                    </span>
+                    <div className="flex flex-col items-start gap-1">
+                      <a
+                        href={item.notification_image}
+                        target="_blank"
+                        rel="noreferrer"
+                        title="Open the attachment in a new tab"
+                        className="block overflow-hidden rounded-lg"
+                      >
+                        <RemoteImage
+                          src={item.notification_image}
+                          alt={
+                            item.notification_image_name ?? 'Notification attachment'
+                          }
+                          className="h-12 w-16 rounded-lg border border-cream-300 object-cover"
+                          fallback={
+                            <span className="inline-flex items-center gap-1 rounded-md border border-gold-200 bg-gold-50 px-2 py-0.5 text-[0.7rem] font-semibold text-gold-800">
+                              <ImageIcon className="size-3" aria-hidden />
+                              Image Attached
+                            </span>
+                          }
+                        />
+                      </a>
+                      {item.notification_image_name ? (
+                        <span className="max-w-20 truncate text-[0.65rem] text-ink-400">
+                          {item.notification_image_name}
+                        </span>
+                      ) : null}
+                    </div>
                   ) : (
                     <span className="text-[0.7rem] text-ink-400 italic">None</span>
                   )}
@@ -709,9 +734,11 @@ export default function NotificationsPage() {
                   Attachment Image
                 </span>
                 <div className="max-h-48 overflow-hidden rounded-2xl border border-cream-300 bg-navy-900">
-                  <img
+                  <RemoteImage
                     src={inspectedRecord.notification_image}
-                    alt={inspectedRecord.notification_image_name ?? 'Notification attachment'}
+                    alt={
+                      inspectedRecord.notification_image_name ?? 'Notification attachment'
+                    }
                     className="h-44 w-full object-contain"
                   />
                 </div>

@@ -29,6 +29,7 @@ import {
   PanelTableFooter,
   PanelTableHeadCell,
 } from '../components/PanelTable'
+import { ProfileAvatar } from '../components/ProfileAvatar'
 import { ProfileDetails } from '../components/ProfileDetails'
 import { StatusActionGroup } from '../components/StatusActionGroup'
 import { usePendingMembersQuery } from '../hook/useMembers'
@@ -161,9 +162,12 @@ export default function PendingMembersPage() {
               <tr key={member.id} className="transition-colors hover:bg-cream-50/70">
                 <td className="px-4 py-3.5">
                   <div className="flex items-center gap-3">
-                    <span className="flex size-10 shrink-0 items-center justify-center rounded-full border border-gold-200 bg-gold-100 text-xs font-bold text-gold-900">
-                      {member.name.charAt(0)}
-                    </span>
+                    <ProfileAvatar
+                      src={member.face_image}
+                      name={member.name}
+                      size="lg"
+                      tone="gold"
+                    />
                     <div className="min-w-0">
                       <p className="flex items-center gap-1.5 font-bold text-navy-900">
                         {member.name}
@@ -282,9 +286,14 @@ export default function PendingMembersPage() {
             : undefined
         }
         icon={
-          <span className="font-display text-lg font-bold text-navy-950">
-            {activeProfile?.name.charAt(0)}
-          </span>
+          activeProfile ? (
+            <ProfileAvatar
+              src={activeProfile.face_image}
+              name={activeProfile.name}
+              size="md"
+              tone="navy"
+            />
+          ) : null
         }
         size="lg"
         onClose={() => setActiveProfileId(null)}
