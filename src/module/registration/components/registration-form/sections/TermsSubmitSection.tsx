@@ -21,6 +21,8 @@ export default function TermsSubmitSection() {
     isFormFullyFilled,
     isSubmitting,
     isMobileVerifiedNow,
+    isMobileComplete,
+    openOtpModal,
     setTermsOpen,
   } = useRegistrationForm()
 
@@ -65,6 +67,79 @@ export default function TermsSubmitSection() {
         </p>
       )}
 
+      {/* Mobile OTP Verification Card at the bottom */}
+      <div
+        className={cn(
+          "mt-6 rounded-2xl border p-4 sm:p-5 transition flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4",
+          isMobileVerifiedNow
+            ? "border-emerald-400/40 bg-emerald-50/60 text-emerald-950"
+            : isMobileComplete
+            ? "border-gold-500/40 bg-gold-50/60 text-navy-950"
+            : "border-cream-300 bg-cream-50/60 text-ink-600"
+        )}
+      >
+        <div className="flex items-start gap-3.5">
+          <span
+            className={cn(
+              "flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-base shadow-xs",
+              isMobileVerifiedNow
+                ? "bg-emerald-100 text-emerald-700"
+                : isMobileComplete
+                ? "bg-gold-100 text-gold-700"
+                : "bg-cream-200 text-ink-500"
+            )}
+          >
+            {isMobileVerifiedNow ? (
+              <svg className="h-5 w-5 text-emerald-600" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+              </svg>
+            ) : (
+              <svg className="h-5 w-5 text-gold-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
+              </svg>
+            )}
+          </span>
+          <div>
+            <h4 className="text-sm font-bold text-navy-900">
+              {isMobileVerifiedNow
+                ? t('registrationPage.form.mobileVerifiedHeading', 'Mobile Number Verified')
+                : t('registrationPage.form.mobileVerificationTitle', 'Mobile Number Verification')}
+            </h4>
+            <p className="mt-0.5 text-xs text-ink-600 leading-relaxed">
+              {isMobileVerifiedNow
+                ? t('registrationPage.form.mobileVerifiedSuccess', {
+                    defaultValue: `✓ Contact number +91 ${form.mobile} has been verified successfully.`,
+                    mobile: form.mobile,
+                  })
+                : isMobileComplete
+                ? t('registrationPage.form.mobileVerificationNotice', {
+                    defaultValue: `We will send a 6-digit verification code (OTP) to +91 ${form.mobile} to verify this number.`,
+                    mobile: form.mobile,
+                  })
+                : t('registrationPage.form.mobileVerificationNoticeEmpty', 'Please enter a valid 10-digit mobile number in Part 1 to receive the verification OTP.')}
+            </p>
+          </div>
+        </div>
+
+        {!isMobileVerifiedNow && (
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={openOtpModal}
+            disabled={!isMobileComplete}
+            className={cn(
+              "w-full sm:w-auto shrink-0 font-bold text-xs shadow-2xs transition",
+              isMobileComplete
+                ? "border-gold-500 bg-gold-100 hover:bg-gold-200 text-navy-900 cursor-pointer"
+                : "border-cream-300 bg-cream-100 text-ink-400 cursor-not-allowed opacity-60"
+            )}
+          >
+            {t('registrationPage.form.verifyMobileBtn', 'Verify Mobile via OTP')}
+          </Button>
+        )}
+      </div>
+
       {/* Action buttons */}
       <div className="mt-6 flex flex-col items-center justify-between gap-4 border-t border-cream-200 pt-5 sm:flex-row">
         <Button
@@ -102,7 +177,10 @@ export default function TermsSubmitSection() {
             ) : isMobileVerifiedNow ? (
               t('registrationPage.form.submitRegistration', 'Submit Registration')
             ) : (
-              t('registrationPage.form.verifyAndSubmit', 'Verify Mobile via OTP & Submit')
+              t('registrationPage.form.sendOtpAndSubmit', {
+                defaultValue: `Verify Mobile (+91 ${form.mobile}) & Submit`,
+                mobile: form.mobile,
+              })
             )}
           </Button>
 
@@ -112,7 +190,12 @@ export default function TermsSubmitSection() {
             </span>
           ) : !isMobileVerifiedNow ? (
             <span className="text-[11px] text-gold-900 font-semibold flex items-center gap-1 text-center sm:text-right">
-              <span>{t('registrationPage.form.detailsCompleteOtp', '✓ Details complete. Click to verify via Firebase OTP.')}</span>
+              <span>
+                {t('registrationPage.form.detailsCompleteOtpWithMobile', {
+                  defaultValue: `✓ Details complete. Click to send OTP to +91 ${form.mobile} and submit.`,
+                  mobile: form.mobile,
+                })}
+              </span>
             </span>
           ) : (
             <span className="text-[11px] text-emerald-700 font-semibold flex items-center gap-1 text-center sm:text-right">

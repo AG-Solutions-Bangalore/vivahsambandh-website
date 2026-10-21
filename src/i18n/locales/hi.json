@@ -1265,7 +1265,15 @@
       "termsModalTitle": "नियम एवं शर्तें",
       "termsModalIntro": "कृपया पंजीकरण और मैचमेकिंग सहायता को नियंत्रित करने वाले दिशानिर्देशों और नीतियों की समीक्षा करें:",
       "termsModalAccept": "मैं समझता हूँ और स्वीकार करता हूँ",
-      "termsModalClose": "बंद करें"
+      "termsModalClose": "बंद करें",
+      "mobileVerificationTitle": "मोबाइल नंबर सत्यापन",
+      "mobileVerifiedHeading": "मोबाइल नंबर सत्यापित",
+      "mobileVerificationNotice": "हम इस नंबर को सत्यापित करने के लिए +91 {{mobile}} पर 6 अंकों का ओटीपी भेजेंगे।",
+      "mobileVerificationNoticeEmpty": "ओटीपी प्राप्त करने के लिए कृपया भाग 1 में 10 अंकों का वैध मोबाइल नंबर दर्ज करें।",
+      "mobileVerifiedSuccess": "✓ संपर्क नंबर +91 {{mobile}} सफलतापूर्वक सत्यापित हो गया है।",
+      "verifyMobileBtn": "ओटीपी से मोबाइल सत्यापित करें",
+      "sendOtpAndSubmit": "मोबाइल (+91 {{mobile}}) सत्यापित कर सबमिट करें",
+      "detailsCompleteOtpWithMobile": "✓ विवरण पूर्ण हैं। +91 {{mobile}} पर ओटीपी भेजकर सबमिट करने के लिए क्लिक करें।"
     }
   }
 }

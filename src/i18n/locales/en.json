@@ -1265,7 +1265,15 @@
       "termsModalTitle": "Terms & Conditions",
       "termsModalIntro": "Please review the guidelines and policies governing the registration and matchmaking assistance:",
       "termsModalAccept": "I Understand & Accept",
-      "termsModalClose": "Close"
+      "termsModalClose": "Close",
+      "mobileVerificationTitle": "Mobile Number Verification",
+      "mobileVerifiedHeading": "Mobile Number Verified",
+      "mobileVerificationNotice": "We will send a 6-digit verification code (OTP) to +91 {{mobile}} to verify this number.",
+      "mobileVerificationNoticeEmpty": "Please enter a valid 10-digit mobile number in Part 1 to receive the verification OTP.",
+      "mobileVerifiedSuccess": "✓ Contact number +91 {{mobile}} has been verified successfully.",
+      "verifyMobileBtn": "Verify Mobile via OTP",
+      "sendOtpAndSubmit": "Verify Mobile (+91 {{mobile}}) & Submit",
+      "detailsCompleteOtpWithMobile": "✓ Details complete. Click to send OTP to +91 {{mobile}} and submit."
     }
   }
 }

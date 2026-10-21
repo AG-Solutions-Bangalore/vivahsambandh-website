@@ -40,7 +40,6 @@ export default function PersonalDetailsSection() {
     conditions,
     isMobileVerifiedNow,
     isMobileComplete,
-    openOtpModal,
   } = useRegistrationForm()
 
   const { isEmployed, isBusiness, isOtherProfession, showIncome, isDivorced, hasPriorMarriage, showChildrenWith } =
@@ -798,31 +797,14 @@ export default function PersonalDetailsSection() {
                 placeholder={t('registrationPage.form.contactMobilePlaceholder', '10-digit mobile number')}
                 className={cn(
                   inputCls('mobile'),
-                  isMobileVerifiedNow
-                    ? 'border-emerald-500 bg-emerald-50/20 pr-28 text-emerald-950 focus-visible:border-emerald-600 focus-visible:ring-emerald-500/20'
-                    : 'pr-24',
+                  isMobileVerifiedNow && 'border-emerald-500 bg-emerald-50/20 pr-28 text-emerald-950 focus-visible:border-emerald-600 focus-visible:ring-emerald-500/20',
                 )}
                 aria-invalid={Boolean(fieldErrors.mobile)}
               />
-              {isMobileVerifiedNow ? (
+              {isMobileVerifiedNow && (
                 <span className="absolute right-2.5 top-1/2 -translate-y-1/2 inline-flex items-center gap-1 rounded-full bg-emerald-100 border border-emerald-300 px-2.5 py-0.5 text-[11px] font-bold text-emerald-800">
                   {t('registrationPage.form.verified', '✓ Verified')}
                 </span>
-              ) : (
-                <button
-                  type="button"
-                  onClick={openOtpModal}
-                  disabled={!isMobileComplete}
-                  className={cn(
-                    "absolute right-2.5 top-1/2 -translate-y-1/2 rounded-lg border px-2.5 py-1 text-[11px] font-bold transition active:scale-95 shadow-2xs",
-                    isMobileComplete
-                      ? "bg-gold-100 hover:bg-gold-200 border-gold-300 text-navy-900 cursor-pointer"
-                      : "bg-cream-100/70 border-cream-200 text-ink-400 cursor-not-allowed opacity-60",
-                  )}
-                  title={isMobileComplete ? "Verify mobile number via OTP" : "Enter 10-digit mobile number to verify"}
-                >
-                  {t('registrationPage.form.verifyOtp', 'Verify OTP')}
-                </button>
               )}
             </div>
           </Field>
