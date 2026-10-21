@@ -9,12 +9,7 @@
     <script>
       try {
         var isHi = location.pathname === '/hi' || location.pathname.indexOf('/hi/') === 0;
-        if (isHi) {
-          document.documentElement.lang = 'hi';
-        } else {
-          var __vl = localStorage.getItem('vivah-lang');
-          if (__vl === 'hi' || __vl === 'en') document.documentElement.lang = __vl;
-        }
+        document.documentElement.lang = isHi ? 'hi' : 'en';
       } catch (e) { /* storage unavailable — default lang="en" stands */ }
     </script>
     <meta name="google" content="notranslate" >

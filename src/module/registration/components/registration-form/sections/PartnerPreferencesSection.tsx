@@ -11,9 +11,13 @@ import {
 import { Field } from '@/components/ui/field'
 import { YesNoPills } from '@/components/ui/option-pills'
 import { HelpCircle } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { useRegistrationForm } from '../context'
+import FormSection from '../FormSection'
+import { REGISTRATION_STEP_IDS } from '../steps'
 
 export default function PartnerPreferencesSection() {
+  const { t } = useTranslation()
   const {
     baseId,
     form,
@@ -21,24 +25,24 @@ export default function PartnerPreferencesSection() {
     handlePillChange,
   } = useRegistrationForm()
 
-  return (
-    <div className="rounded-[1.5rem] border border-gold-500/30 bg-white p-6 sm:p-8 lg:p-10 shadow-card">
-      <div className="mb-6 border-b border-cream-200 pb-4">
-        <span className="eyebrow">Part 2</span>
-        <h2 className="text-xl sm:text-2xl font-bold font-display text-navy-900">
-          Partner Preferences &amp; Horoscope
-        </h2>
-        <p className="mt-1 text-xs text-ink-500">
-          Astrological criteria for the alliance.
-        </p>
-      </div>
+  const tooltipTrigger =
+    'inline-flex size-5 items-center justify-center rounded-full text-ink-400 transition hover:bg-gold-50 hover:text-gold-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold-500/40'
 
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+  return (
+    <FormSection
+      id={REGISTRATION_STEP_IDS.preferences}
+      title={t('registrationPage.form.part2Title', 'Partner Preferences & Horoscope')}
+      subtitle={t('registrationPage.form.part2Subtitle', 'Astrological criteria for the alliance.')}
+    >
+      <div className="grid grid-cols-1 gap-x-5 gap-y-6 sm:grid-cols-2 lg:grid-cols-3">
         {/* Same Gotra */}
-        <div id={`${baseId}-same-gotra-group`}>
+        <div
+          id={`${baseId}-same-gotra-group`}
+          className="rounded-2xl border border-cream-300 bg-cream-50/70 p-4 transition-colors focus-within:border-gold-500/50"
+        >
           <Field
             id={`${baseId}-same-gotra-pills`}
-            label="Marry in same Gotra?"
+            label={t('registrationPage.form.sameGotraLabel', 'Marry in same Gotra?')}
             required
             error={fieldErrors.will_marry_same_gotra}
             tooltip={
@@ -46,12 +50,13 @@ export default function PartnerPreferencesSection() {
                 <TooltipTrigger
                   type="button"
                   tabIndex={-1}
-                  className="text-ink-400 transition hover:text-gold-700"
+                  aria-label={t('registrationPage.form.sameGotraTooltip', 'Indicate if your family permits alliances within the same paternal Gotra.')}
+                  className={tooltipTrigger}
                 >
-                  <HelpCircle className="size-3.5" />
+                  <HelpCircle className="size-3.5" aria-hidden />
                 </TooltipTrigger>
                 <TooltipContent>
-                  Indicate if your family permits alliances within the same paternal Gotra.
+                  {t('registrationPage.form.sameGotraTooltip', 'Indicate if your family permits alliances within the same paternal Gotra.')}
                 </TooltipContent>
               </Tooltip>
             }
@@ -62,16 +67,19 @@ export default function PartnerPreferencesSection() {
               value={form.will_marry_same_gotra}
               onChange={handlePillChange('will_marry_same_gotra')}
               error={Boolean(fieldErrors.will_marry_same_gotra)}
-              ariaLabel="Marry in same Gotra"
+              ariaLabel={t('registrationPage.form.sameGotraLabel', 'Marry in same Gotra')}
             />
           </Field>
         </div>
 
         {/* Are you Manglik */}
-        <div id={`${baseId}-is-manglik-group`}>
+        <div
+          id={`${baseId}-is-manglik-group`}
+          className="rounded-2xl border border-cream-300 bg-cream-50/70 p-4 transition-colors focus-within:border-gold-500/50"
+        >
           <Field
             id={`${baseId}-is-manglik-pills`}
-            label="Are you Manglik?"
+            label={t('registrationPage.form.isManglikLabel', 'Are you Manglik?')}
             required
             error={fieldErrors.is_manglik}
             tooltip={
@@ -79,12 +87,13 @@ export default function PartnerPreferencesSection() {
                 <TooltipTrigger
                   type="button"
                   tabIndex={-1}
-                  className="text-ink-400 transition hover:text-gold-700"
+                  aria-label={t('registrationPage.form.isManglikTooltip', "Astrological Mangal Dosha positioning in the candidate's birth chart.")}
+                  className={tooltipTrigger}
                 >
-                  <HelpCircle className="size-3.5" />
+                  <HelpCircle className="size-3.5" aria-hidden />
                 </TooltipTrigger>
                 <TooltipContent>
-                  Astrological Mangal Dosha positioning in the candidate&apos;s birth chart.
+                  {t('registrationPage.form.isManglikTooltip', "Astrological Mangal Dosha positioning in the candidate's birth chart.")}
                 </TooltipContent>
               </Tooltip>
             }
@@ -95,16 +104,19 @@ export default function PartnerPreferencesSection() {
               value={form.is_manglik}
               onChange={handlePillChange('is_manglik')}
               error={Boolean(fieldErrors.is_manglik)}
-              ariaLabel="Are you Manglik"
+              ariaLabel={t('registrationPage.form.isManglikLabel', 'Are you Manglik')}
             />
           </Field>
         </div>
 
         {/* Marry a Manglik */}
-        <div id={`${baseId}-will-marry-manglik-group`}>
+        <div
+          id={`${baseId}-will-marry-manglik-group`}
+          className="rounded-2xl border border-cream-300 bg-cream-50/70 p-4 transition-colors focus-within:border-gold-500/50"
+        >
           <Field
             id={`${baseId}-will-marry-manglik-pills`}
-            label="Will you marry Manglik?"
+            label={t('registrationPage.form.willMarryManglikLabel', 'Will you marry Manglik?')}
             required
             error={fieldErrors.will_marry_manglik}
             tooltip={
@@ -112,12 +124,13 @@ export default function PartnerPreferencesSection() {
                 <TooltipTrigger
                   type="button"
                   tabIndex={-1}
-                  className="text-ink-400 transition hover:text-gold-700"
+                  aria-label={t('registrationPage.form.willMarryManglikTooltip', 'Indicate if willing to consider proposals from Manglik candidates.')}
+                  className={tooltipTrigger}
                 >
-                  <HelpCircle className="size-3.5" />
+                  <HelpCircle className="size-3.5" aria-hidden />
                 </TooltipTrigger>
                 <TooltipContent>
-                  Indicate if willing to consider proposals from Manglik candidates.
+                  {t('registrationPage.form.willMarryManglikTooltip', 'Indicate if willing to consider proposals from Manglik candidates.')}
                 </TooltipContent>
               </Tooltip>
             }
@@ -128,11 +141,11 @@ export default function PartnerPreferencesSection() {
               value={form.will_marry_manglik}
               onChange={handlePillChange('will_marry_manglik')}
               error={Boolean(fieldErrors.will_marry_manglik)}
-              ariaLabel="Will you marry Manglik"
+              ariaLabel={t('registrationPage.form.willMarryManglikLabel', 'Will you marry Manglik')}
             />
           </Field>
         </div>
       </div>
-    </div>
+    </FormSection>
   )
 }

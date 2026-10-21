@@ -1,18 +1,53 @@
 /**
  * @file src/components/ui/time-picker.tsx
- * Shadcn/Base-nova styled Time of Birth picker with 12-hour format and AM/PM selector.
+ * Native HTML5 time picker styled to match the VivahSambandh luxury design system.
+ * Features a gold clock icon, full 12-hour/24-hour bidirectionality, and native picker integration.
  */
 
-import { useMemo, useCallback } from 'react'
+import * as React from 'react'
+import { Clock } from 'lucide-react'
 import { cn } from 'cn'
-import { FormSelect } from '@/components/ui/form-select'
 
-interface TimePickerProps {
+export interface TimePickerProps {
   id?: string
-  value: string // e.g. "10:30 AM" or "10:30"
+  value: string // e.g. "10:30 AM" or "14:30"
   onChange: (timeStr: string) => void
   error?: boolean
+  disabled?: boolean
   required?: boolean
+  className?: string
+}
+
+function to24HourTime(str: string): string {
+  if (!str) return ''
+  const trimmed = str.trim()
+  const match = trimmed.match(/^(\d{1,2}):(\d{1,2})\s*(AM|PM)?$/i)
+  if (!match) return ''
+  let hours = parseInt(match[1], 10)
+  const minutes = match[2].padStart(2, '0')
+  const period = match[3] ? match[3].toUpperCase() : null
+
+  if (period === 'PM' && hours < 12) {
+    hours += 12
+  } else if (period === 'AM' && hours === 12) {
+    hours = 0
+  }
+
+  return `${hours.toString().padStart(2, '0')}:${minutes}`
+}
+
+function to12HourTime(str: string): string {
+  if (!str) return ''
+  const trimmed = str.trim()
+  const match = trimmed.match(/^(\d{1,2}):(\d{1,2})/i)
+  if (!match) return ''
+  let hours = parseInt(match[1], 10)
+  const minutes = match[2].padStart(2, '0')
+  const period = hours >= 12 ? 'PM' : 'AM'
+  if (hours > 12) hours -= 12
+  if (hours === 0) hours = 12
+  const hoursStr = hours < 10 ? `0${hours}` : `${hours}`
+  return `${hoursStr}:${minutes} ${period}`
 }
 
 export function TimePicker({
@@ -20,158 +55,55 @@ export function TimePicker({
   value,
   onChange,
   error = false,
+  disabled = false,
+  required = false,
+  className,
 }: TimePickerProps) {
-  // Parse hour, minute, period purely derived from value prop
-  const { hour, minute, period } = useMemo(() => {
-    if (!value) return { hour: '', minute: '', period: 'AM' as const }
-    const match = value.match(/(\d+):(\d+)\s*(AM|PM)?/i)
-    if (match) {
-      let hourNum = parseInt(match[1], 10)
-      let p: 'AM' | 'PM' = match[3] && match[3].toUpperCase() === 'PM' ? 'PM' : 'AM'
-      if (!match[3] && hourNum >= 12) {
-        p = 'PM'
-        if (hourNum > 12) hourNum -= 12
-      } else if (!match[3] && hourNum === 0) {
-        hourNum = 12
-      }
-      const hStr = hourNum < 10 ? `0${hourNum}` : `${hourNum}`
-      return { hour: hStr, minute: match[2], period: p }
+  const time24 = React.useMemo(() => to24HourTime(value), [value])
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = e.target.value
+    if (!val) {
+      onChange('')
+      return
     }
-    return { hour: '', minute: '', period: 'AM' as const }
-  }, [value])
+    onChange(to12HourTime(val))
+  }
 
-  const handleHourChange = useCallback(
-    (h: string) => {
-      if (!h) {
-        onChange('')
-        return
+  const handleClick = (e: React.MouseEvent<HTMLInputElement>) => {
+    try {
+      // Trigger native clock picker popup on click if supported
+      if ('showPicker' in HTMLInputElement.prototype) {
+        e.currentTarget.showPicker()
       }
-      const m = minute || '00'
-      onChange(`${h}:${m} ${period}`)
-    },
-    [minute, period, onChange],
-  )
-
-  const handleMinuteChange = useCallback(
-    (m: string) => {
-      if (!m) {
-        onChange('')
-        return
-      }
-      const h = hour || '12'
-      onChange(`${h}:${m} ${period}`)
-    },
-    [hour, period, onChange],
-  )
-
-  const handlePeriodChange = useCallback(
-    (p: 'AM' | 'PM') => {
-      if (!hour && !minute) {
-        return
-      }
-      const h = hour || '12'
-      const m = minute || '00'
-      onChange(`${h}:${m} ${p}`)
-    },
-    [hour, minute, onChange],
-  )
-
-  const hourOptions = useMemo(
-    () =>
-      Array.from({ length: 12 }, (_, i) => {
-        const h = i + 1
-        const val = h < 10 ? `0${h}` : `${h}`
-        return { value: val, label: String(h) }
-      }),
-    [],
-  )
-  const minuteOptions = useMemo(
-    () =>
-      Array.from({ length: 60 }, (_, i) => {
-        const val = i < 10 ? `0${i}` : `${i}`
-        return { value: val, label: val }
-      }),
-    [],
-  )
+    } catch {
+      // Browser fallback (native icon click)
+    }
+  }
 
   return (
-    <div className="w-full h-8 space-y-1" id={id}>
-      <div className="grid grid-cols-[1fr_1fr_1.4fr] gap-1.5 items-center h-full">
-        {/* Hour (1-12) */}
-        <div className="min-w-0 h-full">
-          <label htmlFor={`${id}-hour`} className="sr-only">
-            Hour
-          </label>
-          <FormSelect
-            id={`${id}-hour`}
-            value={hour}
-            onValueChange={handleHourChange}
-            options={hourOptions}
-            placeholder="Hour"
-            error={error}
-            className="h-full px-2"
-          />
-        </div>
-
-        {/* Minute (00-59) */}
-        <div className="min-w-0 h-full">
-          <label htmlFor={`${id}-min`} className="sr-only">
-            Minute
-          </label>
-          <FormSelect
-            id={`${id}-min`}
-            value={minute}
-            onValueChange={handleMinuteChange}
-            options={minuteOptions}
-            placeholder="Min"
-            error={error}
-            className="h-full px-2"
-          />
-        </div>
-
-        {/* AM / PM Segmented Toggle — full width so it never squeezes */}
-        <div
-          role="radiogroup"
-          aria-label="AM or PM"
-          className={cn(
-            'relative h-full grid grid-cols-2 gap-1 rounded-full border p-1 transition',
-            error
-              ? 'border-maroon-500 bg-maroon-50/30'
-              : 'border-cream-300 bg-cream-50/70',
-          )}
-        >
-          {/* Gliding active pill — AM ⇄ PM */}
-          <span
-            aria-hidden="true"
-            className="pointer-events-none absolute top-1 bottom-1 left-1 rounded-full bg-navy-900 shadow-xs transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]"
-            style={{
-              width: 'calc((100% - 0.5rem - 0.25rem) / 2)',
-              transform:
-                period === 'PM'
-                  ? 'translateX(calc(100% + 0.25rem))'
-                  : 'translateX(0)',
-            }}
-          />
-          {(['AM', 'PM'] as const).map((p) => (
-            <button
-              key={p}
-              type="button"
-              role="radio"
-              aria-checked={period === p}
-              onClick={() => handlePeriodChange(p)}
-              className={cn(
-                'relative z-10 h-full w-full inline-flex items-center justify-center rounded-full px-2 py-1 text-xs font-bold cursor-pointer transition-colors duration-200 outline-none active:scale-[0.98]',
-                'focus-visible:ring-2 focus-visible:ring-gold-500/40',
-                period === p
-                  ? 'text-white'
-                  : 'text-navy-900 hover:text-gold-700',
-              )}
-            >
-              {p}
-            </button>
-          ))}
-        </div>
-      </div>
+    <div className={cn('relative flex items-center w-full min-w-0', className)}>
+      <Clock
+        className="pointer-events-none absolute left-3.5 size-4 text-gold-600 shrink-0"
+        aria-hidden="true"
+      />
+      <input
+        type="time"
+        id={id}
+        value={time24}
+        onChange={handleChange}
+        onClick={handleClick}
+        disabled={disabled}
+        required={required}
+        aria-invalid={error}
+        className={cn(
+          'h-11 w-full min-w-0 rounded-full border pl-11 pr-10 text-base md:text-sm font-medium text-navy-900 transition duration-200 outline-none cursor-pointer select-none focus-visible:ring-2',
+          error
+            ? 'border-maroon-500 bg-maroon-50/30 text-navy-900 focus:border-maroon-600 focus:ring-maroon-500/20'
+            : 'border-cream-300 bg-cream-50/70 text-navy-900 hover:bg-white hover:border-gold-500/60 focus:border-gold-500 focus:bg-white focus:ring-gold-500/20',
+          '[&::-webkit-calendar-picker-indicator]:cursor-pointer [&::-webkit-calendar-picker-indicator]:opacity-75 hover:[&::-webkit-calendar-picker-indicator]:opacity-100',
+        )}
+      />
     </div>
   )
 }

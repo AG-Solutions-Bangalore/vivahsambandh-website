@@ -41,11 +41,18 @@ export const NAV_ENTRIES: readonly NavEntry[] = [
 export const PAGE_ROUTES: readonly string[] = [
   '/about',
   '/stories',
+  '/success-stories',
   '/membership',
   '/blogs',
   '/contact',
   '/download',
+  '/registration',
+  '/register',
   '/admin-register',
+  '/privacy',
+  '/terms',
+  '/guidelines',
+  '/help-center',
 ]
 
 /** Site root for a language: '/' (en) or '/hi' (hi). */

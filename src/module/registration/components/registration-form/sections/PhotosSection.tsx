@@ -7,10 +7,15 @@
 
 import { useState, useRef, type ChangeEvent } from 'react'
 import { Button } from '@/components/ui/button'
+import { ImageUp, RefreshCw } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import ImageCropModal from '../../ImageCropModal'
 import { useRegistrationForm } from '../context'
+import FormSection from '../FormSection'
+import { REGISTRATION_STEP_IDS } from '../steps'
 
 export default function PhotosSection() {
+  const { t } = useTranslation()
   const { baseId, form, fieldErrors, setPhotoFields } = useRegistrationForm()
 
   const fullPhotoInputRef = useRef<HTMLInputElement>(null)
@@ -43,36 +48,30 @@ export default function PhotosSection() {
   }
 
   return (
-    <div className="rounded-[1.5rem] border border-gold-500/30 bg-white p-6 sm:p-8 lg:p-10 shadow-card">
-      <div className="mb-6 border-b border-cream-200 pb-4">
-        <span className="eyebrow">Part 4</span>
-        <h2 className="text-xl sm:text-2xl font-bold font-display text-navy-900">
-          Profile Photographs
-        </h2>
-        <p className="mt-1 text-xs text-ink-500">
-          High-resolution recent photographs. Selecting a photo will open the interactive cropper.
-        </p>
-      </div>
-
-      <div className="grid grid-cols-1 gap-8 sm:grid-cols-2">
+    <FormSection
+      id={REGISTRATION_STEP_IDS.photos}
+      title={t('registrationPage.form.part4Title', 'Profile Photographs')}
+      subtitle={t('registrationPage.form.part4Subtitle', 'High-resolution recent photographs. Selecting a photo will open the interactive cropper.')}
+    >
+      <div className="grid grid-cols-1 gap-x-6 gap-y-6 sm:grid-cols-2">
         {/* Full Length Photo */}
         <div
           id={`${baseId}-full-image-group`}
-          className={`rounded-2xl border p-5 transition ${
+          className={`flex flex-col rounded-2xl border p-5 transition ${
             fieldErrors.full_image
               ? 'border-maroon-500 bg-maroon-50/20'
-              : 'border-cream-200 bg-cream-50/50'
+              : 'border-cream-300 bg-cream-50/70'
           }`}
         >
-          <span className="block text-sm font-bold text-navy-900 mb-1">
-            Full Length Photograph <span className="text-maroon-600">*</span>
+          <span className="text-[13px] font-semibold leading-tight tracking-tight text-navy-900">
+            {t('registrationPage.form.fullPhotoLabel', 'Full Length Photograph')} <span className="text-maroon-600" aria-hidden="true">*</span>
           </span>
-          <p className="text-xs text-ink-500 mb-4">
-            Full-standing recent photo showing attire clearly.
+          <p className="mt-1 text-xs leading-relaxed text-ink-500">
+            {t('registrationPage.form.fullPhotoSubtitle', 'Full-standing recent photo showing attire clearly.')}
           </p>
 
-          <div className="flex flex-col items-center gap-4">
-            <div className="h-44 w-44 overflow-hidden rounded-xl border-2 border-dashed border-gold-500/50 bg-white flex items-center justify-center shadow-inner">
+          <div className="mt-4 flex flex-1 flex-col items-center justify-center gap-4">
+            <div className="flex h-56 w-44 items-center justify-center overflow-hidden rounded-2xl border-2 border-dashed border-gold-500/50 bg-white">
               {form.full_image_preview ? (
                 <img
                   src={form.full_image_preview}
@@ -80,11 +79,11 @@ export default function PhotosSection() {
                   className="h-full w-full object-cover"
                 />
               ) : (
-                <div className="text-center p-4">
-                  <svg className="mx-auto h-10 w-10 text-gold-500/60" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                  </svg>
-                  <span className="mt-2 block text-xs text-ink-500">No photo selected</span>
+                <div className="px-4 text-center">
+                  <ImageUp className="mx-auto size-9 text-gold-500/70" aria-hidden />
+                  <span className="mt-2 block text-xs text-ink-500">
+                    {t('registrationPage.form.noPhotoSelected', 'No photo selected')}
+                  </span>
                 </div>
               )}
             </div>
@@ -95,19 +94,30 @@ export default function PhotosSection() {
               accept="image/*"
               onChange={(e) => handleFileSelect(e, 'full')}
               className="sr-only"
-              aria-label="Select full length photograph"
+              aria-label={t('registrationPage.form.fullPhotoLabel', 'Full Length Photograph')}
             />
             <Button
               type="button"
               variant="outline"
-              size="sm"
+              size="default"
               onClick={() => fullPhotoInputRef.current?.click()}
+              className="h-11 w-full max-w-[16rem] rounded-full border-gold-500/60 bg-white font-semibold text-navy-900 hover:border-gold-500 hover:bg-gold-50"
             >
-              <span>{form.full_image ? 'Change & Crop' : 'Upload & Crop Photo'}</span>
+              {form.full_image ? (
+                <>
+                  <RefreshCw aria-hidden />
+                  {t('registrationPage.form.changeAndCrop', 'Change & Crop')}
+                </>
+              ) : (
+                <>
+                  <ImageUp aria-hidden />
+                  {t('registrationPage.form.uploadAndCrop', 'Upload & Crop Photo')}
+                </>
+              )}
             </Button>
           </div>
           {fieldErrors.full_image && (
-            <p role="alert" className="mt-3 flex items-center gap-1.5 text-xs font-semibold text-maroon-600">
+            <p role="alert" className="mt-3 flex items-start gap-1.5 text-xs font-semibold text-maroon-600">
               {fieldErrors.full_image}
             </p>
           )}
@@ -116,21 +126,21 @@ export default function PhotosSection() {
         {/* Full Face Photo */}
         <div
           id={`${baseId}-face-image-group`}
-          className={`rounded-2xl border p-5 transition ${
+          className={`flex flex-col rounded-2xl border p-5 transition ${
             fieldErrors.face_image
               ? 'border-maroon-500 bg-maroon-50/20'
-              : 'border-cream-200 bg-cream-50/50'
+              : 'border-cream-300 bg-cream-50/70'
           }`}
         >
-          <span className="block text-sm font-bold text-navy-900 mb-1">
-            Full Face Photograph <span className="text-maroon-600">*</span>
+          <span className="text-[13px] font-semibold leading-tight tracking-tight text-navy-900">
+            {t('registrationPage.form.facePhotoLabel', 'Full Face Photograph')} <span className="text-maroon-600" aria-hidden="true">*</span>
           </span>
-          <p className="text-xs text-ink-500 mb-4">
-            Close-up portrait with clear frontal view of facial features.
+          <p className="mt-1 text-xs leading-relaxed text-ink-500">
+            {t('registrationPage.form.facePhotoSubtitle', 'Close-up portrait with clear frontal view of facial features.')}
           </p>
 
-          <div className="flex flex-col items-center gap-4">
-            <div className="h-44 w-44 overflow-hidden rounded-full border-2 border-dashed border-gold-500/50 bg-white flex items-center justify-center shadow-inner">
+          <div className="mt-4 flex flex-1 flex-col items-center justify-center gap-4">
+            <div className="flex h-56 w-56 items-center justify-center overflow-hidden rounded-full border-2 border-dashed border-gold-500/50 bg-white">
               {form.face_image_preview ? (
                 <img
                   src={form.face_image_preview}
@@ -138,11 +148,11 @@ export default function PhotosSection() {
                   className="h-full w-full object-cover"
                 />
               ) : (
-                <div className="text-center p-4">
-                  <svg className="mx-auto h-10 w-10 text-gold-500/60" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                  <span className="mt-2 block text-xs text-ink-500">No photo selected</span>
+                <div className="px-4 text-center">
+                  <ImageUp className="mx-auto size-9 text-gold-500/70" aria-hidden />
+                  <span className="mt-2 block text-xs text-ink-500">
+                    {t('registrationPage.form.noPhotoSelected', 'No photo selected')}
+                  </span>
                 </div>
               )}
             </div>
@@ -153,19 +163,30 @@ export default function PhotosSection() {
               accept="image/*"
               onChange={(e) => handleFileSelect(e, 'face')}
               className="sr-only"
-              aria-label="Select full face photograph"
+              aria-label={t('registrationPage.form.facePhotoLabel', 'Full Face Photograph')}
             />
             <Button
               type="button"
               variant="outline"
-              size="sm"
+              size="default"
               onClick={() => facePhotoInputRef.current?.click()}
+              className="h-11 w-full max-w-[16rem] rounded-full border-gold-500/60 bg-white font-semibold text-navy-900 hover:border-gold-500 hover:bg-gold-50"
             >
-              <span>{form.face_image ? 'Change & Crop' : 'Upload & Crop Photo'}</span>
+              {form.face_image ? (
+                <>
+                  <RefreshCw aria-hidden />
+                  {t('registrationPage.form.changeAndCrop', 'Change & Crop')}
+                </>
+              ) : (
+                <>
+                  <ImageUp aria-hidden />
+                  {t('registrationPage.form.uploadAndCrop', 'Upload & Crop Photo')}
+                </>
+              )}
             </Button>
           </div>
           {fieldErrors.face_image && (
-            <p role="alert" className="mt-3 flex items-center gap-1.5 text-xs font-semibold text-maroon-600">
+            <p role="alert" className="mt-3 flex items-start gap-1.5 text-xs font-semibold text-maroon-600">
               {fieldErrors.face_image}
             </p>
           )}
@@ -176,7 +197,11 @@ export default function PhotosSection() {
       <ImageCropModal
         key={cropTarget || 'none'}
         isOpen={cropTarget !== null}
-        title={cropTarget === 'full' ? 'Crop Full Length Photo' : 'Crop Full Face Photo'}
+        title={
+          cropTarget === 'full'
+            ? t('registrationPage.form.cropFullPhoto', 'Crop Full Length Photo')
+            : t('registrationPage.form.cropFacePhoto', 'Crop Full Face Photo')
+        }
         imageSrc={cropRawSrc}
         onClose={() => {
           setCropTarget(null)
@@ -184,6 +209,6 @@ export default function PhotosSection() {
         }}
         onCropComplete={handleCropComplete}
       />
-    </div>
+    </FormSection>
   )
 }

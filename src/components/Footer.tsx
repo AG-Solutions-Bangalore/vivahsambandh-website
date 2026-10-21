@@ -1,4 +1,5 @@
 import { useTranslation } from "react-i18next";
+import { Heart, Mail, MapPin, Phone } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { COMPANY } from "../constants/company";
 import { getNavItems, pagePath } from "../constants/navigation";
@@ -47,6 +48,7 @@ export default function Footer() {
     { label: t("footer.terms"), href: pagePath("/terms", appLang) },
     { label: t("footer.guidelines"), href: pagePath("/guidelines", appLang) },
     { label: t("footer.adminRegister"), href: pagePath("/admin-register", appLang) },
+    { label: t("footer.adminLogin"), href: "/panel-login" },
     { label: t("footer.sitemap"), href: "/sitemap.xml" },
   ];
 
@@ -197,11 +199,11 @@ export default function Footer() {
           </p>
           <ul className="mt-3.5 space-y-2.5 text-xs text-white/75 sm:text-sm">
             <li className="flex items-start gap-2">
-              <span className="text-gold-400 mt-0.5">📍</span>
+              <MapPin className="mt-0.5 size-4 shrink-0 text-gold-400" aria-hidden="true" />
               <span>{address}</span>
             </li>
             <li className="flex items-center gap-2">
-              <span className="text-gold-400">📞</span>
+              <Phone className="size-4 shrink-0 text-gold-400" aria-hidden="true" />
               <a
                 href={phoneLink}
                 title={phone}
@@ -211,7 +213,7 @@ export default function Footer() {
               </a>
             </li>
             <li className="flex items-center gap-2">
-              <span className="text-gold-400">✉️</span>
+              <Mail className="size-4 shrink-0 text-gold-400" aria-hidden="true" />
               <a
                 href={`mailto:${email}`}
                 title={email}
@@ -233,7 +235,8 @@ export default function Footer() {
             {t("footer.rights").replace(/© \d+ [^.]+\./, "")}
           </p>
           <p className="font-semibold tracking-wide text-gold-300/90">
-            {t("footer.madeWith")} <span className="text-maroon-500">♥</span>{" "}
+            {t("footer.madeWith")}{" "}
+            <Heart className="inline size-3.5 text-maroon-500" aria-hidden="true" />{" "}
             {company.name}
           </p>
         </div>

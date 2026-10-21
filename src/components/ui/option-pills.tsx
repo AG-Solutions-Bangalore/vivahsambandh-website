@@ -4,6 +4,7 @@
  * Keyboard navigable, aria-checked, focus-visible ring, error state.
  */
 
+import { useTranslation } from 'react-i18next'
 import { cn } from 'cn'
 
 export interface OptionPillsOption {
@@ -43,7 +44,7 @@ export function OptionPills({
       aria-label={ariaLabel ?? name}
       aria-invalid={error}
       className={cn(
-        'relative h-8 w-full flex items-center gap-1.5 rounded-full border p-1 transition',
+        'relative h-11 w-full flex items-center gap-1.5 rounded-full border p-1 transition-colors',
         error
           ? 'border-maroon-500 bg-maroon-50/20'
           : 'border-cream-300 bg-cream-50/70',
@@ -76,7 +77,7 @@ export function OptionPills({
               }
             }}
             className={cn(
-              'relative z-10 h-full flex-1 rounded-full px-4 py-1 text-xs font-bold whitespace-nowrap cursor-pointer transition-colors duration-200 outline-none active:scale-[0.98]',
+              'relative z-10 h-full flex-1 rounded-full px-4 py-1 text-sm font-bold whitespace-nowrap cursor-pointer transition-colors duration-200 outline-none active:scale-[0.98]',
               'focus-visible:ring-2 focus-visible:ring-gold-500/40',
               selected ? 'text-white' : 'text-navy-900 hover:text-gold-800',
             )}
@@ -91,14 +92,21 @@ export function OptionPills({
 
 /** Convenience Yes/No variant used across horoscope + Gotra questions. */
 export function YesNoPills(
-  props: Omit<OptionPillsProps, 'options'>,
+  props: Omit<OptionPillsProps, 'options'> & {
+    yesLabel?: string
+    noLabel?: string
+  },
 ) {
+  const { t } = useTranslation()
+  const yes = props.yesLabel ?? t('registrationPage.form.yes', 'Yes')
+  const no = props.noLabel ?? t('registrationPage.form.no', 'No')
+
   return (
     <OptionPills
       {...props}
       options={[
-        { value: 'Yes', label: 'Yes' },
-        { value: 'No', label: 'No' },
+        { value: 'Yes', label: yes },
+        { value: 'No', label: no },
       ]}
     />
   )

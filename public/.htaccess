@@ -21,6 +21,20 @@ Options -Indexes
   RewriteCond %{HTTP:Accept-Encoding} gzip
   RewriteCond %{REQUEST_FILENAME}.gz -f
   RewriteRule ^(.+)$ $1.gz [L]
+
+  # SPA Route Rewriting (redirect non-static URLs to index.html)
+  RewriteBase /
+  RewriteRule ^index\.html$ - [L]
+
+  # CKEditor probes optional plugin files under /ckeditor/ and treats any 2xx
+  # as "plugin loaded". Letting the SPA fallback answer those probes with
+  # index.html would register nothing and leave the editor toolbar empty, so
+  # the editor tree gets real 404s instead.
+  RewriteRule ^ckeditor/ - [L]
+
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule . /index.html [L]
 </IfModule>
 
 # Content-Encoding for the precompressed twins (keeps original MIME type).
@@ -59,12 +73,15 @@ Options -Indexes
   RemoveType .br
   AddEncoding br .br
   AddEncoding gzip .gz
-  AddType application/javascript .js
+  AddType application/javascript .js .mjs
+  AddType text/javascript .js .mjs
   AddType text/css .css
   AddType image/svg+xml .svg
-  AddType application/json .json
+  AddType application/json .json .ld+json
   AddType text/html .html
   AddType image/webp .webp
+  AddType font/woff2 .woff2
+  AddType font/woff .woff
   AddType text/plain .txt
 </IfModule>
 

@@ -15,7 +15,7 @@ export default function RegistrationPage() {
   const { t } = useTranslation()
 
   return (
-    <div className="relative min-h-screen bg-cream-50 overflow-hidden">
+    <div className="relative min-h-screen bg-cream-50 overflow-x-clip">
       <PageParallax />
 
       {/* Hero Banner */}
@@ -29,6 +29,10 @@ export default function RegistrationPage() {
           </h1>
           <p className="mx-auto mt-4 max-w-2xl text-sm sm:text-base text-cream-200/90 leading-relaxed">
             {t('registrationPage.body')}
+          </p>
+          <p className="mt-4 text-xs text-cream-200/70">
+            <span className="font-bold text-gold-400">*</span>{' '}
+            {t('registrationPage.form.requiredHint', 'Required fields are marked with an asterisk')}
           </p>
         </div>
       </section>

@@ -7,20 +7,9 @@ import { Link, useLocation } from 'react-router-dom'
 import { getNavItems, homePath } from '../constants/navigation'
 import type { AppLang } from '../i18n'
 import { lockPageScroll, unlockPageScroll } from '../lib/scroll'
+import LotusMark from './LotusMark'
 
 const MobileDrawer = lazy(() => import('./MobileDrawer'))
-
-function LotusMark() {
-  return (
-    <svg viewBox="0 0 32 32" className="h-8 w-8 shrink-0 text-gold-600" aria-hidden="true">
-      <path
-        fill="currentColor"
-        d="M16 3c2.5 3.2 4 6.4 4 9.2 2.8-.6 5.4-.4 8 .8-2.2 1.4-4.7 2-7.4 1.9 1.5 1.2 2.6 2.9 3.1 5-2.6.7-5.3.5-7.7-.5-2.4 1-5.1 1.2-7.7.5.5-2.1 1.6-3.8 3.1-5-2.7.1-5.2-.5-7.4-1.9 2.6-1.2 5.2-1.4 8-.8 0-2.8 1.5-6 4-9.2z"
-      />
-      <ellipse cx="16" cy="27" rx="9" ry="1.6" fill="currentColor" opacity=".35" />
-    </svg>
-  )
-}
 
 export default function Header() {
   const { t, i18n } = useTranslation()
@@ -153,7 +142,7 @@ export default function Header() {
       <div className="section-pad flex h-16 items-center justify-between gap-2 sm:gap-3">
         {/* Brand Logo */}
         <Link to={brandHref} title={company.name} className="flex min-w-0 items-center gap-2 transition hover:opacity-95">
-          <LotusMark />
+          <LotusMark className="h-8 w-8 shrink-0 text-gold-600" />
           <span className="min-w-0 leading-none">
             <span className="font-display block truncate text-base font-bold text-navy-900 sm:text-xl">
               {company.name}
