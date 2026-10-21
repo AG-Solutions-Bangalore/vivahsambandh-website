@@ -1265,7 +1265,18 @@
       "termsModalTitle": "नियम एवं शर्तें",
       "termsModalIntro": "कृपया पंजीकरण और मैचमेकिंग सहायता को नियंत्रित करने वाले दिशानिर्देशों और नीतियों की समीक्षा करें:",
       "termsModalAccept": "मैं समझता हूँ और स्वीकार करता हूँ",
-      "termsModalClose": "बंद करें"
+      "termsModalClose": "बंद करें",
+      "navLabel": "पंजीकरण फ़ॉर्म अनुभाग",
+      "navPersonal": "व्यक्तिगत",
+      "navPreferences": "पसंद",
+      "navFamily": "परिवार",
+      "navPhotos": "तस्वीरें",
+      "navSubmit": "जमा करें",
+      "part5Title": "घोषणा और सबमिशन",
+      "part5Subtitle": "समुदाय दिशानिर्देश स्वीकार करें, फिर अपना जीवन परिचय स्वयंसेवा समिति की जाँच के लिए भेजें।",
+      "maritalHistoryHeading": "वैवाहिक इतिहास",
+      "addressHeading": "पता और आवास",
+      "requiredHint": "आवश्यक फ़ील्ड को तारा (*) से चिह्नित किया गया है"
     }
   }
 }

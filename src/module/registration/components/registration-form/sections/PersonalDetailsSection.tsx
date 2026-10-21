@@ -13,8 +13,11 @@ import { Textarea } from '@/components/ui/textarea'
 import { Field } from '@/components/ui/field'
 import { FormSelect } from '@/components/ui/form-select'
 import { OptionPills } from '@/components/ui/option-pills'
+import { Users, HeartHandshake, MapPin, Phone, Check, Plus } from 'lucide-react'
 import { cn } from 'cn'
 import { useRegistrationForm } from '../context'
+import FormSection from '../FormSection'
+import { REGISTRATION_STEP_IDS } from '../steps'
 
 export default function PersonalDetailsSection() {
   const { t } = useTranslation()
@@ -48,28 +51,25 @@ export default function PersonalDetailsSection() {
   // Dynamic CSS helper based on field validation status (shadcn-aligned brand style)
   const inputCls = (key: string) =>
     cn(
-      'w-full rounded-full border px-4 py-2.5 text-sm text-navy-900 transition outline-none focus-visible:ring-2',
+      'h-11 w-full rounded-full border px-4 py-2 text-base md:text-sm font-medium text-navy-900 shadow-xs transition outline-none focus-visible:ring-2',
+      'placeholder:font-normal placeholder:text-ink-400',
       fieldErrors[key]
         ? 'border-maroon-500 bg-maroon-50/30 focus-visible:border-maroon-600 focus-visible:ring-maroon-500/20'
-        : 'border-cream-300 bg-cream-50/70 hover:bg-white focus-visible:border-gold-500 focus-visible:bg-white focus-visible:ring-gold-500/20',
+        : 'border-cream-300 bg-cream-50/70 hover:bg-white hover:border-gold-500/60 focus-visible:border-gold-500 focus-visible:bg-white focus-visible:ring-gold-500/20',
     )
 
   return (
-    <div className="rounded-[1.5rem] border border-gold-500/30 bg-white p-6 sm:p-8 lg:p-10 shadow-card">
-      <div className="mb-6 border-b border-cream-200 pb-4">
-        <span className="eyebrow">{t('registrationPage.form.part1Badge', 'Part 1')}</span>
-        <h2 className="text-xl sm:text-2xl font-bold font-display text-navy-900">
-          {t('registrationPage.form.part1Title', 'Personal & Family Details')}
-        </h2>
-        <p className="mt-1 text-xs text-ink-500">
-          {t(
-            'registrationPage.form.part1Subtitle',
-            'Basic identification, educational qualifications, background, and family records.',
-          )}
-        </p>
-      </div>
-
-      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+    <FormSection
+      id={REGISTRATION_STEP_IDS.personal}
+      step={1}
+      badge={t('registrationPage.form.part1Badge', 'Part 1')}
+      title={t('registrationPage.form.part1Title', 'Personal & Family Details')}
+      subtitle={t(
+        'registrationPage.form.part1Subtitle',
+        'Basic identification, educational qualifications, background, and family records.',
+      )}
+    >
+      <div className="grid grid-cols-1 gap-x-5 gap-y-6 sm:grid-cols-2 lg:grid-cols-4">
         {/* Full Name */}
         <Field id={`${baseId}-name`} label={t('registrationPage.form.nameLabel', 'Full Name')} required error={fieldErrors.name}>
           <Input
@@ -89,8 +89,8 @@ export default function PersonalDetailsSection() {
 
         {/* Gender (radio pill selection) */}
         <div id={`${baseId}-gender`}>
-          <span className="mb-1.5 block text-xs font-bold text-navy-900">
-            {t('registrationPage.form.genderLabel', 'Gender')} <span className="text-maroon-600">*</span>
+          <span className="mb-2 block text-[13px] font-semibold leading-tight tracking-tight text-navy-900">
+            {t('registrationPage.form.genderLabel', 'Gender')} <span className="text-maroon-600" aria-hidden="true">*</span>
           </span>
           <OptionPills
             id={`${baseId}-gender-pills`}
@@ -105,28 +105,26 @@ export default function PersonalDetailsSection() {
             ariaLabel={t('registrationPage.form.genderLabel', 'Gender')}
           />
           {fieldErrors.gender && (
-            <p role="alert" id={`${baseId}-gender-error`} className="mt-1.5 text-[11px] font-semibold text-maroon-600">
+            <p role="alert" id={`${baseId}-gender-error`} className="mt-1.5 flex items-start gap-1.5 text-xs font-semibold text-maroon-600">
               {fieldErrors.gender}
             </p>
           )}
         </div>
 
         {/* Date of Birth with shadcn-styled DatePicker */}
-        <div id={`${baseId}-dob`}>
-          <Field id={`${baseId}-dob-day`} label={t('registrationPage.form.dobLabel', 'Date of Birth')} required error={fieldErrors.date_of_birth}>
-            <DatePicker
-              id={`${baseId}-dob`}
-              value={form.date_of_birth}
-              onChange={(dateStr) => {
-                setForm((prev) => ({ ...prev, date_of_birth: dateStr }))
-                clearFieldError('date_of_birth')
-              }}
-              error={Boolean(fieldErrors.date_of_birth)}
-              placeholder={t('registrationPage.form.dobPlaceholder', 'Select Date of Birth')}
-              minAge={form.gender === 'Male' ? 21 : 18}
-            />
-          </Field>
-        </div>
+        <Field id={`${baseId}-dob`} label={t('registrationPage.form.dobLabel', 'Date of Birth')} required error={fieldErrors.date_of_birth}>
+          <DatePicker
+            id={`${baseId}-dob`}
+            value={form.date_of_birth}
+            onChange={(dateStr) => {
+              setForm((prev) => ({ ...prev, date_of_birth: dateStr }))
+              clearFieldError('date_of_birth')
+            }}
+            error={Boolean(fieldErrors.date_of_birth)}
+            placeholder={t('registrationPage.form.dobPlaceholder', 'Select Date of Birth')}
+            minAge={form.gender === 'Male' ? 21 : 18}
+          />
+        </Field>
 
         {/* Time of Birth with native TimePicker */}
         <div id={`${baseId}-birthtime`}>
@@ -206,9 +204,9 @@ export default function PersonalDetailsSection() {
         {isEmployed && (
           <>
             <div className="animate-fade-in">
-              <Field id={`${baseId}-company`} label={t('registrationPage.form.companyNameLabel', 'Company Name')} error={fieldErrors.company_name}>
+              <Field id={`${baseId}-company-name`} label={t('registrationPage.form.companyNameLabel', 'Company Name')} error={fieldErrors.company_name}>
                 <Input
-                  id={`${baseId}-company`}
+                  id={`${baseId}-company-name`}
                   type="text"
                   name="company_name"
                   maxLength={45}
@@ -243,9 +241,9 @@ export default function PersonalDetailsSection() {
         {isBusiness && (
           <>
             <div className="animate-fade-in">
-              <Field id={`${baseId}-biz-name`} label={t('registrationPage.form.bizNameLabel', 'Business Name')} error={fieldErrors.company_name}>
+              <Field id={`${baseId}-company-name`} label={t('registrationPage.form.bizNameLabel', 'Business Name')} error={fieldErrors.company_name}>
                 <Input
-                  id={`${baseId}-biz-name`}
+                  id={`${baseId}-company-name`}
                   type="text"
                   name="company_name"
                   maxLength={45}
@@ -259,9 +257,9 @@ export default function PersonalDetailsSection() {
               </Field>
             </div>
             <div className="animate-fade-in">
-              <Field id={`${baseId}-biz-type`} label={t('registrationPage.form.bizTypeLabel', 'Business Type')} error={fieldErrors.company_type}>
+              <Field id={`${baseId}-company-type`} label={t('registrationPage.form.bizTypeLabel', 'Business Type')} error={fieldErrors.company_type}>
                 <Input
-                  id={`${baseId}-biz-type`}
+                  id={`${baseId}-company-type`}
                   type="text"
                   name="company_type"
                   maxLength={45}
@@ -279,9 +277,9 @@ export default function PersonalDetailsSection() {
 
         {isOtherProfession && (
           <div className="animate-fade-in">
-            <Field id={`${baseId}-other-prof`} label={t('registrationPage.form.otherProfLabel', 'Other Profession')} error={fieldErrors.company_name}>
+            <Field id={`${baseId}-company-name`} label={t('registrationPage.form.otherProfLabel', 'Other Profession')} error={fieldErrors.company_name}>
               <Input
-                id={`${baseId}-other-prof`}
+                id={`${baseId}-company-name`}
                 type="text"
                 name="company_name"
                 maxLength={45}
@@ -356,10 +354,10 @@ export default function PersonalDetailsSection() {
 
         {/* Height (Feet & Inches) */}
         <div>
-          <span className="mb-1.5 block text-xs font-bold text-navy-900">
-            {t('registrationPage.form.heightLabel', 'Height')} <span className="text-maroon-600">*</span>
+          <span className="mb-2 block text-[13px] font-semibold leading-tight tracking-tight text-navy-900">
+            {t('registrationPage.form.heightLabel', 'Height')} <span className="text-maroon-600" aria-hidden="true">*</span>
           </span>
-          <div className="w-full grid grid-cols-2 gap-2">
+          <div className="w-full grid grid-cols-2 gap-2.5">
             <FormSelect
               id={`${baseId}-height-feet`}
               value={form.height_feet}
@@ -373,6 +371,7 @@ export default function PersonalDetailsSection() {
               placeholder={t('registrationPage.form.heightFeet', 'Feet')}
               error={Boolean(fieldErrors.height_feet)}
               aria-invalid={Boolean(fieldErrors.height_feet)}
+              className="pl-3 pr-7 text-[13px] md:text-[13px]"
             />
             <FormSelect
               id={`${baseId}-height-inch`}
@@ -385,10 +384,11 @@ export default function PersonalDetailsSection() {
               placeholder={t('registrationPage.form.heightInch', 'Inch')}
               error={Boolean(fieldErrors.height_inch)}
               aria-invalid={Boolean(fieldErrors.height_inch)}
+              className="pl-3 pr-7 text-[13px] md:text-[13px]"
             />
           </div>
           {(fieldErrors.height_feet || fieldErrors.height_inch) && (
-            <p role="alert" className="mt-1.5 flex items-center gap-1.5 text-xs font-semibold text-maroon-600">
+            <p role="alert" className="mt-1.5 flex items-start gap-1.5 text-xs font-semibold text-maroon-600">
               {fieldErrors.height_feet || fieldErrors.height_inch}
             </p>
           )}
@@ -430,16 +430,21 @@ export default function PersonalDetailsSection() {
       </div>
 
       {/* Community Preferences multi-select chips */}
-      <div id={`${baseId}-comm-prefs`} className="mt-5 border-t border-cream-200 pt-5">
-        <div className="mb-2 flex items-center justify-between">
-          <span className="block text-xs font-bold text-navy-900">
-            {t('registrationPage.form.commPrefsLabel', 'Community Preferences (Select eligible communities)')} <span className="text-maroon-600">*</span>
+      <div
+        id={`${baseId}-comm-prefs`}
+        className="mt-6 rounded-2xl border border-cream-200 bg-cream-50/60 p-4 sm:p-5"
+      >
+        <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+          <span className="flex items-center gap-2 text-[13px] font-semibold leading-tight tracking-tight text-navy-900">
+            <Users className="size-4 shrink-0 text-gold-600" aria-hidden="true" />
+            {t('registrationPage.form.commPrefsLabel', 'Community Preferences (Select eligible communities)')}
+            <span className="text-maroon-600" aria-hidden="true">*</span>
           </span>
           {communityOptions.length > 0 && (
             <button
               type="button"
               onClick={selectAllCommunities}
-              className="text-xs font-semibold text-gold-700 hover:text-gold-900 underline transition cursor-pointer"
+              className="shrink-0 cursor-pointer rounded-full border border-gold-500/40 bg-white px-3 py-1 text-[11px] font-semibold text-gold-700 transition hover:border-gold-500 hover:bg-gold-50"
             >
               {communityOptions.every((c) => form.marry_in_community.includes(c.value))
                 ? t('registrationPage.form.deselectAll', 'Deselect All')
@@ -460,29 +465,38 @@ export default function PersonalDetailsSection() {
                   aria-pressed={selected}
                   onClick={() => toggleCommunityPreference(comm.value)}
                   className={cn(
-                    'rounded-full px-4 py-2 text-xs font-semibold transition outline-none active:scale-95 cursor-pointer',
+                    'flex items-center gap-1.5 rounded-full border px-3.5 py-2 text-xs font-semibold transition outline-none active:scale-95 cursor-pointer',
                     'focus-visible:ring-2 focus-visible:ring-gold-500/40',
                     selected
-                      ? 'bg-navy-900 text-white shadow-xs'
-                      : 'border border-cream-300 bg-cream-50 text-navy-800 hover:border-gold-500/60 hover:bg-gold-50',
+                      ? 'border-navy-900 bg-navy-900 text-white shadow-xs'
+                      : 'border-cream-300 bg-white text-navy-800 hover:border-gold-500/60 hover:bg-gold-50',
                   )}
                 >
-                  {selected ? '✓ ' : '+ '}{comm.label}
+                  {selected ? (
+                    <Check className="size-3.5 shrink-0" aria-hidden="true" />
+                  ) : (
+                    <Plus className="size-3.5 shrink-0" aria-hidden="true" />
+                  )}
+                  {comm.label}
                 </button>
               )
             })
           )}
         </div>
         {fieldErrors.marry_in_community && (
-          <p role="alert" className="mt-1.5 flex items-center gap-1.5 text-xs font-semibold text-maroon-600">
+          <p role="alert" className="mt-2.5 flex items-start gap-1.5 text-xs font-semibold text-maroon-600">
             {fieldErrors.marry_in_community}
           </p>
         )}
       </div>
 
       {/* Prior Marriage Condition */}
-      <div className="mt-6 border-t border-cream-200 pt-5">
-        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="mt-6 border-t border-cream-200 pt-6">
+        <h3 className="mb-4 flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-gold-700">
+          <HeartHandshake className="size-4 shrink-0" aria-hidden="true" />
+          {t('registrationPage.form.maritalHistoryHeading', 'Marital History')}
+        </h3>
+        <div className="grid grid-cols-1 gap-x-5 gap-y-6 sm:grid-cols-2 lg:grid-cols-3">
           <Field
             id={`${baseId}-prior-marriage`}
             label={t('registrationPage.form.marriedBeforeLabel', 'Have you been married before?')}
@@ -580,12 +594,13 @@ export default function PersonalDetailsSection() {
       </div>
 
       {/* Parents and Siblings row */}
-      <div className="mt-6 border-t border-cream-200 pt-5">
-        <h3 className="mb-4 text-xs font-bold uppercase tracking-wider text-gold-700">
+      <div className="mt-6 border-t border-cream-200 pt-6">
+        <h3 className="mb-4 flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-gold-700">
+          <Users className="size-4 shrink-0" aria-hidden="true" />
           {t('registrationPage.form.parentsSiblingsHeading', 'Parents & Siblings')}
         </h3>
         {/* Parents Row */}
-        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+        <div className="grid grid-cols-1 gap-x-5 gap-y-6 sm:grid-cols-2">
           <Field id={`${baseId}-father`} label={t('registrationPage.form.fatherLabel', "Father's Name")} required error={fieldErrors.father_name}>
             <Input
               id={`${baseId}-father`}
@@ -618,7 +633,7 @@ export default function PersonalDetailsSection() {
         </div>
 
         {/* Siblings Row */}
-        <div className="mt-5 grid grid-cols-2 gap-4 sm:grid-cols-4">
+        <div className="mt-6 grid grid-cols-2 gap-x-4 gap-y-6 sm:grid-cols-4">
           <Field id={`${baseId}-bro-married`} label={t('registrationPage.form.broMarriedLabel', 'Brothers (Married)')} required error={fieldErrors.brother_married}>
             <FormSelect
               id={`${baseId}-bro-married`}
@@ -662,8 +677,12 @@ export default function PersonalDetailsSection() {
       </div>
 
       {/* Residential Address, House type, Years */}
-      <div className="mt-6 border-t border-cream-200 pt-5">
-        <div className="grid grid-cols-1 gap-5 lg:grid-cols-3">
+      <div className="mt-6 border-t border-cream-200 pt-6">
+        <h3 className="mb-4 flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-gold-700">
+          <MapPin className="size-4 shrink-0" aria-hidden="true" />
+          {t('registrationPage.form.addressHeading', 'Address & Housing')}
+        </h3>
+        <div className="grid grid-cols-1 gap-x-5 gap-y-6 lg:grid-cols-3">
           <div className="lg:col-span-2">
             <Field
               id={`${baseId}-address`}
@@ -689,8 +708,8 @@ export default function PersonalDetailsSection() {
 
           <div className="space-y-4">
             <div id={`${baseId}-house-type-group`}>
-              <span className="mb-1.5 block text-xs font-bold text-navy-900">
-                {t('registrationPage.form.houseTypeLabel', 'House Type')} <span className="text-maroon-600">*</span>
+              <span className="mb-2 block text-[13px] font-semibold leading-tight tracking-tight text-navy-900">
+                {t('registrationPage.form.houseTypeLabel', 'House Type')} <span className="text-maroon-600" aria-hidden="true">*</span>
               </span>
               <OptionPills
                 id={`${baseId}-house-type-pills`}
@@ -725,13 +744,14 @@ export default function PersonalDetailsSection() {
       </div>
 
       {/* Current City & Contacts */}
-      <div className="mt-6 border-t border-cream-200 pt-5">
-        <h3 className="mb-4 text-xs font-bold uppercase tracking-wider text-gold-700">
+      <div className="mt-6 border-t border-cream-200 pt-6">
+        <h3 className="mb-4 flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-gold-700">
+          <Phone className="size-4 shrink-0" aria-hidden="true" />
           {t('registrationPage.form.locationHeading', 'Location & Contact Details')}
         </h3>
 
         {/* Primary Location & Main Contact */}
-        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-x-5 gap-y-6 sm:grid-cols-2 lg:grid-cols-3">
           <Field
             id={`${baseId}-current-city`}
             label={t('registrationPage.form.cityLabel', 'Present City / Parents Location')}
@@ -811,7 +831,7 @@ export default function PersonalDetailsSection() {
         </div>
 
         {/* Alternate Contact */}
-        <div className="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2">
+        <div className="mt-6 grid grid-cols-1 gap-x-5 gap-y-6 sm:grid-cols-2">
           <Field
             id={`${baseId}-alt-name`}
             label={t('registrationPage.form.altContactNameLabel', 'Alternate Contact Person')}
@@ -858,6 +878,6 @@ export default function PersonalDetailsSection() {
           </Field>
         </div>
       </div>
-    </div>
+    </FormSection>
   )
 }

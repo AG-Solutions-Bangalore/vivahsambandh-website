@@ -8,6 +8,8 @@ import { Field } from '@/components/ui/field'
 import { cn } from 'cn'
 import { useTranslation } from 'react-i18next'
 import { useRegistrationForm } from '../context'
+import FormSection from '../FormSection'
+import { REGISTRATION_STEP_IDS } from '../steps'
 
 export default function FamilySummarySection() {
   const { t } = useTranslation()
@@ -15,24 +17,21 @@ export default function FamilySummarySection() {
 
   const inputCls = (key: string) =>
     cn(
-      'w-full rounded-2xl border px-4 py-2.5 text-sm text-navy-900 transition outline-none focus-visible:ring-2',
+      'w-full rounded-2xl border px-4 py-3 text-base md:text-sm font-medium text-navy-900 shadow-xs transition outline-none focus-visible:ring-2',
+      'placeholder:font-normal placeholder:text-ink-400',
       fieldErrors[key]
         ? 'border-maroon-500 bg-maroon-50/30 focus-visible:border-maroon-600 focus-visible:ring-maroon-500/20'
-        : 'border-cream-300 bg-cream-50/70 hover:bg-white focus-visible:border-gold-500 focus-visible:bg-white focus-visible:ring-gold-500/20',
+        : 'border-cream-300 bg-cream-50/70 hover:bg-white hover:border-gold-500/60 focus-visible:border-gold-500 focus-visible:bg-white focus-visible:ring-gold-500/20',
     )
 
   return (
-    <div className="rounded-[1.5rem] border border-gold-500/30 bg-white p-6 sm:p-8 lg:p-10 shadow-card">
-      <div className="mb-6 border-b border-cream-200 pb-4">
-        <span className="eyebrow">{t('registrationPage.form.part3Badge', 'Part 3')}</span>
-        <h2 className="text-xl sm:text-2xl font-bold font-display text-navy-900">
-          {t('registrationPage.form.part3Title', 'Family History & Summary')}
-        </h2>
-        <p className="mt-1 text-xs text-ink-500">
-          {t('registrationPage.form.part3Subtitle', "Briefly describe parents' occupation, values, family background, and any aspirations.")}
-        </p>
-      </div>
-
+    <FormSection
+      id={REGISTRATION_STEP_IDS.family}
+      step={3}
+      badge={t('registrationPage.form.part3Badge', 'Part 3')}
+      title={t('registrationPage.form.part3Title', 'Family History & Summary')}
+      subtitle={t('registrationPage.form.part3Subtitle', "Briefly describe parents' occupation, values, family background, and any aspirations.")}
+    >
       <div>
         <Field
           id={`${baseId}-summary`}
@@ -55,6 +54,6 @@ export default function FamilySummarySection() {
           />
         </Field>
       </div>
-    </div>
+    </FormSection>
   )
 }

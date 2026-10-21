@@ -44,7 +44,7 @@ export function OptionPills({
       aria-label={ariaLabel ?? name}
       aria-invalid={error}
       className={cn(
-        'relative h-8 w-full flex items-center gap-1.5 rounded-full border p-1 transition',
+        'relative h-11 w-full flex items-center gap-1.5 rounded-full border p-1 transition shadow-xs',
         error
           ? 'border-maroon-500 bg-maroon-50/20'
           : 'border-cream-300 bg-cream-50/70',
@@ -77,7 +77,7 @@ export function OptionPills({
               }
             }}
             className={cn(
-              'relative z-10 h-full flex-1 rounded-full px-4 py-1 text-xs font-bold whitespace-nowrap cursor-pointer transition-colors duration-200 outline-none active:scale-[0.98]',
+              'relative z-10 h-full flex-1 rounded-full px-4 py-1 text-sm font-bold whitespace-nowrap cursor-pointer transition-colors duration-200 outline-none active:scale-[0.98]',
               'focus-visible:ring-2 focus-visible:ring-gold-500/40',
               selected ? 'text-white' : 'text-navy-900 hover:text-gold-800',
             )}

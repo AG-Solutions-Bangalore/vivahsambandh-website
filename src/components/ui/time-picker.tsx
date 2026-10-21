@@ -84,7 +84,7 @@ export function TimePicker({
   return (
     <div className={cn('relative flex items-center w-full min-w-0', className)}>
       <Clock
-        className="pointer-events-none absolute left-3 size-4 text-gold-600 shrink-0"
+        className="pointer-events-none absolute left-3.5 size-4 text-gold-600 shrink-0"
         aria-hidden="true"
       />
       <input
@@ -97,10 +97,10 @@ export function TimePicker({
         required={required}
         aria-invalid={error}
         className={cn(
-          'h-8 w-full min-w-0 rounded-full border pl-9 pr-3 text-xs sm:text-sm font-medium text-navy-900 transition duration-200 outline-none cursor-pointer select-none focus-visible:ring-2',
+          'h-11 w-full min-w-0 rounded-full border pl-11 pr-10 text-base md:text-sm font-medium text-navy-900 transition duration-200 outline-none cursor-pointer select-none focus-visible:ring-2 shadow-xs',
           error
             ? 'border-maroon-500 bg-maroon-50/30 text-navy-900 focus:border-maroon-600 focus:ring-maroon-500/20'
-            : 'border-cream-300 bg-cream-50/70 text-navy-900 focus:border-gold-500 focus:bg-white focus:ring-gold-500/20',
+            : 'border-cream-300 bg-cream-50/70 text-navy-900 hover:bg-white hover:border-gold-500/60 focus:border-gold-500 focus:bg-white focus:ring-gold-500/20',
           '[&::-webkit-calendar-picker-indicator]:cursor-pointer [&::-webkit-calendar-picker-indicator]:opacity-75 hover:[&::-webkit-calendar-picker-indicator]:opacity-100',
         )}
       />

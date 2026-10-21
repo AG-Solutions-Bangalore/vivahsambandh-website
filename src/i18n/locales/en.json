@@ -1265,7 +1265,18 @@
       "termsModalTitle": "Terms & Conditions",
       "termsModalIntro": "Please review the guidelines and policies governing the registration and matchmaking assistance:",
       "termsModalAccept": "I Understand & Accept",
-      "termsModalClose": "Close"
+      "termsModalClose": "Close",
+      "navLabel": "Registration form sections",
+      "navPersonal": "Personal",
+      "navPreferences": "Preferences",
+      "navFamily": "Family",
+      "navPhotos": "Photos",
+      "navSubmit": "Submit",
+      "part5Title": "Declaration & Submit",
+      "part5Subtitle": "Accept the community guidelines, then send your bio-data to the volunteer committee for verification.",
+      "maritalHistoryHeading": "Marital History",
+      "addressHeading": "Address & Housing",
+      "requiredHint": "Required fields are marked with an asterisk"
     }
   }
 }

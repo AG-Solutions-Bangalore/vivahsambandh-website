@@ -20,6 +20,7 @@ import {
   RegistrationFormProvider,
   useRegistrationForm,
 } from './registration-form/context'
+import FormStepNav from './registration-form/FormStepNav'
 import SubmitResultBanner from './registration-form/sections/SubmitResultBanner'
 import PersonalDetailsSection from './registration-form/sections/PersonalDetailsSection'
 import PartnerPreferencesSection from './registration-form/sections/PartnerPreferencesSection'
@@ -49,13 +50,13 @@ function RegistrationFormInner() {
   if (submitResult?.type === 'success') {
     return (
       <TooltipProvider delay={150}>
-        <div className="mx-auto max-w-5xl min-h-[70vh] flex flex-col items-center justify-center py-20 text-center">
+        <div className="mx-auto flex min-h-[70vh] max-w-5xl flex-col items-center justify-center py-20 text-center">
           <SubmitResultBanner />
 
           <Button
             type="button"
             onClick={resetRegistration}
-            className="mt-8 px-8 py-3 text-sm font-bold bg-navy-900 text-white hover:bg-navy-800 shadow-md"
+            className="mt-8 rounded-full bg-navy-900 px-8 py-3 text-sm font-bold text-white shadow-md hover:bg-navy-800"
           >
             {t('registrationPage.form.submitOtherResponse', 'Submit other response')}
           </Button>
@@ -70,7 +71,10 @@ function RegistrationFormInner() {
         {/* Success / Error notification */}
         <SubmitResultBanner />
 
-        <form noValidate onSubmit={handleSubmit} className="space-y-10">
+        {/* Sticky jump-navigation between the five parts */}
+        <FormStepNav />
+
+        <form noValidate onSubmit={handleSubmit} className="space-y-6 sm:space-y-8">
           <PersonalDetailsSection />
           <PartnerPreferencesSection />
           <FamilySummarySection />

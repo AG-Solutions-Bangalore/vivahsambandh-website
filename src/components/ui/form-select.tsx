@@ -84,20 +84,20 @@ export function FormSelect({
         id={id}
         aria-invalid={ariaInvalid ?? error}
         className={cn(
-          'h-8 w-full rounded-full border px-3.5 py-1 text-sm cursor-pointer transition duration-200 focus:outline-none focus-visible:ring-2',
+          'h-11! w-full rounded-full border pl-4 pr-8 py-2 text-base md:text-sm font-medium cursor-pointer transition duration-200 focus:outline-none focus-visible:ring-2',
           error
             ? 'border-maroon-500 bg-maroon-50/30 text-navy-900 focus-visible:border-maroon-600 focus-visible:ring-maroon-500/20'
-            : 'border-cream-300 bg-cream-50/70 text-navy-900 hover:bg-white focus-visible:border-gold-500 focus-visible:ring-gold-500/20 data-[placeholder]:text-ink-400',
+            : 'border-cream-300 bg-cream-50/70 text-navy-900 shadow-xs hover:bg-white hover:border-gold-500/60 focus-visible:border-gold-500 focus-visible:bg-white focus-visible:ring-gold-500/20 data-[placeholder]:text-ink-400',
           className,
         )}
       >
         {loading ? (
-          <span className="flex flex-1 items-center gap-2 text-left text-ink-400">
+          <span className="flex flex-1 items-center gap-2 text-left font-normal text-ink-400">
             <Loader2 className="size-4 animate-spin" aria-hidden />
             {loadingText}
           </span>
         ) : selectedLabel ? (
-          <span className="flex flex-1 truncate text-left">{selectedLabel}</span>
+          <span className="flex flex-1 truncate text-left font-medium">{selectedLabel}</span>
         ) : (
           <SelectValue
             placeholder={
