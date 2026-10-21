@@ -10,8 +10,11 @@
 import {
   Ban,
   Bell,
+  FileText,
+  HelpCircle,
   LayoutDashboard,
   MessageSquare,
+  Quote,
   ShieldCheck,
   UserCheck,
   UserPlus,
@@ -83,6 +86,27 @@ export const PANEL_NAV_ITEMS: PanelNavItem[] = [
     icon: Bell,
     description:
       'Create and broadcast push alerts, announcements, and policy updates to Users or Admins.',
+  },
+  {
+    label: 'Blog Management',
+    to: '/panel/blogs',
+    icon: FileText,
+    description:
+      'Create, edit and publish articles, control home page and featured placement, and manage article metadata.',
+  },
+  {
+    label: 'FAQs',
+    to: '/panel/faqs',
+    icon: HelpCircle,
+    description:
+      'Manage FAQ groups, target audiences, and structured question-and-answer accordions.',
+  },
+  {
+    label: 'Testimonials',
+    to: '/panel/testimonials',
+    icon: Quote,
+    description:
+      'Manage matrimonial success reviews, member feedback quotes, and client ratings.',
   },
 ]
 

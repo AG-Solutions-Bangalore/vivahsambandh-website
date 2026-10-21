@@ -12,7 +12,16 @@
  */
 
 import path from 'node:path';
-import { readdirSync, readFileSync, statSync, writeFileSync } from 'node:fs';
+import {
+  copyFileSync,
+  existsSync,
+  mkdirSync,
+  readdirSync,
+  readFileSync,
+  rmSync,
+  statSync,
+  writeFileSync,
+} from 'node:fs';
 import { join } from 'node:path';
 import { brotliCompressSync, constants } from 'node:zlib';
 import http from 'node:http';
@@ -170,6 +179,195 @@ function brotliStatic(threshold = 1024): Plugin {
   };
 }
 
+/**
+ * Serves the CKEditor 4 distribution.
+ *
+ * CKEditor 4 is a classic script: it mounts over a `<textarea>` and pulls its
+ * own skins, languages and plugins from a base path at runtime, so it cannot
+ * be bundled. This plugin exposes `node_modules/ckeditor4` at `/ckeditor/`
+ * during dev and stages the subset the editor actually needs into
+ * `dist/ckeditor` on build.
+ */
+function ckeditorAssets(): Plugin {
+  const rootDir = import.meta.dirname ?? '.';
+  const sourceDir = path.resolve(rootDir, 'node_modules/ckeditor4');
+  const targetDir = path.resolve(rootDir, 'dist/ckeditor');
+
+  /** Root files the editor loads by name. */
+  const rootFiles = ['ckeditor.js', 'config.js', 'styles.js', 'contents.css', 'LICENSE.md'];
+
+  /** Plugins the editor loads on demand (see `EXTRA_PLUGINS` in the editor). */
+  const pluginDirs = [
+    'font',
+    'colordialog',
+    'colorbutton',
+    'showblocks',
+    'justify',
+    'smiley',
+    'pagebreak',
+    'iframe',
+    'codesnippet',
+    'preview',
+  ];
+
+  /**
+   * Collects the plugins a set of plugins depends on. CKEditor stores the
+   * dependency list in the plugin file itself (`requires:"a,b"`); anything
+   * that also ships as a directory has to be staged next to its dependant.
+   */
+  const resolvePluginClosure = (names: string[]): string[] => {
+    const collected = new Set<string>();
+
+    const visit = (name: string): void => {
+      if (collected.has(name)) return;
+      const entry = join(sourceDir, 'plugins', name, 'plugin.js');
+      if (!existsSync(entry)) return;
+      collected.add(name);
+
+      const source = readFileSync(entry, 'utf8');
+      const requires = source.match(/requires\s*:\s*"([^"]*)"/);
+      if (!requires) return;
+      for (const dependency of requires[1].split(',')) {
+        const trimmed = dependency.trim();
+        if (!trimmed) continue;
+        if (existsSync(join(sourceDir, 'plugins', trimmed))) visit(trimmed);
+      }
+    };
+
+    names.forEach(visit);
+    return [...collected];
+  };
+
+  /** The only skin the panel uses. */
+  const skinDirs = ['moono-lisa'];
+
+  /** The editor runs in English; every other locale is dead weight. */
+  const locales = ['en'];
+
+  const contentType = (file: string): string => {
+    switch (path.extname(file).toLowerCase()) {
+      case '.js':
+        return 'application/javascript; charset=utf-8';
+      case '.css':
+        return 'text/css; charset=utf-8';
+      case '.html':
+      case '.htm':
+        return 'text/html; charset=utf-8';
+      case '.json':
+        return 'application/json; charset=utf-8';
+      case '.png':
+        return 'image/png';
+      case '.gif':
+        return 'image/gif';
+      case '.jpg':
+      case '.jpeg':
+        return 'image/jpeg';
+      case '.svg':
+        return 'image/svg+xml';
+      case '.ico':
+        return 'image/x-icon';
+      case '.woff':
+        return 'font/woff';
+      case '.woff2':
+        return 'font/woff2';
+      case '.ttf':
+        return 'font/ttf';
+      case '.eot':
+        return 'application/vnd.ms-fontobject';
+      default:
+        return 'application/octet-stream';
+    }
+  };
+
+  const copyFile = (from: string, to: string): void => {
+    mkdirSync(path.dirname(to), { recursive: true });
+    copyFileSync(from, to);
+  };
+
+  const copyTree = (from: string, to: string, skip: (name: string) => boolean = () => false): void => {
+    mkdirSync(to, { recursive: true });
+    for (const entry of readdirSync(from, { withFileTypes: true })) {
+      if (skip(entry.name)) continue;
+      const source = join(from, entry.name);
+      const destination = join(to, entry.name);
+      if (entry.isDirectory()) {
+        copyTree(source, destination, skip);
+      } else {
+        copyFileSync(source, destination);
+      }
+    }
+  };
+
+  return {
+    name: 'ckeditor-assets',
+    configureServer(server) {
+      server.middlewares.use('/ckeditor', (req, res, next) => {
+        if (!req.url) return next();
+        const relative = decodeURIComponent(req.url.split('?')[0]);
+        const requested = path.resolve(join(sourceDir, relative));
+        // Block path traversal out of the package directory.
+        if (requested !== sourceDir && !requested.startsWith(sourceDir + path.sep)) {
+          return next();
+        }
+        if (!existsSync(requested) || !statSync(requested).isFile()) {
+          // Answer with a real 404 instead of letting Vite's SPA fallback
+          // serve index.html. CKEditor probes `<plugin>/<plugin>.js` before
+          // `<plugin>/plugin.js` and treats any 2xx as a loaded plugin — an
+          // HTML body would register nothing and break the whole toolbar.
+          res.statusCode = 404;
+          res.setHeader('Content-Type', 'text/plain; charset=utf-8');
+          res.end('Not found');
+          return;
+        }
+        res.setHeader('Content-Type', contentType(requested));
+        res.setHeader('Cache-Control', 'no-cache');
+        res.end(readFileSync(requested));
+      });
+    },
+    closeBundle() {
+      try {
+        rmSync(targetDir, { recursive: true, force: true, maxRetries: 5, retryDelay: 200 });
+        mkdirSync(targetDir, { recursive: true });
+
+        for (const file of rootFiles) {
+          const source = join(sourceDir, file);
+          if (existsSync(source)) copyFile(source, join(targetDir, file));
+        }
+
+        for (const locale of locales) {
+          const source = join(sourceDir, 'lang', `${locale}.js`);
+          if (existsSync(source)) copyFile(source, join(targetDir, 'lang', `${locale}.js`));
+        }
+
+        for (const skin of skinDirs) {
+          const source = join(sourceDir, 'skins', skin);
+          if (existsSync(source)) copyTree(source, join(targetDir, 'skins', skin));
+        }
+
+        for (const plugin of resolvePluginClosure(pluginDirs)) {
+          const source = join(sourceDir, 'plugins', plugin);
+          if (!existsSync(source)) continue;
+          const destination = join(targetDir, 'plugins', plugin);
+          // Copy the plugin itself, but only the English strings.
+          copyTree(source, destination, (name) => name === 'lang');
+          for (const locale of locales) {
+            const lang = join(source, 'lang', `${locale}.js`);
+            if (existsSync(lang)) copyFile(lang, join(destination, 'lang', `${locale}.js`));
+          }
+          // CKEditor probes `<plugin>/<plugin>.js` before `<plugin>/plugin.js`.
+          // Ship both names so the first probe succeeds on any host — a
+          // missing file that the host answers with the SPA shell would be
+          // read as "plugin loaded" and silently break the toolbar.
+          const entry = join(source, 'plugin.js');
+          if (existsSync(entry)) copyFile(entry, join(destination, `${plugin}.js`));
+        }
+      } catch (err) {
+        console.warn('[ckeditor-assets] could not stage the editor bundle:', err);
+      }
+    },
+  };
+}
+
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [
@@ -218,6 +416,7 @@ export default defineConfig({
     compression({ algorithm: 'gzip', threshold: 1024 }),
     deferNonCriticalPreloads(),
     brotliStatic(),
+    ckeditorAssets(),
     eventLoopCleanup(),
   ],
   resolve: {

@@ -116,6 +116,148 @@ export interface CreateNotificationPayload {
   notification_image?: File | null
 }
 
+/** Publication state of a blog article. */
+export type BlogStatus = 'Active' | 'Inactive'
+
+/** A blog article as the panel sees it — flattened by the blog mapper. */
+export interface BlogRecord {
+  id: number
+  title: string
+  slug: string
+  short_description?: string | null
+  description?: string | null
+  /** Absolute URL of the banner image, resolved from the API metadata. */
+  banner_image?: string | null
+  /** Stored file name of the banner image, as returned by the API. */
+  banner_image_name?: string | null
+  banner_image_alt?: string | null
+  categories_id?: string | null
+  /** Display name of the linked category, when the API resolves it. */
+  categories?: string | null
+  meta_keywords?: string | null
+  status: BlogStatus
+  index?: string | number | null
+  /** Shown on the home page blog rail. */
+  is_front: boolean
+  /** Highlighted in the featured articles rail. */
+  is_featured: boolean
+  created_date?: string | null
+  updated_date?: string | null
+  created_by?: string | null
+}
+
+/** Fields the panel can create or update on a blog article. */
+export interface BlogPayload {
+  blog_title: string
+  blog_slug: string
+  blog_short_description?: string
+  blog_description?: string
+  blog_categories_ids?: string
+  blog_banner_image_alt?: string
+  blog_meta_keywords?: string
+  blog_status: BlogStatus
+  blog_index?: string | number
+  blog_front?: boolean
+  blog_featured?: boolean
+  blog_banner_image?: File | null
+}
+
+/** Query parameters accepted by the blog list endpoint. */
+export interface BlogListParams {
+  page?: number
+  per_page?: number
+  search?: string
+  blog_status?: string
+  category_id?: string
+}
+
+/** Pagination block the blog list endpoint wraps its rows in. */
+export interface BlogListMeta {
+  current_page: number
+  last_page: number
+  per_page: number
+  total: number
+}
+
+/** Publication state of an FAQ group or sub-item. */
+export type FaqStatus = 'Active' | 'Inactive'
+
+export interface FaqSubItem {
+  id?: number
+  faq_top_id?: number
+  faq_sort: number | string
+  faq_for: string
+  faq_heading: string
+  faq_que: string
+  faq_ans: string
+  faq_status: FaqStatus | number | string
+}
+
+export interface FaqRecord {
+  id: number
+  faq_for: string
+  faq_status: FaqStatus
+  subs: FaqSubItem[]
+  created_at?: string | null
+  updated_at?: string | null
+  created_by?: string | null
+  updated_by?: string | null
+}
+
+export interface FaqPayload {
+  faq_for: string
+  faq_status?: string
+  subs: Array<{
+    id?: number
+    faq_sort?: number | string
+    faq_for?: string
+    faq_heading?: string
+    faq_que?: string
+    faq_ans?: string
+    faq_status?: number | string
+  }>
+}
+
+export interface FaqListParams {
+  page?: number
+  search?: string
+  faq_for?: string
+  faq_status?: string
+}
+
+/** Publication state of a Testimonial. */
+export type TestimonialStatus = 'Active' | 'Inactive'
+
+export interface TestimonialRecord {
+  id: number
+  testimonial_for: string
+  testimonial_client_name: string
+  testimonial_description: string
+  testimonial_rating: string | number
+  testimonial_status: TestimonialStatus
+  testimonial_created_date?: string | null
+  testimonial_updated_date?: string | null
+  created_at?: string | null
+  updated_at?: string | null
+  created_by?: string | null
+  updated_by?: string | null
+}
+
+export interface TestimonialPayload {
+  testimonial_for: string
+  testimonial_client_name: string
+  testimonial_description: string
+  testimonial_rating: string | number
+  testimonial_status?: TestimonialStatus
+}
+
+export interface TestimonialListParams {
+  page?: number
+  search?: string
+  testimonial_for?: string
+  testimonial_status?: string
+}
+
 export interface UpdateCityPayload {
   multiple_city: string[] | string
 }

@@ -58,6 +58,11 @@ const BlockProfilesPage = lazy(
 const NotificationsPage = lazy(
   () => import('./module/super-admin/pages/NotificationsPage'),
 )
+const PanelBlogsPage = lazy(() => import('./module/super-admin/pages/BlogsPage'))
+const PanelFaqsPage = lazy(() => import('./module/super-admin/pages/FaqsPage'))
+const PanelTestimonialsPage = lazy(
+  () => import('./module/super-admin/pages/TestimonialsPage'),
+)
 
 /**
  * URL is the source of truth for language: `/hi*` → Hindi, else English.
@@ -240,6 +245,45 @@ export default function App() {
                     <Suspense fallback={null}>
                       <SuperAdminLayout>
                         <NotificationsPage />
+                      </SuperAdminLayout>
+                    </Suspense>
+                  </SuperAdminGuard>
+                }
+              />
+
+              <Route
+                path="/panel/blogs"
+                element={
+                  <SuperAdminGuard>
+                    <Suspense fallback={null}>
+                      <SuperAdminLayout>
+                        <PanelBlogsPage />
+                      </SuperAdminLayout>
+                    </Suspense>
+                  </SuperAdminGuard>
+                }
+              />
+
+              <Route
+                path="/panel/faqs"
+                element={
+                  <SuperAdminGuard>
+                    <Suspense fallback={null}>
+                      <SuperAdminLayout>
+                        <PanelFaqsPage />
+                      </SuperAdminLayout>
+                    </Suspense>
+                  </SuperAdminGuard>
+                }
+              />
+
+              <Route
+                path="/panel/testimonials"
+                element={
+                  <SuperAdminGuard>
+                    <Suspense fallback={null}>
+                      <SuperAdminLayout>
+                        <PanelTestimonialsPage />
                       </SuperAdminLayout>
                     </Suspense>
                   </SuperAdminGuard>

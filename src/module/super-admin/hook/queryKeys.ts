@@ -18,6 +18,13 @@ export const superAdminKeys = {
   notifications: ['super-admin', 'notifications'] as const,
   notification: (id: number | string) =>
     ['super-admin', 'notifications', 'detail', id] as const,
+  blogs: ['super-admin', 'blogs'] as const,
+  blog: (id: number | string) => ['super-admin', 'blogs', 'detail', id] as const,
+  faqs: ['super-admin', 'faqs'] as const,
+  faq: (id: number | string) => ['super-admin', 'faqs', 'detail', id] as const,
+  testimonials: ['super-admin', 'testimonials'] as const,
+  testimonial: (id: number | string) =>
+    ['super-admin', 'testimonials', 'detail', id] as const,
 }
 
 /**

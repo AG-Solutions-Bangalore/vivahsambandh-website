@@ -65,7 +65,7 @@ export default function BlockProfilesPage() {
     deleteMutation.mutate(
       {
         id: targetId,
-        successMessage: `Blocked profile record #${targetId} deleted.`,
+        successMessage: 'Blocked profile record deleted.',
       },
       {
         onSuccess: () => setDeleteTargetId(null),

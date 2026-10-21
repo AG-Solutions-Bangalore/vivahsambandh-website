@@ -18,10 +18,14 @@ import type {
   AdminMember,
   AdminMemberStatus,
   BlockProfileRecord,
+  BlogRecord,
+  BlogStatus,
   FeedbackRecord,
   Member,
   MemberStatus,
   NotificationRecord,
+  FaqRecord,
+  TestimonialRecord,
 } from '../types'
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -91,6 +95,20 @@ function adminStatus(value: unknown): AdminMemberStatus {
   if (raw === 'approved') return 'Approved'
   if (raw === 'cancel' || raw === 'cancelled') return 'Cancel'
   return 'Pending'
+}
+
+/** Normalises the blog publication state. */
+function blogStatus(value: unknown): BlogStatus {
+  const raw = text(value)?.toLowerCase()
+  if (raw === 'active' || raw === '1' || raw === 'published') return 'Active'
+  return 'Inactive'
+}
+
+/** Reads a boolean flag the API may send as `1`, `0`, `'yes'` or a boolean. */
+function flag(value: unknown): boolean {
+  if (value === true) return true
+  const raw = text(value)?.toLowerCase()
+  return raw === '1' || raw === 'yes' || raw === 'true' || raw === 'active'
 }
 
 /** Normalises a `/member` or `/getPendingMember` row. */
@@ -188,20 +206,121 @@ export function toNotification(raw: Raw, entries: ImageUrlEntry[] = []): Notific
 }
 
 /**
- * Unwraps the API envelope. Every list endpoint answers with
- * `{ data: [...], image_url: [...] }`, but a few older ones answer with a
- * bare array. The `image_url` block travels with the rows so the mapper can
- * turn stored filenames into absolute URLs.
+ * Normalises a `/blog` row.
+ *
+ * The blog endpoints expose the same field under several names (`blog_title`
+ * and `title`, `blog_slug` and `slug`, …), so each value is read from the
+ * full alias list before it is flattened.
+ */
+export function toBlog(raw: Raw, entries: ImageUrlEntry[] = []): BlogRecord {
+  const bannerName = text(raw.blog_banner_image) ?? text(raw.banner_image)
+
+  return {
+    id: Number(raw.id ?? 0),
+    title: text(raw.blog_title) ?? text(raw.title) ?? '',
+    slug: text(raw.blog_slug) ?? text(raw.slug) ?? '',
+    short_description:
+      text(raw.blog_short_description) ?? text(raw.short_description),
+    description: text(raw.blog_description) ?? text(raw.description),
+    banner_image: resolveImage(bannerName, entries, 'Blog'),
+    banner_image_name: bannerName,
+    banner_image_alt:
+      text(raw.blog_banner_image_alt) ?? text(raw.banner_image_alt) ?? text(raw.alt_text),
+    categories_id:
+      text(raw.blog_categories_ids) ?? text(raw.category_id) ?? text(raw.categories_id),
+    categories: text(raw.categories),
+    meta_keywords: text(raw.blog_meta_keywords) ?? text(raw.meta_keywords),
+    status: blogStatus(raw.blog_status ?? raw.status),
+    index: raw.blog_index ?? raw.index ?? null,
+    is_front: flag(raw.blog_front ?? raw.front ?? raw.is_home),
+    is_featured: flag(raw.blog_featured ?? raw.featured ?? raw.is_featured),
+    created_date: text(raw.blog_created_date) ?? text(raw.created_at),
+    updated_date: text(raw.blog_updated_date) ?? text(raw.updated_at),
+    created_by: text(raw.created_by),
+  }
+}
+
+/**
+ * Normalises an FAQ record.
+ */
+export function toFaq(raw: Raw): FaqRecord {
+  const subs = Array.isArray(raw.subs)
+    ? raw.subs.map((s: Raw) => ({
+        id: s.id ? Number(s.id) : undefined,
+        faq_top_id: s.faq_top_id ? Number(s.faq_top_id) : undefined,
+        faq_sort: s.faq_sort ?? '1',
+        faq_for: text(s.faq_for) ?? text(raw.faq_for) ?? '',
+        faq_heading: text(s.faq_heading) ?? '',
+        faq_que: text(s.faq_que) ?? '',
+        faq_ans: text(s.faq_ans) ?? '',
+        faq_status:
+          String(s.faq_status).toLowerCase() === 'inactive' ||
+          s.faq_status === 0 ||
+          s.faq_status === '0'
+            ? 'Inactive'
+            : 'Active',
+      }))
+    : []
+
+  return {
+    id: Number(raw.id ?? 0),
+    faq_for: text(raw.faq_for) ?? '',
+    faq_status:
+      String(raw.faq_status).toLowerCase() === 'inactive' ||
+      raw.faq_status === 0 ||
+      raw.faq_status === '0'
+        ? 'Inactive'
+        : 'Active',
+    subs,
+    created_at: text(raw.created_at),
+    updated_at: text(raw.updated_at),
+    created_by: text(raw.created_by),
+    updated_by: text(raw.updated_by),
+  }
+}
+
+/**
+ * Normalises a Testimonial record.
+ */
+export function toTestimonial(raw: Raw): TestimonialRecord {
+  return {
+    id: Number(raw.id ?? 0),
+    testimonial_for: text(raw.testimonial_for) ?? '',
+    testimonial_client_name: text(raw.testimonial_client_name) ?? '',
+    testimonial_description: text(raw.testimonial_description) ?? '',
+    testimonial_rating: raw.testimonial_rating ?? '5',
+    testimonial_status:
+      String(raw.testimonial_status).toLowerCase() === 'inactive' ||
+      raw.testimonial_status === 0 ||
+      raw.testimonial_status === '0'
+        ? 'Inactive'
+        : 'Active',
+    testimonial_created_date: text(raw.testimonial_created_date) ?? text(raw.created_at),
+    testimonial_updated_date: text(raw.testimonial_updated_date) ?? text(raw.updated_at),
+    created_at: text(raw.created_at),
+    updated_at: text(raw.updated_at),
+    created_by: text(raw.created_by),
+    updated_by: text(raw.updated_by),
+  }
+}
+
+/**
+ * Unwraps the API envelope. Handles bare arrays, `{ data: [...] }`, and
+ * paginated envelopes like `{ data: { data: [...] } }`.
  */
 export function toList<T>(
   payload: unknown,
   mapper: (row: Raw, entries: ImageUrlEntry[]) => T,
 ): T[] {
+  const rawData = (payload as Raw)?.data
   const rows = Array.isArray(payload)
     ? payload
-    : Array.isArray((payload as Raw)?.data)
-      ? (payload as Raw).data
-      : []
+    : Array.isArray(rawData)
+      ? rawData
+      : Array.isArray(rawData?.data)
+        ? rawData.data
+        : []
   const entries = extractImageEntries(payload)
   return rows.map((row: Raw) => mapper(row, entries))
 }
+

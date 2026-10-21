@@ -25,6 +25,13 @@ Options -Indexes
   # SPA Route Rewriting (redirect non-static URLs to index.html)
   RewriteBase /
   RewriteRule ^index\.html$ - [L]
+
+  # CKEditor probes optional plugin files under /ckeditor/ and treats any 2xx
+  # as "plugin loaded". Letting the SPA fallback answer those probes with
+  # index.html would register nothing and leave the editor toolbar empty, so
+  # the editor tree gets real 404s instead.
+  RewriteRule ^ckeditor/ - [L]
+
   RewriteCond %{REQUEST_FILENAME} !-f
   RewriteCond %{REQUEST_FILENAME} !-d
   RewriteRule . /index.html [L]

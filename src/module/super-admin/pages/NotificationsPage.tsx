@@ -213,7 +213,7 @@ export default function NotificationsPage() {
     deleteMutation.mutate(
       {
         id: targetId,
-        successMessage: `Notification #${targetId} deleted successfully.`,
+        successMessage: 'Notification deleted successfully.',
       },
       {
         onSuccess: () => {
@@ -627,11 +627,7 @@ export default function NotificationsPage() {
       {/* Inspect Notification Modal (GET /notification/{id}) */}
       <PanelModal
         isOpen={inspectingId !== null}
-        title={
-          inspectedRecord
-            ? `Notification #${inspectedRecord.id}`
-            : `Notification #${inspectingId ?? ''}`
-        }
+        title="Notification Details"
         description="Broadcast record retrieved from the notification endpoint."
         icon={<FileText className="size-5" />}
         onClose={() => setInspectingId(null)}

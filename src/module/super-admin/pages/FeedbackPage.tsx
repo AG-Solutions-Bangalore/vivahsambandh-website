@@ -72,7 +72,7 @@ export default function FeedbackPage() {
     deleteMutation.mutate(
       {
         id: targetId,
-        successMessage: `Feedback #${targetId} deleted successfully.`,
+        successMessage: 'Feedback record deleted successfully.',
       },
       {
         onSuccess: () => {
