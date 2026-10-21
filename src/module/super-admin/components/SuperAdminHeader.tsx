@@ -46,11 +46,7 @@ export function SuperAdminHeader({ onOpenSidebar }: SuperAdminHeaderProps) {
       </div>
 
       <div className="flex shrink-0 items-center gap-2 sm:gap-3">
-        {/* Environment Status Badge */}
-        <span className="hidden items-center gap-1.5 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-800 sm:inline-flex">
-          <span className="size-2 animate-pulse rounded-full bg-emerald-500" aria-hidden />
-          Backend Connected
-        </span>
+ 
 
         {/* View Public Website */}
         <Link
