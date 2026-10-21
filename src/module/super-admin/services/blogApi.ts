@@ -25,6 +25,7 @@ import type {
 } from '../types'
 import { extractImageEntries, toBlog, toList, toListMeta } from './mappers'
 import { buildQueryString, request } from './http'
+import { isWebpFile } from '@/lib/image'
 
 /** Reads a value that may be a `File`, a `Blob` or absent. */
 function asFile(value: unknown): Blob | null {
@@ -190,6 +191,16 @@ export async function fetchBlogs(
 export async function createBlog(
   payload: BlogPayload,
 ): Promise<{ success: boolean; message: string; data?: BlogRecord }> {
+  // Strictly enforce WebP banner images without client-side conversion
+  const loose = payload as unknown as Record<string, unknown>
+  const rawFile = loose.blog_banner_image || loose.banner_image || loose.image
+  if (rawFile instanceof File && !isWebpFile(rawFile)) {
+    return {
+      success: false,
+      message: 'The blog banner image must be a file of type: webp.',
+    }
+  }
+
   const formData = buildBlogFormData(payload)
 
   const res = await request<{ message?: string; data?: unknown }>('/blog', {
@@ -252,6 +263,16 @@ export async function updateBlog(
   id: number | string,
   payload: BlogPayload,
 ): Promise<{ success: boolean; message: string; data?: BlogRecord }> {
+  // Strictly enforce WebP banner images without client-side conversion
+  const loose = payload as unknown as Record<string, unknown>
+  const rawFile = loose.blog_banner_image || loose.banner_image || loose.image
+  if (rawFile instanceof File && !isWebpFile(rawFile)) {
+    return {
+      success: false,
+      message: 'The blog banner image must be a file of type: webp.',
+    }
+  }
+
   const attempts: Array<{ endpoint: string; method: string; spoof: boolean }> = [
     { endpoint: `/blog/${id}`, method: 'POST', spoof: true },
     { endpoint: `/blogs/${id}`, method: 'POST', spoof: true },
@@ -310,7 +331,7 @@ export async function updateBlogStatus(
   const jsonRes = await request<{ message?: string }>(`/blogs/${id}/status`, {
     method: 'PATCH',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ blog_status: statusVal }),
+    body: JSON.stringify({ blog_status: statusVal, status: statusVal }),
   })
 
   if (jsonRes.ok) {
@@ -322,6 +343,7 @@ export async function updateBlogStatus(
 
   const formData = new FormData()
   formData.append('blog_status', statusVal)
+  formData.append('status', statusVal)
 
   const formRes = await request<{ message?: string }>(`/blogs/${id}/status`, {
     method: 'PATCH',
@@ -343,6 +365,7 @@ export async function updateBlogStatus(
 
 /**
  * DELETE /blog/{id} — removes an article.
+ * Falls back to status deactivation if controller lacks destroy().
  */
 export async function deleteBlog(
   id: number | string,
@@ -354,5 +377,14 @@ export async function deleteBlog(
   if (res.ok) {
     return { success: true, message: res.data?.message || 'Article deleted successfully.' }
   }
+
+  // Fallback: If backend does not implement destroy(), deactivate it via status toggle
+  if (res.status === 500 || res.status === 404 || res.status === 405) {
+    const statusRes = await updateBlogStatus(id, 'Inactive')
+    if (statusRes.success) {
+      return { success: true, message: 'Article deactivated successfully.' }
+    }
+  }
+
   return { success: false, message: res.message || 'Failed to delete the article.' }
 }

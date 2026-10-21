@@ -8,7 +8,8 @@
  */
 
 import { useEffect, useRef, useState, type ChangeEvent, type FormEvent } from 'react'
-import { Upload } from 'lucide-react'
+import { Upload, Trash2 } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { RichTextEditor } from '@/components/ui/ckeditor'
@@ -53,8 +54,14 @@ export function BlogEditorForm({
   const [values, setValues] = useState<BlogFormValues>(initialValues)
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [preview, setPreview] = useState('')
+  const [existingUrl, setExistingUrl] = useState<string | null>(currentBannerUrl ?? null)
   const [slugTouched, setSlugTouched] = useState(!autoSlug)
   const fileInputRef = useRef<HTMLInputElement>(null)
+
+  // Keep existingUrl in sync if prop changes
+  useEffect(() => {
+    setExistingUrl(currentBannerUrl ?? null)
+  }, [currentBannerUrl])
 
   // Release the object URL when it is replaced or the form unmounts.
   useEffect(() => {
@@ -88,18 +95,22 @@ export function BlogEditorForm({
     const file = event.target.files?.[0]
     if (!file) return
 
-    if (!file.type.startsWith('image/')) {
+    const isWebp =
+      file.type === 'image/webp' || file.name.toLowerCase().endsWith('.webp')
+
+    if (!isWebp) {
       setErrors((prev) => ({
         ...prev,
-        blog_banner_image: 'Please select a valid image file.',
+        blog_banner_image: 'Only WebP (.webp) images are allowed. Please upload a .webp image.',
       }))
+      if (fileInputRef.current) fileInputRef.current.value = ''
       return
     }
 
-    if (file.size > 5 * 1024 * 1024) {
+    if (file.size > 10 * 1024 * 1024) {
       setErrors((prev) => ({
         ...prev,
-        blog_banner_image: 'Image size must be less than 5MB.',
+        blog_banner_image: 'Image size must be less than 10MB.',
       }))
       return
     }
@@ -110,12 +121,15 @@ export function BlogEditorForm({
       return next
     })
 
+    if (preview) URL.revokeObjectURL(preview)
     setPreview(URL.createObjectURL(file))
     update('blog_banner_image', file)
   }
 
   const handleClearImage = () => {
+    if (preview) URL.revokeObjectURL(preview)
     setPreview('')
+    setExistingUrl(null)
     update('blog_banner_image', null)
     if (fileInputRef.current) fileInputRef.current.value = ''
   }
@@ -138,8 +152,16 @@ export function BlogEditorForm({
     if (!values.blog_banner_image_alt.trim()) {
       next.blog_banner_image_alt = 'Banner alt text is required.'
     }
-    if (requireBanner && !values.blog_banner_image && !currentBannerUrl) {
+    if (requireBanner && !values.blog_banner_image && !existingUrl) {
       next.blog_banner_image = 'A banner image is required.'
+    }
+    if (values.blog_banner_image) {
+      const isWebp =
+        values.blog_banner_image.type === 'image/webp' ||
+        values.blog_banner_image.name.toLowerCase().endsWith('.webp')
+      if (!isWebp) {
+        next.blog_banner_image = 'Only WebP (.webp) images are allowed.'
+      }
     }
 
     setErrors(next)
@@ -293,49 +315,80 @@ export function BlogEditorForm({
 
       {/* Banner image */}
       <div>
-        <span className={LABEL_CLASS}>
-          Banner Image{' '}
-          {requireBanner ? <span className="text-maroon-600">*</span> : null}
-        </span>
+        <div className="mb-1.5 flex items-center justify-between">
+          <span className={LABEL_CLASS}>
+            Banner Image{' '}
+            {requireBanner ? <span className="text-maroon-600">*</span> : null}
+          </span>
+          <span className="rounded-full border border-maroon-300 bg-maroon-50 px-2 py-0.5 text-[0.66rem] font-bold text-maroon-800">
+            .webp Only
+          </span>
+        </div>
+
         <input
           type="file"
-          accept="image/*"
+          accept=".webp,image/webp"
           ref={fileInputRef}
           onChange={handleImageChange}
           className="hidden"
           id={`${formId}-file-input`}
         />
 
-        {preview || currentBannerUrl ? (
-          <div className="relative max-h-40 overflow-hidden rounded-2xl border border-cream-300 bg-navy-900">
-            <img
-              src={preview || currentBannerUrl || ''}
-              alt="Banner preview"
-              className="h-36 w-full object-contain"
-            />
-            <button
-              type="button"
-              onClick={handleClearImage}
-              className="absolute top-2 right-2 cursor-pointer rounded-full bg-navy-950/80 p-1 text-white transition-colors hover:bg-maroon-600"
-              title="Remove image"
-              aria-label="Remove image"
-            >
-              ×
-            </button>
+        {preview || existingUrl ? (
+          <div className="space-y-2">
+            <div className="relative max-h-48 overflow-hidden rounded-2xl border border-cream-300 bg-navy-950 p-2 flex items-center justify-center">
+              <img
+                src={preview || existingUrl || ''}
+                alt="Banner preview"
+                className="max-h-44 w-auto object-contain rounded-xl"
+              />
+              <button
+                type="button"
+                onClick={handleClearImage}
+                className="absolute top-2.5 right-2.5 cursor-pointer rounded-full bg-navy-950/80 p-1.5 text-white transition-colors hover:bg-maroon-600 shadow-md"
+                title="Remove image"
+                aria-label="Remove image"
+              >
+                <Trash2 className="size-3.5" />
+              </button>
+            </div>
+
+            <div className="flex flex-wrap items-center gap-2">
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => fileInputRef.current?.click()}
+                className="cursor-pointer gap-2 rounded-xl border-dashed border-cream-400 bg-cream-50 text-xs font-semibold text-navy-900 hover:bg-cream-100"
+              >
+                <Upload className="size-3.5 text-gold-600" />
+                <span>
+                  {values.blog_banner_image
+                    ? 'Change Selected .webp'
+                    : 'Replace Banner Image (.webp)'}
+                </span>
+              </Button>
+
+              {values.blog_banner_image && (
+                <span className="text-xs font-medium text-emerald-700">
+                  ✓ {values.blog_banner_image.name}
+                </span>
+              )}
+            </div>
           </div>
         ) : (
-          <label
-            htmlFor={`${formId}-file-input`}
-            className="flex cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-cream-300 bg-cream-50/50 p-4 text-center transition-colors hover:border-gold-500/60 hover:bg-gold-100/70"
+          <div
+            onClick={() => fileInputRef.current?.click()}
+            className="flex cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-cream-300 bg-cream-50/50 p-6 text-center transition-colors hover:border-gold-500/60 hover:bg-gold-100/70"
           >
-            <Upload className="mb-1 size-6 text-gold-600" aria-hidden />
+            <Upload className="mb-1.5 size-7 text-gold-600" aria-hidden />
             <span className="text-xs font-semibold text-navy-900">
-              Click to upload banner image
+              Click to upload banner image (.webp required)
             </span>
             <span className="mt-0.5 text-[0.68rem] text-ink-400">
-              PNG, JPG, WebP up to 5MB
+              Only .webp format supported (max 10MB)
             </span>
-          </label>
+          </div>
         )}
         {errors.blog_banner_image ? (
           <p className={ERROR_CLASS}>{errors.blog_banner_image}</p>

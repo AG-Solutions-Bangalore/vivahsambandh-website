@@ -8,12 +8,12 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import toast from 'react-hot-toast'
 import {
   createBlog,
-  deleteBlog,
   fetchBlogById,
   fetchBlogs,
   updateBlog,
   updateBlogStatus,
 } from '../services/blogApi'
+import { bumpBlogBannerRevision } from '../services/blogImageVersion'
 import { PANEL_STALE_TIME, superAdminKeys } from './queryKeys'
 import { unwrapAction, unwrapItem } from './errors'
 import type {
@@ -103,6 +103,9 @@ export function useUpdateBlogMutation() {
       unwrapAction(await updateBlog(id, payload)),
     onSuccess: async (message, variables) => {
       toast.success(variables.successMessage ?? message)
+      // The banner file keeps its name, so give it a fresh URL — otherwise
+      // the browser keeps serving the picture it cached for the old one.
+      bumpBlogBannerRevision(variables.id)
       await queryClient.invalidateQueries({ queryKey: superAdminKeys.blogs })
       await queryClient.invalidateQueries({ queryKey: superAdminKeys.blog(variables.id) })
     },
@@ -134,23 +137,3 @@ export function useUpdateBlogStatusMutation() {
   })
 }
 
-interface DeleteBlogVariables {
-  id: number | string
-  successMessage?: string
-}
-
-export function useDeleteBlogMutation() {
-  const queryClient = useQueryClient()
-
-  return useMutation({
-    mutationFn: async ({ id }: DeleteBlogVariables) =>
-      unwrapAction(await deleteBlog(id)),
-    onSuccess: async (message, variables) => {
-      toast.success(variables.successMessage ?? message)
-      await queryClient.invalidateQueries({ queryKey: superAdminKeys.blogs })
-    },
-    onError: (error) => {
-      toast.error(error.message)
-    },
-  })
-}

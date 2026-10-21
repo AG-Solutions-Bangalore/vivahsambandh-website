@@ -82,6 +82,30 @@ export async function apiPostForm<T>(
 }
 
 /**
+ * Appends a version token to an image URL.
+ *
+ * The CRM overwrites a banner file in place — `7.webp` always points at the
+ * current banner of article 7 — and serves it with `Cache-Control:
+ * max-age=31536000`. A browser that already cached the old picture would
+ * keep showing it for a year, so the record's update timestamp goes into the
+ * URL: it changes on every save, so the URL changes with the content.
+ */
+export function withImageVersion(
+  src: string | null | undefined,
+  version: string | null | undefined,
+): string | null {
+  if (!src) return null
+  const clean = src.trim()
+  if (!clean) return null
+
+  const token = String(version ?? '').trim()
+  if (!token) return clean
+
+  const separator = clean.includes('?') ? '&' : '?'
+  return `${clean}${separator}v=${encodeURIComponent(token)}`
+}
+
+/**
  * Resolves a remote image filename to a full HTTPS URL using the backend `image_url` metadata.
  */
 export function resolveImageUrl(
@@ -121,6 +145,17 @@ export function resolveImageUrl(
         : `${firstEntry.image_url}/`
       return `${base}${clean}`
     }
+  }
+
+  // Fallback defaults for known entity types if entries metadata was omitted
+  if (imageFor?.toLowerCase() === 'blog') {
+    return `https://vivahsambandh.com/crmapi/public/assets/images/blog_images/${clean.replace(/^\/+/, '')}`
+  }
+  if (imageFor?.toLowerCase() === 'client') {
+    return `https://vivahsambandh.com/crmapi/public/assets/images/client_images/${clean.replace(/^\/+/, '')}`
+  }
+  if (imageFor?.toLowerCase() === 'gallery' || imageFor?.toLowerCase() === 'galleries') {
+    return `https://vivahsambandh.com/crmapi/public/assets/images/gallerys_images/${clean.replace(/^\/+/, '')}`
   }
 
   return clean

@@ -12,7 +12,8 @@
  * here instead of leaving broken `src` values in the DOM.
  */
 
-import { resolveImageUrl } from '@/lib/api/apiClient'
+import { resolveImageUrl, withImageVersion } from '@/lib/api/apiClient'
+import { blogBannerRevision } from './blogImageVersion'
 import type { ImageUrlEntry } from '@/lib/api/types'
 import type {
   AdminMember,
@@ -212,6 +213,49 @@ export function toNotification(raw: Raw, entries: ImageUrlEntry[] = []): Notific
   }
 }
 
+const DEFAULT_BLOG_IMAGE_URL =
+  'https://vivahsambandh.com/crmapi/public/assets/images/blog_images/'
+
+let cachedBlogImageEntries: ImageUrlEntry[] = [
+  {
+    image_for: 'Blog',
+    image_url: DEFAULT_BLOG_IMAGE_URL,
+  },
+  {
+    image_for: 'No Image',
+    image_url: 'https://vivahsambandh.com/crmapi/public/assets/images/no_image.jpg',
+  },
+]
+
+export function setCachedBlogImageEntries(entries: ImageUrlEntry[]): void {
+  if (entries && entries.length > 0) {
+    cachedBlogImageEntries = entries
+  }
+}
+
+export function getCachedBlogImageEntries(): ImageUrlEntry[] {
+  return cachedBlogImageEntries
+}
+
+export function resolveBlogImageUrl(
+  filename: string | null | undefined,
+  entries?: ImageUrlEntry[],
+): string | null {
+  if (!filename || !filename.trim()) return null
+  const clean = filename.trim()
+  if (clean.startsWith('http://') || clean.startsWith('https://')) {
+    return clean
+  }
+  const effectiveEntries = entries && entries.length > 0 ? entries : cachedBlogImageEntries
+  const resolved =
+    resolveImage(clean, effectiveEntries, 'Blog') ??
+    resolveImage(clean, effectiveEntries, 'blog') ??
+    resolveImage(clean, effectiveEntries, 'blogs')
+  if (resolved) return resolved
+
+  return `${DEFAULT_BLOG_IMAGE_URL}${clean.replace(/^\/+/, '')}`
+}
+
 /**
  * Normalises a `/blog` row.
  *
@@ -220,7 +264,26 @@ export function toNotification(raw: Raw, entries: ImageUrlEntry[] = []): Notific
  * full alias list before it is flattened.
  */
 export function toBlog(raw: Raw, entries: ImageUrlEntry[] = []): BlogRecord {
+  if (entries && entries.length > 0) {
+    const hasBlog = entries.some(
+      (e) => e.image_for.toLowerCase() === 'blog' || e.image_for.toLowerCase() === 'blogs',
+    )
+    if (hasBlog) {
+      setCachedBlogImageEntries(entries)
+    }
+  }
+
   const bannerName = text(raw.blog_banner_image) ?? text(raw.banner_image)
+
+  // The banner file is overwritten in place and served with a one-year
+  // `max-age`, so the URL needs a version token — otherwise the browser keeps
+  // showing the picture the article had before it was replaced.
+  const bannerVersion = [
+    text(raw.updated_at) ?? text(raw.blog_updated_date) ?? text(raw.blog_created_date),
+    blogBannerRevision(raw.id),
+  ]
+    .filter(Boolean)
+    .join('-')
 
   return {
     id: Number(raw.id ?? 0),
@@ -229,7 +292,10 @@ export function toBlog(raw: Raw, entries: ImageUrlEntry[] = []): BlogRecord {
     short_description:
       text(raw.blog_short_description) ?? text(raw.short_description),
     description: text(raw.blog_description) ?? text(raw.description),
-    banner_image: resolveImage(bannerName, entries, 'Blog'),
+    banner_image: withImageVersion(
+      resolveBlogImageUrl(bannerName, entries),
+      bannerVersion,
+    ),
     banner_image_name: bannerName,
     banner_image_alt:
       text(raw.blog_banner_image_alt) ?? text(raw.banner_image_alt) ?? text(raw.alt_text),

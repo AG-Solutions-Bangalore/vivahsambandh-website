@@ -1,8 +1,12 @@
 /**
  * @file src/module/super-admin/pages/BlogsPage.tsx
  * Blog management for the Super Admin Panel: list articles, search and filter
- * them, publish or unpublish, inspect a record, create a new article, edit an
- * existing one and delete it.
+ * them, publish or unpublish, inspect a record, create a new article and edit
+ * an existing one.
+ *
+ * There is no delete: the CRM has no `BlogController::destroy()`, so
+ * `DELETE /blog/{id}` always fails. Unpublishing is the way to take an
+ * article off the site until the backend implements the route.
  */
 
 import { useMemo, useState } from 'react'
@@ -13,11 +17,9 @@ import {
   Pencil,
   Plus,
   RefreshCw,
-  Trash2,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { cn } from 'cn'
-import { ConfirmDialog } from '../components/ConfirmDialog'
 import { PanelCard } from '../components/PanelCard'
 import { PanelPageHeader } from '../components/PanelPageHeader'
 import { PanelModal } from '../components/PanelModal'
@@ -45,7 +47,6 @@ import {
   useBlogQuery,
   useBlogsQuery,
   useCreateBlogMutation,
-  useDeleteBlogMutation,
   useUpdateBlogMutation,
   useUpdateBlogStatusMutation,
 } from '../hook/useBlogs'
@@ -79,7 +80,6 @@ export default function BlogsPage() {
   const createMutation = useCreateBlogMutation()
   const updateMutation = useUpdateBlogMutation()
   const statusMutation = useUpdateBlogStatusMutation()
-  const deleteMutation = useDeleteBlogMutation()
 
   // Editor state
   const [isCreateOpen, setIsCreateOpen] = useState(false)
@@ -101,14 +101,6 @@ export default function BlogsPage() {
     isLoading: isLoadingEdit,
     error: editError,
   } = useBlogQuery(editingId)
-
-  // Delete state
-  const [deleteTargetId, setDeleteTargetId] = useState<number | null>(null)
-
-  const deleteTarget = useMemo(
-    () => blogs.find((blog) => blog.id === deleteTargetId) ?? null,
-    [blogs, deleteTargetId],
-  )
 
   // The API ignores the status parameter, so the publication state is
   // filtered here.
@@ -163,23 +155,6 @@ export default function BlogsPage() {
       {
         onSuccess: () => {
           if (inspectingId === blog.id) setInspectingId(null)
-        },
-      },
-    )
-  }
-
-  const handleDelete = () => {
-    if (!deleteTarget) return
-
-    deleteMutation.mutate(
-      {
-        id: deleteTarget.id,
-        successMessage: `Article "${deleteTarget.title}" deleted successfully.`,
-      },
-      {
-        onSuccess: () => {
-          setDeleteTargetId(null)
-          if (inspectingId === deleteTarget.id) setInspectingId(null)
         },
       },
     )
@@ -383,17 +358,6 @@ export default function BlogsPage() {
                       )}
                     >
                       {blog.status === 'Active' ? 'Unpublish' : 'Publish'}
-                    </Button>
-
-                    <Button
-                      type="button"
-                      size="xs"
-                      variant="outline"
-                      onClick={() => setDeleteTargetId(blog.id)}
-                      title="Delete article"
-                      className="cursor-pointer rounded-full border-maroon-200 bg-maroon-50 text-[0.7rem] text-maroon-800 hover:bg-maroon-100"
-                    >
-                      <Trash2 className="size-3" aria-hidden />
                     </Button>
                   </div>
                 </td>
@@ -644,21 +608,6 @@ export default function BlogsPage() {
           </p>
         )}
       </PanelModal>
-
-      {/* Delete Confirmation Dialog */}
-      {deleteTarget && (
-        <ConfirmDialog
-          isOpen={true}
-          title="Delete Blog Article"
-          description={`Are you sure you want to permanently delete "${deleteTarget.title}"? This removes the article from the site and cannot be undone.`}
-          confirmText="Yes, Delete Article"
-          cancelText="Cancel"
-          variant="danger"
-          isLoading={deleteMutation.isPending}
-          onConfirm={handleDelete}
-          onClose={() => setDeleteTargetId(null)}
-        />
-      )}
     </div>
   )
 }
