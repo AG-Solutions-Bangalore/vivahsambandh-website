@@ -24,10 +24,7 @@ function getInitialLanguage(): AppLang {
     if (pathname === '/hi' || pathname.startsWith('/hi/')) {
       return 'hi'
     }
-    const stored = localStorage.getItem(LANG_STORAGE_KEY)
-    if (stored === 'hi' || stored === 'en') {
-      return stored
-    }
+    return 'en'
   }
   return DEFAULT_LANG
 }

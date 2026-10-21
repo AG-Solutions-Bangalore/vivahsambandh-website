@@ -1253,27 +1253,19 @@
       "agreeTermsSuffix": "governing community bio-data verification and honorary matchmaking support.",
       "checkUnfilled": "Check Any Unfilled Details",
       "fillAllDetails": "Fill All Details to Enable Submit",
-      "verifyAndSubmit": "Verify Mobile via OTP & Submit",
+      "verifyAndSubmit": "Verify via OTP & Submit",
       "submitRegistration": "Submit Registration",
       "submittingRegistration": "Submitting Registration...",
       "completeAllRequired": "Complete all required fields above to proceed with submission",
-      "detailsCompleteOtp": "✓ Details complete. Click to verify via Firebase OTP.",
       "mobileVerifiedReady": "✓ Mobile verified. Ready to submit!",
+      "otpSendNotice": "We'll send an OTP to +91 {{mobile}} to verify",
       "submitOtherResponse": "Submit other response",
       "registrationCompleted": "Registration Completed",
       "submissionNote": "Submission Note",
       "termsModalTitle": "Terms & Conditions",
       "termsModalIntro": "Please review the guidelines and policies governing the registration and matchmaking assistance:",
       "termsModalAccept": "I Understand & Accept",
-      "termsModalClose": "Close",
-      "mobileVerificationTitle": "Mobile Number Verification",
-      "mobileVerifiedHeading": "Mobile Number Verified",
-      "mobileVerificationNotice": "We will send a 6-digit verification code (OTP) to +91 {{mobile}} to verify this number.",
-      "mobileVerificationNoticeEmpty": "Please enter a valid 10-digit mobile number in Part 1 to receive the verification OTP.",
-      "mobileVerifiedSuccess": "✓ Contact number +91 {{mobile}} has been verified successfully.",
-      "verifyMobileBtn": "Verify Mobile via OTP",
-      "sendOtpAndSubmit": "Verify Mobile (+91 {{mobile}}) & Submit",
-      "detailsCompleteOtpWithMobile": "✓ Details complete. Click to send OTP to +91 {{mobile}} and submit."
+      "termsModalClose": "Close"
     }
   }
 }

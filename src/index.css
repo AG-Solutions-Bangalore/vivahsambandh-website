@@ -55,6 +55,8 @@
   --color-ink-900: #180f08;
 
   /* ————— shadcn/base surface tokens (mapped to the brand palette) ————— */
+  --color-primary: var(--color-navy-900);
+  --color-primary-foreground: #ffffff;
   --color-background: var(--color-cream-50);
   --color-foreground: var(--color-navy-900);
   --color-popover: #ffffff;

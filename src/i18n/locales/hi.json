@@ -1253,27 +1253,19 @@
       "agreeTermsSuffix": "पढ़, समझ लिए हैं और उनसे पूर्णतः सहमत हूँ।",
       "checkUnfilled": "अपूर्ण विवरण जांचें",
       "fillAllDetails": "सबमिट करने के लिए सभी विवरण भरें",
-      "verifyAndSubmit": "ओटीपी से मोबाइल सत्यापित कर सबमिट करें",
+      "verifyAndSubmit": "ओटीपी सत्यापित कर सबमिट करें",
       "submitRegistration": "पंजीकरण सबमिट करें",
       "submittingRegistration": "पंजीकरण सबमिट हो रहा है...",
       "completeAllRequired": "आगे बढ़ने के लिए ऊपर दिए गए सभी आवश्यक फ़ील्ड भरें",
-      "detailsCompleteOtp": "✓ विवरण पूर्ण हैं। फ़ायरबेस ओटीपी से सत्यापित करने के लिए क्लिक करें।",
       "mobileVerifiedReady": "✓ मोबाइल सत्यापित हो गया। सबमिट करने के लिए तैयार!",
+      "otpSendNotice": "सत्यापन के लिए +91 {{mobile}} पर ओटीपी भेजा जाएगा",
       "submitOtherResponse": "एक और पंजीकरण सबमिट करें",
       "registrationCompleted": "पंजीकरण सफलतापूर्वक संपन्न",
       "submissionNote": "महत्वपूर्ण सूचना",
       "termsModalTitle": "नियम एवं शर्तें",
       "termsModalIntro": "कृपया पंजीकरण और मैचमेकिंग सहायता को नियंत्रित करने वाले दिशानिर्देशों और नीतियों की समीक्षा करें:",
       "termsModalAccept": "मैं समझता हूँ और स्वीकार करता हूँ",
-      "termsModalClose": "बंद करें",
-      "mobileVerificationTitle": "मोबाइल नंबर सत्यापन",
-      "mobileVerifiedHeading": "मोबाइल नंबर सत्यापित",
-      "mobileVerificationNotice": "हम इस नंबर को सत्यापित करने के लिए +91 {{mobile}} पर 6 अंकों का ओटीपी भेजेंगे।",
-      "mobileVerificationNoticeEmpty": "ओटीपी प्राप्त करने के लिए कृपया भाग 1 में 10 अंकों का वैध मोबाइल नंबर दर्ज करें।",
-      "mobileVerifiedSuccess": "✓ संपर्क नंबर +91 {{mobile}} सफलतापूर्वक सत्यापित हो गया है।",
-      "verifyMobileBtn": "ओटीपी से मोबाइल सत्यापित करें",
-      "sendOtpAndSubmit": "मोबाइल (+91 {{mobile}}) सत्यापित कर सबमिट करें",
-      "detailsCompleteOtpWithMobile": "✓ विवरण पूर्ण हैं। +91 {{mobile}} पर ओटीपी भेजकर सबमिट करने के लिए क्लिक करें।"
+      "termsModalClose": "बंद करें"
     }
   }
 }

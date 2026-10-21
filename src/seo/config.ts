@@ -105,8 +105,38 @@ export const COMPANY_CONFIG = {
 
 export type CompanyConfig = typeof COMPANY_CONFIG;
 export type SupportedLang = "en" | "hi";
-export const SUPPORTED_LANGS: readonly SupportedLang[] = ["en", "hi"] as const;
-export const SUPPORTED_SSG_ROUTES = ["/", "/hi"] as const;
+export const SUPPORTED_SSG_ROUTES = [
+  "/",
+  "/hi",
+  "/registration",
+  "/hi/registration",
+  "/register",
+  "/hi/register",
+  "/about",
+  "/hi/about",
+  "/stories",
+  "/hi/stories",
+  "/success-stories",
+  "/hi/success-stories",
+  "/membership",
+  "/hi/membership",
+  "/contact",
+  "/hi/contact",
+  "/blogs",
+  "/hi/blogs",
+  "/privacy",
+  "/hi/privacy",
+  "/terms",
+  "/hi/terms",
+  "/guidelines",
+  "/hi/guidelines",
+  "/help-center",
+  "/hi/help-center",
+  "/admin-register",
+  "/hi/admin-register",
+  "/download",
+  "/hi/download",
+] as const;
 
 /** Standalone pages that carry their own SEO metadata. */
 export type PageKey =
