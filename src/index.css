@@ -65,6 +65,28 @@
   --color-muted-foreground: var(--color-ink-500);
   --color-border: var(--color-cream-300);
 
+  /* Interactive/derived tokens. These MUST exist: base-ui + shadcn primitives
+     reference them for focus rings, destructive buttons and secondary fills.
+     Without them the utilities silently compile to nothing (no ring colour,
+     no destructive colour) — verified by inspecting the built stylesheet. */
+  --color-card: #ffffff;
+  --color-card-foreground: var(--color-navy-900);
+  --color-accent: var(--color-cream-100);
+  --color-accent-foreground: var(--color-navy-900);
+  --color-secondary: var(--color-cream-200);
+  --color-secondary-foreground: var(--color-navy-900);
+  --color-input: var(--color-cream-300);
+  /* Focus ring = brand gold, the one accent that reads on both white and navy */
+  --color-ring: var(--color-gold-500);
+  /* Destructive = sindoor maroon, not a generic red */
+  --color-destructive: var(--color-maroon-600);
+  --color-destructive-foreground: #ffffff;
+  --color-sidebar: var(--color-navy-900);
+  --color-sidebar-foreground: #ffffff;
+  --color-sidebar-border: var(--color-navy-800);
+  --color-sidebar-accent: var(--color-navy-800);
+  --color-sidebar-accent-foreground: #ffffff;
+
   /* ————— Typography ————— */
   /* Single display font for both locales: Gotu (Devanagari + Latin). */
   --font-display: "Gotu", "Georgia", serif;
@@ -307,6 +329,135 @@ html[lang="hi"] [data-eyebrow] {
   &::-webkit-scrollbar {
     display: none;
   }
+}
+
+/* Panel form controls — the native date picker's calendar glyph is ink by
+   default, which fights the brand. Recolour it to gold and pin the colour
+   scheme so the browser draws light chrome on the cream canvas. */
+input[type="date"],
+input[type="time"],
+input[type="datetime-local"] {
+  color-scheme: light;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator,
+input[type="time"]::-webkit-calendar-picker-indicator,
+input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  opacity: 0.55;
+  filter: sepia(1) saturate(3) hue-rotate(345deg) brightness(0.85);
+  transition: opacity 150ms ease;
+}
+
+input[type="date"]:hover::-webkit-calendar-picker-indicator,
+input[type="time"]:hover::-webkit-calendar-picker-indicator,
+input[type="datetime-local"]:hover::-webkit-calendar-picker-indicator {
+  opacity: 1;
+}
+
+/* ————— Super Admin Panel surfaces —————
+   The panel is a data-dense surface, so it reuses the brand card language
+   (gold hairline border + warm shadow) instead of the plain grey card
+   defaults, and keeps the same gold focus ring as the public site. */
+
+/* Primary panel surface — the brand card idiom, tuned for dense data */
+@utility panel-card {
+  @apply rounded-[1.25rem] border border-gold-500/25 bg-white shadow-card;
+}
+
+/* Quiet surface — inset panels, table footers, empty slots */
+@utility panel-card-quiet {
+  @apply rounded-[1.25rem] border border-cream-300/90 bg-cream-50/60;
+}
+
+/* Panel table header strip */
+@utility panel-table-head {
+  @apply border-b border-cream-300 bg-cream-100/70 text-[0.68rem] font-bold tracking-[0.14em] text-ink-600 uppercase;
+}
+
+/* Themed scrollbar for the navy sidebar and long lists */
+@utility panel-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-navy-700) transparent;
+  &::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: var(--color-navy-700);
+    border-radius: 999px;
+  }
+  &::-webkit-scrollbar-thumb:hover {
+    background: var(--color-navy-600);
+  }
+}
+
+/* Scrim behind panel modals — navy ink over the cream canvas */
+@utility panel-scrim {
+  @apply fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-navy-950/70 p-4 backdrop-blur-sm;
+  overscroll-behavior: contain;
+}
+
+/* Solid gold action surface. The ramp stops at gold-600 so white label text
+   keeps a 3.6:1–5.9:1 contrast ratio across the gradient; hover deepens the
+   ramp (never lightens it) so the interactive state stays the most legible. */
+@utility btn-gold-solid {
+  @apply inline-flex items-center justify-center gap-2 rounded-full bg-gold-600 px-6 py-3 text-sm font-bold text-white shadow-gold transition-colors hover:bg-gold-700 active:scale-[0.98];
+}
+
+/* Skeleton shimmer — the panel never shows a spinner, it shows the shape of
+   the content that is arriving. */
+@keyframes panel-skeleton {
+  from {
+    background-position: 200% 0;
+  }
+  to {
+    background-position: -200% 0;
+  }
+}
+
+@utility skeleton {
+  @apply rounded-lg bg-cream-200/80;
+  background-image: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgb(255 255 255 / 0.85) 50%,
+    transparent 100%
+  );
+  background-size: 200% 100%;
+  animation: panel-skeleton 1.6s ease-in-out infinite;
+}
+
+/* Panel entrance — replaces the (never-compiled) `animate-in fade-in` pair */
+@keyframes panel-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes panel-scale-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 10px, 0) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+.animate-panel-fade {
+  animation: panel-fade-in 0.2s ease-out both;
+}
+
+.animate-panel-scale {
+  animation: panel-scale-in 0.24s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 /* Success-stories Swiper pagination bullets (moved here from an inline

@@ -1,98 +1,83 @@
 /**
  * @file src/module/super-admin/components/SuperAdminHeader.tsx
- * Top header bar for the Super Admin Panel.
+ * Sticky top bar for the Super Admin Panel.
+ *
+ * The bar carries orientation and global chrome only — the page owns its own
+ * title, so the two never repeat the same words.
  */
 
-import { Menu, Globe, Shield, Sparkles, ExternalLink } from 'lucide-react'
+import { Menu, Globe, Shield, ExternalLink } from 'lucide-react'
 import { Link, useLocation } from 'react-router-dom'
 import { useSuperAdminAuth } from '../context/SuperAdminAuthContext'
+import { findNavItem } from '../navigation'
 
 interface SuperAdminHeaderProps {
   onOpenSidebar: () => void
 }
 
-const ROUTE_TITLES: Record<string, { title: string; subtitle: string }> = {
-  '/panel': { title: 'Dashboard Overview', subtitle: 'Platform metrics, statistics, and quick operations' },
-  '/panel/dashboard': { title: 'Dashboard Overview', subtitle: 'Platform metrics, statistics, and quick operations' },
-  '/panel/admin-members': { title: 'Admin Members', subtitle: 'Manage regional administrators, city assignments & approval status' },
-  '/panel/pending-admin-members': { title: 'Pending Admin Members', subtitle: 'Review and approve new admin applications' },
-  '/panel/members': { title: 'All Registered Members', subtitle: 'Browse matrimonial member profiles and manage account statuses' },
-  '/panel/pending-members': { title: 'Pending Member Approvals', subtitle: 'Verify and approve pending matrimonial profiles' },
-  '/panel/feedback': { title: 'User Feedback', subtitle: 'Review inquiries, suggestions, and member reviews' },
-  '/panel/block-profiles': { title: 'Blocked Profiles', subtitle: 'Monitor flagged accounts and moderation records' },
-  '/panel/notifications': { title: 'Notification Broadcasts', subtitle: 'Send announcements and push notifications to Users or Admins' },
-}
-
 export function SuperAdminHeader({ onOpenSidebar }: SuperAdminHeaderProps) {
   const { pathname } = useLocation()
-  const { session, isDevSession } = useSuperAdminAuth()
-  const current = ROUTE_TITLES[pathname] || {
-    title: 'Super Admin Panel',
-    subtitle: 'VivahSambandh Control Panel',
-  }
+  const { session } = useSuperAdminAuth()
+  const current = findNavItem(pathname)
 
   return (
-    <header className="sticky top-0 z-30 flex h-18 items-center justify-between border-b border-cream-200/90 bg-white/95 px-4 sm:px-8 backdrop-blur-md">
-      <div className="flex items-center gap-4">
+    <header className="sticky top-0 z-30 flex h-18 shrink-0 items-center justify-between gap-4 border-b border-gold-500/25 bg-white/90 px-4 backdrop-blur-md sm:px-8">
+      <div className="flex min-w-0 items-center gap-3 sm:gap-4">
         <button
           type="button"
           onClick={onOpenSidebar}
-          className="rounded-xl border border-cream-300 p-2 text-ink-600 hover:bg-cream-100 lg:hidden cursor-pointer"
+          className="cursor-pointer rounded-xl border border-cream-300 p-2 text-ink-600 transition-colors hover:border-gold-500/50 hover:bg-cream-100 hover:text-navy-900 focus-visible:ring-2 focus-visible:ring-gold-500 focus-visible:outline-none lg:hidden"
           aria-label="Open sidebar"
         >
-          <Menu className="size-5" />
+          <Menu className="size-5" aria-hidden />
         </button>
 
-        <div>
-          <h1 className="text-lg sm:text-xl font-bold font-display text-navy-900 tracking-tight leading-tight">
-            {current.title}
-          </h1>
-          <p className="hidden sm:block text-xs text-ink-500">
-            {current.subtitle}
-          </p>
-        </div>
+        <nav aria-label="Breadcrumb" className="min-w-0">
+          <ol className="flex items-center gap-1.5 text-[0.68rem] font-bold tracking-[0.16em] text-ink-400 uppercase">
+            <li className="hidden shrink-0 sm:block">Super Admin</li>
+            <li aria-hidden className="hidden text-gold-600 sm:block">
+              /
+            </li>
+            <li className="truncate text-navy-900">
+              {current?.label ?? 'Control Panel'}
+            </li>
+          </ol>
+        </nav>
       </div>
 
-      <div className="flex items-center gap-3">
+      <div className="flex shrink-0 items-center gap-2 sm:gap-3">
         {/* Environment Status Badge */}
-        {isDevSession ? (
-          <div className="hidden sm:inline-flex items-center gap-1.5 rounded-full bg-amber-50 border border-amber-200/90 px-3 py-1 text-xs font-semibold text-amber-800">
-            <Sparkles className="size-3.5 text-amber-600" />
-            <span>Dev Preview Mode</span>
-          </div>
-        ) : (
-          <div className="hidden sm:inline-flex items-center gap-1.5 rounded-full bg-emerald-50 border border-emerald-200/90 px-3 py-1 text-xs font-semibold text-emerald-800">
-            <span className="size-2 rounded-full bg-emerald-500 animate-pulse" />
-            <span>Backend Connected</span>
-          </div>
-        )}
+        <span className="hidden items-center gap-1.5 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-800 sm:inline-flex">
+          <span className="size-2 animate-pulse rounded-full bg-emerald-500" aria-hidden />
+          Backend Connected
+        </span>
 
         {/* View Public Website */}
         <Link
           to="/"
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center gap-1.5 rounded-full border border-cream-300 bg-cream-50 px-3 py-1.5 text-xs font-semibold text-ink-600 hover:bg-cream-100 hover:text-navy-900 transition-colors"
+          className="inline-flex items-center gap-1.5 rounded-full border border-cream-300 bg-cream-50 px-3 py-1.5 text-xs font-semibold text-ink-600 transition-colors hover:border-gold-500/60 hover:bg-cream-100 hover:text-navy-900 focus-visible:ring-2 focus-visible:ring-gold-500 focus-visible:outline-none"
           title="Open Public Website"
         >
-          <Globe className="size-3.5 text-gold-600" />
+          <Globe className="size-3.5 text-gold-600" aria-hidden />
           <span className="hidden md:inline">Public Site</span>
-          <ExternalLink className="size-3 opacity-60" />
+          <ExternalLink className="size-3 opacity-60" aria-hidden />
         </Link>
 
         {/* User Badge */}
-        <div className="flex items-center gap-2 pl-2 border-l border-cream-200">
-          <div className="size-9 rounded-full bg-navy-900 text-gold-400 font-bold text-xs flex items-center justify-center shadow-xs">
-            <Shield className="size-4" />
-          </div>
-          <div className="hidden md:block text-left">
-            <p className="text-xs font-bold text-navy-900 leading-tight">
+        <div className="flex items-center gap-2 border-l border-cream-300 pl-2 sm:pl-3">
+          <span className="flex size-9 items-center justify-center rounded-full bg-navy-900 font-bold text-gold-400 shadow-card">
+            <Shield className="size-4" aria-hidden />
+          </span>
+          <span className="hidden text-left md:block">
+            <span className="block text-xs leading-tight font-bold text-navy-900">
               {session?.user.name || 'Super Admin'}
-            </p>
-            <p className="text-[0.68rem] text-ink-400 font-medium">
+            </span>
+            <span className="block text-[0.68rem] font-medium text-ink-400">
               Authorized
-            </p>
-          </div>
+            </span>
+          </span>
         </div>
       </div>
     </header>

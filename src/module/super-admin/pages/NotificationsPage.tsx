@@ -7,15 +7,11 @@
 import { useEffect, useState, useMemo, useRef, type ChangeEvent, type FormEvent } from 'react'
 import {
   Bell,
-  Search,
   RefreshCw,
   Plus,
   Trash2,
   Calendar,
   Eye,
-  CheckCircle,
-  AlertCircle,
-  X,
   Upload,
   Image as ImageIcon,
   Users,
@@ -26,6 +22,22 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { ConfirmDialog } from '../components/ConfirmDialog'
+import { PanelCard } from '../components/PanelCard'
+import { PanelPageHeader } from '../components/PanelPageHeader'
+import { panelDescription } from '../navigation'
+import { PanelBanner } from '../components/PanelBanner'
+import { PanelModal } from '../components/PanelModal'
+import { PanelSearch } from '../components/PanelSearch'
+import { PanelToolbar } from '../components/PanelToolbar'
+import { PanelEmpty } from '../components/PanelState'
+import { PanelTableSkeleton, SkeletonText } from '../components/PanelSkeleton'
+import {
+  PanelTable,
+  PanelTableFooter,
+  PanelTableHeadCell,
+} from '../components/PanelTable'
+import { PanelFilterSelect } from '../components/PanelFilterSelect'
+import { cn } from 'cn'
 import {
   createNotification,
   deleteNotificationRecord,
@@ -38,6 +50,8 @@ import type {
   NotificationRecord,
   NotificationTarget,
 } from '../types'
+
+const AUDIENCE_FILTERS = ['All', 'User', 'Admin'] as const
 
 export default function NotificationsPage() {
   const [notifications, setNotifications] = useState<NotificationRecord[]>([])
@@ -253,580 +267,521 @@ export default function NotificationsPage() {
 
   return (
     <div className="space-y-6">
-      {/* Title & Top Action */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h2 className="text-xl font-bold font-display text-navy-900 tracking-tight">
-            Notification Broadcasts
-          </h2>
-          <p className="text-xs text-ink-500 mt-0.5">
-            Create and broadcast push alerts, announcements, and policy updates to Users or Admins.
-          </p>
-        </div>
-
-        <div className="flex items-center gap-2">
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            onClick={() => void loadData()}
-            disabled={isLoading}
-            className="rounded-full text-xs font-semibold cursor-pointer"
-          >
-            <RefreshCw className={`size-3.5 ${isLoading ? 'animate-spin' : ''}`} />
-            <span>Refresh</span>
-          </Button>
-
-          <Button
-            type="button"
-            size="sm"
-            onClick={() => setIsCreateModalOpen(true)}
-            className="rounded-full bg-gradient-to-r from-gold-500 to-gold-400 hover:from-gold-400 hover:to-gold-300 text-navy-950 font-bold text-xs shadow-gold cursor-pointer"
-          >
-            <Plus className="size-4" />
-            <span>Create Notification</span>
-          </Button>
-        </div>
-      </div>
-
-      {/* Success banner */}
-      {successBanner && (
-        <div className="rounded-xl bg-emerald-50 border border-emerald-200 p-3.5 text-xs text-emerald-800 flex items-center justify-between animate-in fade-in">
-          <div className="flex items-center gap-2">
-            <CheckCircle className="size-4 text-emerald-600 shrink-0" />
-            <span>{successBanner}</span>
-          </div>
-          <button
-            type="button"
-            onClick={() => setSuccessBanner(null)}
-            className="text-emerald-700 hover:text-emerald-900 p-1"
-          >
-            <X className="size-4" />
-          </button>
-        </div>
-      )}
-
-      {/* Error banner */}
-      {errorMessage && (
-        <div className="rounded-xl bg-rose-50 border border-rose-200 p-3.5 text-xs text-rose-800 flex items-center justify-between animate-in fade-in">
-          <div className="flex items-center gap-2">
-            <AlertCircle className="size-4 text-rose-600 shrink-0" />
-            <span>{errorMessage}</span>
-          </div>
-          <button
-            type="button"
-            onClick={() => setErrorMessage(null)}
-            className="text-rose-700 hover:text-rose-900 p-1"
-          >
-            <X className="size-4" />
-          </button>
-        </div>
-      )}
-
-      {/* Search & Target Audience Filter */}
-      <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 rounded-2xl bg-white p-3 border border-cream-200/90 shadow-xs">
-        <div className="relative flex-1">
-          <Search className="absolute inset-y-0 left-3 my-auto size-4 text-ink-400 pointer-events-none" />
-          <Input
-            type="text"
-            placeholder="Search notification heading or message content..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-9 h-9.5 text-xs bg-cream-50/50 border-cream-200 rounded-xl"
-          />
-        </div>
-
-        <div className="flex items-center gap-1.5">
-          <span className="text-[0.68rem] uppercase font-bold text-ink-400 shrink-0">
-            Target Audience:
-          </span>
-          {['All', 'User', 'Admin'].map((aud) => (
-            <button
-              key={aud}
+      <PanelPageHeader
+        title="Notification Broadcasts"
+        description={panelDescription('/panel/notifications')}
+        actions={
+          <>
+            <Button
               type="button"
-              onClick={() => setTargetFilter(aud)}
-              className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-colors cursor-pointer ${
-                targetFilter === aud
-                  ? 'bg-navy-900 text-white'
-                  : 'bg-cream-100 text-ink-600 hover:bg-cream-200'
-              }`}
+              variant="outline"
+              size="sm"
+              onClick={() => void loadData()}
+              disabled={isLoading}
+              className="cursor-pointer rounded-full border-cream-300 text-xs font-semibold"
             >
-              {aud}
-            </button>
-          ))}
-        </div>
-      </div>
+              <RefreshCw className={isLoading ? 'size-3.5 animate-spin' : 'size-3.5'} aria-hidden />
+              <span>Refresh</span>
+            </Button>
+
+            <Button
+              type="button"
+              size="sm"
+              onClick={() => setIsCreateModalOpen(true)}
+              className="cursor-pointer rounded-full bg-gold-600 text-xs font-bold text-white shadow-gold hover:bg-gold-700"
+            >
+              <Plus className="size-4" aria-hidden />
+              <span>Create Notification</span>
+            </Button>
+          </>
+        }
+      />
+
+      {successBanner && (
+        <PanelBanner
+          tone="success"
+          message={successBanner}
+          onDismiss={() => setSuccessBanner(null)}
+        />
+      )}
+
+      {errorMessage && (
+        <PanelBanner
+          tone="error"
+          message={errorMessage}
+          onDismiss={() => setErrorMessage(null)}
+        />
+      )}
 
       {/* Notifications Table */}
-      <div className="rounded-2xl border border-cream-200/90 bg-white overflow-hidden shadow-xs">
-        {isLoading ? (
-          <div className="py-20 text-center">
-            <div className="inline-flex size-10 items-center justify-center rounded-full bg-cream-100 text-navy-800 animate-spin mb-3">
-              <RefreshCw className="size-5" />
-            </div>
-            <p className="text-xs font-semibold text-ink-500">
-              Loading broadcast notifications...
-            </p>
-          </div>
-        ) : filtered.length === 0 ? (
-          <div className="py-16 text-center">
-            <Bell className="mx-auto size-12 text-ink-300 mb-2" />
-            <p className="text-sm font-bold text-navy-900">No Notifications Found</p>
-            <p className="text-xs text-ink-500 mt-1 max-w-sm mx-auto">
-              {searchQuery || targetFilter !== 'All'
-                ? 'No notifications match your current filter criteria.'
-                : 'No announcements have been dispatched yet. Click "Create Notification" to compose one.'}
-            </p>
-          </div>
-        ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs border-collapse">
-              <thead>
-                <tr className="border-b border-cream-200 bg-cream-50/80 text-[0.7rem] uppercase font-bold tracking-wider text-ink-500">
-                  <th className="py-3.5 px-4">Heading & Content</th>
-                  <th className="py-3.5 px-4">Audience</th>
-                  <th className="py-3.5 px-4">Broadcast Date</th>
-                  <th className="py-3.5 px-4">Attachment</th>
-                  <th className="py-3.5 px-4 text-right">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-cream-100">
-                {filtered.map((item) => (
-                  <tr
-                    key={item.id}
-                    className="hover:bg-cream-50/50 transition-colors"
-                  >
-                    <td className="py-3.5 px-4 max-w-md">
-                      <p className="font-bold text-navy-900 text-sm">
-                        {item.notification_heading}
-                      </p>
-                      <p className="text-ink-600 line-clamp-2 mt-0.5 leading-relaxed">
-                        {item.notification_message}
-                      </p>
-                    </td>
-
-                    <td className="py-3.5 px-4">
-                      <span
-                        className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold ${
-                          item.notification_for === 'Admin'
-                            ? 'bg-amber-100 text-amber-800 border border-amber-200'
-                            : 'bg-emerald-100 text-emerald-800 border border-emerald-200'
-                        }`}
-                      >
-                        {item.notification_for === 'Admin' ? (
-                          <Shield className="size-3" />
-                        ) : (
-                          <Users className="size-3" />
-                        )}
-                        <span>{item.notification_for}</span>
-                      </span>
-                    </td>
-
-                    <td className="py-3.5 px-4">
-                      <span className="text-ink-500 flex items-center gap-1.5 font-medium">
-                        <Calendar className="size-3.5 text-ink-400" />
-                        {item.notification_date || '—'}
-                      </span>
-                    </td>
-
-                    <td className="py-3.5 px-4">
-                      {item.notification_image ? (
-                        <span className="inline-flex items-center gap-1 text-[0.7rem] text-gold-700 bg-gold-50 border border-gold-200 px-2 py-0.5 rounded-md font-semibold">
-                          <ImageIcon className="size-3" />
-                          Image Attached
-                        </span>
-                      ) : (
-                        <span className="text-ink-400 text-[0.7rem] italic">None</span>
-                      )}
-                    </td>
-
-                    <td className="py-3.5 px-4 text-right">
-                      <div className="flex items-center justify-end gap-1.5">
-                        <Button
-                          type="button"
-                          size="xs"
-                          variant="outline"
-                          onClick={() => void handleInspect(item.id)}
-                          className="rounded-full text-navy-900 border-navy-200 hover:bg-navy-50 text-[0.7rem] px-2.5 cursor-pointer"
-                          title="View Details via GET /notification/{id}"
-                        >
-                          <Eye className="size-3 text-navy-700" />
-                          <span>Details</span>
-                        </Button>
-
-                        <Button
-                          type="button"
-                          size="xs"
-                          variant="outline"
-                          onClick={() => setDeleteTarget(item)}
-                          className="rounded-full text-rose-700 border-rose-300 hover:bg-rose-50 text-[0.7rem] px-2 cursor-pointer"
-                          title="Delete Notification"
-                        >
-                          <Trash2 className="size-3" />
-                        </Button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-
-        <div className="flex items-center justify-between border-t border-cream-200 px-4 py-3 bg-cream-50/50 text-[0.7rem] text-ink-500">
-          <span>
-            Total notifications: <strong>{filtered.length}</strong>
-          </span>
-          <span>
-            Endpoints: GET /notification • POST /notification • GET /notification/:id • DELETE /notification/:id
-          </span>
-        </div>
-      </div>
-
-      {/* Create Notification Modal */}
-      {isCreateModalOpen && (
-        <div
-          role="dialog"
-          aria-modal="true"
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-navy-950/70 backdrop-blur-xs animate-in fade-in"
+      <PanelCard flush>
+        <PanelToolbar
+          search={
+            <PanelSearch
+              value={searchQuery}
+              onChange={setSearchQuery}
+              placeholder="Search heading or message content…"
+            />
+          }
         >
-          <div className="relative w-full max-w-lg rounded-3xl bg-white p-6 sm:p-8 shadow-2xl border border-cream-200">
-            <button
-              type="button"
-              onClick={() => {
-                if (!isSubmitting) {
-                  setIsCreateModalOpen(false)
-                  handleClearImage()
-                }
-              }}
-              className="absolute right-5 top-5 rounded-full p-1.5 text-ink-400 hover:bg-cream-100 hover:text-ink-700 cursor-pointer"
-            >
-              <X className="size-5" />
-            </button>
+          <PanelFilterSelect
+            id="filter-notification-audience"
+            label="Audience"
+            options={AUDIENCE_FILTERS}
+            value={targetFilter}
+            onChange={setTargetFilter}
+          />
+        </PanelToolbar>
 
-            <div className="flex items-center gap-3 mb-6">
-              <div className="size-11 rounded-2xl bg-gold-100 text-gold-700 flex items-center justify-center">
-                <Bell className="size-5" />
-              </div>
-              <div>
-                <h3 className="text-lg font-bold font-display text-navy-900">
-                  Compose Broadcast Notification
-                </h3>
-                <p className="text-xs text-ink-500">
-                  Send structured announcement using POST /notification
-                </p>
-              </div>
-            </div>
-
-            <form onSubmit={handleCreateSubmit} className="space-y-4">
-              {/* Target Audience Dropdown */}
-              <div>
-                <label className="block text-xs font-bold text-navy-900 uppercase tracking-wider mb-1.5">
-                  Notification For <span className="text-rose-500">*</span>
-                </label>
-                <select
-                  value={createForm.notification_for}
-                  onChange={(e) =>
-                    setCreateForm((prev) => ({
-                      ...prev,
-                      notification_for: e.target.value as NotificationTarget,
-                    }))
-                  }
-                  className="w-full h-10 px-3 text-xs bg-cream-50/70 border border-cream-300 rounded-xl font-semibold text-navy-900 focus:outline-none focus:ring-2 focus:ring-gold-400"
-                >
-                  <option value="User">User (Matrimonial Members)</option>
-                  <option value="Admin">Admin (Regional Administrators)</option>
-                </select>
-              </div>
-
-              {/* Broadcast Date */}
-              <div>
-                <label className="block text-xs font-bold text-navy-900 uppercase tracking-wider mb-1.5">
-                  Notification Date <span className="text-rose-500">*</span>
-                </label>
-                <Input
-                  type="date"
-                  value={createForm.notification_date}
-                  onChange={(e) =>
-                    setCreateForm((prev) => ({
-                      ...prev,
-                      notification_date: e.target.value,
-                    }))
-                  }
-                  required
-                  className="h-10 text-xs rounded-xl"
-                />
-                {formErrors.notification_date && (
-                  <p className="mt-1 text-[0.7rem] text-rose-600">
-                    {formErrors.notification_date}
-                  </p>
-                )}
-              </div>
-
-              {/* Heading */}
-              <div>
-                <label className="block text-xs font-bold text-navy-900 uppercase tracking-wider mb-1.5">
-                  Notification Heading <span className="text-rose-500">*</span>
-                </label>
-                <Input
-                  type="text"
-                  placeholder="e.g. Festival Season Matrimonial Special"
-                  value={createForm.notification_heading}
-                  onChange={(e) =>
-                    setCreateForm((prev) => ({
-                      ...prev,
-                      notification_heading: e.target.value,
-                    }))
-                  }
-                  required
-                  className="h-10 text-xs rounded-xl"
-                />
-                {formErrors.notification_heading && (
-                  <p className="mt-1 text-[0.7rem] text-rose-600">
-                    {formErrors.notification_heading}
-                  </p>
-                )}
-              </div>
-
-              {/* Message Body */}
-              <div>
-                <label className="block text-xs font-bold text-navy-900 uppercase tracking-wider mb-1.5">
-                  Notification Message Body <span className="text-rose-500">*</span>
-                </label>
-                <Textarea
-                  placeholder="Write clear, informative announcement message..."
-                  rows={4}
-                  value={createForm.notification_message}
-                  onChange={(e) =>
-                    setCreateForm((prev) => ({
-                      ...prev,
-                      notification_message: e.target.value,
-                    }))
-                  }
-                  required
-                  className="text-xs rounded-xl"
-                />
-                {formErrors.notification_message && (
-                  <p className="mt-1 text-[0.7rem] text-rose-600">
-                    {formErrors.notification_message}
-                  </p>
-                )}
-              </div>
-
-              {/* Notification Image File Upload */}
-              <div>
-                <label className="block text-xs font-bold text-navy-900 uppercase tracking-wider mb-1.5">
-                  Notification Banner Image (Optional)
-                </label>
-                <input
-                  type="file"
-                  accept="image/*"
-                  ref={fileInputRef}
-                  onChange={handleImageChange}
-                  className="hidden"
-                  id="notification-file-input"
-                />
-
-                {createForm.imagePreview ? (
-                  <div className="relative rounded-2xl overflow-hidden border border-cream-300 max-h-40 bg-navy-900">
-                    <img
-                      src={createForm.imagePreview}
-                      alt="Banner Preview"
-                      className="w-full h-36 object-contain"
-                    />
-                    <button
-                      type="button"
-                      onClick={handleClearImage}
-                      className="absolute top-2 right-2 rounded-full bg-navy-950/80 p-1 text-white hover:bg-rose-600 transition-colors"
-                      title="Remove image"
-                    >
-                      <X className="size-4" />
-                    </button>
-                  </div>
-                ) : (
-                  <label
-                    htmlFor="notification-file-input"
-                    className="flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-cream-300 bg-cream-50/50 p-4 text-center cursor-pointer hover:bg-cream-100/70 transition-colors"
-                  >
-                    <Upload className="size-6 text-ink-400 mb-1" />
-                    <span className="text-xs font-semibold text-navy-900">
-                      Click to upload banner image
-                    </span>
-                    <span className="text-[0.68rem] text-ink-400 mt-0.5">
-                      PNG, JPG, WebP up to 5MB
-                    </span>
-                  </label>
-                )}
-                {formErrors.notification_image && (
-                  <p className="mt-1 text-[0.7rem] text-rose-600">
-                    {formErrors.notification_image}
-                  </p>
-                )}
-              </div>
-
-              {/* Modal Buttons */}
-              <div className="mt-6 flex items-center justify-end gap-3 pt-4 border-t border-cream-200">
+        {isLoading ? (
+          <PanelTableSkeleton rows={6} columns={5} />
+        ) : filtered.length === 0 ? (
+          <PanelEmpty
+            icon={<Bell className="size-6" />}
+            title="No Notifications Found"
+            description={
+              searchQuery || targetFilter !== 'All'
+                ? 'No notifications match your current filter criteria.'
+                : 'No announcements have been dispatched yet. Create one to notify your audience.'
+            }
+            action={
+              searchQuery || targetFilter !== 'All' ? (
                 <Button
                   type="button"
                   variant="outline"
+                  size="xs"
                   onClick={() => {
-                    setIsCreateModalOpen(false)
-                    handleClearImage()
+                    setSearchQuery('')
+                    setTargetFilter('All')
                   }}
-                  disabled={isSubmitting}
-                  className="rounded-full text-xs font-semibold cursor-pointer"
+                  className="mt-4 cursor-pointer rounded-full border-cream-300 text-xs font-semibold"
                 >
-                  Cancel
+                  Clear filters
                 </Button>
-                <Button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="rounded-full bg-navy-900 hover:bg-navy-800 text-white font-bold text-xs px-5 shadow-md cursor-pointer"
-                >
-                  {isSubmitting ? (
-                    <span className="flex items-center gap-2">
-                      <span className="size-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                      Broadcasting...
+              ) : undefined
+            }
+          />
+        ) : (
+          <PanelTable
+            caption="Broadcast notifications with audience, date and attachment"
+            head={
+              <>
+                <PanelTableHeadCell>Heading & Content</PanelTableHeadCell>
+                <PanelTableHeadCell>Audience</PanelTableHeadCell>
+                <PanelTableHeadCell>Broadcast Date</PanelTableHeadCell>
+                <PanelTableHeadCell>Attachment</PanelTableHeadCell>
+                <PanelTableHeadCell align="right">Actions</PanelTableHeadCell>
+              </>
+            }
+          >
+            {filtered.map((item) => (
+              <tr key={item.id} className="transition-colors hover:bg-cream-50/70">
+                <td className="max-w-md px-4 py-3.5">
+                  <p className="text-sm font-bold text-navy-900">
+                    {item.notification_heading}
+                  </p>
+                  <p className="mt-0.5 line-clamp-2 leading-relaxed text-ink-600">
+                    {item.notification_message}
+                  </p>
+                </td>
+
+                <td className="px-4 py-3.5">
+                  <span
+                    className={cn(
+                      'inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-xs font-bold',
+                      item.notification_for === 'Admin'
+                        ? 'border-navy-200 bg-navy-50 text-navy-800'
+                        : 'border-gold-300 bg-gold-50 text-gold-800',
+                    )}
+                  >
+                    {item.notification_for === 'Admin' ? (
+                      <Shield className="size-3" aria-hidden />
+                    ) : (
+                      <Users className="size-3" aria-hidden />
+                    )}
+                    <span>{item.notification_for}</span>
+                  </span>
+                </td>
+
+                <td className="px-4 py-3.5">
+                  <span className="flex items-center gap-1.5 font-medium text-ink-500">
+                    <Calendar className="size-3.5 text-ink-400" aria-hidden />
+                    {item.notification_date || '—'}
+                  </span>
+                </td>
+
+                <td className="px-4 py-3.5">
+                  {item.notification_image ? (
+                    <span className="inline-flex items-center gap-1 rounded-md border border-gold-200 bg-gold-50 px-2 py-0.5 text-[0.7rem] font-semibold text-gold-800">
+                      <ImageIcon className="size-3" aria-hidden />
+                      Image Attached
                     </span>
                   ) : (
-                    <span>Publish Notification</span>
+                    <span className="text-[0.7rem] text-ink-400 italic">None</span>
                   )}
-                </Button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
+                </td>
 
-      {/* Inspect Notification Modal (GET /notification/{id}) */}
-      {inspectingId !== null && (
-        <div
-          role="dialog"
-          aria-modal="true"
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-navy-950/70 backdrop-blur-xs animate-in fade-in"
-        >
-          <div className="relative w-full max-w-lg rounded-3xl bg-white p-6 sm:p-8 shadow-2xl border border-cream-200">
-            <button
+                <td className="px-4 py-3.5">
+                  <div className="flex items-center justify-end gap-1.5">
+                    <Button
+                      type="button"
+                      size="xs"
+                      variant="outline"
+                      onClick={() => void handleInspect(item.id)}
+                      title="View notification details"
+                      className="cursor-pointer rounded-full border-navy-200 text-[0.7rem] text-navy-900 hover:bg-navy-50"
+                    >
+                      <Eye className="size-3 text-navy-700" aria-hidden />
+                      <span>Details</span>
+                    </Button>
+
+                    <Button
+                      type="button"
+                      size="xs"
+                      variant="outline"
+                      onClick={() => setDeleteTarget(item)}
+                      title="Delete Notification"
+                      className="cursor-pointer rounded-full border-maroon-200 bg-maroon-50 text-[0.7rem] text-maroon-800 hover:bg-maroon-100"
+                    >
+                      <Trash2 className="size-3" aria-hidden />
+                    </Button>
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </PanelTable>
+        )}
+
+        <PanelTableFooter>
+          <span>
+            Total notifications: <strong>{filtered.length}</strong>
+          </span>
+        </PanelTableFooter>
+      </PanelCard>
+
+      {/* Create Notification Modal */}
+      <PanelModal
+        isOpen={isCreateModalOpen}
+        title="Compose Broadcast Notification"
+        description="Send a structured announcement to the selected audience."
+        icon={<Bell className="size-5" />}
+        onClose={() => {
+          if (!isSubmitting) {
+            setIsCreateModalOpen(false)
+            handleClearImage()
+          }
+        }}
+        footer={
+          <>
+            <Button
               type="button"
+              variant="outline"
               onClick={() => {
-                setInspectingId(null)
-                setInspectedRecord(null)
+                setIsCreateModalOpen(false)
+                handleClearImage()
               }}
-              className="absolute right-5 top-5 rounded-full p-1.5 text-ink-400 hover:bg-cream-100 hover:text-ink-700 cursor-pointer"
+              disabled={isSubmitting}
+              className="cursor-pointer rounded-full border-cream-300 text-xs font-semibold"
             >
-              <X className="size-5" />
-            </button>
+              Cancel
+            </Button>
+            <Button
+              type="button"
+              onClick={(event) => {
+                event.preventDefault()
+                void handleCreateSubmit(event as unknown as FormEvent)
+              }}
+              disabled={isSubmitting}
+              className="cursor-pointer rounded-full bg-navy-900 px-5 text-xs font-bold text-white hover:bg-navy-700"
+            >
+              {isSubmitting ? (
+                <span className="flex items-center gap-2">
+                  <span className="size-3.5 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                  Broadcasting…
+                </span>
+              ) : (
+                <span>Publish Notification</span>
+              )}
+            </Button>
+          </>
+        }
+      >
+        <form
+          onSubmit={handleCreateSubmit}
+          className="space-y-4"
+          id="notification-create-form"
+        >
+          {/* Target Audience */}
+          <div>
+            <label
+              htmlFor="notification-for"
+              className="mb-1.5 block text-[0.68rem] font-bold tracking-[0.14em] text-navy-900 uppercase"
+            >
+              Notification For <span className="text-maroon-600">*</span>
+            </label>
+            <select
+              id="notification-for"
+              value={createForm.notification_for}
+              onChange={(e) =>
+                setCreateForm((prev) => ({
+                  ...prev,
+                  notification_for: e.target.value as NotificationTarget,
+                }))
+              }
+              className="h-10 w-full cursor-pointer rounded-xl border border-cream-300 bg-cream-50/70 px-3 text-xs font-semibold text-navy-900 focus-visible:border-gold-500 focus-visible:ring-2 focus-visible:ring-gold-500/40 focus-visible:outline-none"
+            >
+              <option value="User">User (Matrimonial Members)</option>
+              <option value="Admin">Admin (Regional Administrators)</option>
+            </select>
+          </div>
 
-            {isLoadingDetail ? (
-              <div className="py-16 text-center">
-                <div className="inline-flex size-10 items-center justify-center rounded-full bg-cream-100 text-navy-800 animate-spin mb-3">
-                  <RefreshCw className="size-5" />
-                </div>
-                <p className="text-xs font-semibold text-ink-500">
-                  Retrieving notification #{inspectingId} from API...
-                </p>
-              </div>
-            ) : inspectedRecord ? (
-              <div>
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="size-11 rounded-2xl bg-navy-100 text-navy-900 flex items-center justify-center">
-                    <FileText className="size-5" />
-                  </div>
-                  <div>
-                    <h3 className="text-base font-bold font-display text-navy-900">
-                      Notification Details (GET /notification/{inspectedRecord.id})
-                    </h3>
-                    <div className="flex items-center gap-2 mt-0.5">
-                      <span
-                        className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[0.68rem] font-bold ${
-                          inspectedRecord.notification_for === 'Admin'
-                            ? 'bg-amber-100 text-amber-800'
-                            : 'bg-emerald-100 text-emerald-800'
-                        }`}
-                      >
-                        Target: {inspectedRecord.notification_for}
-                      </span>
-                      <span className="text-xs text-ink-500">
-                        Date: {inspectedRecord.notification_date}
-                      </span>
-                    </div>
-                  </div>
-                </div>
+          {/* Broadcast Date */}
+          <div>
+            <label
+              htmlFor="notification-date"
+              className="mb-1.5 block text-[0.68rem] font-bold tracking-[0.14em] text-navy-900 uppercase"
+            >
+              Notification Date <span className="text-maroon-600">*</span>
+            </label>
+            <Input
+              id="notification-date"
+              type="date"
+              value={createForm.notification_date}
+              onChange={(e) =>
+                setCreateForm((prev) => ({
+                  ...prev,
+                  notification_date: e.target.value,
+                }))
+              }
+              required
+              className="h-10 rounded-xl border-cream-300 text-xs"
+            />
+            {formErrors.notification_date && (
+              <p className="mt-1 text-[0.7rem] text-maroon-600">
+                {formErrors.notification_date}
+              </p>
+            )}
+          </div>
 
-                <div className="mt-4 space-y-4 text-xs">
-                  <div>
-                    <span className="text-[0.68rem] uppercase font-bold text-ink-400 block mb-1">
-                      Heading
-                    </span>
-                    <p className="font-bold text-navy-900 text-sm">
-                      {inspectedRecord.notification_heading}
-                    </p>
-                  </div>
+          {/* Heading */}
+          <div>
+            <label
+              htmlFor="notification-heading"
+              className="mb-1.5 block text-[0.68rem] font-bold tracking-[0.14em] text-navy-900 uppercase"
+            >
+              Notification Heading <span className="text-maroon-600">*</span>
+            </label>
+            <Input
+              id="notification-heading"
+              type="text"
+              placeholder="e.g. Festival Season Matrimonial Special"
+              value={createForm.notification_heading}
+              onChange={(e) =>
+                setCreateForm((prev) => ({
+                  ...prev,
+                  notification_heading: e.target.value,
+                }))
+              }
+              required
+              className="h-10 rounded-xl border-cream-300 text-xs"
+            />
+            {formErrors.notification_heading && (
+              <p className="mt-1 text-[0.7rem] text-maroon-600">
+                {formErrors.notification_heading}
+              </p>
+            )}
+          </div>
 
-                  <div>
-                    <span className="text-[0.68rem] uppercase font-bold text-ink-400 block mb-1">
-                      Message Body
-                    </span>
-                    <div className="rounded-2xl bg-cream-50 p-4 border border-cream-200 text-ink-800 leading-relaxed whitespace-pre-wrap">
-                      {inspectedRecord.notification_message}
-                    </div>
-                  </div>
+          {/* Message Body */}
+          <div>
+            <label
+              htmlFor="notification-message"
+              className="mb-1.5 block text-[0.68rem] font-bold tracking-[0.14em] text-navy-900 uppercase"
+            >
+              Notification Message Body <span className="text-maroon-600">*</span>
+            </label>
+            <Textarea
+              id="notification-message"
+              placeholder="Write clear, informative announcement message…"
+              rows={4}
+              value={createForm.notification_message}
+              onChange={(e) =>
+                setCreateForm((prev) => ({
+                  ...prev,
+                  notification_message: e.target.value,
+                }))
+              }
+              required
+              className="rounded-xl border-cream-300 text-xs"
+            />
+            {formErrors.notification_message && (
+              <p className="mt-1 text-[0.7rem] text-maroon-600">
+                {formErrors.notification_message}
+              </p>
+            )}
+          </div>
 
-                  {inspectedRecord.notification_image && (
-                    <div>
-                      <span className="text-[0.68rem] uppercase font-bold text-ink-400 block mb-1">
-                        Attachment Image
-                      </span>
-                      <div className="rounded-2xl overflow-hidden border border-cream-200 bg-navy-900 max-h-48">
-                        <img
-                          src={
-                            resolveImageUrl(inspectedRecord.notification_image) ||
-                            inspectedRecord.notification_image
-                          }
-                          alt="Notification Attachment"
-                          className="w-full h-44 object-contain"
-                        />
-                      </div>
-                    </div>
-                  )}
-                </div>
+          {/* Notification Image File Upload */}
+          <div>
+            <span className="mb-1.5 block text-[0.68rem] font-bold tracking-[0.14em] text-navy-900 uppercase">
+              Notification Banner Image (Optional)
+            </span>
+            <input
+              type="file"
+              accept="image/*"
+              ref={fileInputRef}
+              onChange={handleImageChange}
+              className="hidden"
+              id="notification-file-input"
+            />
 
-                <div className="mt-6 flex items-center justify-between pt-4 border-t border-cream-200">
-                  <Button
-                    type="button"
-                    variant="destructive"
-                    size="sm"
-                    onClick={() => {
-                      setDeleteTarget(inspectedRecord)
-                    }}
-                    className="rounded-full text-xs font-semibold cursor-pointer"
-                  >
-                    <Trash2 className="size-3.5" />
-                    <span>Delete Broadcast</span>
-                  </Button>
-
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    onClick={() => {
-                      setInspectingId(null)
-                      setInspectedRecord(null)
-                    }}
-                    className="rounded-full text-xs font-semibold cursor-pointer"
-                  >
-                    Close
-                  </Button>
-                </div>
+            {createForm.imagePreview ? (
+              <div className="relative max-h-40 overflow-hidden rounded-2xl border border-cream-300 bg-navy-900">
+                <img
+                  src={createForm.imagePreview}
+                  alt="Banner preview"
+                  className="h-36 w-full object-contain"
+                />
+                <button
+                  type="button"
+                  onClick={handleClearImage}
+                  className="absolute top-2 right-2 cursor-pointer rounded-full bg-navy-950/80 p-1 text-white transition-colors hover:bg-maroon-600"
+                  title="Remove image"
+                  aria-label="Remove image"
+                >
+                  ×
+                </button>
               </div>
             ) : (
-              <div className="py-12 text-center text-xs text-ink-500">
-                Notification record could not be found.
+              <label
+                htmlFor="notification-file-input"
+                className="flex cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-cream-300 bg-cream-50/50 p-4 text-center transition-colors hover:border-gold-500/60 hover:bg-cream-100/70"
+              >
+                <Upload className="mb-1 size-6 text-gold-600" aria-hidden />
+                <span className="text-xs font-semibold text-navy-900">
+                  Click to upload banner image
+                </span>
+                <span className="mt-0.5 text-[0.68rem] text-ink-400">
+                  PNG, JPG, WebP up to 5MB
+                </span>
+              </label>
+            )}
+            {formErrors.notification_image && (
+              <p className="mt-1 text-[0.7rem] text-maroon-600">
+                {formErrors.notification_image}
+              </p>
+            )}
+          </div>
+        </form>
+      </PanelModal>
+
+      {/* Inspect Notification Modal (GET /notification/{id}) */}
+      <PanelModal
+        isOpen={inspectingId !== null}
+        title={
+          inspectedRecord
+            ? `Notification #${inspectedRecord.id}`
+            : `Notification #${inspectingId ?? ''}`
+        }
+        description="Broadcast record retrieved from the notification endpoint."
+        icon={<FileText className="size-5" />}
+        onClose={() => {
+          setInspectingId(null)
+          setInspectedRecord(null)
+        }}
+        footer={
+          inspectedRecord ? (
+            <>
+              <Button
+                type="button"
+                variant="destructive"
+                size="sm"
+                onClick={() => {
+                  setDeleteTarget(inspectedRecord)
+                }}
+                className="mr-auto cursor-pointer rounded-full text-xs font-semibold"
+              >
+                <Trash2 className="size-3.5" aria-hidden />
+                <span>Delete Broadcast</span>
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  setInspectingId(null)
+                  setInspectedRecord(null)
+                }}
+                className="cursor-pointer rounded-full border-cream-300 text-xs font-semibold"
+              >
+                Close
+              </Button>
+            </>
+          ) : null
+        }
+      >
+        {isLoadingDetail ? (
+          <SkeletonText lines={5} className="py-6" />
+        ) : inspectedRecord ? (
+          <div className="space-y-4 text-xs">
+            <div className="flex items-center gap-2">
+              <span
+                className={cn(
+                  'inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[0.68rem] font-bold',
+                  inspectedRecord.notification_for === 'Admin'
+                    ? 'border-navy-200 bg-navy-50 text-navy-800'
+                    : 'border-gold-300 bg-gold-50 text-gold-800',
+                )}
+              >
+                Target: {inspectedRecord.notification_for}
+              </span>
+              <span className="text-xs text-ink-500">
+                Date: {inspectedRecord.notification_date}
+              </span>
+            </div>
+
+            <div>
+              <span className="mb-1 block text-[0.68rem] font-bold tracking-[0.14em] text-ink-400 uppercase">
+                Heading
+              </span>
+              <p className="text-sm font-bold text-navy-900">
+                {inspectedRecord.notification_heading}
+              </p>
+            </div>
+
+            <div>
+              <span className="mb-1 block text-[0.68rem] font-bold tracking-[0.14em] text-ink-400 uppercase">
+                Message Body
+              </span>
+              <div className="whitespace-pre-wrap rounded-2xl border border-cream-300/80 bg-cream-50/70 p-4 leading-relaxed text-ink-700">
+                {inspectedRecord.notification_message}
+              </div>
+            </div>
+
+            {inspectedRecord.notification_image && (
+              <div>
+                <span className="mb-1 block text-[0.68rem] font-bold tracking-[0.14em] text-ink-400 uppercase">
+                  Attachment Image
+                </span>
+                <div className="max-h-48 overflow-hidden rounded-2xl border border-cream-300 bg-navy-900">
+                  <img
+                    src={
+                      resolveImageUrl(inspectedRecord.notification_image) ||
+                      inspectedRecord.notification_image
+                    }
+                    alt="Notification attachment"
+                    className="h-44 w-full object-contain"
+                  />
+                </div>
               </div>
             )}
           </div>
-        </div>
-      )}
+        ) : (
+          <p className="py-8 text-center text-xs text-ink-500">
+            Notification record could not be found.
+          </p>
+        )}
+      </PanelModal>
 
       {/* Delete Confirmation Dialog */}
       {deleteTarget && (

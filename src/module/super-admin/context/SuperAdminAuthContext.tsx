@@ -15,7 +15,6 @@ import { Navigate, useLocation } from 'react-router-dom'
 import {
   clearSession,
   getStoredSession,
-  saveSession,
   superAdminLogin,
 } from '../services/adminApi'
 import type { SuperAdminSession } from '../types'
@@ -23,13 +22,11 @@ import type { SuperAdminSession } from '../types'
 interface SuperAdminAuthContextValue {
   session: SuperAdminSession | null
   isAuthenticated: boolean
-  isDevSession: boolean
   login: (username: string, password: string) => Promise<{
     success: boolean
     message: string
     isInactiveProfile?: boolean
   }>
-  devBypassLogin: (username: string) => void
   logout: () => void
 }
 
@@ -57,23 +54,6 @@ export function SuperAdminAuthProvider({ children }: { children: ReactNode }) {
     [],
   )
 
-  const devBypassLogin = useCallback((username: string) => {
-    const devSession: SuperAdminSession = {
-      token: 'dev-preview-token-' + Date.now(),
-      user: {
-        id: 9999,
-        name: 'Super Admin (Dev)',
-        username: username || '9999999999',
-        user_type: 'Super Admin',
-        mobile: username || '9999999999',
-      },
-      isDevSession: true,
-      expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
-    }
-    saveSession(devSession)
-    setSession(devSession)
-  }, [])
-
   const logout = useCallback(() => {
     clearSession()
     setSession(null)
@@ -82,9 +62,7 @@ export function SuperAdminAuthProvider({ children }: { children: ReactNode }) {
   const value: SuperAdminAuthContextValue = {
     session,
     isAuthenticated: Boolean(session?.token),
-    isDevSession: Boolean(session?.isDevSession),
     login,
-    devBypassLogin,
     logout,
   }
 

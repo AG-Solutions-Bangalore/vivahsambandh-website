@@ -15,12 +15,13 @@ import {
   Bell,
   RefreshCw,
   ArrowRight,
-  Server,
-  Sparkles,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { cn } from 'cn'
 import { StatusBadge } from '../components/StatusBadge'
-import { useSuperAdminAuth } from '../context/SuperAdminAuthContext'
+import { PanelCard, PanelCardHeader } from '../components/PanelCard'
+import { PanelPageHeader } from '../components/PanelPageHeader'
+import { PanelListSkeleton, Skeleton, SkeletonText } from '../components/PanelSkeleton'
 import {
   fetchAdminMembers,
   fetchBlockProfiles,
@@ -31,11 +32,8 @@ import {
   fetchPendingMembers,
 } from '../services/adminApi'
 import type { AdminMember, Member, NotificationRecord } from '../types'
-import { API_BASE_URL } from '@/lib/api/apiClient'
 
 export default function DashboardOverviewPage() {
-  const { isDevSession } = useSuperAdminAuth()
-
   const [isLoading, setIsLoading] = useState(true)
   const [adminCount, setAdminCount] = useState(0)
   const [pendingAdminCount, setPendingAdminCount] = useState(0)
@@ -90,339 +88,366 @@ export default function DashboardOverviewPage() {
     void loadDashboardData()
   }, [])
 
-  const statCards = [
+  /* Queues the admin has to work through — these carry the visual weight. */
+  const attentionMetrics = [
     {
-      label: 'Admin Members',
-      count: adminCount,
-      icon: ShieldCheck,
-      to: '/panel/admin-members',
-      accent: 'text-navy-700 bg-navy-50 border-navy-200',
-    },
-    {
-      label: 'Pending Admins',
+      label: 'Pending Admin Applications',
       count: pendingAdminCount,
       icon: UserCheck,
       to: '/panel/pending-admin-members',
-      accent: 'text-amber-700 bg-amber-50 border-amber-200',
-      highlight: pendingAdminCount > 0,
+      attention: true,
+    },
+    {
+      label: 'Pending Member Profiles',
+      count: pendingMemberCount,
+      icon: UserPlus,
+      to: '/panel/pending-members',
+      attention: true,
     },
     {
       label: 'Total Members',
       count: memberCount,
       icon: Users,
       to: '/panel/members',
-      accent: 'text-emerald-700 bg-emerald-50 border-emerald-200',
     },
     {
-      label: 'Pending Members',
-      count: pendingMemberCount,
-      icon: UserPlus,
-      to: '/panel/pending-members',
-      accent: 'text-purple-700 bg-purple-50 border-purple-200',
-      highlight: pendingMemberCount > 0,
+      label: 'Admin Members',
+      count: adminCount,
+      icon: ShieldCheck,
+      to: '/panel/admin-members',
     },
-    {
-      label: 'Feedback Records',
-      count: feedbackCount,
-      icon: MessageSquare,
-      to: '/panel/feedback',
-      accent: 'text-blue-700 bg-blue-50 border-blue-200',
-    },
+  ]
+
+  /* Everything else is context — one dense, scannable strip. */
+  const contextMetrics = [
     {
       label: 'Blocked Profiles',
       count: blockCount,
       icon: Ban,
       to: '/panel/block-profiles',
-      accent: 'text-rose-700 bg-rose-50 border-rose-200',
+      critical: blockCount > 0,
     },
     {
-      label: 'Notifications',
+      label: 'Feedback',
+      count: feedbackCount,
+      icon: MessageSquare,
+      to: '/panel/feedback',
+    },
+    {
+      label: 'Broadcasts',
       count: notificationCount,
       icon: Bell,
       to: '/panel/notifications',
-      accent: 'text-gold-700 bg-gold-50 border-gold-200',
     },
   ]
 
   return (
     <div className="space-y-6">
-      {/* Top Banner & Quick Controls */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 rounded-2xl bg-gradient-to-r from-navy-900 via-navy-800 to-navy-900 p-6 text-white shadow-xl">
-        <div>
-          <div className="flex items-center gap-2">
-            <h2 className="text-xl sm:text-2xl font-bold font-display text-white">
-              VivahSambandh Control Center
-            </h2>
-            {isDevSession && (
-              <span className="inline-flex items-center gap-1 rounded-full bg-amber-400/20 border border-amber-400/40 px-2.5 py-0.5 text-[0.7rem] font-bold text-amber-300">
-                <Sparkles className="size-3" />
-                Dev Mode
-              </span>
-            )}
-          </div>
-          <p className="mt-1 text-xs text-cream-200/80">
-            Real-time platform overview, moderation queues, and operational metrics.
-          </p>
-        </div>
-
-        <div className="flex items-center gap-3">
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            onClick={() => void loadDashboardData()}
-            disabled={isLoading}
-            className="rounded-full border-white/20 bg-white/10 text-white hover:bg-white/20 text-xs font-semibold cursor-pointer"
-          >
-            <RefreshCw className={`size-3.5 ${isLoading ? 'animate-spin' : ''}`} />
-            <span>Refresh Metrics</span>
-          </Button>
-
-          <Link to="/panel/notifications">
+      <PanelPageHeader
+        title="Dashboard Overview"
+        description="Moderation queues, platform totals, and recent activity across every module."
+        actions={
+          <>
             <Button
               type="button"
+              variant="outline"
               size="sm"
-              className="rounded-full bg-gradient-to-r from-gold-500 to-gold-400 hover:from-gold-400 hover:to-gold-300 text-navy-950 font-bold text-xs shadow-gold cursor-pointer"
+              onClick={() => void loadDashboardData()}
+              disabled={isLoading}
+              className="cursor-pointer rounded-full border-cream-300 bg-white text-xs font-semibold hover:border-gold-500/60 hover:bg-cream-50"
             >
-              <Bell className="size-3.5" />
-              <span>Broadcast Alert</span>
+              <RefreshCw
+                className={cn('size-3.5', isLoading && 'animate-spin')}
+                aria-hidden
+              />
+              <span>Refresh</span>
             </Button>
-          </Link>
-        </div>
-      </div>
 
-      {/* KPI Stat Cards Grid */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-        {statCards.map((card) => {
-          const Icon = card.icon
-          return (
-            <Link
-              key={card.label}
-              to={card.to}
-              className="group relative overflow-hidden rounded-2xl border border-cream-200/90 bg-white p-5 shadow-xs hover:shadow-md transition-all duration-200 hover:-translate-y-0.5"
-            >
-              <div className="flex items-center justify-between">
-                <div className={`size-10 rounded-xl flex items-center justify-center border ${card.accent}`}>
-                  <Icon className="size-5" />
-                </div>
-                {card.highlight && (
-                  <span className="flex size-2 rounded-full bg-amber-500 animate-ping" />
-                )}
-              </div>
-
-              <div className="mt-4">
-                <p className="text-2xl font-black font-display text-navy-900 tracking-tight">
-                  {isLoading ? '...' : card.count}
-                </p>
-                <div className="flex items-center justify-between mt-1">
-                  <span className="text-xs font-semibold text-ink-500">
-                    {card.label}
-                  </span>
-                  <ArrowRight className="size-3.5 text-ink-400 group-hover:text-gold-600 group-hover:translate-x-0.5 transition-all" />
-                </div>
-              </div>
+            <Link to="/panel/notifications">
+              <Button
+                type="button"
+                size="sm"
+                className="cursor-pointer rounded-full bg-gold-600 text-xs font-bold text-white shadow-gold ring-1 ring-gold-500/40 ring-inset hover:bg-gold-700"
+              >
+                <Bell className="size-3.5" aria-hidden />
+                <span>Broadcast</span>
+              </Button>
             </Link>
-          )
-        })}
-      </div>
+          </>
+        }
+      />
 
-      {/* Two Column Section: Recent Admin Activity & Recent Members */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Recent Admin Members */}
-        <div className="rounded-2xl border border-cream-200/90 bg-white p-5 shadow-xs">
-          <div className="flex items-center justify-between border-b border-cream-200 pb-3 mb-4">
-            <div className="flex items-center gap-2">
-              <ShieldCheck className="size-4.5 text-navy-800" />
-              <h3 className="text-sm font-bold font-display text-navy-900">
-                Recent Admin Members
-              </h3>
-            </div>
-            <Link
-              to="/panel/admin-members"
-              className="text-xs font-semibold text-gold-600 hover:text-gold-700 flex items-center gap-1"
-            >
-              <span>View All</span>
-              <ArrowRight className="size-3" />
-            </Link>
-          </div>
-
-          {recentAdmins.length === 0 ? (
-            <div className="py-8 text-center text-xs text-ink-400">
-              No admin records found.
-            </div>
-          ) : (
-            <div className="space-y-3">
-              {recentAdmins.map((admin) => (
-                <div
-                  key={admin.id}
-                  className="flex items-center justify-between rounded-xl border border-cream-200/60 bg-cream-50/40 p-3"
+      {/* Primary metrics — two queues that need a decision, two totals for scale */}
+      <section aria-label="Primary metrics" className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        {isLoading
+          ? Array.from({ length: 4 }, (_, index) => (
+              <div key={index} className="panel-card p-5">
+                <Skeleton className="h-3 w-32" />
+                <Skeleton className="mt-4 h-9 w-14" />
+              </div>
+            ))
+          : attentionMetrics.map((metric) => {
+              const Icon = metric.icon
+              const isAttention = metric.attention === true
+              const isClear = metric.count === 0
+              return (
+                <Link
+                  key={metric.label}
+                  to={metric.to}
+                  className={cn(
+                    'group relative overflow-hidden rounded-[1.25rem] border p-5 shadow-card transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lift focus-visible:ring-2 focus-visible:ring-gold-500 focus-visible:outline-none',
+                    isAttention
+                      ? isClear
+                        ? 'border-cream-300 bg-white'
+                        : 'border-gold-500/40 bg-gold-50'
+                      : 'border-cream-300 bg-white',
+                  )}
                 >
-                  <div className="flex items-center gap-3 min-w-0">
-                    <div className="size-9 rounded-full bg-navy-100 text-navy-800 font-bold text-xs flex items-center justify-center shrink-0">
+                  <div className="flex items-start justify-between gap-3">
+                    <span className="text-[0.66rem] font-bold tracking-[0.14em] text-ink-500 uppercase">
+                      {metric.label}
+                    </span>
+                    <span
+                      className={cn(
+                        'flex size-9 shrink-0 items-center justify-center rounded-xl transition-colors',
+                        isAttention
+                          ? isClear
+                            ? 'bg-cream-100 text-ink-400'
+                            : 'bg-gold-600 text-white'
+                          : 'bg-navy-50 text-navy-700',
+                      )}
+                    >
+                      <Icon className="size-4.5" aria-hidden />
+                    </span>
+                  </div>
+                  <p className="mt-4 flex items-baseline gap-2">
+                    <span className="font-display text-4xl font-bold tabular-nums text-navy-900">
+                      {metric.count}
+                    </span>
+                    {isAttention ? (
+                      <span className="text-xs font-medium text-ink-500">
+                        awaiting review
+                      </span>
+                    ) : null}
+                  </p>
+                  <span className="mt-3 inline-flex items-center gap-1 text-xs font-semibold text-gold-700 transition-all group-hover:gap-1.5">
+                    {isAttention ? 'Review queue' : 'Open list'}
+                    <ArrowRight className="size-3.5" aria-hidden />
+                  </span>
+                </Link>
+              )
+            })}
+      </section>
+
+      {/* Platform totals — one dense, scannable strip */}
+      <section
+        aria-label="Platform totals"
+        className="panel-card overflow-hidden px-5 py-4"
+      >
+        {isLoading ? (
+          <div className="flex flex-wrap gap-x-10 gap-y-3">
+            {Array.from({ length: 3 }, (_, index) => (
+              <Skeleton key={index} className="h-8 w-28" />
+            ))}
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 gap-x-6 gap-y-4 sm:grid-cols-3">
+            {contextMetrics.map((metric) => {
+              const Icon = metric.icon
+              return (
+                <Link
+                  key={metric.label}
+                  to={metric.to}
+                  className="group flex items-center gap-2.5 focus-visible:ring-2 focus-visible:ring-gold-500 focus-visible:outline-none"
+                >
+                  <Icon
+                    className={cn(
+                      'size-4 shrink-0 transition-colors',
+                      metric.critical ? 'text-maroon-500' : 'text-navy-400',
+                      'group-hover:text-gold-600',
+                    )}
+                    aria-hidden
+                  />
+                  <span className="font-display text-lg font-bold tabular-nums text-navy-900">
+                    {metric.count}
+                  </span>
+                  <span className="text-xs font-medium text-ink-500 transition-colors group-hover:text-navy-900">
+                    {metric.label}
+                  </span>
+                </Link>
+              )
+            })}
+          </div>
+        )}
+      </section>
+
+      {/* Recent activity */}
+      <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-2">
+        <PanelCard>
+          <PanelCardHeader
+            title="Recent Admin Members"
+            icon={<ShieldCheck className="size-4" />}
+            action={
+              <Link
+                to="/panel/admin-members"
+                className="flex items-center gap-1 text-xs font-semibold text-gold-700 transition-colors hover:text-gold-600"
+              >
+                <span>View All</span>
+                <ArrowRight className="size-3" aria-hidden />
+              </Link>
+            }
+          />
+
+          {isLoading ? (
+            <PanelListSkeleton rows={4} />
+          ) : recentAdmins.length === 0 ? (
+            <p className="py-8 text-center text-xs text-ink-400">
+              No admin records found.
+            </p>
+          ) : (
+            <ul className="space-y-2.5">
+              {recentAdmins.map((admin) => (
+                <li
+                  key={admin.id}
+                  className="flex items-center justify-between gap-3 rounded-xl border border-cream-300/70 bg-cream-50/60 p-3"
+                >
+                  <div className="flex min-w-0 items-center gap-3">
+                    <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-navy-100 text-xs font-bold text-navy-800">
                       {admin.name.charAt(0)}
-                    </div>
+                    </span>
                     <div className="min-w-0">
-                      <p className="text-xs font-bold text-navy-900 truncate">
+                      <p className="truncate text-xs font-bold text-navy-900">
                         {admin.name}
                       </p>
-                      <p className="text-[0.7rem] text-ink-400 truncate">
-                        {admin.mobile} • {admin.user_current_city || 'City unassigned'}
+                      <p className="truncate text-[0.7rem] text-ink-400">
+                        {admin.mobile || 'No mobile'} &middot;{' '}
+                        {admin.user_current_city || 'City unassigned'}
                       </p>
                     </div>
                   </div>
                   <StatusBadge status={admin.status} size="sm" />
-                </div>
+                </li>
               ))}
-            </div>
+            </ul>
           )}
-        </div>
+        </PanelCard>
 
-        {/* Recent Matrimonial Members */}
-        <div className="rounded-2xl border border-cream-200/90 bg-white p-5 shadow-xs">
-          <div className="flex items-center justify-between border-b border-cream-200 pb-3 mb-4">
-            <div className="flex items-center gap-2">
-              <Users className="size-4.5 text-navy-800" />
-              <h3 className="text-sm font-bold font-display text-navy-900">
-                Recent Member Profiles
-              </h3>
-            </div>
-            <Link
-              to="/panel/members"
-              className="text-xs font-semibold text-gold-600 hover:text-gold-700 flex items-center gap-1"
-            >
-              <span>View All</span>
-              <ArrowRight className="size-3" />
-            </Link>
-          </div>
+        <PanelCard>
+          <PanelCardHeader
+            title="Recent Member Profiles"
+            icon={<Users className="size-4" />}
+            action={
+              <Link
+                to="/panel/members"
+                className="flex items-center gap-1 text-xs font-semibold text-gold-700 transition-colors hover:text-gold-600"
+              >
+                <span>View All</span>
+                <ArrowRight className="size-3" aria-hidden />
+              </Link>
+            }
+          />
 
-          {recentMembers.length === 0 ? (
-            <div className="py-8 text-center text-xs text-ink-400">
+          {isLoading ? (
+            <PanelListSkeleton rows={4} />
+          ) : recentMembers.length === 0 ? (
+            <p className="py-8 text-center text-xs text-ink-400">
               No member profiles found.
-            </div>
+            </p>
           ) : (
-            <div className="space-y-3">
+            <ul className="space-y-2.5">
               {recentMembers.map((member) => (
-                <div
+                <li
                   key={member.id}
-                  className="flex items-center justify-between rounded-xl border border-cream-200/60 bg-cream-50/40 p-3"
+                  className="flex items-center justify-between gap-3 rounded-xl border border-cream-300/70 bg-cream-50/60 p-3"
                 >
-                  <div className="flex items-center gap-3 min-w-0">
-                    <div className="size-9 rounded-full bg-gold-100 text-gold-800 font-bold text-xs flex items-center justify-center shrink-0">
+                  <div className="flex min-w-0 items-center gap-3">
+                    <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-gold-100 text-xs font-bold text-gold-800">
                       {member.name.charAt(0)}
-                    </div>
+                    </span>
                     <div className="min-w-0">
-                      <p className="text-xs font-bold text-navy-900 truncate">
+                      <p className="truncate text-xs font-bold text-navy-900">
                         {member.name} ({member.gender})
                       </p>
-                      <p className="text-[0.7rem] text-ink-400 truncate">
-                        {member.community_name || 'Community N/A'} • {member.user_current_city || 'City N/A'}
+                      <p className="truncate text-[0.7rem] text-ink-400">
+                        {member.community_name || 'Community N/A'} &middot;{' '}
+                        {member.user_current_city || 'City N/A'}
                       </p>
                     </div>
                   </div>
                   <StatusBadge status={member.status} size="sm" />
-                </div>
+                </li>
               ))}
-            </div>
+            </ul>
           )}
-        </div>
+        </PanelCard>
       </div>
 
       {/* Latest Broadcast Announcements */}
-      <div className="rounded-2xl border border-cream-200/90 bg-white p-5 shadow-xs">
-        <div className="flex items-center justify-between border-b border-cream-200 pb-3 mb-4">
-          <div className="flex items-center gap-2">
-            <Bell className="size-4.5 text-navy-800" />
-            <h3 className="text-sm font-bold font-display text-navy-900">
-              Latest Broadcast Announcements
-            </h3>
-          </div>
-          <Link
-            to="/panel/notifications"
-            className="text-xs font-semibold text-gold-600 hover:text-gold-700 flex items-center gap-1"
-          >
-            <span>Manage Notifications</span>
-            <ArrowRight className="size-3" />
-          </Link>
-        </div>
+      <PanelCard>
+        <PanelCardHeader
+          title="Latest Broadcast Announcements"
+          icon={<Bell className="size-4" />}
+          action={
+            <Link
+              to="/panel/notifications"
+              className="flex items-center gap-1 text-xs font-semibold text-gold-700 transition-colors hover:text-gold-600"
+            >
+              <span>Manage</span>
+              <ArrowRight className="size-3" aria-hidden />
+            </Link>
+          }
+        />
 
-        {recentNotifications.length === 0 ? (
-          <div className="py-6 text-center text-xs text-ink-400">
-            No broadcast notifications dispatched yet.
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-            {recentNotifications.map((notif) => (
+        {isLoading ? (
+          <div className="space-y-2.5">
+            {Array.from({ length: 3 }, (_, index) => (
               <div
-                key={notif.id}
-                className="rounded-xl border border-cream-200/70 bg-cream-50/40 p-3.5 flex flex-col justify-between"
+                key={index}
+                className="rounded-xl border border-cream-300/70 bg-cream-50/60 p-3.5"
               >
-                <div>
-                  <div className="flex items-center justify-between gap-2 mb-1.5">
-                    <span
-                      className={`text-[0.68rem] px-2 py-0.5 rounded-full font-bold ${
-                        notif.notification_for === 'Admin'
-                          ? 'bg-amber-100 text-amber-800'
-                          : 'bg-emerald-100 text-emerald-800'
-                      }`}
-                    >
-                      {notif.notification_for}
-                    </span>
-                    <span className="text-[0.68rem] text-ink-400">
-                      {notif.notification_date}
-                    </span>
-                  </div>
-                  <h4 className="font-bold text-xs text-navy-900 line-clamp-1">
-                    {notif.notification_heading}
-                  </h4>
-                  <p className="mt-1 text-[0.72rem] text-ink-500 line-clamp-2 leading-relaxed">
-                    {notif.notification_message}
-                  </p>
-                </div>
+                <Skeleton className="h-4 w-16 rounded-full" />
+                <Skeleton className="mt-3 h-3 w-1/3" />
+                <SkeletonText lines={2} className="mt-2" />
               </div>
             ))}
           </div>
+        ) : recentNotifications.length === 0 ? (
+          <p className="py-8 text-center text-xs text-ink-400">
+            No broadcast notifications dispatched yet.
+          </p>
+        ) : (
+          <ul className="divide-y divide-cream-200/80">
+            {recentNotifications.map((notif) => (
+              <li
+                key={notif.id}
+                className="flex flex-wrap items-start gap-x-4 gap-y-2 py-3 first:pt-0 last:pb-0"
+              >
+                <span
+                  className={cn(
+                    'shrink-0 rounded-full px-2 py-0.5 text-[0.66rem] font-bold',
+                    notif.notification_for === 'Admin'
+                      ? 'bg-navy-100 text-navy-800'
+                      : 'bg-gold-100 text-gold-800',
+                  )}
+                >
+                  {notif.notification_for}
+                </span>
+                <div className="min-w-0 flex-1">
+                  <p className="text-xs font-bold text-navy-900">
+                    {notif.notification_heading}
+                  </p>
+                  <p className="mt-0.5 text-[0.72rem] leading-relaxed text-ink-500">
+                    {notif.notification_message}
+                  </p>
+                </div>
+                <span className="shrink-0 text-[0.68rem] text-ink-400">
+                  {notif.notification_date}
+                </span>
+              </li>
+            ))}
+          </ul>
         )}
-      </div>
-
-      {/* System Infrastructure Details Card */}
-      <div className="rounded-2xl border border-cream-200/90 bg-white p-5 shadow-xs">
-        <div className="flex items-center gap-2 mb-3">
-          <Server className="size-4.5 text-navy-800" />
-          <h3 className="text-sm font-bold font-display text-navy-900">
-            System & API Endpoint Status
-          </h3>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
-          <div className="rounded-xl bg-cream-50/70 p-3 border border-cream-200/80">
-            <span className="text-[0.68rem] uppercase font-bold text-ink-400">
-              API Base URL
-            </span>
-            <p className="mt-1 font-mono text-[0.75rem] text-navy-900 break-all">
-              {API_BASE_URL}
-            </p>
-          </div>
-
-          <div className="rounded-xl bg-cream-50/70 p-3 border border-cream-200/80">
-            <span className="text-[0.68rem] uppercase font-bold text-ink-400">
-              Authentication Scheme
-            </span>
-            <p className="mt-1 font-semibold text-navy-900">
-              Bearer Token (Laravel Sanctum/CRM)
-            </p>
-          </div>
-
-          <div className="rounded-xl bg-cream-50/70 p-3 border border-cream-200/80">
-            <span className="text-[0.68rem] uppercase font-bold text-ink-400">
-              Active Mode
-            </span>
-            <p className="mt-1 font-semibold text-navy-900 flex items-center gap-1.5">
-              <span className={`size-2 rounded-full ${isDevSession ? 'bg-amber-500' : 'bg-emerald-500'}`} />
-              {isDevSession ? 'Development Preview' : 'Production Live'}
-            </p>
-          </div>
-        </div>
-      </div>
+      </PanelCard>
     </div>
   )
 }

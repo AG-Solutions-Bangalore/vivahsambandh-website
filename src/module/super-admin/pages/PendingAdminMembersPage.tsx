@@ -6,39 +6,48 @@
 import { useEffect, useState, useMemo } from 'react'
 import {
   UserCheck,
-  Search,
   RefreshCw,
-  CheckCircle,
-  XCircle,
-  MapPin,
-  AlertCircle,
-  Phone,
+  CircleCheck,
+  CircleX,
   Mail,
-  X,
-  Plus,
+  MapPin,
+  Phone,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
 import { StatusBadge } from '../components/StatusBadge'
 import { ConfirmDialog } from '../components/ConfirmDialog'
+import { PanelCard } from '../components/PanelCard'
+import { PanelPageHeader } from '../components/PanelPageHeader'
+import { panelDescription } from '../navigation'
+import { PanelBanner } from '../components/PanelBanner'
+import { PanelSearch } from '../components/PanelSearch'
+import { PanelToolbar } from '../components/PanelToolbar'
+import { PanelEmpty } from '../components/PanelState'
+import { PanelTableSkeleton } from '../components/PanelSkeleton'
+import {
+  PanelTable,
+  PanelTableFooter,
+  PanelTableHeadCell,
+} from '../components/PanelTable'
+import { StatusActionGroup } from '../components/StatusActionGroup'
+import { CityAssignmentModal } from '../components/CityAssignmentModal'
 import {
   fetchPendingAdminMembers,
   updateMemberCity,
   updateMemberStatus,
 } from '../services/adminApi'
 import type { AdminMember, AdminMemberStatus } from '../types'
-import { CITIES } from '@/module/home/data/cities'
 
 export default function PendingAdminMembersPage() {
   const [pendingAdmins, setPendingAdmins] = useState<AdminMember[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
+  const [successBanner, setSuccessBanner] = useState<string | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
 
   // City Assignment State
   const [editingCityAdmin, setEditingCityAdmin] = useState<AdminMember | null>(null)
   const [selectedCities, setSelectedCities] = useState<string[]>([])
-  const [customCityInput, setCustomCityInput] = useState('')
   const [isUpdatingCity, setIsUpdatingCity] = useState(false)
 
   // Status Action State
@@ -47,7 +56,6 @@ export default function PendingAdminMembersPage() {
     nextStatus: AdminMemberStatus
   } | null>(null)
   const [isUpdatingStatus, setIsUpdatingStatus] = useState(false)
-  const [successBanner, setSuccessBanner] = useState<string | null>(null)
 
   const loadData = async () => {
     setIsLoading(true)
@@ -71,7 +79,7 @@ export default function PendingAdminMembersPage() {
     return pendingAdmins.filter(
       (a) =>
         a.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        a.mobile.includes(searchQuery) ||
+        (a.mobile ?? '').includes(searchQuery) ||
         (a.email && a.email.toLowerCase().includes(searchQuery.toLowerCase())) ||
         (a.user_current_city &&
           a.user_current_city.toLowerCase().includes(searchQuery.toLowerCase())),
@@ -89,7 +97,6 @@ export default function PendingAdminMembersPage() {
       initial = [admin.user_current_city]
     }
     setSelectedCities(initial)
-    setCustomCityInput('')
   }
 
   const handleToggleCity = (cityName: string) => {
@@ -100,11 +107,9 @@ export default function PendingAdminMembersPage() {
     )
   }
 
-  const handleAddCustomCity = () => {
-    const val = customCityInput.trim()
-    if (val && !selectedCities.includes(val)) {
-      setSelectedCities((prev) => [...prev, val])
-      setCustomCityInput('')
+  const handleAddCustomCity = (city: string) => {
+    if (city && !selectedCities.includes(city)) {
+      setSelectedCities((prev) => [...prev, city])
     }
   }
 
@@ -154,376 +159,211 @@ export default function PendingAdminMembersPage() {
     }
   }
 
-  const allCityOptions = CITIES.map((c) => c.defaultName)
-
   return (
     <div className="space-y-6">
-      {/* Header Banner */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <div className="flex items-center gap-2">
-            <h2 className="text-xl font-bold font-display text-navy-900 tracking-tight">
-              Pending Admin Member Approvals
-            </h2>
-            <span className="rounded-full bg-amber-100 text-amber-800 px-2.5 py-0.5 text-xs font-bold border border-amber-200">
-              {pendingAdmins.length} Awaiting Review
-            </span>
-          </div>
-          <p className="text-xs text-ink-500 mt-0.5">
-            Admin applications submitted via registration that require Super Admin vetting and city allocation.
-          </p>
-        </div>
+      <PanelPageHeader
+        title="Pending Admin Member Approvals"
+        description={panelDescription('/panel/pending-admin-members')}
+        chip={
+          <span className="rounded-full border border-gold-300 bg-gold-50 px-2.5 py-0.5 text-xs font-bold text-gold-800">
+            {pendingAdmins.length} Awaiting Review
+          </span>
+        }
+        actions={
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={() => void loadData()}
+            disabled={isLoading}
+            className="cursor-pointer rounded-full border-cream-300 text-xs font-semibold"
+          >
+            <RefreshCw className={isLoading ? 'size-3.5 animate-spin' : 'size-3.5'} aria-hidden />
+            <span>Refresh Queue</span>
+          </Button>
+        }
+      />
 
-        <Button
-          type="button"
-          variant="outline"
-          size="sm"
-          onClick={() => void loadData()}
-          disabled={isLoading}
-          className="rounded-full text-xs font-semibold cursor-pointer"
-        >
-          <RefreshCw className={`size-3.5 ${isLoading ? 'animate-spin' : ''}`} />
-          <span>Refresh Queue</span>
-        </Button>
-      </div>
-
-      {/* Success banner */}
       {successBanner && (
-        <div className="rounded-xl bg-emerald-50 border border-emerald-200 p-3.5 text-xs text-emerald-800 flex items-center justify-between animate-in fade-in">
-          <div className="flex items-center gap-2">
-            <CheckCircle className="size-4 text-emerald-600 shrink-0" />
-            <span>{successBanner}</span>
-          </div>
-          <button
-            type="button"
-            onClick={() => setSuccessBanner(null)}
-            className="text-emerald-700 hover:text-emerald-900 p-1"
-          >
-            <X className="size-4" />
-          </button>
-        </div>
+        <PanelBanner
+          tone="success"
+          message={successBanner}
+          onDismiss={() => setSuccessBanner(null)}
+        />
       )}
 
-      {/* Error banner */}
       {errorMessage && (
-        <div className="rounded-xl bg-rose-50 border border-rose-200 p-3.5 text-xs text-rose-800 flex items-center justify-between animate-in fade-in">
-          <div className="flex items-center gap-2">
-            <AlertCircle className="size-4 text-rose-600 shrink-0" />
-            <span>{errorMessage}</span>
-          </div>
-          <button
-            type="button"
-            onClick={() => setErrorMessage(null)}
-            className="text-rose-700 hover:text-rose-900 p-1"
-          >
-            <X className="size-4" />
-          </button>
-        </div>
+        <PanelBanner
+          tone="error"
+          message={errorMessage}
+          onDismiss={() => setErrorMessage(null)}
+        />
       )}
-
-      {/* Search */}
-      <div className="rounded-2xl bg-white p-3 border border-cream-200/90 shadow-xs">
-        <div className="relative">
-          <Search className="absolute inset-y-0 left-3 my-auto size-4 text-ink-400 pointer-events-none" />
-          <Input
-            type="text"
-            placeholder="Search pending applications by name, mobile, city..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-9 h-9.5 text-xs bg-cream-50/50 border-cream-200 rounded-xl"
-          />
-        </div>
-      </div>
 
       {/* Table */}
-      <div className="rounded-2xl border border-cream-200/90 bg-white overflow-hidden shadow-xs">
+      <PanelCard flush>
+        <PanelToolbar
+          search={
+            <PanelSearch
+              value={searchQuery}
+              onChange={setSearchQuery}
+              placeholder="Search applications by name, mobile, city…"
+            />
+          }
+        />
+
         {isLoading ? (
-          <div className="py-20 text-center">
-            <div className="inline-flex size-10 items-center justify-center rounded-full bg-cream-100 text-navy-800 animate-spin mb-3">
-              <RefreshCw className="size-5" />
-            </div>
-            <p className="text-xs font-semibold text-ink-500">
-              Fetching pending admin applications...
-            </p>
-          </div>
+          <PanelTableSkeleton rows={6} columns={6} />
         ) : filtered.length === 0 ? (
-          <div className="py-16 text-center">
-            <UserCheck className="mx-auto size-12 text-emerald-500/70 mb-2" />
-            <p className="text-sm font-bold text-navy-900">
-              No Pending Admin Members
-            </p>
-            <p className="text-xs text-ink-500 mt-1 max-w-sm mx-auto">
-              {searchQuery
+          <PanelEmpty
+            icon={<UserCheck className="size-6" />}
+            title="No Pending Admin Members"
+            description={
+              searchQuery
                 ? 'No pending applications match your search query.'
-                : 'All admin registration applications have been processed and reviewed.'}
-            </p>
-          </div>
+                : 'All admin registration applications have been processed and reviewed.'
+            }
+          />
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs border-collapse">
-              <thead>
-                <tr className="border-b border-cream-200 bg-cream-50/80 text-[0.7rem] uppercase font-bold tracking-wider text-ink-500">
-                  <th className="py-3.5 px-4">Applicant</th>
-                  <th className="py-3.5 px-4">Contact Details</th>
-                  <th className="py-3.5 px-4">Current Location</th>
-                  <th className="py-3.5 px-4">City Allocation</th>
-                  <th className="py-3.5 px-4">Status</th>
-                  <th className="py-3.5 px-4 text-right">Decision Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-cream-100">
-                {filtered.map((admin) => {
-                  const assignedCities = Array.isArray(admin.multiple_city)
-                    ? admin.multiple_city
-                    : typeof admin.multiple_city === 'string' && admin.multiple_city.trim()
-                    ? admin.multiple_city.split(',').map((c) => c.trim())
-                    : []
+          <PanelTable
+            caption="Admin applications awaiting approval with city allocation and decision actions"
+            head={
+              <>
+                <PanelTableHeadCell>Applicant</PanelTableHeadCell>
+                <PanelTableHeadCell>Contact Details</PanelTableHeadCell>
+                <PanelTableHeadCell>Current Location</PanelTableHeadCell>
+                <PanelTableHeadCell>City Allocation</PanelTableHeadCell>
+                <PanelTableHeadCell>Status</PanelTableHeadCell>
+                <PanelTableHeadCell align="right">Decision Actions</PanelTableHeadCell>
+              </>
+            }
+          >
+            {filtered.map((admin) => {
+              const assignedCities = Array.isArray(admin.multiple_city)
+                ? admin.multiple_city
+                : typeof admin.multiple_city === 'string' && admin.multiple_city.trim()
+                  ? admin.multiple_city.split(',').map((c) => c.trim())
+                  : []
 
-                  return (
-                    <tr
-                      key={admin.id}
-                      className="hover:bg-cream-50/50 transition-colors"
-                    >
-                      <td className="py-3.5 px-4">
-                        <div className="flex items-center gap-3">
-                          <div className="size-9 rounded-full bg-amber-100 text-amber-900 font-bold text-xs flex items-center justify-center shrink-0">
-                            {admin.name.charAt(0)}
-                          </div>
-                          <div>
-                            <p className="font-bold text-navy-900">{admin.name}</p>
-                            <p className="text-[0.68rem] text-ink-400">
-                              App ID: #{admin.id} {admin.gender ? `• ${admin.gender}` : ''}
-                            </p>
-                          </div>
-                        </div>
-                      </td>
+              return (
+                <tr key={admin.id} className="transition-colors hover:bg-cream-50/70">
+                  <td className="px-4 py-3.5">
+                    <div className="flex items-center gap-3">
+                      <span className="flex size-9 shrink-0 items-center justify-center rounded-full border border-gold-200 bg-gold-100 text-xs font-bold text-gold-900">
+                        {admin.name.charAt(0)}
+                      </span>
+                      <div>
+                        <p className="font-bold text-navy-900">{admin.name}</p>
+                        <p className="text-[0.68rem] text-ink-400">
+                          {admin.gender || 'Administrator'}
+                        </p>
+                      </div>
+                    </div>
+                  </td>
 
-                      <td className="py-3.5 px-4">
-                        <div className="space-y-0.5">
-                          <p className="font-medium text-navy-900 flex items-center gap-1.5">
-                            <Phone className="size-3 text-ink-400" />
-                            {admin.mobile}
-                          </p>
-                          {admin.email && (
-                            <p className="text-ink-500 flex items-center gap-1.5">
-                              <Mail className="size-3 text-ink-400" />
-                              {admin.email}
-                            </p>
-                          )}
-                        </div>
-                      </td>
+                  <td className="px-4 py-3.5">
+                    <div className="space-y-0.5">
+                      <p className="flex items-center gap-1.5 font-medium text-navy-900">
+                        <Phone className="size-3 text-ink-400" aria-hidden />
+                        {admin.mobile || '—'}
+                      </p>
+                      {admin.email && (
+                        <p className="flex items-center gap-1.5 text-ink-500">
+                          <Mail className="size-3 text-ink-400" aria-hidden />
+                          {admin.email}
+                        </p>
+                      )}
+                    </div>
+                  </td>
 
-                      <td className="py-3.5 px-4">
-                        <span className="font-medium text-ink-700">
-                          {admin.user_current_city || '—'}
+                  <td className="px-4 py-3.5">
+                    <span className="font-medium text-ink-700">
+                      {admin.user_current_city || '—'}
+                    </span>
+                  </td>
+
+                  <td className="px-4 py-3.5">
+                    <div className="flex max-w-xs flex-wrap items-center gap-1">
+                      {assignedCities.length > 0 ? (
+                        assignedCities.map((city) => (
+                          <span
+                            key={city}
+                            className="inline-flex items-center rounded-md border border-gold-200 bg-gold-50 px-2 py-0.5 text-[0.68rem] font-semibold text-gold-800"
+                          >
+                            {city}
+                          </span>
+                        ))
+                      ) : (
+                        <span className="rounded-sm border border-gold-200 bg-gold-50 px-2 py-0.5 text-[0.7rem] font-medium text-gold-800">
+                          No cities set
                         </span>
-                      </td>
+                      )}
+                      <button
+                        type="button"
+                        onClick={() => handleOpenCityModal(admin)}
+                        className="ml-1 inline-flex cursor-pointer items-center gap-1 text-[0.68rem] font-bold text-gold-700 transition-colors hover:text-gold-600 focus-visible:ring-2 focus-visible:ring-gold-500 focus-visible:outline-none"
+                      >
+                        <MapPin className="size-3" aria-hidden />
+                        <span>Set Cities</span>
+                      </button>
+                    </div>
+                  </td>
 
-                      <td className="py-3.5 px-4">
-                        <div className="flex flex-wrap items-center gap-1 max-w-xs">
-                          {assignedCities.length > 0 ? (
-                            assignedCities.map((city) => (
-                              <span
-                                key={city}
-                                className="inline-flex items-center rounded-md bg-cream-100 border border-cream-200/80 px-2 py-0.5 text-[0.68rem] font-semibold text-ink-700"
-                              >
-                                {city}
-                              </span>
-                            ))
-                          ) : (
-                            <span className="text-amber-700 font-medium text-[0.7rem] bg-amber-50 px-2 py-0.5 rounded-sm border border-amber-200">
-                              No cities set
-                            </span>
-                          )}
-                          <button
-                            type="button"
-                            onClick={() => handleOpenCityModal(admin)}
-                            className="inline-flex items-center gap-1 text-[0.68rem] font-bold text-gold-600 hover:text-gold-700 ml-1 cursor-pointer"
-                          >
-                            <MapPin className="size-3" />
-                            <span>Set Cities</span>
-                          </button>
-                        </div>
-                      </td>
+                  <td className="px-4 py-3.5">
+                    <StatusBadge status="Pending" />
+                  </td>
 
-                      <td className="py-3.5 px-4">
-                        <StatusBadge status="Pending" />
-                      </td>
-
-                      <td className="py-3.5 px-4 text-right">
-                        <div className="flex items-center justify-end gap-2">
-                          <Button
-                            type="button"
-                            size="sm"
-                            onClick={() =>
-                              setActionTarget({ admin, nextStatus: 'Approved' })
-                            }
-                            className="rounded-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs px-3 shadow-xs cursor-pointer"
-                          >
-                            <CheckCircle className="size-3.5" />
-                            <span>Approve</span>
-                          </Button>
-
-                          <Button
-                            type="button"
-                            size="sm"
-                            variant="outline"
-                            onClick={() =>
-                              setActionTarget({ admin, nextStatus: 'Cancel' })
-                            }
-                            className="rounded-full text-rose-700 border-rose-300 hover:bg-rose-50 text-xs font-semibold px-3 cursor-pointer"
-                          >
-                            <XCircle className="size-3.5" />
-                            <span>Reject</span>
-                          </Button>
-                        </div>
-                      </td>
-                    </tr>
-                  )
-                })}
-              </tbody>
-            </table>
-          </div>
+                  <td className="px-4 py-3.5">
+                    <StatusActionGroup
+                      size="sm"
+                      compact
+                      currentStatus="Pending"
+                      onSelect={(next) =>
+                        setActionTarget({
+                          admin,
+                          nextStatus: next as AdminMemberStatus,
+                        })
+                      }
+                      actions={[
+                        {
+                          status: 'Approved',
+                          label: 'Approve',
+                          icon: <CircleCheck className="size-3.5 text-emerald-600" aria-hidden />,
+                          tone: 'success',
+                        },
+                        {
+                          status: 'Cancel',
+                          label: 'Reject',
+                          icon: <CircleX className="size-3.5 text-maroon-600" aria-hidden />,
+                          tone: 'danger',
+                        },
+                      ]}
+                    />
+                  </td>
+                </tr>
+              )
+            })}
+          </PanelTable>
         )}
 
-        <div className="flex items-center justify-between border-t border-cream-200 px-4 py-3 bg-cream-50/50 text-[0.7rem] text-ink-500">
+        <PanelTableFooter>
           <span>
             Total pending: <strong>{filtered.length}</strong> applications
           </span>
-          <span>Endpoint: /getPendingAdminMember</span>
-        </div>
-      </div>
+        </PanelTableFooter>
+      </PanelCard>
 
       {/* City Assignment Modal */}
-      {editingCityAdmin && (
-        <div
-          role="dialog"
-          aria-modal="true"
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-navy-950/60 backdrop-blur-xs animate-in fade-in"
-        >
-          <div className="relative w-full max-w-lg rounded-2xl bg-white p-6 shadow-2xl border border-cream-200">
-            <button
-              type="button"
-              onClick={() => setEditingCityAdmin(null)}
-              className="absolute right-4 top-4 rounded-full p-1 text-ink-400 hover:bg-cream-100 hover:text-ink-700"
-            >
-              <X className="size-5" />
-            </button>
-
-            <div className="flex items-center gap-3 mb-4">
-              <div className="size-10 rounded-xl bg-gold-100 text-gold-700 flex items-center justify-center">
-                <MapPin className="size-5" />
-              </div>
-              <div>
-                <h3 className="text-base font-bold font-display text-navy-900">
-                  Assign Cities Before Approval
-                </h3>
-                <p className="text-xs text-ink-500">
-                  Allocate coverage territories for {editingCityAdmin.name}
-                </p>
-              </div>
-            </div>
-
-            <div className="mb-4 rounded-xl bg-cream-50 p-3 border border-cream-200">
-              <span className="block text-[0.7rem] uppercase font-bold text-ink-400 mb-2">
-                Allocated Cities ({selectedCities.length})
-              </span>
-              <div className="flex flex-wrap gap-1.5">
-                {selectedCities.length === 0 ? (
-                  <span className="text-xs text-ink-400 italic">No cities allocated yet.</span>
-                ) : (
-                  selectedCities.map((city) => (
-                    <span
-                      key={city}
-                      className="inline-flex items-center gap-1 rounded-full bg-navy-900 text-white px-3 py-1 text-xs font-semibold"
-                    >
-                      {city}
-                      <button
-                        type="button"
-                        onClick={() => handleToggleCity(city)}
-                        className="hover:text-gold-300"
-                      >
-                        <X className="size-3" />
-                      </button>
-                    </span>
-                  ))
-                )}
-              </div>
-            </div>
-
-            <div className="mb-4">
-              <span className="block text-[0.7rem] uppercase font-bold text-ink-400 mb-2">
-                Choose Available Cities
-              </span>
-              <div className="flex flex-wrap gap-1.5 max-h-36 overflow-y-auto p-1">
-                {allCityOptions.map((c) => {
-                  const isSelected = selectedCities.includes(c)
-                  return (
-                    <button
-                      key={c}
-                      type="button"
-                      onClick={() => handleToggleCity(c)}
-                      className={`px-3 py-1 rounded-full text-xs font-semibold transition-colors cursor-pointer border ${
-                        isSelected
-                          ? 'bg-gold-500 text-navy-950 border-gold-600'
-                          : 'bg-white text-ink-700 border-cream-300 hover:bg-cream-100'
-                      }`}
-                    >
-                      {isSelected ? `✓ ${c}` : `+ ${c}`}
-                    </button>
-                  )
-                })}
-              </div>
-            </div>
-
-            <div className="mb-6 flex gap-2">
-              <Input
-                type="text"
-                placeholder="Or type custom city..."
-                value={customCityInput}
-                onChange={(e) => setCustomCityInput(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') {
-                    e.preventDefault()
-                    handleAddCustomCity()
-                  }
-                }}
-                className="h-9 text-xs rounded-xl"
-              />
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={handleAddCustomCity}
-                className="rounded-xl px-3 text-xs font-semibold shrink-0 cursor-pointer"
-              >
-                <Plus className="size-3.5" />
-                Add
-              </Button>
-            </div>
-
-            <div className="flex items-center justify-end gap-3 pt-3 border-t border-cream-200">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => setEditingCityAdmin(null)}
-                disabled={isUpdatingCity}
-                className="rounded-full text-xs font-semibold cursor-pointer"
-              >
-                Cancel
-              </Button>
-              <Button
-                type="button"
-                onClick={handleSaveCity}
-                disabled={isUpdatingCity}
-                className="rounded-full bg-navy-900 text-white text-xs font-semibold cursor-pointer"
-              >
-                {isUpdatingCity ? 'Saving...' : 'Save Cities'}
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
+      <CityAssignmentModal
+        isOpen={Boolean(editingCityAdmin)}
+        adminName={editingCityAdmin?.name ?? ''}
+        selectedCities={selectedCities}
+        isSaving={isUpdatingCity}
+        onToggleCity={handleToggleCity}
+        onAddCustomCity={handleAddCustomCity}
+        onSave={() => void handleSaveCity()}
+        onClose={() => setEditingCityAdmin(null)}
+      />
 
       {/* Confirmation Dialog */}
       {actionTarget && (
@@ -537,7 +377,7 @@ export default function PendingAdminMembersPage() {
           description={
             actionTarget.nextStatus === 'Approved'
               ? `This will activate administrator privileges for ${actionTarget.admin.name}. They will be able to log in and manage member registrations in assigned cities.`
-              : `Are you sure you want to reject this admin application? The status will be set to Cancel.`
+              : 'Are you sure you want to reject this admin application? The status will be set to Cancel.'
           }
           confirmText={actionTarget.nextStatus === 'Approved' ? 'Confirm Approval' : 'Confirm Rejection'}
           variant={actionTarget.nextStatus === 'Approved' ? 'success' : 'danger'}

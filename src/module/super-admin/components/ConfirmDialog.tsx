@@ -4,8 +4,9 @@
  */
 
 import { useEffect, type ReactNode } from 'react'
-import { AlertTriangle, CheckCircle2, Info, X } from 'lucide-react'
+import { CircleAlert, CircleCheck, Info } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { cn } from 'cn'
 
 interface ConfirmDialogProps {
   isOpen: boolean
@@ -19,6 +20,24 @@ interface ConfirmDialogProps {
   onConfirm: () => void
   onClose: () => void
 }
+
+const VARIANT_STYLES = {
+  danger: {
+    icon: 'bg-maroon-100 text-maroon-600',
+    Icon: CircleAlert,
+    confirm: 'bg-maroon-600 text-white hover:bg-maroon-700',
+  },
+  success: {
+    icon: 'bg-emerald-100 text-emerald-600',
+    Icon: CircleCheck,
+    confirm: 'bg-emerald-600 text-white hover:bg-emerald-700',
+  },
+  primary: {
+    icon: 'bg-gold-100 text-gold-700',
+    Icon: Info,
+    confirm: 'bg-navy-900 text-white hover:bg-navy-700',
+  },
+} as const
 
 export function ConfirmDialog({
   isOpen,
@@ -35,97 +54,85 @@ export function ConfirmDialog({
   useEffect(() => {
     if (!isOpen) return
 
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && !isLoading) {
-        onClose()
-      }
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape' && !isLoading) onClose()
     }
 
     window.addEventListener('keydown', handleKeyDown)
+    const previousOverflow = document.body.style.overflow
     document.body.style.overflow = 'hidden'
 
     return () => {
       window.removeEventListener('keydown', handleKeyDown)
-      document.body.style.overflow = ''
+      document.body.style.overflow = previousOverflow
     }
   }, [isOpen, isLoading, onClose])
 
   if (!isOpen) return null
 
-  const icon =
-    variant === 'danger' ? (
-      <div className="size-10 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center shrink-0">
-        <AlertTriangle className="size-5" />
-      </div>
-    ) : variant === 'success' ? (
-      <div className="size-10 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center shrink-0">
-        <CheckCircle2 className="size-5" />
-      </div>
-    ) : (
-      <div className="size-10 rounded-full bg-navy-100 text-navy-800 flex items-center justify-center shrink-0">
-        <Info className="size-5" />
-      </div>
-    )
-
-  const confirmBtnVariant = variant === 'danger' ? 'destructive' : 'default'
+  const styles = VARIANT_STYLES[variant]
+  const Icon = styles.Icon
 
   return (
     <div
       role="dialog"
       aria-modal="true"
       aria-labelledby="confirm-dialog-title"
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-navy-950/60 backdrop-blur-xs animate-in fade-in duration-200"
+      className="panel-scrim animate-panel-fade"
+      onClick={isLoading ? undefined : onClose}
     >
       <div
-        className="relative w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl border border-cream-200/70 zoom-in-95 duration-200"
-        onClick={(e) => e.stopPropagation()}
+        className="panel-card animate-panel-scale relative w-full max-w-md p-6"
+        onClick={(event) => event.stopPropagation()}
       >
-        <button
-          type="button"
-          onClick={onClose}
-          disabled={isLoading}
-          className="absolute right-4 top-4 rounded-full p-1 text-ink-400 hover:bg-cream-100 hover:text-ink-700 transition-colors"
-          aria-label="Close dialog"
-        >
-          <X className="size-5" />
-        </button>
-
         <div className="flex items-start gap-4">
-          {icon}
-          <div className="flex-1 pr-6">
-            <h3 id="confirm-dialog-title" className="text-lg font-bold text-navy-900 font-display">
+          <span
+            className={cn(
+              'flex size-11 shrink-0 items-center justify-center rounded-full',
+              styles.icon,
+            )}
+          >
+            <Icon className="size-5" aria-hidden />
+          </span>
+          <div className="min-w-0 flex-1 pr-2">
+            <h3
+              id="confirm-dialog-title"
+              className="font-display text-lg font-bold text-navy-900"
+            >
               {title}
             </h3>
-            {description && (
-              <p className="mt-1 text-sm text-ink-500 leading-relaxed">
+            {description ? (
+              <p className="mt-1 text-sm leading-relaxed text-ink-500">
                 {description}
               </p>
-            )}
+            ) : null}
           </div>
         </div>
 
-        {children && <div className="mt-4">{children}</div>}
+        {children ? <div className="mt-4">{children}</div> : null}
 
-        <div className="mt-6 flex items-center justify-end gap-3 pt-3 border-t border-cream-200">
+        <div className="mt-6 flex items-center justify-end gap-2.5 border-t border-cream-300/80 pt-4">
           <Button
             type="button"
             variant="outline"
             onClick={onClose}
             disabled={isLoading}
-            className="rounded-full px-4 text-xs font-semibold cursor-pointer"
+            className="cursor-pointer rounded-full border-cream-300 px-4 text-xs font-semibold"
           >
             {cancelText}
           </Button>
           <Button
             type="button"
-            variant={confirmBtnVariant}
             onClick={onConfirm}
             disabled={isLoading}
-            className="rounded-full px-5 text-xs font-semibold cursor-pointer"
+            className={cn(
+              'cursor-pointer rounded-full px-5 text-xs font-semibold',
+              styles.confirm,
+            )}
           >
             {isLoading ? (
               <span className="flex items-center gap-2">
-                <span className="size-3.5 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                <span className="size-3.5 animate-spin rounded-full border-2 border-current border-t-transparent" />
                 Processing...
               </span>
             ) : (
