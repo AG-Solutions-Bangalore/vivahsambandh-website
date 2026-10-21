@@ -123,11 +123,11 @@ export default function PersonalDetailsSection() {
           </Field>
         </div>
 
-        {/* Time of Birth with shadcn-styled TimePicker */}
+        {/* Time of Birth with native TimePicker */}
         <div id={`${baseId}-birthtime`}>
-          <Field id={`${baseId}-birthtime-hour`} label="Time of Birth" required error={fieldErrors.time_of_birth}>
+          <Field id={`${baseId}-birthtime-input`} label="Time of Birth" required error={fieldErrors.time_of_birth}>
             <TimePicker
-              id={`${baseId}-birthtime`}
+              id={`${baseId}-birthtime-input`}
               value={form.time_of_birth}
               onChange={handleTimeChange}
               error={Boolean(fieldErrors.time_of_birth)}
