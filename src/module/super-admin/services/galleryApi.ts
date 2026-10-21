@@ -18,7 +18,7 @@ import type {
   GalleryRecord,
   GalleryStatus,
 } from '../types'
-import { extractImageEntries, toGallery, toList } from './mappers'
+import { extractImageEntries, setCachedGalleryBaseUrl, toGallery, toList } from './mappers'
 import { buildQueryString, request } from './http'
 import { convertToWebpFile, isWebpFile } from '@/lib/image'
 
@@ -85,9 +85,18 @@ export async function fetchGalleries(
 
   const res = await request<unknown>(`/gallery${query}`)
   if (res.ok && res.data) {
+    const rawEnvelope = res.data as Record<string, unknown>
+    if (rawEnvelope?.gallery_url && typeof rawEnvelope.gallery_url === 'string') {
+      setCachedGalleryBaseUrl(rawEnvelope.gallery_url)
+    }
     const entries = extractImageEntries(res.data)
     return {
-      data: toList(res.data, (row) => toGallery(row, entries)),
+      data: toList(res.data, (row) => {
+        if (rawEnvelope?.gallery_url && !row.gallery_url) {
+          row.gallery_url = rawEnvelope.gallery_url
+        }
+        return toGallery(row, entries)
+      }),
       raw: res.data,
     }
   }
@@ -106,8 +115,14 @@ export async function fetchGalleryById(
   const res = await request<unknown>(`/gallery/${id}`)
   if (res.ok && res.data) {
     const payload = res.data as Record<string, unknown>
+    if (payload?.gallery_url && typeof payload.gallery_url === 'string') {
+      setCachedGalleryBaseUrl(payload.gallery_url)
+    }
     const candidate = payload?.data ?? payload?.gallery ?? payload
     const raw = (Array.isArray(candidate) ? candidate[0] : candidate) as Record<string, unknown>
+    if (payload?.gallery_url && !raw.gallery_url) {
+      raw.gallery_url = payload.gallery_url
+    }
     const entries = extractImageEntries(res.data)
     return { data: toGallery(raw, entries) }
   }

@@ -5,7 +5,7 @@
  * status controls, copyable image links, image inspection, and deletion.
  */
 
-import { useMemo, useState, useRef } from 'react'
+import { useMemo, useState, useRef } from "react";
 import {
   Images,
   Plus,
@@ -19,24 +19,24 @@ import {
   XCircle,
   Upload,
   Image as ImageIcon,
-} from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { cn } from 'cn'
-import { ConfirmDialog } from '../components/ConfirmDialog'
-import { PanelCard } from '../components/PanelCard'
-import { PanelPageHeader } from '../components/PanelPageHeader'
-import { PanelModal } from '../components/PanelModal'
-import { PanelPagination } from '../components/PanelPagination'
-import { PanelSearch } from '../components/PanelSearch'
-import { PanelToolbar } from '../components/PanelToolbar'
-import { PanelEmpty, PanelError } from '../components/PanelState'
-import { SkeletonText } from '../components/PanelSkeleton'
-import { PanelFilterSelect } from '../components/PanelFilterSelect'
-import { StatusBadge } from '../components/StatusBadge'
-import { panelDescription } from '../navigation'
-import { errorMessage } from '../hook/errors'
-import { DEFAULT_PER_PAGE, useServerSearch } from '../hook/useServerList'
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { cn } from "cn";
+import { ConfirmDialog } from "../components/ConfirmDialog";
+import { PanelCard } from "../components/PanelCard";
+import { PanelPageHeader } from "../components/PanelPageHeader";
+import { PanelModal } from "../components/PanelModal";
+import { PanelPagination } from "../components/PanelPagination";
+import { PanelSearch } from "../components/PanelSearch";
+import { PanelToolbar } from "../components/PanelToolbar";
+import { PanelEmpty, PanelError } from "../components/PanelState";
+import { SkeletonText } from "../components/PanelSkeleton";
+import { PanelFilterSelect } from "../components/PanelFilterSelect";
+import { StatusBadge } from "../components/StatusBadge";
+import { panelDescription } from "../navigation";
+import { errorMessage } from "../hook/errors";
+import { DEFAULT_PER_PAGE, useServerSearch } from "../hook/useServerList";
 import {
   useGalleriesQuery,
   useGalleryQuery,
@@ -44,43 +44,45 @@ import {
   useUpdateGalleryMutation,
   useUpdateGalleryStatusMutation,
   useDeleteGalleryMutation,
-} from '../hook/useGalleries'
-import { convertToWebpFile, isWebpFile } from '@/lib/image'
-import type { GalleryRecord, GalleryStatus } from '../types'
+} from "../hook/useGalleries";
+import { convertToWebpFile, isWebpFile } from "@/lib/image";
+import { resolveGalleryImageUrl } from "../services/mappers";
+import type { GalleryRecord, GalleryStatus } from "../types";
 
-const STATUS_FILTERS = ['All', 'Active', 'Inactive'] as const
+const STATUS_FILTERS = ["All", "Active", "Inactive"] as const;
 
 interface GalleryFormState {
-  gallery_image: File | null
-  existing_image_url?: string | null
-  gallery_status: GalleryStatus
-  title: string
+  gallery_image: File | null;
+  existing_image_url?: string | null;
+  gallery_status: GalleryStatus;
+  title: string;
 }
 
 const DEFAULT_FORM: GalleryFormState = {
   gallery_image: null,
   existing_image_url: null,
-  gallery_status: 'Active',
-  title: '',
-}
+  gallery_status: "Active",
+  title: "",
+};
 
 export default function BlogGalleryPage() {
-  const [page, setPage] = useState(1)
-  const [statusFilter, setStatusFilter] = useState<(typeof STATUS_FILTERS)[number]>('All')
-  const [copiedUrl, setCopiedUrl] = useState<string | null>(null)
+  const [page, setPage] = useState(1);
+  const [statusFilter, setStatusFilter] =
+    useState<(typeof STATUS_FILTERS)[number]>("All");
+  const [copiedUrl, setCopiedUrl] = useState<string | null>(null);
 
   // Search input state with debounced server query
-  const { searchInput, setSearchInput, searchTerm } = useServerSearch()
+  const { searchInput, setSearchInput, searchTerm } = useServerSearch();
 
   const queryParams = useMemo(
     () => ({
       page,
       per_page: DEFAULT_PER_PAGE,
       search: searchTerm || undefined,
-      gallery_status: statusFilter === 'All' ? undefined : statusFilter,
+      gallery_status: statusFilter === "All" ? undefined : statusFilter,
     }),
     [page, searchTerm, statusFilter],
-  )
+  );
 
   const {
     records: galleryItems,
@@ -89,200 +91,202 @@ export default function BlogGalleryPage() {
     isFetching,
     error,
     refetch,
-  } = useGalleriesQuery(queryParams)
+  } = useGalleriesQuery(queryParams);
 
   // Modals state
-  const [inspectId, setInspectId] = useState<number | string | null>(null)
-  const [createModalOpen, setCreateModalOpen] = useState(false)
-  const [editTarget, setEditTarget] = useState<GalleryRecord | null>(null)
-  const [deleteTarget, setDeleteTarget] = useState<GalleryRecord | null>(null)
+  const [inspectId, setInspectId] = useState<number | string | null>(null);
+  const [createModalOpen, setCreateModalOpen] = useState(false);
+  const [editTarget, setEditTarget] = useState<GalleryRecord | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<GalleryRecord | null>(null);
 
   const {
     data: inspectedItem,
     isLoading: isInspectLoading,
     error: inspectError,
-  } = useGalleryQuery(inspectId)
+  } = useGalleryQuery(inspectId);
 
   // Derive preview from list if detail doesn't include full image_url
   const itemFromList = useMemo(
-    () => (inspectId ? galleryItems.find((g) => String(g.id) === String(inspectId)) : null),
+    () =>
+      inspectId
+        ? galleryItems.find((g) => String(g.id) === String(inspectId))
+        : null,
     [galleryItems, inspectId],
-  )
+  );
 
   const inspectedImage =
+    inspectedItem?.gallery_image ||
     itemFromList?.gallery_image ||
-    (inspectedItem?.gallery_image && inspectedItem.gallery_image.startsWith('http')
-      ? inspectedItem.gallery_image
-      : null) ||
     (inspectedItem?.gallery_image
-      ? `https://vivahsambandh.com/crmapi/public/assets/images/gallery_images/${inspectedItem.gallery_image.replace(/^\/+/, '')}`
-      : null)
+      ? resolveGalleryImageUrl(inspectedItem.gallery_image)
+      : null);
 
   // Form states
-  const [createForm, setCreateForm] = useState<GalleryFormState>(DEFAULT_FORM)
-  const [editForm, setEditForm] = useState<GalleryFormState>(DEFAULT_FORM)
-  const [isConvertingImage, setIsConvertingImage] = useState(false)
+  const [createForm, setCreateForm] = useState<GalleryFormState>(DEFAULT_FORM);
+  const [editForm, setEditForm] = useState<GalleryFormState>(DEFAULT_FORM);
+  const [isConvertingImage, setIsConvertingImage] = useState(false);
 
   // File input refs
-  const createFileInputRef = useRef<HTMLInputElement>(null)
-  const editFileInputRef = useRef<HTMLInputElement>(null)
+  const createFileInputRef = useRef<HTMLInputElement>(null);
+  const editFileInputRef = useRef<HTMLInputElement>(null);
 
   // Mutations
-  const createMutation = useCreateGalleryMutation()
-  const updateMutation = useUpdateGalleryMutation()
-  const statusMutation = useUpdateGalleryStatusMutation()
-  const deleteMutation = useDeleteGalleryMutation()
+  const createMutation = useCreateGalleryMutation();
+  const updateMutation = useUpdateGalleryMutation();
+  const statusMutation = useUpdateGalleryStatusMutation();
+  const deleteMutation = useDeleteGalleryMutation();
 
   const handleCopyUrl = async (url: string) => {
     try {
-      await navigator.clipboard.writeText(url)
-      setCopiedUrl(url)
-      setTimeout(() => setCopiedUrl(null), 2000)
+      await navigator.clipboard.writeText(url);
+      setCopiedUrl(url);
+      setTimeout(() => setCopiedUrl(null), 2000);
     } catch {
       // Ignore copy error
     }
-  }
+  };
 
   // Handle file selection with automatic WebP conversion
   const handleFileChange = async (file: File | null, isEdit = false) => {
     if (!file) {
       if (isEdit) {
-        setEditForm((prev) => ({ ...prev, gallery_image: null }))
+        setEditForm((prev) => ({ ...prev, gallery_image: null }));
       } else {
-        setCreateForm((prev) => ({ ...prev, gallery_image: null }))
+        setCreateForm((prev) => ({ ...prev, gallery_image: null }));
       }
-      return
+      return;
     }
 
     try {
-      setIsConvertingImage(true)
-      const webpFile = await convertToWebpFile(file)
+      setIsConvertingImage(true);
+      const webpFile = await convertToWebpFile(file);
       if (isEdit) {
-        setEditForm((prev) => ({ ...prev, gallery_image: webpFile }))
+        setEditForm((prev) => ({ ...prev, gallery_image: webpFile }));
       } else {
-        setCreateForm((prev) => ({ ...prev, gallery_image: webpFile }))
+        setCreateForm((prev) => ({ ...prev, gallery_image: webpFile }));
       }
     } finally {
-      setIsConvertingImage(false)
+      setIsConvertingImage(false);
     }
-  }
+  };
 
   // Open Edit Modal
   const handleOpenEdit = (item: GalleryRecord) => {
-    setEditTarget(item)
+    setEditTarget(item);
     setEditForm({
       gallery_image: null,
       existing_image_url: item.gallery_image,
       gallery_status: item.gallery_status,
-      title: item.title || '',
-    })
-  }
+      title: item.title || "",
+    });
+  };
 
   // Handle Form Submission for Creating Gallery Item
   const handleCreateSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!createForm.gallery_image || isConvertingImage) return
+    e.preventDefault();
+    if (!createForm.gallery_image || isConvertingImage) return;
 
-    let imageFile = createForm.gallery_image
+    let imageFile = createForm.gallery_image;
     if (!isWebpFile(imageFile)) {
-      imageFile = await convertToWebpFile(imageFile)
+      imageFile = await convertToWebpFile(imageFile);
     }
 
-    const formData = new FormData()
-    formData.append('gallery_image', imageFile)
-    formData.append('image', imageFile)
-    formData.append('file', imageFile)
+    const formData = new FormData();
+    formData.append("gallery_image", imageFile);
+    formData.append("image", imageFile);
+    formData.append("file", imageFile);
     if (createForm.title.trim()) {
-      formData.append('title', createForm.title.trim())
+      formData.append("title", createForm.title.trim());
     }
 
     createMutation.mutate(
       {
         payload: formData,
-        successMessage: 'Gallery photo added successfully.',
+        successMessage: "Gallery photo added successfully.",
       },
       {
         onSuccess: () => {
-          setCreateModalOpen(false)
-          setCreateForm(DEFAULT_FORM)
-          if (createFileInputRef.current) createFileInputRef.current.value = ''
+          setCreateModalOpen(false);
+          setCreateForm(DEFAULT_FORM);
+          if (createFileInputRef.current) createFileInputRef.current.value = "";
         },
       },
-    )
-  }
+    );
+  };
 
   // Handle Form Submission for Updating Gallery Item
   const handleEditSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!editTarget || isConvertingImage) return
+    e.preventDefault();
+    if (!editTarget || isConvertingImage) return;
 
-    let imageFile = editForm.gallery_image
+    let imageFile = editForm.gallery_image;
     if (imageFile && !isWebpFile(imageFile)) {
-      imageFile = await convertToWebpFile(imageFile)
+      imageFile = await convertToWebpFile(imageFile);
     }
 
-    const formData = new FormData()
-    formData.append('gallery_status', editForm.gallery_status)
-    formData.append('status', editForm.gallery_status)
-    formData.append('_method', 'PUT')
+    const formData = new FormData();
+    formData.append("gallery_status", editForm.gallery_status);
+    formData.append("status", editForm.gallery_status);
+    formData.append("_method", "PUT");
 
     if (imageFile) {
-      formData.append('gallery_image', imageFile)
-      formData.append('image', imageFile)
-      formData.append('file', imageFile)
+      formData.append("gallery_image", imageFile);
+      formData.append("image", imageFile);
+      formData.append("file", imageFile);
     }
 
     if (editForm.title.trim()) {
-      formData.append('title', editForm.title.trim())
+      formData.append("title", editForm.title.trim());
     }
 
     updateMutation.mutate(
       {
         id: editTarget.id,
         payload: formData,
-        successMessage: 'Gallery item updated successfully.',
+        successMessage: "Gallery item updated successfully.",
       },
       {
         onSuccess: () => {
-          setEditTarget(null)
-          setEditForm(DEFAULT_FORM)
-          if (editFileInputRef.current) editFileInputRef.current.value = ''
+          setEditTarget(null);
+          setEditForm(DEFAULT_FORM);
+          if (editFileInputRef.current) editFileInputRef.current.value = "";
         },
       },
-    )
-  }
+    );
+  };
 
   // Toggle quick status
   const handleToggleStatus = (item: GalleryRecord) => {
-    const nextStatus: GalleryStatus = item.gallery_status === 'Active' ? 'Inactive' : 'Active'
+    const nextStatus: GalleryStatus =
+      item.gallery_status === "Active" ? "Inactive" : "Active";
     statusMutation.mutate({
       id: item.id,
       gallery_status: nextStatus,
       successMessage: `Gallery photo marked as ${nextStatus}.`,
-    })
-  }
+    });
+  };
 
   // Confirm delete
   const handleConfirmDelete = () => {
-    if (!deleteTarget) return
+    if (!deleteTarget) return;
     deleteMutation.mutate(
       {
         id: deleteTarget.id,
-        successMessage: 'Gallery photo deleted successfully.',
+        successMessage: "Gallery photo deleted successfully.",
       },
       {
         onSuccess: () => setDeleteTarget(null),
       },
-    )
-  }
+    );
+  };
 
-  const hasFilters = Boolean(searchTerm) || statusFilter !== 'All'
+  const hasFilters = Boolean(searchTerm) || statusFilter !== "All";
 
   return (
     <div className="space-y-6">
       <PanelPageHeader
         title="Blog Gallery"
-        description={panelDescription('/panel/blog-gallery')}
+        description={panelDescription("/panel/blog-gallery")}
         actions={
           <div className="flex items-center gap-2">
             <Button
@@ -293,7 +297,12 @@ export default function BlogGalleryPage() {
               disabled={isFetching}
               className="cursor-pointer gap-2 rounded-full border-cream-300 bg-cream-50 text-xs font-semibold text-navy-900 hover:bg-cream-100/70"
             >
-              <RefreshCw className={cn('size-3.5 text-navy-700', isFetching && 'animate-spin')} />
+              <RefreshCw
+                className={cn(
+                  "size-3.5 text-navy-700",
+                  isFetching && "animate-spin",
+                )}
+              />
               <span>Refresh</span>
             </Button>
 
@@ -301,8 +310,8 @@ export default function BlogGalleryPage() {
               type="button"
               size="sm"
               onClick={() => {
-                setCreateForm(DEFAULT_FORM)
-                setCreateModalOpen(true)
+                setCreateForm(DEFAULT_FORM);
+                setCreateModalOpen(true);
               }}
               className="cursor-pointer gap-2 rounded-full bg-gold-600 text-xs font-bold text-white shadow-gold hover:bg-gold-700"
             >
@@ -329,8 +338,8 @@ export default function BlogGalleryPage() {
             value={statusFilter}
             options={STATUS_FILTERS}
             onChange={(val) => {
-              setStatusFilter(val as (typeof STATUS_FILTERS)[number])
-              setPage(1)
+              setStatusFilter(val as (typeof STATUS_FILTERS)[number]);
+              setPage(1);
             }}
             showStatusDots
           />
@@ -350,24 +359,28 @@ export default function BlogGalleryPage() {
           </div>
         ) : error ? (
           <PanelError
-            message={errorMessage(error, 'Could not load gallery items.')}
+            message={errorMessage(error, "Could not load gallery items.")}
             onRetry={() => void refetch()}
           />
         ) : galleryItems.length === 0 ? (
           <PanelEmpty
-            title={hasFilters ? 'No matching images found' : 'No gallery photos added yet'}
+            title={
+              hasFilters
+                ? "No matching images found"
+                : "No gallery photos added yet"
+            }
             description={
               hasFilters
-                ? 'Try adjusting your search terms or filter selection.'
-                : 'Upload and organize high-resolution gallery images to feature across the website.'
+                ? "Try adjusting your search terms or filter selection."
+                : "Upload and organize high-resolution gallery images to feature across the website."
             }
             action={
               <Button
                 type="button"
                 size="sm"
                 onClick={() => {
-                  setCreateForm(DEFAULT_FORM)
-                  setCreateModalOpen(true)
+                  setCreateForm(DEFAULT_FORM);
+                  setCreateModalOpen(true);
                 }}
                 className="rounded-full bg-gold-600 text-xs font-bold text-white hover:bg-gold-700"
               >
@@ -380,8 +393,8 @@ export default function BlogGalleryPage() {
           <div className="p-6">
             <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
               {galleryItems.map((item) => {
-                const imageUrl = item.gallery_image
-                const isCopied = imageUrl ? copiedUrl === imageUrl : false
+                const imageUrl = item.gallery_image;
+                const isCopied = imageUrl ? copiedUrl === imageUrl : false;
 
                 return (
                   <div
@@ -397,13 +410,32 @@ export default function BlogGalleryPage() {
                           className="size-full object-contain transition-transform duration-300 group-hover:scale-105"
                           loading="lazy"
                           onError={(e) => {
-                            e.currentTarget.style.display = 'none'
-                            e.currentTarget.parentElement?.classList.add('bg-cream-100')
+                            e.currentTarget.style.display = "none";
+                            const parent = e.currentTarget.parentElement;
+                            if (parent) {
+                              parent.classList.add("bg-cream-100");
+                              const fallback =
+                                parent.querySelector(".img-fallback");
+                              if (fallback)
+                                (fallback as HTMLElement).classList.remove(
+                                  "hidden",
+                                );
+                            }
                           }}
                         />
-                      ) : (
-                        <ImageIcon className="size-12 text-ink-300" />
-                      )}
+                      ) : null}
+
+                      <div
+                        className={cn(
+                          "img-fallback flex flex-col items-center justify-center gap-1.5 text-center text-ink-400",
+                          imageUrl ? "hidden" : "flex",
+                        )}
+                      >
+                        <ImageIcon className="size-8 text-ink-300" />
+                        <span className="text-[11px] font-medium text-ink-400">
+                          Preview unavailable
+                        </span>
+                      </div>
 
                       {/* Status badge overlay */}
                       <div className="absolute top-2.5 left-2.5">
@@ -450,14 +482,18 @@ export default function BlogGalleryPage() {
                           type="button"
                           onClick={() => handleToggleStatus(item)}
                           className={cn(
-                            'flex size-8 cursor-pointer items-center justify-center rounded-full bg-white shadow-lift transition-transform hover:scale-110',
-                            item.gallery_status === 'Active'
-                              ? 'text-emerald-700 hover:bg-emerald-50'
-                              : 'text-slate-600 hover:bg-slate-50',
+                            "flex size-8 cursor-pointer items-center justify-center rounded-full bg-white shadow-lift transition-transform hover:scale-110",
+                            item.gallery_status === "Active"
+                              ? "text-emerald-700 hover:bg-emerald-50"
+                              : "text-slate-600 hover:bg-slate-50",
                           )}
-                          title={item.gallery_status === 'Active' ? 'Deactivate' : 'Activate'}
+                          title={
+                            item.gallery_status === "Active"
+                              ? "Deactivate"
+                              : "Activate"
+                          }
                         >
-                          {item.gallery_status === 'Active' ? (
+                          {item.gallery_status === "Active" ? (
                             <CheckCircle2 className="size-3.5 text-emerald-600" />
                           ) : (
                             <XCircle className="size-3.5 text-slate-500" />
@@ -478,14 +514,14 @@ export default function BlogGalleryPage() {
                     {/* Metadata card footer */}
                     <div className="flex items-center justify-between border-t border-cream-200/80 px-3.5 py-2.5 text-[0.7rem] text-ink-500">
                       <span className="font-semibold text-navy-950">
-                        {item.title || `Photo #${item.id}`}
+                        {item.title || `${item.id}`}
                       </span>
                       <span className="font-mono text-[0.66rem] text-ink-400">
                         ID: {item.id}
                       </span>
                     </div>
                   </div>
-                )
+                );
               })}
             </div>
           </div>
@@ -503,7 +539,11 @@ export default function BlogGalleryPage() {
       {/* Inspect Modal */}
       <PanelModal
         isOpen={inspectId !== null}
-        title={inspectedItem?.title ? `Photo: ${inspectedItem.title}` : `Photo #${inspectId || ''}`}
+        title={
+          inspectedItem?.title
+            ? `Photo: ${inspectedItem.title}`
+            : `Photo #${inspectId || ""}`
+        }
         description="Detailed record from /gallery/{id}."
         icon={<Images className="size-5" />}
         size="md"
@@ -530,7 +570,9 @@ export default function BlogGalleryPage() {
                   </>
                 )}
               </Button>
-            ) : <div />}
+            ) : (
+              <div />
+            )}
 
             <Button
               type="button"
@@ -551,7 +593,7 @@ export default function BlogGalleryPage() {
         ) : inspectError ? (
           <div className="py-8 text-center">
             <p className="text-sm font-semibold text-maroon-700">
-              {errorMessage(inspectError, 'Could not find gallery item.')}
+              {errorMessage(inspectError, "Could not find gallery item.")}
             </p>
           </div>
         ) : (
@@ -581,7 +623,9 @@ export default function BlogGalleryPage() {
                   Status
                 </span>
                 <p className="mt-1 font-semibold text-navy-900">
-                  {inspectedItem?.gallery_status || itemFromList?.gallery_status || 'Active'}
+                  {inspectedItem?.gallery_status ||
+                    itemFromList?.gallery_status ||
+                    "Active"}
                 </p>
               </div>
             </div>
@@ -621,10 +665,14 @@ export default function BlogGalleryPage() {
             <Button
               type="button"
               onClick={handleCreateSubmit}
-              disabled={createMutation.isPending || !createForm.gallery_image || isConvertingImage}
+              disabled={
+                createMutation.isPending ||
+                !createForm.gallery_image ||
+                isConvertingImage
+              }
               className="cursor-pointer rounded-full bg-maroon-700 px-5 text-xs font-bold text-white hover:bg-maroon-800 disabled:opacity-50"
             >
-              {createMutation.isPending ? 'Uploading…' : 'Upload Photo'}
+              {createMutation.isPending ? "Uploading…" : "Upload Photo"}
             </Button>
           </>
         }
@@ -661,8 +709,8 @@ export default function BlogGalleryPage() {
                 type="file"
                 accept="image/webp,.webp,image/*"
                 onChange={(e) => {
-                  const file = e.target.files?.[0] || null
-                  void handleFileChange(file, false)
+                  const file = e.target.files?.[0] || null;
+                  void handleFileChange(file, false);
                 }}
                 className="hidden"
                 id="create-gallery-image"
@@ -678,10 +726,10 @@ export default function BlogGalleryPage() {
                 <Upload className="size-3.5" />
                 <span>
                   {isConvertingImage
-                    ? 'Converting to WebP…'
+                    ? "Converting to WebP…"
                     : createForm.gallery_image
-                      ? 'Change Selected File'
-                      : 'Choose Image File'}
+                      ? "Change Selected File"
+                      : "Choose Image File"}
                 </span>
               </Button>
 
@@ -692,7 +740,8 @@ export default function BlogGalleryPage() {
               )}
             </div>
             <p className="mt-1.5 text-[0.7rem] text-ink-500">
-              Images will be automatically formatted to <code>.webp</code> to comply with CRM storage requirements.
+              Images will be automatically formatted to <code>.webp</code> to
+              comply with CRM storage requirements.
             </p>
           </div>
         </form>
@@ -722,7 +771,7 @@ export default function BlogGalleryPage() {
               disabled={updateMutation.isPending || isConvertingImage}
               className="cursor-pointer rounded-full bg-maroon-700 px-5 text-xs font-bold text-white hover:bg-maroon-800 disabled:opacity-50"
             >
-              {updateMutation.isPending ? 'Updating…' : 'Save Changes'}
+              {updateMutation.isPending ? "Updating…" : "Save Changes"}
             </Button>
           </>
         }
@@ -778,8 +827,8 @@ export default function BlogGalleryPage() {
                 type="file"
                 accept="image/webp,.webp,image/*"
                 onChange={(e) => {
-                  const file = e.target.files?.[0] || null
-                  void handleFileChange(file, true)
+                  const file = e.target.files?.[0] || null;
+                  void handleFileChange(file, true);
                 }}
                 className="hidden"
                 id="edit-gallery-image"
@@ -795,10 +844,10 @@ export default function BlogGalleryPage() {
                 <Upload className="size-3.5" />
                 <span>
                   {isConvertingImage
-                    ? 'Converting…'
+                    ? "Converting…"
                     : editForm.gallery_image
-                      ? 'Change File'
-                      : 'Choose New File'}
+                      ? "Change File"
+                      : "Choose New File"}
                 </span>
               </Button>
 
@@ -825,5 +874,5 @@ export default function BlogGalleryPage() {
         onClose={() => setDeleteTarget(null)}
       />
     </div>
-  )
+  );
 }

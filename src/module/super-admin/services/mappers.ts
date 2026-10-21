@@ -482,7 +482,9 @@ export function toList<T>(
 }
 
 const DEFAULT_GALLERY_IMAGE_URL =
-  'https://vivahsambandh.com/crmapi/public/assets/images/gallery_images/'
+  'https://vivahsambandh.com/crmapi/public/assets/images/gallerys_images/'
+
+let cachedGalleryBaseUrl: string = DEFAULT_GALLERY_IMAGE_URL
 
 let cachedGalleryImageEntries: ImageUrlEntry[] = [
   {
@@ -498,7 +500,24 @@ let cachedGalleryImageEntries: ImageUrlEntry[] = [
 export function setCachedGalleryImageEntries(entries: ImageUrlEntry[]): void {
   if (entries && entries.length > 0) {
     cachedGalleryImageEntries = entries
+    const galleryEntry = entries.find(
+      (e) => e.image_for.toLowerCase() === 'gallery' || e.image_for.toLowerCase() === 'galleries',
+    )
+    if (galleryEntry?.image_url) {
+      setCachedGalleryBaseUrl(galleryEntry.image_url)
+    }
   }
+}
+
+export function setCachedGalleryBaseUrl(url: string | null | undefined): void {
+  if (url && typeof url === 'string' && url.trim()) {
+    const clean = url.trim()
+    cachedGalleryBaseUrl = clean.endsWith('/') ? clean : `${clean}/`
+  }
+}
+
+export function getCachedGalleryBaseUrl(): string {
+  return cachedGalleryBaseUrl
 }
 
 export function getCachedGalleryImageEntries(): ImageUrlEntry[] {
@@ -508,12 +527,22 @@ export function getCachedGalleryImageEntries(): ImageUrlEntry[] {
 export function resolveGalleryImageUrl(
   filename: string | null | undefined,
   entries?: ImageUrlEntry[],
+  baseUrl?: string | null,
 ): string | null {
   if (!filename || !filename.trim()) return null
   const clean = filename.trim()
   if (clean.startsWith('http://') || clean.startsWith('https://')) {
     return clean
   }
+
+  // 1. Direct base URL from row (e.g. raw.gallery_url)
+  const explicitBase = baseUrl && typeof baseUrl === 'string' && baseUrl.trim() ? baseUrl.trim() : null
+  if (explicitBase) {
+    const prefix = explicitBase.endsWith('/') ? explicitBase : `${explicitBase}/`
+    return `${prefix}${clean.replace(/^\/+/, '')}`
+  }
+
+  // 2. Resolve against ImageUrlEntry metadata if available
   const effectiveEntries = entries && entries.length > 0 ? entries : cachedGalleryImageEntries
   const resolved =
     resolveImage(clean, effectiveEntries, 'Gallery') ??
@@ -521,13 +550,22 @@ export function resolveGalleryImageUrl(
     resolveImage(clean, effectiveEntries, 'galleries')
   if (resolved) return resolved
 
-  return `${DEFAULT_GALLERY_IMAGE_URL}${clean.replace(/^\/+/, '')}`
+  // 3. Fallback to cached baseUrl
+  const fallbackBase = cachedGalleryBaseUrl || DEFAULT_GALLERY_IMAGE_URL
+  const prefix = fallbackBase.endsWith('/') ? fallbackBase : `${fallbackBase}/`
+  return `${prefix}${clean.replace(/^\/+/, '')}`
 }
 
 /**
  * Normalises a Gallery record.
  */
 export function toGallery(raw: Raw, entries: ImageUrlEntry[] = []): GalleryRecord {
+  // If row or payload supplies gallery_url, cache it dynamically
+  const rowBaseUrl = text(raw.gallery_url ?? raw.image_url ?? raw.url)
+  if (rowBaseUrl && (rowBaseUrl.startsWith('http://') || rowBaseUrl.startsWith('https://'))) {
+    setCachedGalleryBaseUrl(rowBaseUrl)
+  }
+
   if (entries && entries.length > 0) {
     const hasGallery = entries.some(
       (e) => e.image_for.toLowerCase() === 'gallery' || e.image_for.toLowerCase() === 'galleries',
@@ -555,7 +593,7 @@ export function toGallery(raw: Raw, entries: ImageUrlEntry[] = []): GalleryRecor
 
   return {
     id: Number(raw.id ?? 0),
-    gallery_image: resolveGalleryImageUrl(img, entries),
+    gallery_image: resolveGalleryImageUrl(img, entries, rowBaseUrl),
     gallery_status,
     title: text(raw.title ?? raw.gallery_title ?? raw.name),
     created_at: text(raw.created_at),
