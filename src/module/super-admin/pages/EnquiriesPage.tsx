@@ -7,11 +7,13 @@
 
 import { useMemo, useState } from 'react'
 import {
+  BarChart3,
   CircleCheck,
   CircleX,
   Clock,
   Download,
   Eye,
+  FileJson,
   Inbox,
   RefreshCw,
   RotateCcw,
@@ -47,7 +49,12 @@ import {
   useUpdateEnquiryStatusMutation,
 } from '../hook/useEnquiries'
 import { formatDate } from '../utils/format'
-import type { EnquiryRecord, EnquiryStatus } from '../types'
+import {
+  downloadEnquiriesCsv,
+  downloadEnquiriesJson,
+  summariseEnquiries,
+} from '../utils/enquiryExport'
+import type { EnquiryStatus } from '../types'
 
 const STATUS_FILTERS = ['All', 'Pending', 'Processing', 'Completed', 'Cancel'] as const
 
@@ -56,72 +63,6 @@ interface StatusChangeTarget {
   id: number
   label: string
   nextStatus: EnquiryStatus
-}
-
-/** Escapes a value for a CSV cell. */
-function csvCell(value: string | number | null | undefined): string {
-  return `"${String(value ?? '').replace(/"/g, '""')}"`
-}
-
-/** Builds the CSV body used by the export. */
-function toCsv(rows: EnquiryRecord[]): string {
-  // The report endpoint does not always carry the timestamps, so the
-  // "Received" column is only written when there is something to put in it.
-  const hasReceived = rows.some((row) => row.created_at)
-
-  const headers = [
-    'ID',
-    'Name',
-    'Mobile',
-    'Email',
-    'Service',
-    'Source',
-    'Message',
-    'Status',
-    'UTM Medium',
-    'UTM Source',
-    'UTM Campaign',
-    ...(hasReceived ? ['Received'] : []),
-  ]
-
-  const lines = [headers.map(csvCell).join(',')]
-
-  for (const row of rows) {
-    const columns = [
-      row.id,
-      row.full_name,
-      row.mobile,
-      row.email,
-      row.service,
-      row.source,
-      row.message,
-      row.status,
-      row.utm_medium,
-      row.utm_source,
-      row.utm_campaign,
-      ...(hasReceived ? [row.created_at] : []),
-    ]
-
-    lines.push(columns.map(csvCell).join(','))
-  }
-
-  return lines.join('\r\n')
-}
-
-/** Hands a CSV string to the browser as a download. */
-function downloadCsv(rows: EnquiryRecord[]): void {
-  // The BOM keeps Excel from reading UTF-8 names as mojibake.
-  const blob = new Blob(['\uFEFF' + toCsv(rows)], {
-    type: 'text/csv;charset=utf-8;',
-  })
-  const url = URL.createObjectURL(blob)
-  const link = document.createElement('a')
-  link.href = url
-  link.download = `enquiries-${new Date().toISOString().slice(0, 10)}.csv`
-  document.body.appendChild(link)
-  link.click()
-  link.remove()
-  URL.revokeObjectURL(url)
 }
 
 export default function EnquiriesPage() {
@@ -144,7 +85,11 @@ export default function EnquiriesPage() {
 
   const statusMutation = useUpdateEnquiryStatusMutation()
   const deleteMutation = useDeleteEnquiryMutation()
-  const reportQuery = useEnquiryReportQuery(false)
+
+  // The report is fetched from `GET /getEnquiryReport` — only when an admin
+  // asks for the report or a download.
+  const [isReportOpen, setIsReportOpen] = useState(false)
+  const reportQuery = useEnquiryReportQuery(isReportOpen)
 
   // Inspector state
   const [inspectingId, setInspectingId] = useState<number | null>(null)
@@ -176,6 +121,36 @@ export default function EnquiriesPage() {
   )
 
   const hasFilters = searchInput.trim() !== '' || statusFilter !== 'All'
+
+  /**
+   * The report rows with the panel's own filters applied.
+   *
+   * `/getEnquiryReport` ignores every query parameter and answers with the
+   * complete list, so the search term and the status filter are applied
+   * here — the download then matches what the admin is looking at.
+   */
+  const reportRows = useMemo(() => {
+    const rows = reportQuery.data ?? []
+    const term = searchTerm.toLowerCase()
+
+    return rows.filter((enquiry) => {
+      const matchesSearch =
+        !term ||
+        (enquiry.full_name ?? '').toLowerCase().includes(term) ||
+        (enquiry.mobile ?? '').toLowerCase().includes(term) ||
+        (enquiry.email ?? '').toLowerCase().includes(term) ||
+        (enquiry.service ?? '').toLowerCase().includes(term) ||
+        (enquiry.source ?? '').toLowerCase().includes(term) ||
+        (enquiry.message ?? '').toLowerCase().includes(term)
+
+      const matchesStatus =
+        statusFilter === 'All' || enquiry.status === (statusFilter as EnquiryStatus)
+
+      return matchesSearch && matchesStatus
+    })
+  }, [reportQuery.data, searchTerm, statusFilter])
+
+  const reportSummary = useMemo(() => summariseEnquiries(reportRows), [reportRows])
 
   const handleStatusChange = () => {
     if (!statusTarget) return
@@ -214,7 +189,14 @@ export default function EnquiriesPage() {
     )
   }
 
-  const handleExport = async () => {
+  /**
+   * Downloads the report rows.
+   *
+   * The report is re-read from `GET /getEnquiryReport` first so the file
+   * always reflects the server, then the panel's filters are applied so the
+   * download matches the rows the admin is looking at.
+   */
+  const handleDownload = async (format: 'csv' | 'json') => {
     const result = await reportQuery.refetch()
     const rows = result.data ?? []
 
@@ -223,8 +205,35 @@ export default function EnquiriesPage() {
       return
     }
 
-    downloadCsv(rows)
-    toast.success(`Exported ${rows.length} enquiries.`)
+    const term = searchTerm.toLowerCase()
+    const filteredRows = rows.filter((enquiry) => {
+      const matchesSearch =
+        !term ||
+        (enquiry.full_name ?? '').toLowerCase().includes(term) ||
+        (enquiry.mobile ?? '').toLowerCase().includes(term) ||
+        (enquiry.email ?? '').toLowerCase().includes(term) ||
+        (enquiry.service ?? '').toLowerCase().includes(term) ||
+        (enquiry.source ?? '').toLowerCase().includes(term) ||
+        (enquiry.message ?? '').toLowerCase().includes(term)
+
+      const matchesStatus =
+        statusFilter === 'All' || enquiry.status === (statusFilter as EnquiryStatus)
+
+      return matchesSearch && matchesStatus
+    })
+
+    if (!filteredRows.length) {
+      toast.error('No enquiries match the current filters.')
+      return
+    }
+
+    if (format === 'json') {
+      downloadEnquiriesJson(filteredRows)
+    } else {
+      downloadEnquiriesCsv(filteredRows)
+    }
+
+    toast.success(`Downloaded ${filteredRows.length} enquiries.`)
   }
 
   const firstRow = meta.total === 0 ? 0 : (meta.current_page - 1) * meta.per_page + 1
@@ -256,7 +265,18 @@ export default function EnquiriesPage() {
               type="button"
               variant="outline"
               size="sm"
-              onClick={() => void handleExport()}
+              onClick={() => setIsReportOpen(true)}
+              className="cursor-pointer rounded-full border-cream-300 text-xs font-semibold"
+            >
+              <BarChart3 className="size-3.5" aria-hidden />
+              <span>Report</span>
+            </Button>
+
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => void handleDownload('csv')}
               disabled={reportQuery.isFetching}
               className="cursor-pointer rounded-full border-cream-300 text-xs font-semibold"
             >
@@ -264,7 +284,7 @@ export default function EnquiriesPage() {
                 className={reportQuery.isFetching ? 'size-3.5 animate-pulse' : 'size-3.5'}
                 aria-hidden
               />
-              <span>Export CSV</span>
+              <span>Download CSV</span>
             </Button>
           </>
         }
@@ -465,6 +485,159 @@ export default function EnquiriesPage() {
           />
         </PanelTableFooter>
       </PanelCard>
+
+      {/* Enquiry Report (GET /getEnquiryReport) */}
+      <PanelModal
+        isOpen={isReportOpen}
+        title="Enquiry Report"
+        description="Figures and downloads built from the enquiry report endpoint."
+        icon={<BarChart3 className="size-5" />}
+        size="lg"
+        onClose={() => setIsReportOpen(false)}
+        footer={
+          <>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => void handleDownload('json')}
+              disabled={reportQuery.isFetching || !reportRows.length}
+              className="mr-auto cursor-pointer rounded-full border-cream-300 text-xs font-semibold"
+            >
+              <FileJson className="size-3.5" aria-hidden />
+              <span>Download JSON</span>
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setIsReportOpen(false)}
+              className="cursor-pointer rounded-full border-cream-300 text-xs font-semibold"
+            >
+              Close
+            </Button>
+            <Button
+              type="button"
+              onClick={() => void handleDownload('csv')}
+              disabled={reportQuery.isFetching || !reportRows.length}
+              className="cursor-pointer rounded-full bg-navy-900 px-5 text-xs font-bold text-white hover:bg-navy-700"
+            >
+              <Download className="size-3.5" aria-hidden />
+              <span>Download CSV</span>
+            </Button>
+          </>
+        }
+      >
+        {reportQuery.isLoading ? (
+          <SkeletonText lines={6} className="py-6" />
+        ) : reportQuery.error ? (
+          <p className="py-8 text-center text-xs text-maroon-600">
+            {errorMessage(reportQuery.error, 'Could not load the enquiry report.')}
+          </p>
+        ) : (
+          <div className="space-y-5 text-xs">
+            <p className="rounded-xl border border-cream-300/80 bg-cream-50/70 px-3 py-2 text-ink-500">
+              {reportSummary.total} of {(reportQuery.data ?? []).length} enquiries
+              {hasFilters ? ' match the current search and status filter' : ''}. The
+              downloads contain exactly these rows.
+            </p>
+
+            {/* Headline figure */}
+            <div className="rounded-2xl border border-gold-500/25 bg-gold-50/60 p-4">
+              <span className="text-[0.66rem] font-bold tracking-[0.14em] text-ink-500 uppercase">
+                Enquiries in report
+              </span>
+              <p className="mt-2 font-display text-4xl font-bold tabular-nums text-navy-900">
+                {reportSummary.total}
+              </p>
+            </div>
+
+            {/* Status breakdown */}
+            <div>
+              <span className="mb-2 block text-[0.66rem] font-bold tracking-[0.14em] text-ink-400 uppercase">
+                By status
+              </span>
+              <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+                {reportSummary.byStatus.map((entry) => (
+                  <div
+                    key={entry.status}
+                    className="rounded-xl border border-cream-300 bg-white px-3 py-2"
+                  >
+                    <StatusBadge status={entry.status} size="sm" />
+                    <p className="mt-1.5 font-display text-xl font-bold tabular-nums text-navy-900">
+                      {entry.count}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Source / campaign breakdown */}
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div>
+                <span className="mb-2 block text-[0.66rem] font-bold tracking-[0.14em] text-ink-400 uppercase">
+                  Top sources
+                </span>
+                {reportSummary.bySource.length ? (
+                  <ul className="space-y-1.5">
+                    {reportSummary.bySource.slice(0, 5).map((entry) => (
+                      <li
+                        key={entry.label}
+                        className="flex items-center justify-between gap-3 rounded-lg border border-cream-300/80 bg-cream-50/60 px-3 py-1.5"
+                      >
+                        <span className="truncate text-ink-700">{entry.label}</span>
+                        <span className="font-display text-sm font-bold tabular-nums text-navy-900">
+                          {entry.count}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p className="text-ink-400 italic">No source recorded.</p>
+                )}
+              </div>
+
+              <div>
+                <span className="mb-2 block text-[0.66rem] font-bold tracking-[0.14em] text-ink-400 uppercase">
+                  Campaigns &amp; channels
+                </span>
+                {reportSummary.byCampaign.length || reportSummary.byMedium.length ? (
+                  <ul className="space-y-1.5">
+                    {reportSummary.byCampaign.slice(0, 3).map((entry) => (
+                      <li
+                        key={`campaign-${entry.label}`}
+                        className="flex items-center justify-between gap-3 rounded-lg border border-cream-300/80 bg-cream-50/60 px-3 py-1.5"
+                      >
+                        <span className="truncate text-ink-700">
+                          {entry.label}
+                          <span className="ml-1 text-ink-400">campaign</span>
+                        </span>
+                        <span className="font-display text-sm font-bold tabular-nums text-navy-900">
+                          {entry.count}
+                        </span>
+                      </li>
+                    ))}
+                    {reportSummary.byMedium.slice(0, 3).map((entry) => (
+                      <li
+                        key={`medium-${entry.label}`}
+                        className="flex items-center justify-between gap-3 rounded-lg border border-cream-300/80 bg-cream-50/60 px-3 py-1.5"
+                      >
+                        <span className="truncate text-ink-700">
+                          {entry.label}
+                          <span className="ml-1 text-ink-400">medium</span>
+                        </span>
+                        <span className="font-display text-sm font-bold tabular-nums text-navy-900">
+                          {entry.count}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p className="text-ink-400 italic">No campaign recorded.</p>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+      </PanelModal>
 
       {/* Inspect Enquiry Modal (GET /enquiry/{id}) */}
       <PanelModal

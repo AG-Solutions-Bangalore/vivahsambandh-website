@@ -340,3 +340,37 @@ export interface PanelLoginResponse {
     token_expires_at?: string
   }
 }
+
+/** Publication state of a Client. */
+export type ClientStatus = 'Active' | 'Inactive'
+
+export interface ClientRecord {
+  id: number
+  clients_name: string
+  clients_image?: string | null
+  clients_status: ClientStatus
+  created_at?: string | null
+  updated_at?: string | null
+  created_by?: string | null
+  updated_by?: string | null
+}
+
+export interface ClientPayload {
+  clients_name?: string
+  client_name?: string
+  name?: string
+  clients_image?: File | Blob | string | null
+  client_image?: File | Blob | string | null
+  image?: File | Blob | string | null
+  clients_status?: ClientStatus | string
+  client_status?: ClientStatus | string
+  status?: ClientStatus | string
+  [key: string]: unknown
+}
+
+export interface ClientListParams {
+  page?: number
+  per_page?: number
+  search?: string
+  clients_status?: string
+}

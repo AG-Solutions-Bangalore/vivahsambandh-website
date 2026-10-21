@@ -12,3 +12,19 @@ export * from '@/module/contact/api/enquiry.api'
 export * from '@/module/contact/hook/useEnquiry'
 export * from '@/module/home/api/home.api'
 export * from '@/module/home/hook/useHomeData'
+
+// Client API operations & HTTP client
+export { default as api } from './api'
+export { default as clientApi } from './clientApi'
+export {
+  buildClientFormData,
+  createClient,
+  getClientById,
+  findClientById,
+  updateClient,
+  updateClientStatus,
+  deleteClient,
+  type ClientPayload,
+  type ClientStatus,
+  type ClientListParams,
+} from './clientApi'

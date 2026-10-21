@@ -105,3 +105,85 @@ export const Img: React.FC<React.ComponentPropsWithoutRef<'img'>> = ({
     srcSet: srcSet ? imgSrcSet(srcSet) : undefined,
   })
 }
+
+/**
+ * Checks if a given file is a WebP image.
+ */
+export function isWebpFile(file: File): boolean {
+  return (
+    file.type === 'image/webp' ||
+    file.name.toLowerCase().endsWith('.webp')
+  )
+}
+
+/**
+ * Converts any image file (PNG, JPEG, GIF, BMP, etc.) to a true WebP File
+ * in the browser using HTML5 Canvas. If the file is already WebP, returns it as-is.
+ */
+export async function convertToWebpFile(
+  file: File,
+  quality = 0.92,
+): Promise<File> {
+  if (isWebpFile(file)) {
+    return file
+  }
+
+  // Non-image files cannot be converted
+  if (!file.type.startsWith('image/')) {
+    return file
+  }
+
+  if (typeof window === 'undefined' || typeof document === 'undefined') {
+    return file
+  }
+
+  return new Promise((resolve) => {
+    const reader = new FileReader()
+
+    reader.onload = (e) => {
+      const imgObj = new Image()
+
+      imgObj.onload = () => {
+        try {
+          const canvas = document.createElement('canvas')
+          canvas.width = imgObj.naturalWidth || imgObj.width
+          canvas.height = imgObj.naturalHeight || imgObj.height
+
+          const ctx = canvas.getContext('2d')
+          if (!ctx) {
+            resolve(file)
+            return
+          }
+
+          ctx.drawImage(imgObj, 0, 0)
+
+          canvas.toBlob(
+            (blob) => {
+              if (!blob) {
+                resolve(file)
+                return
+              }
+              const originalBase = file.name.replace(/\.[^/.]+$/, '')
+              const webpFileName = `${originalBase || 'client_logo'}.webp`
+              const webpFile = new File([blob], webpFileName, {
+                type: 'image/webp',
+                lastModified: Date.now(),
+              })
+              resolve(webpFile)
+            },
+            'image/webp',
+            quality,
+          )
+        } catch {
+          resolve(file)
+        }
+      }
+
+      imgObj.onerror = () => resolve(file)
+      imgObj.src = e.target?.result as string
+    }
+
+    reader.onerror = () => resolve(file)
+    reader.readAsDataURL(file)
+  })
+}

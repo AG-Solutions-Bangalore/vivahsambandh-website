@@ -10,6 +10,7 @@
 import {
   Ban,
   Bell,
+  Briefcase,
   FileText,
   HelpCircle,
   Inbox,
@@ -115,6 +116,13 @@ export const PANEL_NAV_ITEMS: PanelNavItem[] = [
     icon: Inbox,
     description:
       'Review contact-form enquiries, track them through Pending, Processing and Completed, and export the full report.',
+  },
+  {
+    label: 'Clients',
+    to: '/panel/clients',
+    icon: Briefcase,
+    description:
+      'Manage client partners, brand logos, and collaborator visibility on the platform.',
   },
 ]
 

@@ -66,6 +66,9 @@ const PanelFaqsPage = lazy(() => import('./module/super-admin/pages/FaqsPage'))
 const PanelTestimonialsPage = lazy(
   () => import('./module/super-admin/pages/TestimonialsPage'),
 )
+const PanelClientsPage = lazy(
+  () => import('./module/super-admin/pages/ClientsPage'),
+)
 
 /**
  * URL is the source of truth for language: `/hi*` → Hindi, else English.
@@ -300,6 +303,19 @@ export default function App() {
                     <Suspense fallback={null}>
                       <SuperAdminLayout>
                         <PanelTestimonialsPage />
+                      </SuperAdminLayout>
+                    </Suspense>
+                  </SuperAdminGuard>
+                }
+              />
+
+              <Route
+                path="/panel/clients"
+                element={
+                  <SuperAdminGuard>
+                    <Suspense fallback={null}>
+                      <SuperAdminLayout>
+                        <PanelClientsPage />
                       </SuperAdminLayout>
                     </Suspense>
                   </SuperAdminGuard>

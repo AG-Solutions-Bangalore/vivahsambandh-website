@@ -108,10 +108,13 @@ export function useDeleteEnquiryMutation() {
 }
 
 /**
- * The flat report used by the CSV export. It is only fetched when an admin
- * asks for the export, so it stays out of the list page's request path.
+ * The flat report behind the export and the analysis panel.
+ *
+ * `GET /getEnquiryReport` answers with every enquiry as JSON — no paging
+ * and no server-side filters — so the query is only enabled when an admin
+ * asks for the report.
  */
-export function useEnquiryReportQuery(enabled: boolean) {
+export function useEnquiryReportQuery(enabled = true) {
   return useQuery({
     queryKey: superAdminKeys.enquiryReport,
     queryFn: async () => {

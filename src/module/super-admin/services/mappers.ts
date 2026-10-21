@@ -29,6 +29,8 @@ import type {
   NotificationRecord,
   FaqRecord,
   TestimonialRecord,
+  ClientRecord,
+  ClientStatus,
 } from '../types'
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -300,6 +302,90 @@ export function toTestimonial(raw: Raw): TestimonialRecord {
         : 'Active',
     testimonial_created_date: text(raw.testimonial_created_date) ?? text(raw.created_at),
     testimonial_updated_date: text(raw.testimonial_updated_date) ?? text(raw.updated_at),
+    created_at: text(raw.created_at),
+    updated_at: text(raw.updated_at),
+    created_by: text(raw.created_by),
+    updated_by: text(raw.updated_by),
+  }
+}
+
+const DEFAULT_CLIENT_IMAGE_URL =
+  'https://vivahsambandh.com/crmapi/public/assets/images/client_images/'
+
+let cachedClientImageEntries: ImageUrlEntry[] = [
+  {
+    image_for: 'Client',
+    image_url: DEFAULT_CLIENT_IMAGE_URL,
+  },
+  {
+    image_for: 'No Image',
+    image_url: 'https://vivahsambandh.com/crmapi/public/assets/images/no_image.jpg',
+  },
+]
+
+export function setCachedClientImageEntries(entries: ImageUrlEntry[]): void {
+  if (entries && entries.length > 0) {
+    cachedClientImageEntries = entries
+  }
+}
+
+export function getCachedClientImageEntries(): ImageUrlEntry[] {
+  return cachedClientImageEntries
+}
+
+/**
+ * Resolves a client image filename to a full HTTPS URL using list image_url entries
+ * or the fallback client images directory.
+ */
+export function resolveClientImageUrl(
+  filename: string | null | undefined,
+  entries?: ImageUrlEntry[],
+): string | null {
+  if (!filename || !filename.trim()) return null
+  const clean = filename.trim()
+  if (clean.startsWith('http://') || clean.startsWith('https://')) {
+    return clean
+  }
+  const effectiveEntries = entries && entries.length > 0 ? entries : cachedClientImageEntries
+  const resolved =
+    resolveImage(clean, effectiveEntries, 'Client') ??
+    resolveImage(clean, effectiveEntries, 'client') ??
+    resolveImage(clean, effectiveEntries, 'clients')
+  if (resolved) return resolved
+
+  return `${DEFAULT_CLIENT_IMAGE_URL}${clean.replace(/^\/+/, '')}`
+}
+
+/**
+ * Normalises a Client record.
+ */
+export function toClient(raw: Raw, entries: ImageUrlEntry[] = []): ClientRecord {
+  if (entries && entries.length > 0) {
+    const hasClient = entries.some(
+      (e) => e.image_for.toLowerCase() === 'client' || e.image_for.toLowerCase() === 'clients',
+    )
+    if (hasClient) {
+      setCachedClientImageEntries(entries)
+    }
+  }
+
+  const statusStr = text(raw.clients_status ?? raw.client_status ?? raw.status)?.toLowerCase()
+  const clients_status: ClientStatus =
+    statusStr === 'inactive' || raw.clients_status === 0 || raw.clients_status === '0'
+      ? 'Inactive'
+      : 'Active'
+
+  const img = text(raw.clients_image ?? raw.client_image ?? raw.image)
+
+  return {
+    id: Number(raw.id ?? 0),
+    clients_name:
+      text(raw.clients_name) ??
+      text(raw.client_name) ??
+      text(raw.name) ??
+      '',
+    clients_image: resolveClientImageUrl(img, entries),
+    clients_status,
     created_at: text(raw.created_at),
     updated_at: text(raw.updated_at),
     created_by: text(raw.created_by),
