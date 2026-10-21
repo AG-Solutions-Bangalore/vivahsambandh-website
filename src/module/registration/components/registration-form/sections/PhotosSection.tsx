@@ -7,10 +7,12 @@
 
 import { useState, useRef, type ChangeEvent } from 'react'
 import { Button } from '@/components/ui/button'
+import { useTranslation } from 'react-i18next'
 import ImageCropModal from '../../ImageCropModal'
 import { useRegistrationForm } from '../context'
 
 export default function PhotosSection() {
+  const { t } = useTranslation()
   const { baseId, form, fieldErrors, setPhotoFields } = useRegistrationForm()
 
   const fullPhotoInputRef = useRef<HTMLInputElement>(null)
@@ -45,12 +47,12 @@ export default function PhotosSection() {
   return (
     <div className="rounded-[1.5rem] border border-gold-500/30 bg-white p-6 sm:p-8 lg:p-10 shadow-card">
       <div className="mb-6 border-b border-cream-200 pb-4">
-        <span className="eyebrow">Part 4</span>
+        <span className="eyebrow">{t('registrationPage.form.part4Badge', 'Part 4')}</span>
         <h2 className="text-xl sm:text-2xl font-bold font-display text-navy-900">
-          Profile Photographs
+          {t('registrationPage.form.part4Title', 'Profile Photographs')}
         </h2>
         <p className="mt-1 text-xs text-ink-500">
-          High-resolution recent photographs. Selecting a photo will open the interactive cropper.
+          {t('registrationPage.form.part4Subtitle', 'High-resolution recent photographs. Selecting a photo will open the interactive cropper.')}
         </p>
       </div>
 
@@ -65,10 +67,10 @@ export default function PhotosSection() {
           }`}
         >
           <span className="block text-sm font-bold text-navy-900 mb-1">
-            Full Length Photograph <span className="text-maroon-600">*</span>
+            {t('registrationPage.form.fullPhotoLabel', 'Full Length Photograph')} <span className="text-maroon-600">*</span>
           </span>
           <p className="text-xs text-ink-500 mb-4">
-            Full-standing recent photo showing attire clearly.
+            {t('registrationPage.form.fullPhotoSubtitle', 'Full-standing recent photo showing attire clearly.')}
           </p>
 
           <div className="flex flex-col items-center gap-4">
@@ -84,7 +86,9 @@ export default function PhotosSection() {
                   <svg className="mx-auto h-10 w-10 text-gold-500/60" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                   </svg>
-                  <span className="mt-2 block text-xs text-ink-500">No photo selected</span>
+                  <span className="mt-2 block text-xs text-ink-500">
+                    {t('registrationPage.form.noPhotoSelected', 'No photo selected')}
+                  </span>
                 </div>
               )}
             </div>
@@ -95,7 +99,7 @@ export default function PhotosSection() {
               accept="image/*"
               onChange={(e) => handleFileSelect(e, 'full')}
               className="sr-only"
-              aria-label="Select full length photograph"
+              aria-label={t('registrationPage.form.fullPhotoLabel', 'Full Length Photograph')}
             />
             <Button
               type="button"
@@ -103,7 +107,11 @@ export default function PhotosSection() {
               size="sm"
               onClick={() => fullPhotoInputRef.current?.click()}
             >
-              <span>{form.full_image ? 'Change & Crop' : 'Upload & Crop Photo'}</span>
+              <span>
+                {form.full_image
+                  ? t('registrationPage.form.changeAndCrop', 'Change & Crop')
+                  : t('registrationPage.form.uploadAndCrop', 'Upload & Crop Photo')}
+              </span>
             </Button>
           </div>
           {fieldErrors.full_image && (
@@ -123,10 +131,10 @@ export default function PhotosSection() {
           }`}
         >
           <span className="block text-sm font-bold text-navy-900 mb-1">
-            Full Face Photograph <span className="text-maroon-600">*</span>
+            {t('registrationPage.form.facePhotoLabel', 'Full Face Photograph')} <span className="text-maroon-600">*</span>
           </span>
           <p className="text-xs text-ink-500 mb-4">
-            Close-up portrait with clear frontal view of facial features.
+            {t('registrationPage.form.facePhotoSubtitle', 'Close-up portrait with clear frontal view of facial features.')}
           </p>
 
           <div className="flex flex-col items-center gap-4">
@@ -142,7 +150,9 @@ export default function PhotosSection() {
                   <svg className="mx-auto h-10 w-10 text-gold-500/60" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
-                  <span className="mt-2 block text-xs text-ink-500">No photo selected</span>
+                  <span className="mt-2 block text-xs text-ink-500">
+                    {t('registrationPage.form.noPhotoSelected', 'No photo selected')}
+                  </span>
                 </div>
               )}
             </div>
@@ -153,7 +163,7 @@ export default function PhotosSection() {
               accept="image/*"
               onChange={(e) => handleFileSelect(e, 'face')}
               className="sr-only"
-              aria-label="Select full face photograph"
+              aria-label={t('registrationPage.form.facePhotoLabel', 'Full Face Photograph')}
             />
             <Button
               type="button"
@@ -161,7 +171,11 @@ export default function PhotosSection() {
               size="sm"
               onClick={() => facePhotoInputRef.current?.click()}
             >
-              <span>{form.face_image ? 'Change & Crop' : 'Upload & Crop Photo'}</span>
+              <span>
+                {form.face_image
+                  ? t('registrationPage.form.changeAndCrop', 'Change & Crop')
+                  : t('registrationPage.form.uploadAndCrop', 'Upload & Crop Photo')}
+              </span>
             </Button>
           </div>
           {fieldErrors.face_image && (
@@ -176,7 +190,11 @@ export default function PhotosSection() {
       <ImageCropModal
         key={cropTarget || 'none'}
         isOpen={cropTarget !== null}
-        title={cropTarget === 'full' ? 'Crop Full Length Photo' : 'Crop Full Face Photo'}
+        title={
+          cropTarget === 'full'
+            ? t('registrationPage.form.cropFullPhoto', 'Crop Full Length Photo')
+            : t('registrationPage.form.cropFacePhoto', 'Crop Full Face Photo')
+        }
         imageSrc={cropRawSrc}
         onClose={() => {
           setCropTarget(null)

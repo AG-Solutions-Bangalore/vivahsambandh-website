@@ -6,9 +6,11 @@
 import { Checkbox } from '@/components/ui/checkbox'
 import { Button } from '@/components/ui/button'
 import { cn } from 'cn'
+import { useTranslation } from 'react-i18next'
 import { useRegistrationForm } from '../context'
 
 export default function TermsSubmitSection() {
+  const { t } = useTranslation()
   const {
     baseId,
     form,
@@ -40,21 +42,21 @@ export default function TermsSubmitSection() {
             clearFieldError('agree_terms')
           }}
           error={Boolean(fieldErrors.agree_terms)}
-          aria-label="Agree to Terms and Conditions"
+          aria-label={t('registrationPage.form.termsAndConditions', 'Agree to Terms and Conditions')}
         />
         <label
           htmlFor={`${baseId}-agree-terms`}
           className="cursor-pointer text-xs leading-relaxed text-navy-900 sm:text-sm"
         >
-          I have read, understood and agree to the{' '}
+          {t('registrationPage.form.agreeTermsPrefix', 'I have read, understood and agree to the')}{' '}
           <button
             type="button"
             onClick={() => setTermsOpen(true)}
             className="font-bold text-gold-700 underline transition hover:text-gold-800"
           >
-            Terms &amp; Conditions
+            {t('registrationPage.form.termsAndConditions', 'Terms & Conditions')}
           </button>{' '}
-          governing community bio-data verification and honorary matchmaking support.
+          {t('registrationPage.form.agreeTermsSuffix', 'governing community bio-data verification and honorary matchmaking support.')}
         </label>
       </div>
       {fieldErrors.agree_terms && (
@@ -71,7 +73,7 @@ export default function TermsSubmitSection() {
           onClick={handleValidateClick}
           className="w-full border-gold-500/60 bg-gold-50/50 text-navy-900 hover:bg-gold-100 sm:w-auto"
         >
-          Check Any Unfilled Details
+          {t('registrationPage.form.checkUnfilled', 'Check Any Unfilled Details')}
         </Button>
 
         <div className="flex flex-col items-center sm:items-end gap-1.5 w-full sm:w-auto">
@@ -93,29 +95,28 @@ export default function TermsSubmitSection() {
                   <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
                   <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
                 </svg>
-                Submitting Registration...
+                {t('registrationPage.form.submittingRegistration', 'Submitting Registration...')}
               </span>
             ) : !isFormFullyFilled ? (
-              'Fill All Details to Enable Submit'
+              t('registrationPage.form.fillAllDetails', 'Fill All Details to Enable Submit')
             ) : isMobileVerifiedNow ? (
-              'Submit Registration'
+              t('registrationPage.form.submitRegistration', 'Submit Registration')
             ) : (
-              'Verify Mobile via OTP & Submit'
+              t('registrationPage.form.verifyAndSubmit', 'Verify Mobile via OTP & Submit')
             )}
           </Button>
 
           {!isFormFullyFilled ? (
             <span className="text-[11px] text-ink-500 font-medium text-center sm:text-right">
-              Complete all required fields above to proceed with submission
+              {t('registrationPage.form.completeAllRequired', 'Complete all required fields above to proceed with submission')}
             </span>
           ) : !isMobileVerifiedNow ? (
             <span className="text-[11px] text-gold-900 font-semibold flex items-center gap-1 text-center sm:text-right">
-              <span>✓ Details complete.</span>
-              <span>Click to verify via Firebase OTP.</span>
+              <span>{t('registrationPage.form.detailsCompleteOtp', '✓ Details complete. Click to verify via Firebase OTP.')}</span>
             </span>
           ) : (
             <span className="text-[11px] text-emerald-700 font-semibold flex items-center gap-1 text-center sm:text-right">
-              <span>✓ Mobile verified. Ready to submit!</span>
+              <span>{t('registrationPage.form.mobileVerifiedReady', '✓ Mobile verified. Ready to submit!')}</span>
             </span>
           )}
         </div>

@@ -3,9 +3,11 @@
  * Success / error notification shown above the form after submission attempts.
  */
 
+import { useTranslation } from 'react-i18next'
 import { useRegistrationForm } from '../context'
 
 export default function SubmitResultBanner() {
+  const { t } = useTranslation()
   const { submitResult } = useRegistrationForm()
 
   if (!submitResult) return null
@@ -30,7 +32,9 @@ export default function SubmitResultBanner() {
         )}
         <div>
           <h4 className="font-bold text-base">
-            {submitResult.type === 'success' ? 'Registration Completed' : 'Submission Note'}
+            {submitResult.type === 'success'
+              ? t('registrationPage.form.registrationCompleted', 'Registration Completed')
+              : t('registrationPage.form.submissionNote', 'Submission Note')}
           </h4>
           <p className="mt-1 text-sm">{submitResult.message}</p>
         </div>

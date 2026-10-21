@@ -4,6 +4,7 @@
  */
 
 import { useState, useRef, useCallback, type MouseEvent, type TouchEvent } from 'react'
+import { useTranslation } from 'react-i18next'
 
 interface ImageCropModalProps {
   isOpen: boolean
@@ -20,6 +21,7 @@ export default function ImageCropModal({
   onClose,
   onCropComplete,
 }: ImageCropModalProps) {
+  const { t } = useTranslation()
   const [scale, setScale] = useState(1)
   const [position, setPosition] = useState({ x: 0, y: 0 })
   const [isDragging, setIsDragging] = useState(false)
@@ -176,12 +178,12 @@ export default function ImageCropModal({
           </div>
 
           <p className="mt-2 text-center text-xs text-ink-500">
-            Drag to reposition. Use the slider below to zoom.
+            {t('registrationPage.form.cropDragHint', 'Drag to reposition. Use the slider below to zoom.')}
           </p>
 
           {/* Zoom controls */}
           <div className="mt-4 flex items-center justify-center gap-3">
-            <span className="text-xs font-semibold text-navy-900">Zoom:</span>
+            <span className="text-xs font-semibold text-navy-900">{t('registrationPage.form.zoom', 'Zoom:')}</span>
             <input
               type="range"
               min="0.8"
@@ -204,14 +206,14 @@ export default function ImageCropModal({
             onClick={onClose}
             className="rounded-full border border-navy-200 bg-white px-5 py-2 text-xs font-bold text-navy-900 transition hover:bg-cream-100"
           >
-            Cancel
+            {t('registrationPage.form.cancel', 'Cancel')}
           </button>
           <button
             type="button"
             onClick={handleCrop}
             className="btn-primary !px-6 !py-2 text-xs"
           >
-            Crop & Apply
+            {t('registrationPage.form.cropAndApply', 'Crop & Apply')}
           </button>
         </div>
       </div>

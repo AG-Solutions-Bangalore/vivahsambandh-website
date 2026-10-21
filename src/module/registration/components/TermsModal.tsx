@@ -3,6 +3,8 @@
  * Modal displaying VivahSambandh & ASVT terms and conditions.
  */
 
+import { useTranslation } from 'react-i18next'
+
 interface TermsModalProps {
   isOpen: boolean
   onClose: () => void
@@ -23,6 +25,7 @@ const termsList = [
 ]
 
 export default function TermsModal({ isOpen, onClose }: TermsModalProps) {
+  const { t } = useTranslation()
   if (!isOpen) return null
 
   return (
@@ -40,13 +43,15 @@ export default function TermsModal({ isOpen, onClose }: TermsModalProps) {
                 <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </span>
-            <h3 className="text-base font-bold text-navy-900">Terms & Conditions</h3>
+            <h3 className="text-base font-bold text-navy-900">
+              {t('registrationPage.form.termsModalTitle', 'Terms & Conditions')}
+            </h3>
           </div>
           <button
             type="button"
             onClick={onClose}
             className="rounded-full p-1 text-ink-500 hover:bg-cream-200 hover:text-navy-900 transition"
-            aria-label="Close"
+            aria-label={t('registrationPage.form.termsModalClose', 'Close')}
           >
             <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M6 18L18 6M6 6l12 12" strokeLinecap="round" strokeLinejoin="round" />
@@ -57,7 +62,7 @@ export default function TermsModal({ isOpen, onClose }: TermsModalProps) {
         {/* Content */}
         <div className="flex-1 overflow-y-auto p-6 text-sm text-ink-700 space-y-4">
           <p className="font-medium text-navy-900">
-            Please review the guidelines and policies governing the registration and matchmaking assistance:
+            {t('registrationPage.form.termsModalIntro', 'Please review the guidelines and policies governing the registration and matchmaking assistance:')}
           </p>
           <ul className="space-y-3 pl-5 list-disc text-xs sm:text-sm leading-relaxed">
             {termsList.map((term, index) => (
@@ -75,7 +80,7 @@ export default function TermsModal({ isOpen, onClose }: TermsModalProps) {
             onClick={onClose}
             className="btn-primary !px-6 !py-2 text-xs"
           >
-            I Understand & Accept
+            {t('registrationPage.form.termsModalAccept', 'I Understand & Accept')}
           </button>
         </div>
       </div>

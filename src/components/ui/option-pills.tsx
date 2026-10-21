@@ -4,6 +4,7 @@
  * Keyboard navigable, aria-checked, focus-visible ring, error state.
  */
 
+import { useTranslation } from 'react-i18next'
 import { cn } from 'cn'
 
 export interface OptionPillsOption {
@@ -91,14 +92,21 @@ export function OptionPills({
 
 /** Convenience Yes/No variant used across horoscope + Gotra questions. */
 export function YesNoPills(
-  props: Omit<OptionPillsProps, 'options'>,
+  props: Omit<OptionPillsProps, 'options'> & {
+    yesLabel?: string
+    noLabel?: string
+  },
 ) {
+  const { t } = useTranslation()
+  const yes = props.yesLabel ?? t('registrationPage.form.yes', 'Yes')
+  const no = props.noLabel ?? t('registrationPage.form.no', 'No')
+
   return (
     <OptionPills
       {...props}
       options={[
-        { value: 'Yes', label: 'Yes' },
-        { value: 'No', label: 'No' },
+        { value: 'Yes', label: yes },
+        { value: 'No', label: no },
       ]}
     />
   )

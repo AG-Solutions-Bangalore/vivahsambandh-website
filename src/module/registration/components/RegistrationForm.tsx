@@ -13,6 +13,7 @@
 
 import { TooltipProvider } from '@/components/ui/tooltip'
 import { Button } from '@/components/ui/button'
+import { useTranslation } from 'react-i18next'
 import TermsModal from './TermsModal'
 import OtpVerificationModal from './OtpVerificationModal'
 import {
@@ -27,6 +28,7 @@ import PhotosSection from './registration-form/sections/PhotosSection'
 import TermsSubmitSection from './registration-form/sections/TermsSubmitSection'
 
 function RegistrationFormInner() {
+  const { t } = useTranslation()
   const {
     form,
     handleOtpVerified,
@@ -55,7 +57,7 @@ function RegistrationFormInner() {
             onClick={resetRegistration}
             className="mt-8 px-8 py-3 text-sm font-bold bg-navy-900 text-white hover:bg-navy-800 shadow-md"
           >
-            Submit other response
+            {t('registrationPage.form.submitOtherResponse', 'Submit other response')}
           </Button>
         </div>
       </TooltipProvider>
