@@ -48,6 +48,7 @@ export default function Footer() {
     { label: t("footer.terms"), href: pagePath("/terms", appLang) },
     { label: t("footer.guidelines"), href: pagePath("/guidelines", appLang) },
     { label: t("footer.adminRegister"), href: pagePath("/admin-register", appLang) },
+    { label: t("footer.adminLogin"), href: "/panel-login" },
     { label: t("footer.sitemap"), href: "/sitemap.xml" },
   ];
 
