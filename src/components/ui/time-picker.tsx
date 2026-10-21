@@ -97,7 +97,7 @@ export function TimePicker({
         required={required}
         aria-invalid={error}
         className={cn(
-          'h-11 w-full min-w-0 rounded-full border pl-11 pr-10 text-base md:text-sm font-medium text-navy-900 transition duration-200 outline-none cursor-pointer select-none focus-visible:ring-2 shadow-xs',
+          'h-11 w-full min-w-0 rounded-full border pl-11 pr-10 text-base md:text-sm font-medium text-navy-900 transition duration-200 outline-none cursor-pointer select-none focus-visible:ring-2',
           error
             ? 'border-maroon-500 bg-maroon-50/30 text-navy-900 focus:border-maroon-600 focus:ring-maroon-500/20'
             : 'border-cream-300 bg-cream-50/70 text-navy-900 hover:bg-white hover:border-gold-500/60 focus:border-gold-500 focus:bg-white focus:ring-gold-500/20',

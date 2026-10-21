@@ -165,6 +165,103 @@ html[lang="hi"] [data-eyebrow] {
   color: var(--color-navy-900);
 }
 
+/* ————— Wizard motion (registration form steps) ————— */
+/* The live step node breathes with a gold halo and every node ripples from
+   its centre when hovered or pressed. Both are feedback, not decoration:
+   they point at the one step that is live. */
+@keyframes step-halo {
+  0% {
+    transform: scale(1);
+    opacity: 0.65;
+  }
+  70%,
+  100% {
+    transform: scale(1.7);
+    opacity: 0;
+  }
+}
+
+@keyframes step-ripple {
+  0% {
+    transform: scale(0.45);
+    opacity: 0;
+  }
+  30% {
+    opacity: 0.6;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 0;
+  }
+}
+
+.step-node {
+  position: relative;
+}
+
+/* press ripple — two small rings that travel outward from the node */
+.step-node::before,
+.step-node::after {
+  content: "";
+  position: absolute;
+  inset: -2px;
+  border-radius: 9999px;
+  border: 2px solid currentColor;
+  opacity: 0;
+  transform: scale(0.45);
+  pointer-events: none;
+}
+
+.step-node:active::before {
+  animation: step-ripple 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.step-node:active::after {
+  animation: step-ripple 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.13s;
+}
+
+/* the live node keeps a slow gold halo going */
+.step-halo {
+  position: absolute;
+  inset: -5px;
+  border-radius: 9999px;
+  border: 2px solid var(--color-gold-500);
+  animation: step-halo 2.6s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+  pointer-events: none;
+}
+
+/* Step change: card lifts in from below with a soft fade. */
+@keyframes step-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 14px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+.animate-step-in {
+  animation: step-in 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Conditional fields (profession branches, marital-history branches). */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 6px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.32s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
 /* ————— Reusable brand components ————— */
 @utility eyebrow {
   @apply inline-flex items-center gap-2 text-[11px] font-bold tracking-[0.22em] uppercase text-gold-600;
@@ -263,8 +360,7 @@ html[lang="hi"] [data-eyebrow] {
   }
 }
 
-/* Infinite Auto-Scroll Cities Marquee (pre-filled, zero initial gap) */
-@keyframes cities-marquee {
+/* Infinite Auto-Scroll Cities Marquee (pre-filled, zero initial gap) */@keyframes cities-marquee {
   0% {
     transform: translate3d(0, 0, 0);
   }

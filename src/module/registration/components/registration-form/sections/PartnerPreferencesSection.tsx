@@ -31,8 +31,6 @@ export default function PartnerPreferencesSection() {
   return (
     <FormSection
       id={REGISTRATION_STEP_IDS.preferences}
-      step={2}
-      badge={t('registrationPage.form.part2Badge', 'Part 2')}
       title={t('registrationPage.form.part2Title', 'Partner Preferences & Horoscope')}
       subtitle={t('registrationPage.form.part2Subtitle', 'Astrological criteria for the alliance.')}
     >
@@ -40,7 +38,7 @@ export default function PartnerPreferencesSection() {
         {/* Same Gotra */}
         <div
           id={`${baseId}-same-gotra-group`}
-          className="rounded-2xl border border-cream-200 bg-cream-50/60 p-4 transition focus-within:border-gold-500/50"
+          className="rounded-2xl border border-cream-300 bg-cream-50/70 p-4 transition-colors focus-within:border-gold-500/50"
         >
           <Field
             id={`${baseId}-same-gotra-pills`}
@@ -77,7 +75,7 @@ export default function PartnerPreferencesSection() {
         {/* Are you Manglik */}
         <div
           id={`${baseId}-is-manglik-group`}
-          className="rounded-2xl border border-cream-200 bg-cream-50/60 p-4 transition focus-within:border-gold-500/50"
+          className="rounded-2xl border border-cream-300 bg-cream-50/70 p-4 transition-colors focus-within:border-gold-500/50"
         >
           <Field
             id={`${baseId}-is-manglik-pills`}
@@ -114,7 +112,7 @@ export default function PartnerPreferencesSection() {
         {/* Marry a Manglik */}
         <div
           id={`${baseId}-will-marry-manglik-group`}
-          className="rounded-2xl border border-cream-200 bg-cream-50/60 p-4 transition focus-within:border-gold-500/50"
+          className="rounded-2xl border border-cream-300 bg-cream-50/70 p-4 transition-colors focus-within:border-gold-500/50"
         >
           <Field
             id={`${baseId}-will-marry-manglik-pills`}

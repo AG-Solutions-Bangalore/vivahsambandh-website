@@ -89,7 +89,7 @@ export function DatePicker({
           id={id}
           disabled={disabled}
           className={cn(
-            'flex h-11 w-full items-center justify-between gap-2 rounded-full border pl-4 pr-4 text-base md:text-sm font-medium text-left transition duration-200 outline-none select-none cursor-pointer focus-visible:ring-2 shadow-xs',
+            'flex h-11 w-full items-center justify-between gap-2 rounded-full border pl-4 pr-4 text-base md:text-sm font-medium text-left transition duration-200 outline-none select-none cursor-pointer focus-visible:ring-2',
             error || isUnderage
               ? "border-maroon-500 bg-maroon-50/30 text-navy-900 focus:border-maroon-600 focus:ring-maroon-500/20"
               : "border-cream-300 bg-cream-50/70 text-navy-900 hover:bg-white hover:border-gold-500/60 focus:border-gold-500 focus:bg-white focus:ring-gold-500/20",

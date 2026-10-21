@@ -45,7 +45,7 @@ export function Field({
           {tooltip}
         </label>
         {hint && (
-          <span className="shrink-0 rounded-md bg-cream-100 px-1.5 py-0.5 font-mono text-[10px] font-semibold leading-none text-ink-500 tabular-nums">
+          <span className="shrink-0 text-[12px] font-medium leading-none text-ink-500 tabular-nums">
             {hint}
           </span>
         )}

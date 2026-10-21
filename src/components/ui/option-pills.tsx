@@ -44,7 +44,7 @@ export function OptionPills({
       aria-label={ariaLabel ?? name}
       aria-invalid={error}
       className={cn(
-        'relative h-11 w-full flex items-center gap-1.5 rounded-full border p-1 transition shadow-xs',
+        'relative h-11 w-full flex items-center gap-1.5 rounded-full border p-1 transition-colors',
         error
           ? 'border-maroon-500 bg-maroon-50/20'
           : 'border-cream-300 bg-cream-50/70',

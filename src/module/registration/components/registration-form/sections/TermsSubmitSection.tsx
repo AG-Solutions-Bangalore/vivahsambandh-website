@@ -1,12 +1,11 @@
 /**
  * @file src/module/registration/components/registration-form/sections/TermsSubmitSection.tsx
- * Part 5 — Terms agreement and submission actions.
+ * Part 5 — Terms agreement panel. The submit action lives in the wizard
+ * footer (FormWizardNav) so it stays visible on every step.
  */
 
 import { Checkbox } from '@/components/ui/checkbox'
-import { Button } from '@/components/ui/button'
-import { CheckCircle2, ClipboardCheck, Send } from 'lucide-react'
-import { cn } from 'cn'
+import { ClipboardCheck } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { useRegistrationForm } from '../context'
 import FormSection from '../FormSection'
@@ -20,19 +19,13 @@ export default function TermsSubmitSection() {
     fieldErrors,
     setForm,
     clearFieldError,
-    handleValidateClick,
-    isFormFullyFilled,
-    isSubmitting,
-    isMobileVerifiedNow,
-    isMobileComplete,
+    validateAllSteps,
     setTermsOpen,
   } = useRegistrationForm()
 
   return (
     <FormSection
       id={REGISTRATION_STEP_IDS.terms}
-      step={5}
-      badge={t('registrationPage.form.part5Badge', 'Part 5')}
       title={t('registrationPage.form.part5Title', 'Declaration & Submit')}
       subtitle={t(
         'registrationPage.form.part5Subtitle',
@@ -44,7 +37,7 @@ export default function TermsSubmitSection() {
         className={`rounded-2xl border p-4 transition sm:p-5 ${
           fieldErrors.agree_terms
             ? 'border-maroon-500 bg-maroon-50/20'
-            : 'border-cream-200 bg-cream-50/60 focus-within:border-gold-500/50'
+            : 'border-cream-300 bg-cream-50/70 focus-within:border-gold-500/50'
         }`}
       >
         <div className="flex items-start gap-3">
@@ -81,79 +74,17 @@ export default function TermsSubmitSection() {
         )}
       </div>
 
-      {/* Action buttons */}
-      <div className="mt-6 flex flex-col items-stretch gap-5 border-t border-cream-200 pt-6 lg:flex-row lg:items-center lg:justify-between">
-        <Button
-          type="button"
-          variant="outline"
-          onClick={handleValidateClick}
-          className="h-12 w-full rounded-full border-gold-500/60 bg-white font-semibold text-navy-900 hover:border-gold-500 hover:bg-gold-50 lg:w-auto"
-        >
-          <ClipboardCheck aria-hidden />
-          {t('registrationPage.form.checkUnfilled', 'Check Any Unfilled Details')}
-        </Button>
-
-        <div className="flex w-full flex-col items-center gap-2 lg:w-auto lg:items-end">
-          {/* Natural notice telling user where OTP goes */}
-          {!isMobileVerifiedNow && isMobileComplete && (
-            <p className="flex items-center gap-1.5 text-center text-xs font-medium text-ink-600 lg:text-right">
-              <span className="size-1.5 animate-pulse rounded-full bg-gold-600" />
-              <span>
-                {t('registrationPage.form.otpSendNotice', {
-                  defaultValue: `सत्यापन के लिए +91 ${form.mobile} पर ओटीपी भेजा जाएगा`,
-                  mobile: form.mobile,
-                })}
-              </span>
-            </p>
-          )}
-
-          <Button
-            type="submit"
-            disabled={!isFormFullyFilled || isSubmitting}
-            className={cn(
-              'h-12 w-full rounded-full px-8 text-sm font-bold transition shadow-md lg:w-auto',
-              !isFormFullyFilled
-                ? '!bg-navy-900/40 !text-white cursor-not-allowed hover:!bg-navy-900/40'
-                : isMobileVerifiedNow
-                ? '!bg-navy-900 !text-white hover:!bg-navy-800'
-                : '!bg-gold-600 !text-white hover:!bg-gold-500 ring-2 ring-gold-400/50 shadow-gold',
-            )}
-          >
-            {isSubmitting ? (
-              <span className="flex items-center gap-2">
-                <svg className="h-4 w-4 animate-spin text-white" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-                </svg>
-                {t('registrationPage.form.submittingRegistration', 'Submitting Registration...')}
-              </span>
-            ) : !isFormFullyFilled ? (
-              t('registrationPage.form.fillAllDetails', 'Fill All Details to Enable Submit')
-            ) : isMobileVerifiedNow ? (
-              <span className="flex items-center gap-2">
-                <Send aria-hidden />
-                {t('registrationPage.form.submitRegistration', 'Submit Registration')}
-              </span>
-            ) : (
-              <span className="flex items-center gap-2">
-                <Send aria-hidden />
-                {t('registrationPage.form.verifyAndSubmit', 'Verify via OTP & Submit')}
-              </span>
-            )}
-          </Button>
-
-          {!isFormFullyFilled ? (
-            <span className="text-center text-[11px] font-medium text-ink-500 lg:text-right">
-              {t('registrationPage.form.completeAllRequired', 'Complete all required fields above to proceed with submission')}
-            </span>
-          ) : isMobileVerifiedNow ? (
-            <span className="flex items-center gap-1 text-center text-[11px] font-semibold text-emerald-700 lg:text-right">
-              <CheckCircle2 className="size-3.5 shrink-0" aria-hidden />
-              <span>{t('registrationPage.form.mobileVerifiedReady', '✓ Mobile verified. Ready to submit!')}</span>
-            </span>
-          ) : null}
-        </div>
-      </div>
+      {/* Secondary review helper — jumps straight to the first unfinished step */}
+      <button
+        type="button"
+        onClick={() => {
+          validateAllSteps()
+        }}
+        className="mt-5 inline-flex cursor-pointer items-center gap-2 rounded-full border border-cream-300 bg-white px-4 py-2 text-xs font-semibold text-navy-800 transition hover:border-gold-500 hover:bg-gold-50"
+      >
+        <ClipboardCheck className="size-3.5 shrink-0" aria-hidden />
+        {t('registrationPage.form.checkUnfilled', 'Check Any Unfilled Details')}
+      </button>
     </FormSection>
   )
 }

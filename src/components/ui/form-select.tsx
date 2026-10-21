@@ -87,7 +87,7 @@ export function FormSelect({
           'h-11! w-full rounded-full border pl-4 pr-8 py-2 text-base md:text-sm font-medium cursor-pointer transition duration-200 focus:outline-none focus-visible:ring-2',
           error
             ? 'border-maroon-500 bg-maroon-50/30 text-navy-900 focus-visible:border-maroon-600 focus-visible:ring-maroon-500/20'
-            : 'border-cream-300 bg-cream-50/70 text-navy-900 shadow-xs hover:bg-white hover:border-gold-500/60 focus-visible:border-gold-500 focus-visible:bg-white focus-visible:ring-gold-500/20 data-[placeholder]:text-ink-400',
+            : 'border-cream-300 bg-cream-50/70 text-navy-900 hover:bg-white hover:border-gold-500/60 focus-visible:border-gold-500 focus-visible:bg-white focus-visible:ring-gold-500/20 data-[placeholder]:text-ink-400',
           className,
         )}
       >

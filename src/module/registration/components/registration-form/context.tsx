@@ -41,7 +41,9 @@ import {
   validateRegistrationForm,
   isRegistrationFormComplete,
   type RegistrationConditions,
+  type ErrorSummaryItem,
 } from './validation'
+import { REGISTRATION_STEPS } from './steps'
 import {
   sanitizeName,
   sanitizeEmail,
@@ -126,7 +128,23 @@ export interface RegistrationFormContextValue {
   termsOpen: boolean
   setTermsOpen: React.Dispatch<React.SetStateAction<boolean>>
 
-
+  // ——— Step-by-step wizard ———
+  /** Index of the step currently on screen (0-based). */
+  currentStep: number
+  /** Jump to a step without validation (used by the stepper / Back button). */
+  goToStep: (step: number) => void
+  /**
+   * Validate one step in isolation. Sets that step's field errors and
+   * scrolls to the first offending control. Returns true when the step is
+   * complete.
+   */
+  validateStep: (step: number) => boolean
+  /**
+   * Validate every step in order. On the first incomplete step it switches
+   * to it, reveals its errors and focuses the first invalid control.
+   * Returns true only when the whole form is complete.
+   */
+  validateAllSteps: () => boolean
 }
 
 const RegistrationFormContext = createContext<RegistrationFormContextValue | null>(null)
@@ -157,6 +175,9 @@ export function RegistrationFormProvider({ children }: PropsWithChildren) {
   const [isOtpModalOpen, setIsOtpModalOpen] = useState(false)
   const [otpTriggerSource, setOtpTriggerSource] = useState<'inline' | 'submit'>('inline')
   const otpTriggerSourceRef = useRef<'inline' | 'submit'>('inline')
+
+  // Wizard state — which numbered part of the form is on screen
+  const [currentStep, setCurrentStep] = useState(0)
 
   // Mobile OTP Verification State
   const [isMobileVerified, setIsMobileVerified] = useState(false)
@@ -491,6 +512,72 @@ export function RegistrationFormProvider({ children }: PropsWithChildren) {
     [form, conditions],
   )
 
+  // ——— Step-by-step wizard helpers ———
+
+  /** Jump to a step without running validation (stepper clicks, Back button). */
+  const goToStep = useCallback((step: number) => {
+    const next = Math.min(Math.max(step, 0), REGISTRATION_STEPS.length - 1)
+    setCurrentStep(next)
+    setFieldErrors({})
+  }, [])
+
+  /**
+   * Validate a single step in isolation. Only that step's errors are kept,
+   * so the user is never shown problems belonging to a step they cannot see.
+   */
+  const validateStep = useCallback(
+    (step: number): boolean => {
+      const definition = REGISTRATION_STEPS[step]
+      if (!definition) return true
+
+      const { errorList } = validateRegistrationForm(form, conditions, baseId)
+      const stepErrors: FieldErrors = {}
+      let firstField: ErrorSummaryItem | null = null
+
+      for (const item of errorList) {
+        if (!definition.fields.includes(item.key)) continue
+        stepErrors[item.key] = item.error
+        if (!firstField) firstField = item
+      }
+
+      setFieldErrors(stepErrors)
+
+      if (!firstField) return true
+      focusAndScrollToField(firstField.id)
+      return false
+    },
+    [form, conditions, baseId, focusAndScrollToField],
+  )
+
+  /**
+   * Validate every step in order. The first incomplete step wins: the wizard
+   * switches to it, reveals its errors and focuses the first invalid control.
+   */
+  const validateAllSteps = useCallback((): boolean => {
+    const { errorList } = validateRegistrationForm(form, conditions, baseId)
+    if (errorList.length === 0) {
+      setFieldErrors({})
+      return true
+    }
+
+    for (let index = 0; index < REGISTRATION_STEPS.length; index += 1) {
+      const definition = REGISTRATION_STEPS[index]
+      const items = errorList.filter((item) => definition.fields.includes(item.key))
+      if (items.length === 0) continue
+
+      const stepErrors: FieldErrors = {}
+      for (const item of items) stepErrors[item.key] = item.error
+
+      setFieldErrors(stepErrors)
+      setCurrentStep(index)
+      // The step has to render before its controls exist in the DOM.
+      setTimeout(() => focusAndScrollToField(items[0].id), 160)
+      return false
+    }
+
+    return false
+  }, [form, conditions, baseId, focusAndScrollToField])
+
   // "Check Any Unfilled Details" Button Action
   const handleValidateClick = useCallback(() => {
     const { errors, firstField } = validateRegistrationForm(form, conditions, baseId)
@@ -707,6 +794,7 @@ function convertTo24HourTime(timeStr: string): string {
     setIsMobileVerified(false)
     setVerifiedMobileNumber('')
     setSubmitResult(null)
+    setCurrentStep(0)
     otpTriggerSourceRef.current = 'inline'
     setOtpTriggerSource('inline')
     window.scrollTo({ top: 0, behavior: 'smooth' })
@@ -750,6 +838,10 @@ function convertTo24HourTime(timeStr: string): string {
     otpTriggerSource,
     termsOpen,
     setTermsOpen,
+    currentStep,
+    goToStep,
+    validateStep,
+    validateAllSteps,
   }
 
   return (

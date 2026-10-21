@@ -1,26 +1,32 @@
 /**
  * @file src/module/registration/components/RegistrationForm.tsx
- * Complete VivahSambandh Registration Form — orchestrator shell.
+ * Complete VivahSambandh Registration Form — step-by-step wizard shell.
  *
- * Delegates state/handlers to registration-form/context.tsx and renders the
- * five section components (registration-form/sections/*):
- *   Part 1  PersonalDetailsSection      — personal & family details
- *   Part 2  PartnerPreferencesSection   — horoscope & partner preferences
- *   Part 3  FamilySummarySection        — family history summary
- *   Part 4  PhotosSection               — photographs with interactive cropper
- *   Part 5  TermsSubmitSection          — terms agreement & submit actions
+ * The five numbered parts are shown one at a time so the form never reads as
+ * one endless wall of inputs:
+ *   Step 1  PersonalDetailsSection      — personal & family details
+ *   Step 2  PartnerPreferencesSection   — horoscope & partner preferences
+ *   Step 3  FamilySummarySection        — family history summary
+ *   Step 4  PhotosSection               — photographs with interactive cropper
+ *   Step 5  TermsSubmitSection          — terms agreement
+ *
+ * State, handlers and validation live in registration-form/context.tsx.
  */
 
 import { TooltipProvider } from '@/components/ui/tooltip'
 import { Button } from '@/components/ui/button'
 import { useTranslation } from 'react-i18next'
+import type { FormEvent } from 'react'
+import { getLenis } from '@/lib/scroll'
 import TermsModal from './TermsModal'
 import OtpVerificationModal from './OtpVerificationModal'
 import {
   RegistrationFormProvider,
   useRegistrationForm,
 } from './registration-form/context'
-import FormStepNav from './registration-form/FormStepNav'
+import FormStepper from './registration-form/FormStepper'
+import FormWizardNav from './registration-form/FormWizardNav'
+import { REGISTRATION_STEPS } from './registration-form/steps'
 import SubmitResultBanner from './registration-form/sections/SubmitResultBanner'
 import PersonalDetailsSection from './registration-form/sections/PersonalDetailsSection'
 import PartnerPreferencesSection from './registration-form/sections/PartnerPreferencesSection'
@@ -43,7 +49,55 @@ function RegistrationFormInner() {
     submitResult,
     resetRegistration,
     otpTriggerSource,
+    currentStep,
+    goToStep,
+    validateStep,
+    validateAllSteps,
+    isFormFullyFilled,
+    isSubmitting,
+    isMobileVerifiedNow,
+    isMobileComplete,
   } = useRegistrationForm()
+
+  const lastStepIndex = REGISTRATION_STEPS.length - 1
+  const isLastStep = currentStep === lastStepIndex
+
+  // Keep the active step in view when it changes.
+  const scrollToStepTop = () => {
+    const lenis = getLenis()
+    if (lenis) {
+      lenis.scrollTo(0, { offset: 0, duration: 0.7 })
+    } else {
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+    }
+  }
+
+  const handleNext = () => {
+    if (!validateStep(currentStep)) return
+    goToStep(currentStep + 1)
+    scrollToStepTop()
+  }
+
+  const handleBack = () => {
+    goToStep(currentStep - 1)
+    scrollToStepTop()
+  }
+
+  const handleStepSelect = (step: number) => {
+    goToStep(step)
+    scrollToStepTop()
+  }
+
+  // Submit guard: only hand over to the real submit flow once every step
+  // is complete. Otherwise jump to the first unfinished step.
+  const handleWizardSubmit = (e: FormEvent) => {
+    e.preventDefault()
+    if (!validateAllSteps()) {
+      scrollToStepTop()
+      return
+    }
+    void handleSubmit(e)
+  }
 
   // Once submitted successfully, show only the centered success message
   // with a "Submit other response" button instead of the form.
@@ -71,15 +125,29 @@ function RegistrationFormInner() {
         {/* Success / Error notification */}
         <SubmitResultBanner />
 
-        {/* Sticky jump-navigation between the five parts */}
-        <FormStepNav />
+        {/* Progress indicator — travels with the form, never fixed */}
+        <FormStepper current={currentStep} onSelect={handleStepSelect} />
 
-        <form noValidate onSubmit={handleSubmit} className="space-y-6 sm:space-y-8">
-          <PersonalDetailsSection />
-          <PartnerPreferencesSection />
-          <FamilySummarySection />
-          <PhotosSection />
-          <TermsSubmitSection />
+        <form noValidate onSubmit={handleWizardSubmit}>
+          <div key={currentStep} className="animate-step-in">
+            {currentStep === 0 && <PersonalDetailsSection />}
+            {currentStep === 1 && <PartnerPreferencesSection />}
+            {currentStep === 2 && <FamilySummarySection />}
+            {currentStep === 3 && <PhotosSection />}
+            {currentStep === 4 && <TermsSubmitSection />}
+          </div>
+
+          <FormWizardNav
+            step={currentStep}
+            isLastStep={isLastStep}
+            onBack={handleBack}
+            onNext={handleNext}
+            isSubmitting={isSubmitting}
+            isFormFullyFilled={isFormFullyFilled}
+            isMobileVerifiedNow={isMobileVerifiedNow}
+            isMobileComplete={isMobileComplete}
+            mobile={form.mobile}
+          />
         </form>
 
         {/* Terms Modal */}

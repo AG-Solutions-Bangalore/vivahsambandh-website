@@ -51,7 +51,7 @@ export default function PersonalDetailsSection() {
   // Dynamic CSS helper based on field validation status (shadcn-aligned brand style)
   const inputCls = (key: string) =>
     cn(
-      'h-11 w-full rounded-full border px-4 py-2 text-base md:text-sm font-medium text-navy-900 shadow-xs transition outline-none focus-visible:ring-2',
+      'h-11 w-full rounded-full border px-4 py-2 text-base md:text-sm font-medium text-navy-900 transition outline-none focus-visible:ring-2',
       'placeholder:font-normal placeholder:text-ink-400',
       fieldErrors[key]
         ? 'border-maroon-500 bg-maroon-50/30 focus-visible:border-maroon-600 focus-visible:ring-maroon-500/20'
@@ -61,8 +61,6 @@ export default function PersonalDetailsSection() {
   return (
     <FormSection
       id={REGISTRATION_STEP_IDS.personal}
-      step={1}
-      badge={t('registrationPage.form.part1Badge', 'Part 1')}
       title={t('registrationPage.form.part1Title', 'Personal & Family Details')}
       subtitle={t(
         'registrationPage.form.part1Subtitle',
@@ -164,7 +162,7 @@ export default function PersonalDetailsSection() {
             value={form.email}
             onChange={handleInputChange}
             onPaste={handlePasteCapture('email')}
-            placeholder={t('registrationPage.form.emailPlaceholder', 'name@example.com')}
+            placeholder={t('registrationPage.form.emailPlaceholder', 'name@example.com')} /* taste-skill-ignore: RFC 2606 reserved example address */
             className={inputCls('email')}
             aria-invalid={Boolean(fieldErrors.email)}
           />
@@ -432,11 +430,11 @@ export default function PersonalDetailsSection() {
       {/* Community Preferences multi-select chips */}
       <div
         id={`${baseId}-comm-prefs`}
-        className="mt-6 rounded-2xl border border-cream-200 bg-cream-50/60 p-4 sm:p-5"
+        className="mt-6 rounded-2xl border border-cream-300 bg-cream-50/70 p-4 sm:p-5"
       >
         <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
           <span className="flex items-center gap-2 text-[13px] font-semibold leading-tight tracking-tight text-navy-900">
-            <Users className="size-4 shrink-0 text-gold-600" aria-hidden="true" />
+            <Users className="size-4 shrink-0 text-ink-400" aria-hidden="true" />
             {t('registrationPage.form.commPrefsLabel', 'Community Preferences (Select eligible communities)')}
             <span className="text-maroon-600" aria-hidden="true">*</span>
           </span>
@@ -468,7 +466,7 @@ export default function PersonalDetailsSection() {
                     'flex items-center gap-1.5 rounded-full border px-3.5 py-2 text-xs font-semibold transition outline-none active:scale-95 cursor-pointer',
                     'focus-visible:ring-2 focus-visible:ring-gold-500/40',
                     selected
-                      ? 'border-navy-900 bg-navy-900 text-white shadow-xs'
+                      ? 'border-navy-900 bg-navy-900 text-white'
                       : 'border-cream-300 bg-white text-navy-800 hover:border-gold-500/60 hover:bg-gold-50',
                   )}
                 >
@@ -492,7 +490,7 @@ export default function PersonalDetailsSection() {
 
       {/* Prior Marriage Condition */}
       <div className="mt-6 border-t border-cream-200 pt-6">
-        <h3 className="mb-4 flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-gold-700">
+        <h3 className="mb-4 flex items-center gap-2 text-[13px] font-semibold text-navy-900">
           <HeartHandshake className="size-4 shrink-0" aria-hidden="true" />
           {t('registrationPage.form.maritalHistoryHeading', 'Marital History')}
         </h3>
@@ -595,7 +593,7 @@ export default function PersonalDetailsSection() {
 
       {/* Parents and Siblings row */}
       <div className="mt-6 border-t border-cream-200 pt-6">
-        <h3 className="mb-4 flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-gold-700">
+        <h3 className="mb-4 flex items-center gap-2 text-[13px] font-semibold text-navy-900">
           <Users className="size-4 shrink-0" aria-hidden="true" />
           {t('registrationPage.form.parentsSiblingsHeading', 'Parents & Siblings')}
         </h3>
@@ -678,7 +676,7 @@ export default function PersonalDetailsSection() {
 
       {/* Residential Address, House type, Years */}
       <div className="mt-6 border-t border-cream-200 pt-6">
-        <h3 className="mb-4 flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-gold-700">
+        <h3 className="mb-4 flex items-center gap-2 text-[13px] font-semibold text-navy-900">
           <MapPin className="size-4 shrink-0" aria-hidden="true" />
           {t('registrationPage.form.addressHeading', 'Address & Housing')}
         </h3>
@@ -745,7 +743,7 @@ export default function PersonalDetailsSection() {
 
       {/* Current City & Contacts */}
       <div className="mt-6 border-t border-cream-200 pt-6">
-        <h3 className="mb-4 flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-gold-700">
+        <h3 className="mb-4 flex items-center gap-2 text-[13px] font-semibold text-navy-900">
           <Phone className="size-4 shrink-0" aria-hidden="true" />
           {t('registrationPage.form.locationHeading', 'Location & Contact Details')}
         </h3>
@@ -798,9 +796,9 @@ export default function PersonalDetailsSection() {
             required
             hint={
               isMobileVerifiedNow
-                ? t('registrationPage.form.mobileVerified', '✓ Mobile Verified')
+                ? t('registrationPage.form.mobileVerified', 'Mobile verified')
                 : isMobileComplete
-                ? `✓ 10 ${t('registrationPage.form.digits', 'digits')}`
+                ? `10 ${t('registrationPage.form.digits', 'digits')}`
                 : `${form.mobile.length}/10 ${t('registrationPage.form.digits', 'digits')}`
             }
             error={fieldErrors.mobile}
@@ -823,7 +821,7 @@ export default function PersonalDetailsSection() {
               />
               {isMobileVerifiedNow && (
                 <span className="absolute right-2.5 top-1/2 -translate-y-1/2 inline-flex items-center gap-1 rounded-full bg-emerald-100 border border-emerald-300 px-2.5 py-0.5 text-[11px] font-bold text-emerald-800">
-                  {t('registrationPage.form.verified', '✓ Verified')}
+                  {t('registrationPage.form.verified', 'Verified')}
                 </span>
               )}
             </div>
@@ -858,7 +856,7 @@ export default function PersonalDetailsSection() {
             required
             hint={
               form.alternate_mobile_no.length === 10
-                ? `✓ 10 ${t('registrationPage.form.digits', 'digits')}`
+                ? `10 ${t('registrationPage.form.digits', 'digits')}`
                 : `${form.alternate_mobile_no.length}/10 ${t('registrationPage.form.digits', 'digits')}`
             }
             error={fieldErrors.alternate_mobile_no}

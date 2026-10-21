@@ -19,7 +19,7 @@ export default function SubmitResultBanner() {
     <div
       role="status"
       aria-live="polite"
-      className={`mb-6 flex items-start gap-3 rounded-2xl border p-5 shadow-lift ${
+      className={`mb-6 flex items-start gap-3 rounded-2xl border p-5 ${
         isSuccess
           ? 'border-emerald-500/30 bg-emerald-50/90 text-emerald-950'
           : 'border-maroon-500/30 bg-maroon-50/90 text-maroon-950'

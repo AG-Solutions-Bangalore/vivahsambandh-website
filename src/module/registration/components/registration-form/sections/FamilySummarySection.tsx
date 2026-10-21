@@ -17,7 +17,7 @@ export default function FamilySummarySection() {
 
   const inputCls = (key: string) =>
     cn(
-      'w-full rounded-2xl border px-4 py-3 text-base md:text-sm font-medium text-navy-900 shadow-xs transition outline-none focus-visible:ring-2',
+      'w-full rounded-2xl border px-4 py-3 text-base md:text-sm font-medium text-navy-900 transition outline-none focus-visible:ring-2',
       'placeholder:font-normal placeholder:text-ink-400',
       fieldErrors[key]
         ? 'border-maroon-500 bg-maroon-50/30 focus-visible:border-maroon-600 focus-visible:ring-maroon-500/20'
@@ -27,8 +27,6 @@ export default function FamilySummarySection() {
   return (
     <FormSection
       id={REGISTRATION_STEP_IDS.family}
-      step={3}
-      badge={t('registrationPage.form.part3Badge', 'Part 3')}
       title={t('registrationPage.form.part3Title', 'Family History & Summary')}
       subtitle={t('registrationPage.form.part3Subtitle', "Briefly describe parents' occupation, values, family background, and any aspirations.")}
     >

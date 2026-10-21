@@ -50,8 +50,6 @@ export default function PhotosSection() {
   return (
     <FormSection
       id={REGISTRATION_STEP_IDS.photos}
-      step={4}
-      badge={t('registrationPage.form.part4Badge', 'Part 4')}
       title={t('registrationPage.form.part4Title', 'Profile Photographs')}
       subtitle={t('registrationPage.form.part4Subtitle', 'High-resolution recent photographs. Selecting a photo will open the interactive cropper.')}
     >
@@ -62,7 +60,7 @@ export default function PhotosSection() {
           className={`flex flex-col rounded-2xl border p-5 transition ${
             fieldErrors.full_image
               ? 'border-maroon-500 bg-maroon-50/20'
-              : 'border-cream-200 bg-cream-50/60'
+              : 'border-cream-300 bg-cream-50/70'
           }`}
         >
           <span className="text-[13px] font-semibold leading-tight tracking-tight text-navy-900">
@@ -73,7 +71,7 @@ export default function PhotosSection() {
           </p>
 
           <div className="mt-4 flex flex-1 flex-col items-center justify-center gap-4">
-            <div className="flex h-56 w-44 items-center justify-center overflow-hidden rounded-2xl border-2 border-dashed border-gold-500/50 bg-white shadow-inner">
+            <div className="flex h-56 w-44 items-center justify-center overflow-hidden rounded-2xl border-2 border-dashed border-gold-500/50 bg-white">
               {form.full_image_preview ? (
                 <img
                   src={form.full_image_preview}
@@ -131,7 +129,7 @@ export default function PhotosSection() {
           className={`flex flex-col rounded-2xl border p-5 transition ${
             fieldErrors.face_image
               ? 'border-maroon-500 bg-maroon-50/20'
-              : 'border-cream-200 bg-cream-50/60'
+              : 'border-cream-300 bg-cream-50/70'
           }`}
         >
           <span className="text-[13px] font-semibold leading-tight tracking-tight text-navy-900">
@@ -142,7 +140,7 @@ export default function PhotosSection() {
           </p>
 
           <div className="mt-4 flex flex-1 flex-col items-center justify-center gap-4">
-            <div className="flex h-56 w-56 items-center justify-center overflow-hidden rounded-full border-2 border-dashed border-gold-500/50 bg-white shadow-inner">
+            <div className="flex h-56 w-56 items-center justify-center overflow-hidden rounded-full border-2 border-dashed border-gold-500/50 bg-white">
               {form.face_image_preview ? (
                 <img
                   src={form.face_image_preview}
