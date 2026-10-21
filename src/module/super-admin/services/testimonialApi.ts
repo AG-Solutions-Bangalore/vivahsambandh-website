@@ -64,6 +64,7 @@ export async function fetchTestimonials(
 ): Promise<{ data: TestimonialRecord[]; error?: string; raw?: unknown }> {
   const query = buildQueryString({
     page: params.page,
+    per_page: params.per_page,
     search: params.search,
     testimonial_for: params.testimonial_for,
     testimonial_status: params.testimonial_status,

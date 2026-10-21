@@ -10,6 +10,7 @@ import { ConfirmDialog } from '../components/ConfirmDialog'
 import { PanelCard } from '../components/PanelCard'
 import { PanelPageHeader } from '../components/PanelPageHeader'
 import { panelDescription } from '../navigation'
+import { PanelPagination } from '../components/PanelPagination'
 import { PanelSearch } from '../components/PanelSearch'
 import { PanelToolbar } from '../components/PanelToolbar'
 import { PanelEmpty, PanelError } from '../components/PanelState'
@@ -24,39 +25,35 @@ import {
   useDeleteBlockProfileMutation,
 } from '../hook/useBlockProfiles'
 import { errorMessage } from '../hook/errors'
+import { DEFAULT_PER_PAGE, useServerSearch } from '../hook/useServerList'
 import { formatDate } from '../utils/format'
 
 export default function BlockProfilesPage() {
+  const { searchInput, setSearchInput, searchTerm } = useServerSearch()
+  const [page, setPage] = useState(1)
+
   const {
-    data: records = [],
+    data: allRecords = [],
+    records,
+    meta,
     isLoading,
     isFetching,
     error,
     refetch,
-  } = useBlockProfilesQuery()
+  } = useBlockProfilesQuery({
+    search: searchTerm || undefined,
+    page,
+    per_page: DEFAULT_PER_PAGE,
+  })
   const deleteMutation = useDeleteBlockProfileMutation()
-
-  const [searchQuery, setSearchQuery] = useState('')
 
   // Delete Target
   const [deleteTargetId, setDeleteTargetId] = useState<number | null>(null)
 
   const deleteTarget = useMemo(
-    () => records.find((rec) => rec.id === deleteTargetId) ?? null,
-    [records, deleteTargetId],
+    () => allRecords.find((rec) => rec.id === deleteTargetId) ?? null,
+    [allRecords, deleteTargetId],
   )
-
-  const filtered = useMemo(() => {
-    return records.filter((rec) => {
-      const q = searchQuery.toLowerCase()
-      const blockedName = rec.member_name || ''
-      return (
-        blockedName.toLowerCase().includes(q) ||
-        (rec.blocked_by_name && rec.blocked_by_name.toLowerCase().includes(q)) ||
-        (rec.reason && rec.reason.toLowerCase().includes(q))
-      )
-    })
-  }, [records, searchQuery])
 
   const handleDelete = () => {
     if (!deleteTarget) return
@@ -98,8 +95,8 @@ export default function BlockProfilesPage() {
         <PanelToolbar
           search={
             <PanelSearch
-              value={searchQuery}
-              onChange={setSearchQuery}
+              value={searchInput}
+              onChange={setSearchInput}
               placeholder="Search candidate, reporter, or reason…"
             />
           }
@@ -113,22 +110,22 @@ export default function BlockProfilesPage() {
             message={errorMessage(error, 'Failed to load blocked profile records.')}
             onRetry={() => void refetch()}
           />
-        ) : filtered.length === 0 ? (
+        ) : records.length === 0 ? (
           <PanelEmpty
             icon={<Ban className="size-6" />}
             title="No Blocked Profiles Found"
             description={
-              searchQuery
+              searchInput
                 ? 'No blocked records match your current search query.'
                 : 'No accounts are currently flagged as blocked in the database.'
             }
             action={
-              searchQuery ? (
+              searchInput ? (
                 <Button
                   type="button"
                   variant="outline"
                   size="xs"
-                  onClick={() => setSearchQuery('')}
+                  onClick={() => setSearchInput('')}
                   className="mt-4 cursor-pointer rounded-full border-cream-300 text-xs font-semibold"
                 >
                   Clear search
@@ -149,7 +146,7 @@ export default function BlockProfilesPage() {
               </>
             }
           >
-            {filtered.map((rec) => {
+            {records.map((rec) => {
               const targetName =
                 rec.member_name || 'Restricted Profile'
               return (
@@ -205,9 +202,16 @@ export default function BlockProfilesPage() {
         )}
 
         <PanelTableFooter>
-          <span>
-            Total blocked records: <strong>{filtered.length}</strong>
-          </span>
+          <PanelPagination
+            meta={meta}
+            onPageChange={setPage}
+            isFetching={isFetching}
+            summary={
+              <span>
+                Total blocked records: <strong>{meta.total}</strong>
+              </span>
+            }
+          />
         </PanelTableFooter>
       </PanelCard>
 

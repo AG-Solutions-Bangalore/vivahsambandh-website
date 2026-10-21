@@ -21,6 +21,7 @@ import { ConfirmDialog } from '../components/ConfirmDialog'
 import { PanelCard } from '../components/PanelCard'
 import { PanelPageHeader } from '../components/PanelPageHeader'
 import { panelDescription } from '../navigation'
+import { PanelPagination } from '../components/PanelPagination'
 import { PanelSearch } from '../components/PanelSearch'
 import { PanelToolbar } from '../components/PanelToolbar'
 import { PanelEmpty, PanelError } from '../components/PanelState'
@@ -40,24 +41,33 @@ import {
   useUpdateMemberStatusMutation,
 } from '../hook/useAdminMembers'
 import { errorMessage } from '../hook/errors'
+import { DEFAULT_PER_PAGE, useServerSearch } from '../hook/useServerList'
 import type { AdminMemberStatus } from '../types'
 
 const STATUS_FILTERS = ['All', 'Approved', 'Pending', 'Cancel'] as const
 
 export default function AdminMembersPage() {
+  const { searchInput, setSearchInput, searchTerm } = useServerSearch()
+  const [statusFilter, setStatusFilter] = useState<string>('All')
+  const [page, setPage] = useState(1)
+
   const {
-    data: admins = [],
+    data: allAdmins = [],
+    records: admins,
+    meta,
     isLoading,
     isFetching,
     error,
     refetch,
-  } = useAdminMembersQuery()
+  } = useAdminMembersQuery({
+    search: searchTerm || undefined,
+    status: statusFilter === 'All' ? undefined : statusFilter,
+    page,
+    per_page: DEFAULT_PER_PAGE,
+  })
   const cityMutation = useUpdateMemberCityMutation()
   const statusMutation = useUpdateMemberStatusMutation()
   const removeDeviceMutation = useRemoveDeviceIdMutation()
-
-  const [searchQuery, setSearchQuery] = useState('')
-  const [statusFilter, setStatusFilter] = useState<string>('All')
 
   // Edit City Modal State
   const [editingCityAdminId, setEditingCityAdminId] = useState<number | null>(null)
@@ -77,31 +87,13 @@ export default function AdminMembersPage() {
   } | null>(null)
 
   const editingCityAdmin = useMemo(
-    () => admins.find((a) => a.id === editingCityAdminId) ?? null,
-    [admins, editingCityAdminId],
+    () => allAdmins.find((a) => a.id === editingCityAdminId) ?? null,
+    [allAdmins, editingCityAdminId],
   )
-
-  // Filtered admin records
-  const filteredAdmins = useMemo(() => {
-    return admins.filter((admin) => {
-      const matchesSearch =
-        admin.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        (admin.mobile ?? '').includes(searchQuery) ||
-        (admin.email && admin.email.toLowerCase().includes(searchQuery.toLowerCase())) ||
-        (admin.user_current_city &&
-          admin.user_current_city.toLowerCase().includes(searchQuery.toLowerCase()))
-
-      const matchesStatus =
-        statusFilter === 'All' ||
-        admin.status.toLowerCase() === statusFilter.toLowerCase()
-
-      return matchesSearch && matchesStatus
-    })
-  }, [admins, searchQuery, statusFilter])
 
   // Open Edit City modal
   const handleOpenCityModal = (adminId: number) => {
-    const admin = admins.find((a) => a.id === adminId)
+    const admin = allAdmins.find((a) => a.id === adminId)
     if (!admin) return
 
     setEditingCityAdminId(adminId)
@@ -208,8 +200,8 @@ export default function AdminMembersPage() {
         <PanelToolbar
           search={
             <PanelSearch
-              value={searchQuery}
-              onChange={setSearchQuery}
+              value={searchInput}
+              onChange={setSearchInput}
               placeholder="Search by name, mobile, email, or city…"
             />
           }
@@ -232,23 +224,23 @@ export default function AdminMembersPage() {
             message={errorMessage(error, 'Failed to load the admin directory.')}
             onRetry={() => void refetch()}
           />
-        ) : filteredAdmins.length === 0 ? (
+        ) : admins.length === 0 ? (
           <PanelEmpty
             icon={<ShieldCheck className="size-6" />}
             title="No Admin Members Found"
             description={
-              searchQuery || statusFilter !== 'All'
+              searchInput || statusFilter !== 'All'
                 ? 'Try adjusting your search query or status filter.'
                 : 'No admin members are currently registered in the database.'
             }
             action={
-              searchQuery || statusFilter !== 'All' ? (
+              searchInput || statusFilter !== 'All' ? (
                 <Button
                   type="button"
                   variant="outline"
                   size="xs"
                   onClick={() => {
-                    setSearchQuery('')
+                    setSearchInput('')
                     setStatusFilter('All')
                   }}
                   className="mt-4 cursor-pointer rounded-full border-cream-300 text-xs font-semibold"
@@ -272,7 +264,7 @@ export default function AdminMembersPage() {
               </>
             }
           >
-            {filteredAdmins.map((admin) => {
+            {admins.map((admin) => {
               const assignedCities = Array.isArray(admin.multiple_city)
                 ? admin.multiple_city
                 : typeof admin.multiple_city === 'string' && admin.multiple_city.trim()
@@ -407,10 +399,17 @@ export default function AdminMembersPage() {
         )}
 
         <PanelTableFooter>
-          <span>
-            Showing <strong>{filteredAdmins.length}</strong> of{' '}
-            <strong>{admins.length}</strong> admin accounts
-          </span>
+          <PanelPagination
+            meta={meta}
+            onPageChange={setPage}
+            isFetching={isFetching}
+            summary={
+              <span>
+                Showing <strong>{admins.length}</strong> of{' '}
+                <strong>{meta.total}</strong> admin accounts
+              </span>
+            }
+          />
         </PanelTableFooter>
       </PanelCard>
 

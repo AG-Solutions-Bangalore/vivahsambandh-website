@@ -17,32 +17,14 @@
  */
 
 import type {
-  BlogListMeta,
   BlogListParams,
+  ListMeta,
   BlogPayload,
   BlogRecord,
   BlogStatus,
 } from '../types'
-import { extractImageEntries, toBlog, toList } from './mappers'
+import { extractImageEntries, toBlog, toList, toListMeta } from './mappers'
 import { buildQueryString, request } from './http'
-
-/** Reads the pagination block out of the list envelope. */
-function toListMeta(payload: unknown, params: BlogListParams): BlogListMeta {
-  const envelope = (payload as { data?: Record<string, unknown> } | null)?.data
-  const block =
-    envelope && typeof envelope === 'object' && !Array.isArray(envelope)
-      ? (envelope as Record<string, unknown>)
-      : null
-
-  const rows = toList(payload, toBlog)
-
-  return {
-    current_page: Number(block?.current_page ?? 1),
-    last_page: Number(block?.last_page ?? 1),
-    per_page: Number(block?.per_page ?? params.per_page ?? rows.length ?? 10),
-    total: Number(block?.total ?? rows.length),
-  }
-}
 
 /** Reads a value that may be a `File`, a `Blob` or absent. */
 function asFile(value: unknown): Blob | null {
@@ -180,7 +162,7 @@ export function buildBlogFormData(data: BlogPayload | FormData): FormData {
  */
 export async function fetchBlogs(
   params: BlogListParams = {},
-): Promise<{ data: BlogRecord[]; meta: BlogListMeta; error?: string }> {
+): Promise<{ data: BlogRecord[]; meta: ListMeta; error?: string }> {
   const query = buildQueryString({
     page: params.page,
     per_page: params.per_page,

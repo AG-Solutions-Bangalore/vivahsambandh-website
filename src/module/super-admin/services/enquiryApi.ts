@@ -16,38 +16,20 @@
  */
 
 import type {
-  EnquiryListMeta,
   EnquiryListParams,
   EnquiryRecord,
   EnquiryStatus,
+  ListMeta,
 } from '../types'
-import { toEnquiry, toList } from './mappers'
+import { toEnquiry, toList, toListMeta } from './mappers'
 import { buildQueryString, request } from './http'
-
-/** Reads the pagination block out of the list envelope. */
-function toListMeta(payload: unknown, params: EnquiryListParams): EnquiryListMeta {
-  const envelope = (payload as { data?: Record<string, unknown> } | null)?.data
-  const block =
-    envelope && typeof envelope === 'object' && !Array.isArray(envelope)
-      ? (envelope as Record<string, unknown>)
-      : null
-
-  const rows = toList(payload, toEnquiry)
-
-  return {
-    current_page: Number(block?.current_page ?? 1),
-    last_page: Number(block?.last_page ?? 1),
-    per_page: Number(block?.per_page ?? params.per_page ?? rows.length ?? 10),
-    total: Number(block?.total ?? rows.length),
-  }
-}
 
 /**
  * GET /enquiry — fetches enquiries with pagination and search.
  */
 export async function fetchEnquiries(
   params: EnquiryListParams = {},
-): Promise<{ data: EnquiryRecord[]; meta: EnquiryListMeta; error?: string }> {
+): Promise<{ data: EnquiryRecord[]; meta: ListMeta; error?: string }> {
   const query = buildQueryString({
     page: params.page,
     per_page: params.per_page,

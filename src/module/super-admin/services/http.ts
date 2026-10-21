@@ -164,7 +164,7 @@ export async function request<T>(
 
 /** Serialises a params object into a query string, skipping empty values. */
 export function buildQueryString(
-  params: Record<string, string | number | boolean | null | undefined>,
+  params: object | Record<string, string | number | boolean | null | undefined>,
 ): string {
   const search = new URLSearchParams()
 

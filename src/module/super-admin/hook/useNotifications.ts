@@ -4,6 +4,7 @@
  * inspection endpoint, creation, and deletion.
  */
 
+import { useMemo } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import toast from 'react-hot-toast'
 import {
@@ -14,14 +15,47 @@ import {
 } from '../services/adminApi'
 import { PANEL_STALE_TIME, superAdminKeys } from './queryKeys'
 import { unwrapAction, unwrapItem, unwrapList } from './errors'
-import type { CreateNotificationPayload } from '../types'
+import {
+  DEFAULT_PER_PAGE,
+  applyLocalList,
+  matchesStatus,
+  matchesTerm,
+  type ListMeta,
+} from './useServerList'
+import type {
+  CreateNotificationPayload,
+  NotificationRecord,
+  PanelListParams,
+} from '../types'
 
-export function useNotificationsQuery() {
-  return useQuery({
-    queryKey: superAdminKeys.notifications,
-    queryFn: async () => unwrapList(await fetchNotifications()),
+export interface NotificationListParams extends PanelListParams {
+  /** `User` or `Admin` — the audience the broadcast was sent to. */
+  target?: string
+}
+
+export function useNotificationsQuery(params: NotificationListParams = {}) {
+  const query = useQuery({
+    queryKey: [...superAdminKeys.notifications, params],
+    queryFn: async () => unwrapList(await fetchNotifications(params)),
     staleTime: PANEL_STALE_TIME,
   })
+
+  const { search, target, page, per_page } = params
+
+  const local: { records: NotificationRecord[]; meta: ListMeta } = useMemo(
+    () =>
+      applyLocalList(query.data ?? [], {
+        searchTerm: search,
+        matches: (notification, term) =>
+          matchesTerm(term, notification.notification_heading, notification.notification_message),
+        keep: (notification) => matchesStatus(target, notification.notification_for),
+        page,
+        perPage: per_page ?? DEFAULT_PER_PAGE,
+      }),
+    [query.data, search, target, page, per_page],
+  )
+
+  return { ...query, records: local.records, meta: local.meta }
 }
 
 /**

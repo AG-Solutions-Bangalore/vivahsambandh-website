@@ -14,20 +14,46 @@ import {
   updateTestimonial,
   updateTestimonialStatus,
 } from '../services/testimonialApi'
+import { toListMeta } from '../services/mappers'
 import { PANEL_STALE_TIME, superAdminKeys } from './queryKeys'
-import { unwrapAction, unwrapItem, unwrapList } from './errors'
+import { unwrapAction, unwrapItem } from './errors'
+import { EMPTY_LIST_META } from './useServerList'
 import type {
+  ListMeta,
   TestimonialListParams,
   TestimonialPayload,
   TestimonialStatus,
 } from '../types'
 
+/**
+ * The testimonial list. `/testimonial` pages its rows and filters them on
+ * the server, so the search term and the page number travel with the
+ * request.
+ */
 export function useTestimonialsQuery(params: TestimonialListParams = {}) {
-  return useQuery({
+  const query = useQuery({
     queryKey: [...superAdminKeys.testimonials, params],
-    queryFn: async () => unwrapList(await fetchTestimonials(params)),
+    queryFn: async () => {
+      const result = await fetchTestimonials(params)
+      if (result.error) throw new Error(result.error)
+      return {
+        records: result.data,
+        meta: toListMeta(result.raw, {
+          page: params.page,
+          per_page: params.per_page,
+          rowCount: result.data.length,
+        }),
+      }
+    },
     staleTime: PANEL_STALE_TIME,
+    // Keep the previous page on screen while the next one loads.
+    placeholderData: (previous) => previous,
   })
+
+  const records = query.data?.records ?? []
+  const meta: ListMeta = query.data?.meta ?? EMPTY_LIST_META
+
+  return { ...query, records, meta }
 }
 
 /**

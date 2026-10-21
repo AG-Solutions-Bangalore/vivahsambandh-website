@@ -26,6 +26,7 @@ import { PanelCard } from '../components/PanelCard'
 import { PanelPageHeader } from '../components/PanelPageHeader'
 import { panelDescription } from '../navigation'
 import { PanelModal } from '../components/PanelModal'
+import { PanelPagination } from '../components/PanelPagination'
 import { PanelSearch } from '../components/PanelSearch'
 import { PanelToolbar } from '../components/PanelToolbar'
 import { PanelEmpty, PanelError } from '../components/PanelState'
@@ -44,6 +45,7 @@ import {
   useNotificationQuery,
 } from '../hook/useNotifications'
 import { errorMessage } from '../hook/errors'
+import { DEFAULT_PER_PAGE, useServerSearch } from '../hook/useServerList'
 import type { NotificationTarget } from '../types'
 
 const AUDIENCE_FILTERS = ['All', 'User', 'Admin'] as const
@@ -59,18 +61,25 @@ const emptyCreateForm = () => ({
 })
 
 export default function NotificationsPage() {
+  const { searchInput, setSearchInput, searchTerm } = useServerSearch()
+  const [targetFilter, setTargetFilter] = useState<string>('All')
+  const [page, setPage] = useState(1)
+
   const {
-    data: notifications = [],
+    records: notifications,
+    meta,
     isLoading,
     isFetching,
     error,
     refetch,
-  } = useNotificationsQuery()
+  } = useNotificationsQuery({
+    search: searchTerm || undefined,
+    target: targetFilter === 'All' ? undefined : targetFilter,
+    page,
+    per_page: DEFAULT_PER_PAGE,
+  })
   const createMutation = useCreateNotificationMutation()
   const deleteMutation = useDeleteNotificationMutation()
-
-  const [searchQuery, setSearchQuery] = useState('')
-  const [targetFilter, setTargetFilter] = useState<string>('All')
 
   // Create Modal State
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
@@ -94,20 +103,6 @@ export default function NotificationsPage() {
     [notifications, deleteTargetId],
   )
 
-  const filtered = useMemo(() => {
-    return notifications.filter((item) => {
-      const q = searchQuery.toLowerCase()
-      const matchesSearch =
-        item.notification_heading.toLowerCase().includes(q) ||
-        item.notification_message.toLowerCase().includes(q)
-
-      const matchesTarget =
-        targetFilter === 'All' ||
-        item.notification_for.toLowerCase() === targetFilter.toLowerCase()
-
-      return matchesSearch && matchesTarget
-    })
-  }, [notifications, searchQuery, targetFilter])
 
   // Handle Image Selection
   const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -261,8 +256,8 @@ export default function NotificationsPage() {
         <PanelToolbar
           search={
             <PanelSearch
-              value={searchQuery}
-              onChange={setSearchQuery}
+              value={searchInput}
+              onChange={setSearchInput}
               placeholder="Search heading or message content…"
             />
           }
@@ -284,23 +279,23 @@ export default function NotificationsPage() {
             message={errorMessage(error, 'Failed to load broadcast notifications.')}
             onRetry={() => void refetch()}
           />
-        ) : filtered.length === 0 ? (
+        ) : notifications.length === 0 ? (
           <PanelEmpty
             icon={<Bell className="size-6" />}
             title="No Notifications Found"
             description={
-              searchQuery || targetFilter !== 'All'
+              searchInput || targetFilter !== 'All'
                 ? 'No notifications match your current filter criteria.'
                 : 'No announcements have been dispatched yet. Create one to notify your audience.'
             }
             action={
-              searchQuery || targetFilter !== 'All' ? (
+              searchInput || targetFilter !== 'All' ? (
                 <Button
                   type="button"
                   variant="outline"
                   size="xs"
                   onClick={() => {
-                    setSearchQuery('')
+                    setSearchInput('')
                     setTargetFilter('All')
                   }}
                   className="mt-4 cursor-pointer rounded-full border-cream-300 text-xs font-semibold"
@@ -323,7 +318,7 @@ export default function NotificationsPage() {
               </>
             }
           >
-            {filtered.map((item) => (
+            {notifications.map((item) => (
               <tr key={item.id} className="transition-colors hover:bg-cream-50/70">
                 <td className="max-w-md px-4 py-3.5">
                   <p className="text-sm font-bold text-navy-900">
@@ -402,9 +397,16 @@ export default function NotificationsPage() {
         )}
 
         <PanelTableFooter>
-          <span>
-            Total notifications: <strong>{filtered.length}</strong>
-          </span>
+          <PanelPagination
+            meta={meta}
+            onPageChange={setPage}
+            isFetching={isFetching}
+            summary={
+              <span>
+                Total notifications: <strong>{meta.total}</strong>
+              </span>
+            }
+          />
         </PanelTableFooter>
       </PanelCard>
 

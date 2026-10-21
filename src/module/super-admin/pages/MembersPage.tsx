@@ -21,6 +21,7 @@ import { PanelCard } from '../components/PanelCard'
 import { PanelPageHeader } from '../components/PanelPageHeader'
 import { panelDescription } from '../navigation'
 import { PanelModal } from '../components/PanelModal'
+import { PanelPagination } from '../components/PanelPagination'
 import { PanelSearch } from '../components/PanelSearch'
 import { PanelToolbar } from '../components/PanelToolbar'
 import { PanelEmpty, PanelError } from '../components/PanelState'
@@ -33,9 +34,13 @@ import {
 import { PanelFilterSelect } from '../components/PanelFilterSelect'
 import { ProfileDetails } from '../components/ProfileDetails'
 import { StatusActionGroup } from '../components/StatusActionGroup'
-import { useMembersQuery, useRemoveDeviceIdMutation } from '../hook/useMembers'
-import { useUpdateMemberStatusMutation } from '../hook/useAdminMembers'
+import { useMembersQuery } from '../hook/useMembers'
+import {
+  useRemoveDeviceIdMutation,
+  useUpdateMemberStatusMutation,
+} from '../hook/useAdminMembers'
 import { errorMessage } from '../hook/errors'
+import { DEFAULT_PER_PAGE, useServerSearch } from '../hook/useServerList'
 import { formatDate } from '../utils/format'
 import type { MemberStatus } from '../types'
 
@@ -43,19 +48,28 @@ const STATUS_FILTERS = ['All', 'Approved', 'Pending', 'Hold', 'Married', 'Cancel
 const GENDER_FILTERS = ['All', 'Male', 'Female'] as const
 
 export default function MembersPage() {
+  const { searchInput, setSearchInput, searchTerm } = useServerSearch()
+  const [statusFilter, setStatusFilter] = useState<string>('All')
+  const [genderFilter, setGenderFilter] = useState<string>('All')
+  const [page, setPage] = useState(1)
+
   const {
-    data: members = [],
+    data: allMembers = [],
+    records: members,
+    meta,
     isLoading,
     isFetching,
     error,
     refetch,
-  } = useMembersQuery()
+  } = useMembersQuery({
+    search: searchTerm || undefined,
+    status: statusFilter === 'All' ? undefined : statusFilter,
+    gender: genderFilter === 'All' ? undefined : genderFilter,
+    page,
+    per_page: DEFAULT_PER_PAGE,
+  })
   const statusMutation = useUpdateMemberStatusMutation()
   const removeDeviceMutation = useRemoveDeviceIdMutation()
-
-  const [searchQuery, setSearchQuery] = useState('')
-  const [statusFilter, setStatusFilter] = useState<string>('All')
-  const [genderFilter, setGenderFilter] = useState<string>('All')
 
   // Profile Detail Modal State — only the id is stored so the modal always
   // renders the freshest record from the query cache.
@@ -75,35 +89,9 @@ export default function MembersPage() {
   } | null>(null)
 
   const activeProfile = useMemo(
-    () => members.find((m) => m.id === activeProfileId) ?? null,
-    [members, activeProfileId],
+    () => allMembers.find((m) => m.id === activeProfileId) ?? null,
+    [allMembers, activeProfileId],
   )
-
-  const filteredMembers = useMemo(() => {
-    return members.filter((m) => {
-      const matchesSearch =
-        m.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        m.mobile.includes(searchQuery) ||
-        (m.user_current_city &&
-          m.user_current_city.toLowerCase().includes(searchQuery.toLowerCase())) ||
-        (m.community_name &&
-          m.community_name.toLowerCase().includes(searchQuery.toLowerCase())) ||
-        (m.gotra_name &&
-          m.gotra_name.toLowerCase().includes(searchQuery.toLowerCase())) ||
-        (m.profession_name &&
-          m.profession_name.toLowerCase().includes(searchQuery.toLowerCase()))
-
-      const matchesStatus =
-        statusFilter === 'All' ||
-        m.status.toLowerCase() === statusFilter.toLowerCase()
-
-      const matchesGender =
-        genderFilter === 'All' ||
-        (m.gender && m.gender.toLowerCase() === genderFilter.toLowerCase())
-
-      return matchesSearch && matchesStatus && matchesGender
-    })
-  }, [members, searchQuery, statusFilter, genderFilter])
 
   const handleConfirmStatusChange = () => {
     if (!statusChangeTarget) return
@@ -161,8 +149,8 @@ export default function MembersPage() {
         <PanelToolbar
           search={
             <PanelSearch
-              value={searchQuery}
-              onChange={setSearchQuery}
+              value={searchInput}
+              onChange={setSearchInput}
               placeholder="Search name, mobile, community…"
             />
           }
@@ -192,7 +180,7 @@ export default function MembersPage() {
             message={errorMessage(error, 'Failed to load the member directory.')}
             onRetry={() => void refetch()}
           />
-        ) : filteredMembers.length === 0 ? (
+        ) : members.length === 0 ? (
           <PanelEmpty
             icon={<Users className="size-6" />}
             title="No Members Match"
@@ -203,7 +191,7 @@ export default function MembersPage() {
                 variant="outline"
                 size="xs"
                 onClick={() => {
-                  setSearchQuery('')
+                  setSearchInput('')
                   setStatusFilter('All')
                   setGenderFilter('All')
                 }}
@@ -227,7 +215,7 @@ export default function MembersPage() {
               </>
             }
           >
-            {filteredMembers.map((member) => (
+            {members.map((member) => (
               <tr key={member.id} className="transition-colors hover:bg-cream-50/70">
                 <td className="px-4 py-3.5">
                   <div className="flex items-center gap-3">
@@ -352,10 +340,17 @@ export default function MembersPage() {
         )}
 
         <PanelTableFooter>
-          <span>
-            Displaying <strong>{filteredMembers.length}</strong> of{' '}
-            <strong>{members.length}</strong> total member profiles
-          </span>
+          <PanelPagination
+            meta={meta}
+            onPageChange={setPage}
+            isFetching={isFetching}
+            summary={
+              <span>
+                Displaying <strong>{members.length}</strong> of{' '}
+                <strong>{meta.total}</strong> total member profiles
+              </span>
+            }
+          />
         </PanelTableFooter>
       </PanelCard>
 

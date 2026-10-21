@@ -5,10 +5,8 @@
  * Completed lifecycle, inspect a record and delete it.
  */
 
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import {
-  ChevronLeft,
-  ChevronRight,
   CircleCheck,
   CircleX,
   Clock,
@@ -25,6 +23,7 @@ import { ConfirmDialog } from '../components/ConfirmDialog'
 import { PanelCard } from '../components/PanelCard'
 import { PanelPageHeader } from '../components/PanelPageHeader'
 import { PanelModal } from '../components/PanelModal'
+import { PanelPagination } from '../components/PanelPagination'
 import { PanelSearch } from '../components/PanelSearch'
 import { PanelToolbar } from '../components/PanelToolbar'
 import { PanelEmpty, PanelError } from '../components/PanelState'
@@ -39,6 +38,7 @@ import { StatusActionGroup } from '../components/StatusActionGroup'
 import { StatusBadge } from '../components/StatusBadge'
 import { panelDescription } from '../navigation'
 import { errorMessage } from '../hook/errors'
+import { DEFAULT_PER_PAGE, useServerSearch } from '../hook/useServerList'
 import {
   useDeleteEnquiryMutation,
   useEnquiriesQuery,
@@ -51,8 +51,6 @@ import type { EnquiryRecord, EnquiryStatus } from '../types'
 
 const STATUS_FILTERS = ['All', 'Pending', 'Processing', 'Completed', 'Cancel'] as const
 
-const PER_PAGE = 10
-const SEARCH_DEBOUNCE_MS = 350
 
 interface StatusChangeTarget {
   id: number
@@ -127,19 +125,9 @@ function downloadCsv(rows: EnquiryRecord[]): void {
 }
 
 export default function EnquiriesPage() {
-  const [searchInput, setSearchInput] = useState('')
-  const [searchTerm, setSearchTerm] = useState('')
+  const { searchInput, setSearchInput, searchTerm } = useServerSearch()
   const [statusFilter, setStatusFilter] = useState<string>('All')
   const [page, setPage] = useState(1)
-
-  // Debounce the search so a keystroke does not fire a request per letter.
-  useEffect(() => {
-    const timer = window.setTimeout(() => {
-      setSearchTerm(searchInput.trim())
-      setPage(1)
-    }, SEARCH_DEBOUNCE_MS)
-    return () => window.clearTimeout(timer)
-  }, [searchInput])
 
   const {
     records: enquiries,
@@ -151,7 +139,7 @@ export default function EnquiriesPage() {
   } = useEnquiriesQuery({
     search: searchTerm || undefined,
     page,
-    per_page: PER_PAGE,
+    per_page: DEFAULT_PER_PAGE,
   })
 
   const statusMutation = useUpdateEnquiryStatusMutation()
@@ -239,7 +227,6 @@ export default function EnquiriesPage() {
     toast.success(`Exported ${rows.length} enquiries.`)
   }
 
-  const totalPages = Math.max(1, meta.last_page)
   const firstRow = meta.total === 0 ? 0 : (meta.current_page - 1) * meta.per_page + 1
   const lastRow = Math.min(meta.current_page * meta.per_page, meta.total)
 
@@ -465,40 +452,17 @@ export default function EnquiriesPage() {
         )}
 
         <PanelTableFooter>
-          <span>
-            Showing <strong>{firstRow}</strong>–<strong>{lastRow}</strong> of{' '}
-            <strong>{meta.total}</strong> enquiries
-          </span>
-
-          <span className="flex items-center gap-2">
-            <Button
-              type="button"
-              size="xs"
-              variant="outline"
-              onClick={() => setPage((current) => Math.max(1, current - 1))}
-              disabled={meta.current_page <= 1 || isFetching}
-              className="cursor-pointer rounded-full border-cream-300 text-[0.7rem] font-semibold"
-            >
-              <ChevronLeft className="size-3" aria-hidden />
-              <span>Previous</span>
-            </Button>
-
-            <span className="tabular-nums">
-              Page <strong>{meta.current_page}</strong> of <strong>{totalPages}</strong>
-            </span>
-
-            <Button
-              type="button"
-              size="xs"
-              variant="outline"
-              onClick={() => setPage((current) => Math.min(totalPages, current + 1))}
-              disabled={meta.current_page >= totalPages || isFetching}
-              className="cursor-pointer rounded-full border-cream-300 text-[0.7rem] font-semibold"
-            >
-              <span>Next</span>
-              <ChevronRight className="size-3" aria-hidden />
-            </Button>
-          </span>
+          <PanelPagination
+            meta={meta}
+            onPageChange={setPage}
+            isFetching={isFetching}
+            summary={
+              <span>
+                Showing <strong>{firstRow}</strong>–<strong>{lastRow}</strong> of{' '}
+                <strong>{meta.total}</strong> enquiries
+              </span>
+            }
+          />
         </PanelTableFooter>
       </PanelCard>
 

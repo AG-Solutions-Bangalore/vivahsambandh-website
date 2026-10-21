@@ -11,6 +11,7 @@ import { PanelCard } from '../components/PanelCard'
 import { PanelPageHeader } from '../components/PanelPageHeader'
 import { panelDescription } from '../navigation'
 import { PanelModal } from '../components/PanelModal'
+import { PanelPagination } from '../components/PanelPagination'
 import { PanelSearch } from '../components/PanelSearch'
 import { PanelToolbar } from '../components/PanelToolbar'
 import { PanelEmpty, PanelError } from '../components/PanelState'
@@ -25,19 +26,27 @@ import {
   useFeedbacksQuery,
 } from '../hook/useFeedbacks'
 import { errorMessage } from '../hook/errors'
+import { DEFAULT_PER_PAGE, useServerSearch } from '../hook/useServerList'
 import { formatDate } from '../utils/format'
 
 export default function FeedbackPage() {
+  const { searchInput, setSearchInput, searchTerm } = useServerSearch()
+  const [page, setPage] = useState(1)
+
   const {
-    data: feedbacks = [],
+    data: allFeedbacks = [],
+    records: feedbacks,
+    meta,
     isLoading,
     isFetching,
     error,
     refetch,
-  } = useFeedbacksQuery()
+  } = useFeedbacksQuery({
+    search: searchTerm || undefined,
+    page,
+    per_page: DEFAULT_PER_PAGE,
+  })
   const deleteMutation = useDeleteFeedbackMutation()
-
-  const [searchQuery, setSearchQuery] = useState('')
 
   // View Modal — only the id is kept so the modal renders the cached record.
   const [viewingFeedbackId, setViewingFeedbackId] = useState<number | null>(null)
@@ -46,24 +55,14 @@ export default function FeedbackPage() {
   const [deleteTargetId, setDeleteTargetId] = useState<number | null>(null)
 
   const viewingFeedback = useMemo(
-    () => feedbacks.find((fb) => fb.id === viewingFeedbackId) ?? null,
-    [feedbacks, viewingFeedbackId],
+    () => allFeedbacks.find((fb) => fb.id === viewingFeedbackId) ?? null,
+    [allFeedbacks, viewingFeedbackId],
   )
 
   const deleteTarget = useMemo(
-    () => feedbacks.find((fb) => fb.id === deleteTargetId) ?? null,
-    [feedbacks, deleteTargetId],
+    () => allFeedbacks.find((fb) => fb.id === deleteTargetId) ?? null,
+    [allFeedbacks, deleteTargetId],
   )
-
-  const filtered = useMemo(() => {
-    return feedbacks.filter((fb) => {
-      const q = searchQuery.toLowerCase()
-      return (
-        (fb.name && fb.name.toLowerCase().includes(q)) ||
-        (fb.message && fb.message.toLowerCase().includes(q))
-      )
-    })
-  }, [feedbacks, searchQuery])
 
   const handleDelete = () => {
     if (!deleteTarget) return
@@ -108,8 +107,8 @@ export default function FeedbackPage() {
         <PanelToolbar
           search={
             <PanelSearch
-              value={searchQuery}
-              onChange={setSearchQuery}
+              value={searchInput}
+              onChange={setSearchInput}
               placeholder="Search by member name or message text…"
             />
           }
@@ -123,22 +122,22 @@ export default function FeedbackPage() {
             message={errorMessage(error, 'Failed to load feedback records.')}
             onRetry={() => void refetch()}
           />
-        ) : filtered.length === 0 ? (
+        ) : feedbacks.length === 0 ? (
           <PanelEmpty
             icon={<MessageSquare className="size-6" />}
             title="No Feedback Records"
             description={
-              searchQuery
+              searchInput
                 ? 'No feedback entries matched your search keywords.'
                 : 'No feedback submissions found in the database.'
             }
             action={
-              searchQuery ? (
+              searchInput ? (
                 <Button
                   type="button"
                   variant="outline"
                   size="xs"
-                  onClick={() => setSearchQuery('')}
+                  onClick={() => setSearchInput('')}
                   className="mt-4 cursor-pointer rounded-full border-cream-300 text-xs font-semibold"
                 >
                   Clear search
@@ -158,7 +157,7 @@ export default function FeedbackPage() {
               </>
             }
           >
-            {filtered.map((fb) => (
+            {feedbacks.map((fb) => (
               <tr key={fb.id} className="transition-colors hover:bg-cream-50/70">
                 <td className="px-4 py-3.5">
                   <div className="flex items-center gap-2.5">
@@ -217,9 +216,16 @@ export default function FeedbackPage() {
         )}
 
         <PanelTableFooter>
-          <span>
-            Total feedbacks: <strong>{filtered.length}</strong>
-          </span>
+          <PanelPagination
+            meta={meta}
+            onPageChange={setPage}
+            isFetching={isFetching}
+            summary={
+              <span>
+                Total feedbacks: <strong>{meta.total}</strong>
+              </span>
+            }
+          />
         </PanelTableFooter>
       </PanelCard>
 

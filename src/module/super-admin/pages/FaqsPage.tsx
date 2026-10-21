@@ -21,6 +21,7 @@ import { ConfirmDialog } from '../components/ConfirmDialog'
 import { PanelCard } from '../components/PanelCard'
 import { PanelPageHeader } from '../components/PanelPageHeader'
 import { PanelModal } from '../components/PanelModal'
+import { PanelPagination } from '../components/PanelPagination'
 import { PanelSearch } from '../components/PanelSearch'
 import { PanelToolbar } from '../components/PanelToolbar'
 import { PanelEmpty, PanelError } from '../components/PanelState'
@@ -34,6 +35,7 @@ import { PanelFilterSelect } from '../components/PanelFilterSelect'
 import { StatusBadge } from '../components/StatusBadge'
 import { panelDescription } from '../navigation'
 import { errorMessage } from '../hook/errors'
+import { DEFAULT_PER_PAGE, useServerSearch } from '../hook/useServerList'
 import {
   useCreateFaqMutation,
   useDeleteFaqMutation,
@@ -78,13 +80,22 @@ const DEFAULT_FORM: FaqFormState = {
 }
 
 export default function FaqsPage() {
+  const { searchInput, setSearchInput, searchTerm } = useServerSearch()
+  const [statusFilter, setStatusFilter] = useState<string>('All')
+  const [page, setPage] = useState(1)
+
   const {
-    data: faqs = [],
+    records: faqs,
+    meta,
     isLoading,
     isFetching,
     error,
     refetch,
-  } = useFaqsQuery()
+  } = useFaqsQuery({
+    search: searchTerm || undefined,
+    page,
+    per_page: DEFAULT_PER_PAGE,
+  })
 
   const createMutation = useCreateFaqMutation()
   const updateMutation = useUpdateFaqMutation()
@@ -92,8 +103,6 @@ export default function FaqsPage() {
   const deleteMutation = useDeleteFaqMutation()
   const deleteSubMutation = useDeleteFaqSubMutation()
 
-  const [searchQuery, setSearchQuery] = useState('')
-  const [statusFilter, setStatusFilter] = useState<string>('All')
 
   // Modals
   const [isCreateOpen, setIsCreateOpen] = useState(false)
@@ -115,27 +124,15 @@ export default function FaqsPage() {
     [faqs, deleteTargetId],
   )
 
-  // Filtered rows
-  const filtered = useMemo(() => {
-    return faqs.filter((item) => {
-      const q = searchQuery.toLowerCase().trim()
-      const matchesSearch =
-        !q ||
-        item.faq_for.toLowerCase().includes(q) ||
-        item.subs?.some(
-          (s) =>
-            s.faq_que.toLowerCase().includes(q) ||
-            s.faq_ans.toLowerCase().includes(q) ||
-            s.faq_heading.toLowerCase().includes(q),
-        )
-
-      const matchesStatus =
-        statusFilter === 'All' ||
-        item.faq_status.toLowerCase() === statusFilter.toLowerCase()
-
-      return matchesSearch && matchesStatus
-    })
-  }, [faqs, searchQuery, statusFilter])
+  // The API filters the search on the server; the status column is not
+  // filterable there yet, so it is applied to the rows of the current page.
+  const filtered = useMemo(
+    () =>
+      statusFilter === 'All'
+        ? faqs
+        : faqs.filter((item) => item.faq_status.toLowerCase() === statusFilter.toLowerCase()),
+    [faqs, statusFilter],
+  )
 
   // Open Create Modal
   const handleOpenCreate = () => {
@@ -400,8 +397,8 @@ export default function FaqsPage() {
         <PanelToolbar
           search={
             <PanelSearch
-              value={searchQuery}
-              onChange={setSearchQuery}
+              value={searchInput}
+              onChange={setSearchInput}
               placeholder="Search by target area or questions…"
             />
           }
@@ -427,7 +424,7 @@ export default function FaqsPage() {
           <PanelEmpty
             title="No FAQ groups found"
             description={
-              searchQuery || statusFilter !== 'All'
+              searchInput || statusFilter !== 'All'
                 ? 'Try adjusting your search query or filter.'
                 : 'Get started by creating your first FAQ accordion group.'
             }
@@ -545,10 +542,17 @@ export default function FaqsPage() {
         )}
 
         <PanelTableFooter>
-          <span>
-            Showing <strong>{filtered.length}</strong> of{' '}
-            <strong>{faqs.length}</strong> FAQ groups
-          </span>
+          <PanelPagination
+            meta={meta}
+            onPageChange={setPage}
+            isFetching={isFetching}
+            summary={
+              <span>
+                Showing <strong>{filtered.length}</strong> of{' '}
+                <strong>{meta.total}</strong> FAQ groups
+              </span>
+            }
+          />
         </PanelTableFooter>
       </PanelCard>
 

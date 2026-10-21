@@ -7,6 +7,7 @@
  * every list that can contain the record is invalidated after a mutation.
  */
 
+import { useMemo } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import toast from 'react-hot-toast'
 import {
@@ -18,22 +19,82 @@ import {
 } from '../services/adminApi'
 import { PANEL_STALE_TIME, superAdminKeys } from './queryKeys'
 import { unwrapAction, unwrapList } from './errors'
-import type { AdminMemberStatus, MemberStatus } from '../types'
+import {
+  DEFAULT_PER_PAGE,
+  applyLocalList,
+  matchesStatus,
+  matchesTerm,
+  type ListMeta,
+} from './useServerList'
+import type {
+  AdminMember,
+  AdminMemberStatus,
+  MemberStatus,
+  PanelListParams,
+} from '../types'
 
-export function useAdminMembersQuery() {
-  return useQuery({
-    queryKey: superAdminKeys.adminMembers,
-    queryFn: async () => unwrapList(await fetchAdminMembers()),
-    staleTime: PANEL_STALE_TIME,
-  })
+export interface AdminMemberListParams extends PanelListParams {
+  status?: string
 }
 
-export function usePendingAdminMembersQuery() {
-  return useQuery({
-    queryKey: superAdminKeys.pendingAdminMembers,
-    queryFn: async () => unwrapList(await fetchPendingAdminMembers()),
+/** Matches the administrator search across the columns an admin looks for. */
+function adminMatches(admin: AdminMember, term: string): boolean {
+  return matchesTerm(
+    term,
+    admin.name,
+    admin.mobile,
+    admin.email,
+    admin.user_current_city,
+    admin.user_address,
+  )
+}
+
+export function useAdminMembersQuery(params: AdminMemberListParams = {}) {
+  const query = useQuery({
+    queryKey: [...superAdminKeys.adminMembers, params],
+    queryFn: async () => unwrapList(await fetchAdminMembers(params)),
     staleTime: PANEL_STALE_TIME,
   })
+
+  const { search, status, page, per_page } = params
+
+  const local: { records: AdminMember[]; meta: ListMeta } = useMemo(
+    () =>
+      applyLocalList(query.data ?? [], {
+        searchTerm: search,
+        matches: adminMatches,
+        keep: (admin) => matchesStatus(status, admin.status),
+        page,
+        perPage: per_page ?? DEFAULT_PER_PAGE,
+      }),
+    [query.data, search, status, page, per_page],
+  )
+
+  return { ...query, records: local.records, meta: local.meta }
+}
+
+export function usePendingAdminMembersQuery(params: AdminMemberListParams = {}) {
+  const query = useQuery({
+    queryKey: [...superAdminKeys.pendingAdminMembers, params],
+    queryFn: async () => unwrapList(await fetchPendingAdminMembers(params)),
+    staleTime: PANEL_STALE_TIME,
+  })
+
+  const { search, status, page, per_page } = params
+
+  const local: { records: AdminMember[]; meta: ListMeta } = useMemo(
+    () =>
+      applyLocalList(query.data ?? [], {
+        searchTerm: search,
+        matches: adminMatches,
+        keep: (admin) => matchesStatus(status, admin.status),
+        page,
+        perPage: per_page ?? DEFAULT_PER_PAGE,
+      }),
+    [query.data, search, status, page, per_page],
+  )
+
+  return { ...query, records: local.records, meta: local.meta }
 }
 
 interface UpdateStatusVariables {

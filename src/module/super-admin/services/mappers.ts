@@ -23,6 +23,7 @@ import type {
   EnquiryRecord,
   EnquiryStatus,
   FeedbackRecord,
+  ListMeta,
   Member,
   MemberStatus,
   NotificationRecord,
@@ -340,6 +341,35 @@ export function toEnquiry(raw: Raw): EnquiryRecord {
     created_at:
       text(raw.created_at) ?? text(raw.enquiry_date) ?? text(raw.enquiry_created_date),
     updated_at: text(raw.updated_at) ?? text(raw.enquiry_updated_date),
+  }
+}
+
+/**
+ * Reads the pagination block out of a list envelope.
+ *
+ * The paging endpoints answer with
+ * `{ data: { current_page, data: [...], per_page, total, last_page } }`;
+ * the ones that do not page send a bare array, and the panel derives the
+ * block from the rows it has.
+ */
+export function toListMeta(
+  payload: unknown,
+  fallback: { page?: number; per_page?: number; rowCount?: number } = {},
+): ListMeta {
+  const envelope = (payload as { data?: Record<string, unknown> } | null)?.data
+  const block =
+    envelope && typeof envelope === 'object' && !Array.isArray(envelope)
+      ? (envelope as Record<string, unknown>)
+      : null
+
+  const perPage = Number(block?.per_page ?? fallback.per_page ?? 10)
+  const total = Number(block?.total ?? fallback.rowCount ?? 0)
+
+  return {
+    current_page: Number(block?.current_page ?? fallback.page ?? 1),
+    last_page: Number(block?.last_page ?? Math.max(1, Math.ceil(total / perPage))),
+    per_page: perPage,
+    total,
   }
 }
 

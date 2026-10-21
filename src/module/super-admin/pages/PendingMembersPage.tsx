@@ -19,6 +19,7 @@ import { PanelCard } from '../components/PanelCard'
 import { PanelPageHeader } from '../components/PanelPageHeader'
 import { panelDescription } from '../navigation'
 import { PanelModal } from '../components/PanelModal'
+import { PanelPagination } from '../components/PanelPagination'
 import { PanelSearch } from '../components/PanelSearch'
 import { PanelToolbar } from '../components/PanelToolbar'
 import { PanelEmpty, PanelError } from '../components/PanelState'
@@ -33,20 +34,28 @@ import { StatusActionGroup } from '../components/StatusActionGroup'
 import { usePendingMembersQuery } from '../hook/useMembers'
 import { useUpdateMemberStatusMutation } from '../hook/useAdminMembers'
 import { errorMessage } from '../hook/errors'
+import { DEFAULT_PER_PAGE, useServerSearch } from '../hook/useServerList'
 import { formatDate } from '../utils/format'
 import type { MemberStatus } from '../types'
 
 export default function PendingMembersPage() {
+  const { searchInput, setSearchInput, searchTerm } = useServerSearch()
+  const [page, setPage] = useState(1)
+
   const {
-    data: pendingMembers = [],
+    data: allPendingMembers = [],
+    records: pendingMembers,
+    meta,
     isLoading,
     isFetching,
     error,
     refetch,
-  } = usePendingMembersQuery()
+  } = usePendingMembersQuery({
+    search: searchTerm || undefined,
+    page,
+    per_page: DEFAULT_PER_PAGE,
+  })
   const statusMutation = useUpdateMemberStatusMutation()
-
-  const [searchQuery, setSearchQuery] = useState('')
 
   // Profile Drawer / Modal — only the id is kept so the modal always renders
   // the freshest record from the query cache.
@@ -60,21 +69,9 @@ export default function PendingMembersPage() {
   } | null>(null)
 
   const activeProfile = useMemo(
-    () => pendingMembers.find((m) => m.id === activeProfileId) ?? null,
-    [pendingMembers, activeProfileId],
+    () => allPendingMembers.find((m) => m.id === activeProfileId) ?? null,
+    [allPendingMembers, activeProfileId],
   )
-
-  const filtered = useMemo(() => {
-    return pendingMembers.filter(
-      (m) =>
-        m.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        m.mobile.includes(searchQuery) ||
-        (m.community_name &&
-          m.community_name.toLowerCase().includes(searchQuery.toLowerCase())) ||
-        (m.user_current_city &&
-          m.user_current_city.toLowerCase().includes(searchQuery.toLowerCase())),
-    )
-  }, [pendingMembers, searchQuery])
 
   const handleConfirmDecision = () => {
     if (!decisionTarget) return
@@ -125,8 +122,8 @@ export default function PendingMembersPage() {
         <PanelToolbar
           search={
             <PanelSearch
-              value={searchQuery}
-              onChange={setSearchQuery}
+              value={searchInput}
+              onChange={setSearchInput}
               placeholder="Search candidate name, mobile, community…"
             />
           }
@@ -140,7 +137,7 @@ export default function PendingMembersPage() {
             message={errorMessage(error, 'Failed to load pending member profiles.')}
             onRetry={() => void refetch()}
           />
-        ) : filtered.length === 0 ? (
+        ) : pendingMembers.length === 0 ? (
           <PanelEmpty
             icon={<UserPlus className="size-6" />}
             title="Queue is Clear!"
@@ -160,7 +157,7 @@ export default function PendingMembersPage() {
               </>
             }
           >
-            {filtered.map((member) => (
+            {pendingMembers.map((member) => (
               <tr key={member.id} className="transition-colors hover:bg-cream-50/70">
                 <td className="px-4 py-3.5">
                   <div className="flex items-center gap-3">
@@ -262,9 +259,16 @@ export default function PendingMembersPage() {
         )}
 
         <PanelTableFooter>
-          <span>
-            Pending verification: <strong>{filtered.length}</strong> profiles
-          </span>
+          <PanelPagination
+            meta={meta}
+            onPageChange={setPage}
+            isFetching={isFetching}
+            summary={
+              <span>
+                Pending verification: <strong>{meta.total}</strong> profiles
+              </span>
+            }
+          />
         </PanelTableFooter>
       </PanelCard>
 

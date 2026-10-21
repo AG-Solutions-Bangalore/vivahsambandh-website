@@ -220,6 +220,7 @@ export interface FaqPayload {
 
 export interface FaqListParams {
   page?: number
+  per_page?: number
   search?: string
   faq_for?: string
   faq_status?: string
@@ -253,6 +254,7 @@ export interface TestimonialPayload {
 
 export interface TestimonialListParams {
   page?: number
+  per_page?: number
   search?: string
   testimonial_for?: string
   testimonial_status?: string
@@ -294,6 +296,30 @@ export interface EnquiryListMeta {
   last_page: number
   per_page: number
   total: number
+}
+
+/**
+ * Pagination block shared by every panel list.
+ *
+ * The endpoints that page their rows send this envelope; the ones that do
+ * not get it from the panel's own local paging.
+ */
+export interface ListMeta {
+  current_page: number
+  last_page: number
+  per_page: number
+  total: number
+}
+
+/**
+ * Query parameters accepted by the list endpoints that do not expose
+ * filters of their own. `search` is forwarded so the filtering happens on
+ * the server as soon as the endpoint honours it.
+ */
+export interface PanelListParams {
+  search?: string
+  page?: number
+  per_page?: number
 }
 
 export interface UpdateCityPayload {

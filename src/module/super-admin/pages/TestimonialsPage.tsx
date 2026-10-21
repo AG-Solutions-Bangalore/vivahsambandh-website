@@ -28,6 +28,7 @@ import { ConfirmDialog } from '../components/ConfirmDialog'
 import { PanelCard } from '../components/PanelCard'
 import { PanelPageHeader } from '../components/PanelPageHeader'
 import { PanelModal } from '../components/PanelModal'
+import { PanelPagination } from '../components/PanelPagination'
 import { PanelSearch } from '../components/PanelSearch'
 import { PanelToolbar } from '../components/PanelToolbar'
 import { PanelEmpty, PanelError } from '../components/PanelState'
@@ -41,6 +42,7 @@ import { PanelFilterSelect } from '../components/PanelFilterSelect'
 import { StatusBadge } from '../components/StatusBadge'
 import { panelDescription } from '../navigation'
 import { errorMessage } from '../hook/errors'
+import { DEFAULT_PER_PAGE, useServerSearch } from '../hook/useServerList'
 import { formatDate } from '../utils/format'
 import {
   useCreateTestimonialMutation,
@@ -135,21 +137,28 @@ function StarRating({
 }
 
 export default function TestimonialsPage() {
+  const { searchInput, setSearchInput, searchTerm } = useServerSearch()
+  const [statusFilter, setStatusFilter] = useState<string>('All')
+  const [page, setPage] = useState(1)
+
   const {
-    data: testimonials = [],
+    records: testimonials,
+    meta,
     isLoading,
     isFetching,
     error,
     refetch,
-  } = useTestimonialsQuery()
+  } = useTestimonialsQuery({
+    search: searchTerm || undefined,
+    page,
+    per_page: DEFAULT_PER_PAGE,
+  })
 
   const createMutation = useCreateTestimonialMutation()
   const updateMutation = useUpdateTestimonialMutation()
   const statusMutation = useUpdateTestimonialStatusMutation()
   const deleteMutation = useDeleteTestimonialMutation()
 
-  const [searchQuery, setSearchQuery] = useState('')
-  const [statusFilter, setStatusFilter] = useState<string>('All')
 
   // Modals state
   const [isCreateOpen, setIsCreateOpen] = useState(false)
@@ -161,21 +170,15 @@ export default function TestimonialsPage() {
   const [formState, setFormState] = useState<TestimonialFormState>(DEFAULT_FORM)
   const [formErrors, setFormErrors] = useState<Record<string, string>>({})
 
-  // Filtered testimonials
-  const filtered = useMemo(() => {
-    return testimonials.filter((t) => {
-      if (statusFilter !== 'All' && t.testimonial_status !== statusFilter) {
-        return false
-      }
-      if (!searchQuery.trim()) return true
-      const q = searchQuery.toLowerCase()
-      return (
-        (t.testimonial_client_name && t.testimonial_client_name.toLowerCase().includes(q)) ||
-        (t.testimonial_description && t.testimonial_description.toLowerCase().includes(q)) ||
-        (t.testimonial_for && t.testimonial_for.toLowerCase().includes(q))
-      )
-    })
-  }, [testimonials, searchQuery, statusFilter])
+  // The API filters the search on the server; the status column is not
+  // filterable there yet, so it is applied to the rows of the current page.
+  const filtered = useMemo(
+    () =>
+      statusFilter === 'All'
+        ? testimonials
+        : testimonials.filter((t) => t.testimonial_status === statusFilter),
+    [testimonials, statusFilter],
+  )
 
   // Open Create Modal
   const handleOpenCreate = () => {
@@ -338,8 +341,8 @@ export default function TestimonialsPage() {
         <PanelToolbar
           search={
             <PanelSearch
-              value={searchQuery}
-              onChange={setSearchQuery}
+              value={searchInput}
+              onChange={setSearchInput}
               placeholder="Search by client name, quote or section…"
             />
           }
@@ -365,12 +368,12 @@ export default function TestimonialsPage() {
           <PanelEmpty
             icon={<Quote className="size-6 text-gold-600" />}
             title={
-              searchQuery || statusFilter !== 'All'
+              searchInput || statusFilter !== 'All'
                 ? 'No matching testimonials'
                 : 'No testimonials found'
             }
             description={
-              searchQuery || statusFilter !== 'All'
+              searchInput || statusFilter !== 'All'
                 ? 'Try adjusting your search query or filter.'
                 : 'Start showcasing authentic matrimonial matches and client reviews by creating one.'
             }
@@ -530,10 +533,17 @@ export default function TestimonialsPage() {
         )}
 
         <PanelTableFooter>
-          <span>
-            Showing <strong>{filtered.length}</strong> of{' '}
-            <strong>{testimonials.length}</strong> reviews
-          </span>
+          <PanelPagination
+            meta={meta}
+            onPageChange={setPage}
+            isFetching={isFetching}
+            summary={
+              <span>
+                Showing <strong>{filtered.length}</strong> of{' '}
+                <strong>{meta.total}</strong> reviews
+              </span>
+            }
+          />
         </PanelTableFooter>
       </PanelCard>
 

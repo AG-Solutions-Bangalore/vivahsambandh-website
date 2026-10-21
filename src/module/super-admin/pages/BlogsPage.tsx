@@ -5,10 +5,8 @@
  * existing one and delete it.
  */
 
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import {
-  ChevronLeft,
-  ChevronRight,
   Eye,
   FileText,
   Image as ImageIcon,
@@ -23,6 +21,7 @@ import { ConfirmDialog } from '../components/ConfirmDialog'
 import { PanelCard } from '../components/PanelCard'
 import { PanelPageHeader } from '../components/PanelPageHeader'
 import { PanelModal } from '../components/PanelModal'
+import { PanelPagination } from '../components/PanelPagination'
 import { PanelSearch } from '../components/PanelSearch'
 import { PanelToolbar } from '../components/PanelToolbar'
 import { PanelEmpty, PanelError } from '../components/PanelState'
@@ -41,6 +40,7 @@ import {
 import { blogToFormValues, emptyBlogForm, type BlogFormValues } from '../components/blogForm'
 import { panelDescription } from '../navigation'
 import { errorMessage } from '../hook/errors'
+import { DEFAULT_PER_PAGE, useServerSearch } from '../hook/useServerList'
 import {
   useBlogQuery,
   useBlogsQuery,
@@ -54,26 +54,14 @@ import type { BlogPayload, BlogRecord, BlogStatus } from '../types'
 
 const STATUS_FILTERS = ['All', 'Active', 'Inactive'] as const
 
-const PER_PAGE = 10
-const SEARCH_DEBOUNCE_MS = 350
 
 const CREATE_FORM_ID = 'blog-create-form'
 const EDIT_FORM_ID = 'blog-edit-form'
 
 export default function BlogsPage() {
-  const [searchInput, setSearchInput] = useState('')
-  const [searchTerm, setSearchTerm] = useState('')
+  const { searchInput, setSearchInput, searchTerm } = useServerSearch()
   const [statusFilter, setStatusFilter] = useState<string>('All')
   const [page, setPage] = useState(1)
-
-  // Debounce the search so a keystroke does not fire a request per letter.
-  useEffect(() => {
-    const timer = window.setTimeout(() => {
-      setSearchTerm(searchInput.trim())
-      setPage(1)
-    }, SEARCH_DEBOUNCE_MS)
-    return () => window.clearTimeout(timer)
-  }, [searchInput])
 
   const {
     records: blogs,
@@ -85,7 +73,7 @@ export default function BlogsPage() {
   } = useBlogsQuery({
     search: searchTerm || undefined,
     page,
-    per_page: PER_PAGE,
+    per_page: DEFAULT_PER_PAGE,
   })
 
   const createMutation = useCreateBlogMutation()
@@ -197,7 +185,6 @@ export default function BlogsPage() {
     )
   }
 
-  const totalPages = Math.max(1, meta.last_page)
   const firstRow = meta.total === 0 ? 0 : (meta.current_page - 1) * meta.per_page + 1
   const lastRow = Math.min(meta.current_page * meta.per_page, meta.total)
 
@@ -416,40 +403,17 @@ export default function BlogsPage() {
         )}
 
         <PanelTableFooter>
-          <span>
-            Showing <strong>{firstRow}</strong>–<strong>{lastRow}</strong> of{' '}
-            <strong>{meta.total}</strong> articles
-          </span>
-
-          <span className="flex items-center gap-2">
-            <Button
-              type="button"
-              size="xs"
-              variant="outline"
-              onClick={() => setPage((current) => Math.max(1, current - 1))}
-              disabled={meta.current_page <= 1 || isFetching}
-              className="cursor-pointer rounded-full border-cream-300 text-[0.7rem] font-semibold"
-            >
-              <ChevronLeft className="size-3" aria-hidden />
-              <span>Previous</span>
-            </Button>
-
-            <span className="tabular-nums">
-              Page <strong>{meta.current_page}</strong> of <strong>{totalPages}</strong>
-            </span>
-
-            <Button
-              type="button"
-              size="xs"
-              variant="outline"
-              onClick={() => setPage((current) => Math.min(totalPages, current + 1))}
-              disabled={meta.current_page >= totalPages || isFetching}
-              className="cursor-pointer rounded-full border-cream-300 text-[0.7rem] font-semibold"
-            >
-              <span>Next</span>
-              <ChevronRight className="size-3" aria-hidden />
-            </Button>
-          </span>
+          <PanelPagination
+            meta={meta}
+            onPageChange={setPage}
+            isFetching={isFetching}
+            summary={
+              <span>
+                Showing <strong>{firstRow}</strong>–<strong>{lastRow}</strong> of{' '}
+                <strong>{meta.total}</strong> articles
+              </span>
+            }
+          />
         </PanelTableFooter>
       </PanelCard>
 

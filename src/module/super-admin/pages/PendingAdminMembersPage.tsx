@@ -19,6 +19,7 @@ import { ConfirmDialog } from '../components/ConfirmDialog'
 import { PanelCard } from '../components/PanelCard'
 import { PanelPageHeader } from '../components/PanelPageHeader'
 import { panelDescription } from '../navigation'
+import { PanelPagination } from '../components/PanelPagination'
 import { PanelSearch } from '../components/PanelSearch'
 import { PanelToolbar } from '../components/PanelToolbar'
 import { PanelEmpty, PanelError } from '../components/PanelState'
@@ -36,20 +37,29 @@ import {
   useUpdateMemberStatusMutation,
 } from '../hook/useAdminMembers'
 import { errorMessage } from '../hook/errors'
+import { DEFAULT_PER_PAGE, useServerSearch } from '../hook/useServerList'
 import type { AdminMemberStatus } from '../types'
 
 export default function PendingAdminMembersPage() {
+  const { searchInput, setSearchInput, searchTerm } = useServerSearch()
+  const [page, setPage] = useState(1)
+
   const {
-    data: pendingAdmins = [],
+    data: allPendingAdmins = [],
+    records: pendingAdmins,
+    meta,
     isLoading,
     isFetching,
     error,
     refetch,
-  } = usePendingAdminMembersQuery()
+  } = usePendingAdminMembersQuery({
+    search: searchTerm || undefined,
+    page,
+    per_page: DEFAULT_PER_PAGE,
+  })
   const cityMutation = useUpdateMemberCityMutation()
   const statusMutation = useUpdateMemberStatusMutation()
 
-  const [searchQuery, setSearchQuery] = useState('')
 
   // City Assignment State
   const [editingCityAdminId, setEditingCityAdminId] = useState<number | null>(null)
@@ -63,23 +73,12 @@ export default function PendingAdminMembersPage() {
   } | null>(null)
 
   const editingCityAdmin = useMemo(
-    () => pendingAdmins.find((a) => a.id === editingCityAdminId) ?? null,
-    [pendingAdmins, editingCityAdminId],
+    () => allPendingAdmins.find((a) => a.id === editingCityAdminId) ?? null,
+    [allPendingAdmins, editingCityAdminId],
   )
 
-  const filtered = useMemo(() => {
-    return pendingAdmins.filter(
-      (a) =>
-        a.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        (a.mobile ?? '').includes(searchQuery) ||
-        (a.email && a.email.toLowerCase().includes(searchQuery.toLowerCase())) ||
-        (a.user_current_city &&
-          a.user_current_city.toLowerCase().includes(searchQuery.toLowerCase())),
-    )
-  }, [pendingAdmins, searchQuery])
-
   const handleOpenCityModal = (adminId: number) => {
-    const admin = pendingAdmins.find((a) => a.id === adminId)
+    const admin = allPendingAdmins.find((a) => a.id === adminId)
     if (!admin) return
 
     setEditingCityAdminId(adminId)
@@ -171,8 +170,8 @@ export default function PendingAdminMembersPage() {
         <PanelToolbar
           search={
             <PanelSearch
-              value={searchQuery}
-              onChange={setSearchQuery}
+              value={searchInput}
+              onChange={setSearchInput}
               placeholder="Search applications by name, mobile, city…"
             />
           }
@@ -186,12 +185,12 @@ export default function PendingAdminMembersPage() {
             message={errorMessage(error, 'Failed to load pending admin members.')}
             onRetry={() => void refetch()}
           />
-        ) : filtered.length === 0 ? (
+        ) : pendingAdmins.length === 0 ? (
           <PanelEmpty
             icon={<UserCheck className="size-6" />}
             title="No Pending Admin Members"
             description={
-              searchQuery
+              searchInput
                 ? 'No pending applications match your search query.'
                 : 'All admin registration applications have been processed and reviewed.'
             }
@@ -210,7 +209,7 @@ export default function PendingAdminMembersPage() {
               </>
             }
           >
-            {filtered.map((admin) => {
+            {pendingAdmins.map((admin) => {
               const assignedCities = Array.isArray(admin.multiple_city)
                 ? admin.multiple_city
                 : typeof admin.multiple_city === 'string' && admin.multiple_city.trim()
@@ -320,9 +319,16 @@ export default function PendingAdminMembersPage() {
         )}
 
         <PanelTableFooter>
-          <span>
-            Total pending: <strong>{filtered.length}</strong> applications
-          </span>
+          <PanelPagination
+            meta={meta}
+            onPageChange={setPage}
+            isFetching={isFetching}
+            summary={
+              <span>
+                Total pending: <strong>{meta.total}</strong> applications
+              </span>
+            }
+          />
         </PanelTableFooter>
       </PanelCard>
 

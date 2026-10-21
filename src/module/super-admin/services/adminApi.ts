@@ -10,6 +10,7 @@ import type {
   AdminMember,
   AdminMemberStatus,
   BlockProfileRecord,
+  PanelListParams,
   CreateNotificationPayload,
   FeedbackRecord,
   Member,
@@ -27,7 +28,7 @@ import {
   toMember,
   toNotification,
 } from './mappers'
-import { getAuthHeaders, request, saveSession } from './http'
+import { buildQueryString, getAuthHeaders, request, saveSession } from './http'
 
 export { clearSession, getStoredSession, saveSession } from './http'
 
@@ -101,22 +102,26 @@ export async function superAdminLogin(
 // Admin Members Endpoints
 // -------------------------------------------------------------
 
-export async function fetchAdminMembers(): Promise<{
+export async function fetchAdminMembers(
+  params: PanelListParams = {},
+): Promise<{
   data: AdminMember[]
   error?: string
 }> {
-  const res = await request<unknown>('/getAdminMember')
+  const res = await request<unknown>(`/getAdminMember${buildQueryString(params)}`)
   if (res.ok && res.data) {
     return { data: toList(res.data, toAdminMember) }
   }
   return { data: [], error: res.message }
 }
 
-export async function fetchPendingAdminMembers(): Promise<{
+export async function fetchPendingAdminMembers(
+  params: PanelListParams = {},
+): Promise<{
   data: AdminMember[]
   error?: string
 }> {
-  const res = await request<unknown>('/getPendingAdminMember')
+  const res = await request<unknown>(`/getPendingAdminMember${buildQueryString(params)}`)
   if (res.ok && res.data) {
     return { data: toList(res.data, toAdminMember) }
   }
@@ -194,22 +199,26 @@ export async function removeDeviceId(
 // Members Endpoints
 // -------------------------------------------------------------
 
-export async function fetchMembers(): Promise<{
+export async function fetchMembers(
+  params: PanelListParams = {},
+): Promise<{
   data: Member[]
   error?: string
 }> {
-  const res = await request<unknown>('/member')
+  const res = await request<unknown>(`/member${buildQueryString(params)}`)
   if (res.ok && res.data) {
     return { data: toList(res.data, toMember) }
   }
   return { data: [], error: res.message }
 }
 
-export async function fetchPendingMembers(): Promise<{
+export async function fetchPendingMembers(
+  params: PanelListParams = {},
+): Promise<{
   data: Member[]
   error?: string
 }> {
-  const res = await request<unknown>('/getPendingMember')
+  const res = await request<unknown>(`/getPendingMember${buildQueryString(params)}`)
   if (res.ok && res.data) {
     return { data: toList(res.data, toMember) }
   }
@@ -220,11 +229,13 @@ export async function fetchPendingMembers(): Promise<{
 // Feedback Endpoints
 // -------------------------------------------------------------
 
-export async function fetchFeedbacks(): Promise<{
+export async function fetchFeedbacks(
+  params: PanelListParams = {},
+): Promise<{
   data: FeedbackRecord[]
   error?: string
 }> {
-  const res = await request<unknown>('/feedback')
+  const res = await request<unknown>(`/feedback${buildQueryString(params)}`)
   if (res.ok && res.data) {
     return { data: toList(res.data, toFeedback) }
   }
@@ -248,11 +259,13 @@ export async function deleteFeedbackRecord(
 // Block Profile Endpoints
 // -------------------------------------------------------------
 
-export async function fetchBlockProfiles(): Promise<{
+export async function fetchBlockProfiles(
+  params: PanelListParams = {},
+): Promise<{
   data: BlockProfileRecord[]
   error?: string
 }> {
-  const res = await request<unknown>('/blockProfile')
+  const res = await request<unknown>(`/blockProfile${buildQueryString(params)}`)
   if (res.ok && res.data) {
     return { data: toList(res.data, toBlockProfile) }
   }
@@ -276,11 +289,13 @@ export async function deleteBlockProfileRecord(
 // Notification Endpoints
 // -------------------------------------------------------------
 
-export async function fetchNotifications(): Promise<{
+export async function fetchNotifications(
+  params: PanelListParams = {},
+): Promise<{
   data: NotificationRecord[]
   error?: string
 }> {
-  const res = await request<unknown>('/notification')
+  const res = await request<unknown>(`/notification${buildQueryString(params)}`)
   if (res.ok && res.data) {
     return { data: toList(res.data, toNotification) }
   }
