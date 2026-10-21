@@ -415,9 +415,6 @@ export default function ClientsPage() {
                       <span className="block truncate font-semibold text-navy-950 text-sm">
                         {client.clients_name || 'Unnamed Client'}
                       </span>
-                      <span className="text-[0.7rem] text-ink-400">
-                        ID: {client.id}
-                      </span>
                     </div>
                   </div>
                 </td>

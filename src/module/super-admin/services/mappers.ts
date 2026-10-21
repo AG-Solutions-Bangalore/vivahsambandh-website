@@ -31,6 +31,8 @@ import type {
   TestimonialRecord,
   ClientRecord,
   ClientStatus,
+  GalleryRecord,
+  GalleryStatus,
 } from '../types'
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -477,5 +479,89 @@ export function toList<T>(
         : []
   const entries = extractImageEntries(payload)
   return rows.map((row: Raw) => mapper(row, entries))
+}
+
+const DEFAULT_GALLERY_IMAGE_URL =
+  'https://vivahsambandh.com/crmapi/public/assets/images/gallery_images/'
+
+let cachedGalleryImageEntries: ImageUrlEntry[] = [
+  {
+    image_for: 'Gallery',
+    image_url: DEFAULT_GALLERY_IMAGE_URL,
+  },
+  {
+    image_for: 'No Image',
+    image_url: 'https://vivahsambandh.com/crmapi/public/assets/images/no_image.jpg',
+  },
+]
+
+export function setCachedGalleryImageEntries(entries: ImageUrlEntry[]): void {
+  if (entries && entries.length > 0) {
+    cachedGalleryImageEntries = entries
+  }
+}
+
+export function getCachedGalleryImageEntries(): ImageUrlEntry[] {
+  return cachedGalleryImageEntries
+}
+
+export function resolveGalleryImageUrl(
+  filename: string | null | undefined,
+  entries?: ImageUrlEntry[],
+): string | null {
+  if (!filename || !filename.trim()) return null
+  const clean = filename.trim()
+  if (clean.startsWith('http://') || clean.startsWith('https://')) {
+    return clean
+  }
+  const effectiveEntries = entries && entries.length > 0 ? entries : cachedGalleryImageEntries
+  const resolved =
+    resolveImage(clean, effectiveEntries, 'Gallery') ??
+    resolveImage(clean, effectiveEntries, 'gallery') ??
+    resolveImage(clean, effectiveEntries, 'galleries')
+  if (resolved) return resolved
+
+  return `${DEFAULT_GALLERY_IMAGE_URL}${clean.replace(/^\/+/, '')}`
+}
+
+/**
+ * Normalises a Gallery record.
+ */
+export function toGallery(raw: Raw, entries: ImageUrlEntry[] = []): GalleryRecord {
+  if (entries && entries.length > 0) {
+    const hasGallery = entries.some(
+      (e) => e.image_for.toLowerCase() === 'gallery' || e.image_for.toLowerCase() === 'galleries',
+    )
+    if (hasGallery) {
+      setCachedGalleryImageEntries(entries)
+    }
+  }
+
+  const statusStr = text(raw.gallery_status ?? raw.status)?.toLowerCase()
+  const gallery_status: GalleryStatus =
+    statusStr === 'inactive' || raw.gallery_status === 0 || raw.gallery_status === '0'
+      ? 'Inactive'
+      : 'Active'
+
+  const img = text(
+    raw.gallery_image ??
+      raw.image ??
+      raw.photo ??
+      raw.file ??
+      (Array.isArray(raw.gallery_images) && raw.gallery_images.length > 0
+        ? raw.gallery_images[0]
+        : null),
+  )
+
+  return {
+    id: Number(raw.id ?? 0),
+    gallery_image: resolveGalleryImageUrl(img, entries),
+    gallery_status,
+    title: text(raw.title ?? raw.gallery_title ?? raw.name),
+    created_at: text(raw.created_at),
+    updated_at: text(raw.updated_at),
+    created_by: text(raw.created_by),
+    updated_by: text(raw.updated_by),
+  }
 }
 

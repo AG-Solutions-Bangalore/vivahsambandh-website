@@ -59,6 +59,9 @@ const NotificationsPage = lazy(
   () => import('./module/super-admin/pages/NotificationsPage'),
 )
 const PanelBlogsPage = lazy(() => import('./module/super-admin/pages/BlogsPage'))
+const PanelBlogGalleryPage = lazy(
+  () => import('./module/super-admin/pages/BlogGalleryPage'),
+)
 const PanelEnquiriesPage = lazy(
   () => import('./module/super-admin/pages/EnquiriesPage'),
 )
@@ -257,6 +260,22 @@ export default function App() {
                 }
               />
 
+              <Route
+                path="/panel/blog-gallery"
+                element={
+                  <SuperAdminGuard>
+                    <Suspense fallback={null}>
+                      <SuperAdminLayout>
+                        <PanelBlogGalleryPage />
+                      </SuperAdminLayout>
+                    </Suspense>
+                  </SuperAdminGuard>
+                }
+              />
+              <Route
+                path="/panel/gallery"
+                element={<Navigate to="/panel/blog-gallery" replace />}
+              />
               <Route
                 path="/panel/blogs"
                 element={

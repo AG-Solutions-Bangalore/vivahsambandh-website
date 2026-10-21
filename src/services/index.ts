@@ -28,3 +28,19 @@ export {
   type ClientStatus,
   type ClientListParams,
 } from './clientApi'
+
+// Gallery API operations
+export { default as galleryApi } from './galleryApi'
+export {
+  buildGalleryFormData,
+  getGalleries,
+  createGallery,
+  getGalleryById,
+  updateGallery,
+  updateGalleryStatus,
+  getActiveGalleries,
+  deleteGallery,
+  type GalleryPayload,
+  type GalleryStatus,
+  type GalleryListParams,
+} from './galleryApi'

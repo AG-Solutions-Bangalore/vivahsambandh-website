@@ -374,3 +374,39 @@ export interface ClientListParams {
   search?: string
   clients_status?: string
 }
+
+/** Publication state of a Gallery item. */
+export type GalleryStatus = 'Active' | 'Inactive'
+
+export interface GalleryRecord {
+  id: number
+  gallery_image: string | null
+  gallery_status: GalleryStatus
+  title?: string | null
+  created_at?: string | null
+  updated_at?: string | null
+  created_by?: string | null
+  updated_by?: string | null
+}
+
+export interface GalleryPayload {
+  gallery_image?: File | Blob | string | null
+  gallery_images?: (File | Blob | string)[]
+  image?: File | Blob | string | null
+  photo?: File | Blob | string | null
+  file?: File | Blob | string | null
+  gallery?: File | Blob | string | null
+  gallery_status?: GalleryStatus | string
+  status?: GalleryStatus | string
+  title?: string
+  gallery_title?: string
+  [key: string]: unknown
+}
+
+export interface GalleryListParams {
+  page?: number
+  per_page?: number
+  search?: string
+  gallery_status?: string
+  status?: string
+}

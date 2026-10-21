@@ -32,6 +32,9 @@ export const superAdminKeys = {
   clients: ['super-admin', 'clients'] as const,
   client: (id: number | string) =>
     ['super-admin', 'clients', 'detail', id] as const,
+  galleries: ['super-admin', 'galleries'] as const,
+  gallery: (id: number | string) =>
+    ['super-admin', 'galleries', 'detail', id] as const,
 }
 
 /**

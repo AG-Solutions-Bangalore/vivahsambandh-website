@@ -9,7 +9,7 @@ import { LogOut, X } from 'lucide-react'
 import { cn } from 'cn'
 import LotusMark from '@/components/LotusMark'
 import { useSuperAdminAuth } from '../context/SuperAdminAuthContext'
-import { PANEL_NAV_ITEMS } from '../navigation'
+import { PANEL_NAV_GROUPS } from '../navigation'
 import { ConfirmDialog } from './ConfirmDialog'
 
 interface SuperAdminSidebarProps {
@@ -71,46 +71,54 @@ export function SuperAdminSidebar({ isOpen, onClose }: SuperAdminSidebarProps) {
         </div>
 
         {/* Navigation list */}
-        <nav className="panel-scroll flex-1 space-y-1 overflow-y-auto px-4 py-4">
-          <p className="px-3 pb-2 text-[0.66rem] font-bold tracking-[0.18em] text-navy-300 uppercase">
-            Management Modules
-          </p>
+        <nav className="panel-scroll flex-1 space-y-4 overflow-y-auto px-4 py-4">
+          {PANEL_NAV_GROUPS.map((group, groupIdx) => (
+            <div key={group.section || groupIdx} className="space-y-1">
+              {group.section ? (
+                <div className="pt-2 pb-1">
+                  <p className="px-3 text-[0.66rem] font-bold tracking-[0.18em] text-gold-400/90 uppercase">
+                    {group.section}
+                  </p>
+                </div>
+              ) : null}
 
-          {PANEL_NAV_ITEMS.map((item) => {
-            const Icon = item.icon
-            return (
-              <NavLink
-                key={item.to}
-                to={item.to}
-                onClick={() => {
-                  if (window.innerWidth < 1024) onClose()
-                }}
-                className={({ isActive }) =>
-                  cn(
-                    'group flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-medium transition-all duration-150 focus-visible:ring-2 focus-visible:ring-gold-500 focus-visible:outline-none',
-                    isActive
-                      ? 'bg-gold-600 font-bold text-white shadow-gold'
-                      : 'text-navy-100/90 hover:bg-navy-800/80 hover:text-white',
-                  )
-                }
-              >
-                {({ isActive }) => (
-                  <>
-                    <Icon
-                      className={cn(
-                        'size-4.5 shrink-0 transition-colors',
+              {group.items.map((item) => {
+                const Icon = item.icon
+                return (
+                  <NavLink
+                    key={item.to}
+                    to={item.to}
+                    onClick={() => {
+                      if (window.innerWidth < 1024) onClose()
+                    }}
+                    className={({ isActive }) =>
+                      cn(
+                        'group flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-medium transition-all duration-150 focus-visible:ring-2 focus-visible:ring-gold-500 focus-visible:outline-none',
                         isActive
-                          ? 'text-white'
-                          : 'text-gold-400/80 group-hover:text-gold-300',
-                      )}
-                      aria-hidden
-                    />
-                    <span className="truncate">{item.label}</span>
-                  </>
-                )}
-              </NavLink>
-            )
-          })}
+                          ? 'bg-gold-600 font-bold text-white shadow-gold'
+                          : 'text-navy-100/90 hover:bg-navy-800/80 hover:text-white',
+                      )
+                    }
+                  >
+                    {({ isActive }) => (
+                      <>
+                        <Icon
+                          className={cn(
+                            'size-4.5 shrink-0 transition-colors',
+                            isActive
+                              ? 'text-white'
+                              : 'text-gold-400/80 group-hover:text-gold-300',
+                          )}
+                          aria-hidden
+                        />
+                        <span className="truncate">{item.label}</span>
+                      </>
+                    )}
+                  </NavLink>
+                )
+              })}
+            </div>
+          ))}
         </nav>
 
         {/* Footer Admin Info & Logout */}
