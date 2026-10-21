@@ -24,3 +24,6 @@ export function usePendingMembersQuery() {
     staleTime: PANEL_STALE_TIME,
   })
 }
+
+export { useRemoveDeviceIdMutation } from './useAdminMembers'
+

@@ -258,6 +258,44 @@ export interface TestimonialListParams {
   testimonial_status?: string
 }
 
+/** Lifecycle of a contact-form enquiry. */
+export type EnquiryStatus = 'Pending' | 'Processing' | 'Completed' | 'Cancel'
+
+/** A contact-form enquiry as the panel sees it — flattened by the mapper. */
+export interface EnquiryRecord {
+  id: number
+  full_name?: string | null
+  mobile?: string | null
+  email?: string | null
+  /** The service the visitor asked about, when they picked one. */
+  service?: string | null
+  /** Where the enquiry came from (page path, campaign name…). */
+  source?: string | null
+  message?: string | null
+  status: EnquiryStatus
+  utm_medium?: string | null
+  utm_source?: string | null
+  utm_campaign?: string | null
+  created_at?: string | null
+  updated_at?: string | null
+}
+
+/** Query parameters accepted by the enquiry list endpoint. */
+export interface EnquiryListParams {
+  page?: number
+  per_page?: number
+  search?: string
+  status?: string
+}
+
+/** Pagination block the enquiry list endpoint wraps its rows in. */
+export interface EnquiryListMeta {
+  current_page: number
+  last_page: number
+  per_page: number
+  total: number
+}
+
 export interface UpdateCityPayload {
   multiple_city: string[] | string
 }

@@ -25,6 +25,10 @@ export const superAdminKeys = {
   testimonials: ['super-admin', 'testimonials'] as const,
   testimonial: (id: number | string) =>
     ['super-admin', 'testimonials', 'detail', id] as const,
+  enquiries: ['super-admin', 'enquiries'] as const,
+  enquiry: (id: number | string) =>
+    ['super-admin', 'enquiries', 'detail', id] as const,
+  enquiryReport: ['super-admin', 'enquiries', 'report'] as const,
 }
 
 /**

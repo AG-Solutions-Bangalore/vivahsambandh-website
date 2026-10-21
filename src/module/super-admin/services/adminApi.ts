@@ -159,6 +159,37 @@ export async function updateMemberStatus(
   return { success: false, message: res.message || 'Failed to update status.' }
 }
 
+/**
+ * Unlink/Remove registered device ID for a member or admin member.
+ * PUT /removeDeviceId/{id}
+ */
+export async function removeDeviceId(
+  id: number | string,
+): Promise<{ success: boolean; message: string }> {
+  let res = await request<{ message?: string }>(`/removeDeviceId/${id}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+  })
+
+  // Fallback with _method=PUT if the server environment rejects direct PUT
+  if (!res.ok && res.status === 405) {
+    res = await request<{ message?: string }>(`/removeDeviceId/${id}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ _method: 'PUT' }),
+    })
+  }
+
+  if (res.ok) {
+    return {
+      success: true,
+      message: res.data?.message || 'Device ID removed successfully.',
+    }
+  }
+
+  return { success: false, message: res.message || 'Failed to remove device ID.' }
+}
+
 // -------------------------------------------------------------
 // Members Endpoints
 // -------------------------------------------------------------

@@ -20,6 +20,8 @@ import type {
   BlockProfileRecord,
   BlogRecord,
   BlogStatus,
+  EnquiryRecord,
+  EnquiryStatus,
   FeedbackRecord,
   Member,
   MemberStatus,
@@ -301,6 +303,43 @@ export function toTestimonial(raw: Raw): TestimonialRecord {
     updated_at: text(raw.updated_at),
     created_by: text(raw.created_by),
     updated_by: text(raw.updated_by),
+  }
+}
+
+/** Normalises the enquiry lifecycle state. */
+function enquiryStatus(value: unknown): EnquiryStatus {
+  const raw = text(value)?.toLowerCase()
+  if (raw === 'processing' || raw === 'in progress') return 'Processing'
+  if (raw === 'completed' || raw === 'complete' || raw === 'closed') return 'Completed'
+  if (raw === 'cancel' || raw === 'cancelled') return 'Cancel'
+  return 'Pending'
+}
+
+/**
+ * Normalises a `/enquiry` row.
+ *
+ * The endpoint returns the form fields under their public names
+ * (`enquiryFullName`, `enquiryMobile`, …), so each one is read from the
+ * aliases the API has shipped over time.
+ */
+export function toEnquiry(raw: Raw): EnquiryRecord {
+  return {
+    id: Number(raw.id ?? 0),
+    full_name:
+      text(raw.enquiryFullName) ?? text(raw.enquiry_full_name) ?? text(raw.full_name),
+    mobile: text(raw.enquiryMobile) ?? text(raw.enquiry_mobile) ?? text(raw.mobile),
+    email: text(raw.enquiryEmail) ?? text(raw.enquiry_email) ?? text(raw.email),
+    service: text(raw.enquiryService) ?? text(raw.enquiry_service) ?? text(raw.service),
+    source: text(raw.enquiryFrom) ?? text(raw.enquiry_from) ?? text(raw.source),
+    message:
+      text(raw.enquiryMessage) ?? text(raw.enquiry_message) ?? text(raw.message),
+    status: enquiryStatus(raw.enquiryStatus ?? raw.enquiry_status ?? raw.status),
+    utm_medium: text(raw.utm_medium),
+    utm_source: text(raw.utm_source),
+    utm_campaign: text(raw.utm_campaign),
+    created_at:
+      text(raw.created_at) ?? text(raw.enquiry_date) ?? text(raw.enquiry_created_date),
+    updated_at: text(raw.updated_at) ?? text(raw.enquiry_updated_date),
   }
 }
 

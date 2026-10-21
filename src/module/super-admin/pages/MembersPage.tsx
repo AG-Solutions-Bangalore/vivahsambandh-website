@@ -12,6 +12,7 @@ import {
   CircleX,
   CirclePause,
   HeartHandshake,
+  Smartphone,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { StatusBadge } from '../components/StatusBadge'
@@ -32,7 +33,7 @@ import {
 import { PanelFilterSelect } from '../components/PanelFilterSelect'
 import { ProfileDetails } from '../components/ProfileDetails'
 import { StatusActionGroup } from '../components/StatusActionGroup'
-import { useMembersQuery } from '../hook/useMembers'
+import { useMembersQuery, useRemoveDeviceIdMutation } from '../hook/useMembers'
 import { useUpdateMemberStatusMutation } from '../hook/useAdminMembers'
 import { errorMessage } from '../hook/errors'
 import { formatDate } from '../utils/format'
@@ -50,6 +51,7 @@ export default function MembersPage() {
     refetch,
   } = useMembersQuery()
   const statusMutation = useUpdateMemberStatusMutation()
+  const removeDeviceMutation = useRemoveDeviceIdMutation()
 
   const [searchQuery, setSearchQuery] = useState('')
   const [statusFilter, setStatusFilter] = useState<string>('All')
@@ -64,6 +66,12 @@ export default function MembersPage() {
     memberId: number
     memberName: string
     nextStatus: MemberStatus
+  } | null>(null)
+
+  // Remove Device State
+  const [removeDeviceTarget, setRemoveDeviceTarget] = useState<{
+    id: number | string
+    name: string
   } | null>(null)
 
   const activeProfile = useMemo(
@@ -109,6 +117,21 @@ export default function MembersPage() {
       },
       {
         onSuccess: () => setStatusChangeTarget(null),
+      },
+    )
+  }
+
+  const handleConfirmRemoveDevice = () => {
+    if (!removeDeviceTarget) return
+    const { id, name } = removeDeviceTarget
+
+    removeDeviceMutation.mutate(
+      {
+        id,
+        successMessage: `Device ID removed successfully for ${name}.`,
+      },
+      {
+        onSuccess: () => setRemoveDeviceTarget(null),
       },
     )
   }
@@ -267,6 +290,23 @@ export default function MembersPage() {
                       <span>View</span>
                     </Button>
 
+                    <Button
+                      type="button"
+                      size="xs"
+                      variant="outline"
+                      onClick={() =>
+                        setRemoveDeviceTarget({
+                          id: member.id,
+                          name: member.name,
+                        })
+                      }
+                      title="Remove Registered Device ID"
+                      className="cursor-pointer gap-1 rounded-full border-amber-300 bg-amber-50/70 text-[0.7rem] font-medium text-amber-900 hover:bg-amber-100"
+                    >
+                      <Smartphone className="size-3 text-amber-700" aria-hidden />
+                      <span>Reset Device</span>
+                    </Button>
+
                     <StatusActionGroup
                       compact
                       currentStatus={member.status}
@@ -341,30 +381,48 @@ export default function MembersPage() {
         onClose={() => setActiveProfileId(null)}
         footer={
           activeProfile ? (
-            <>
-              <span className="mr-auto text-[0.7rem] font-bold text-ink-500">
-                Change status to
-              </span>
-              <StatusActionGroup
+            <div className="flex w-full flex-wrap items-center justify-between gap-3">
+              <Button
+                type="button"
                 size="sm"
-                currentStatus={activeProfile.status}
-                onSelect={(next) =>
-                  setStatusChangeTarget({
-                    memberId: activeProfile.id,
-                    memberName: activeProfile.name,
-                    nextStatus: next as MemberStatus,
+                variant="outline"
+                onClick={() =>
+                  setRemoveDeviceTarget({
+                    id: activeProfile.id,
+                    name: activeProfile.name,
                   })
                 }
-                actions={[
-                  { status: 'Approved', label: 'Approved', tone: 'success' },
-                  { status: 'Pending', label: 'Pending', tone: 'warn' },
-                  { status: 'Hold', label: 'Hold', tone: 'info' },
-                  { status: 'Married', label: 'Married', tone: 'info' },
-                  { status: 'Cancel', label: 'Cancel', tone: 'danger' },
-                ]}
-                className="justify-start"
-              />
-            </>
+                className="cursor-pointer gap-1.5 rounded-full border-amber-300 bg-amber-50/70 text-xs font-semibold text-amber-900 hover:bg-amber-100"
+              >
+                <Smartphone className="size-3.5 text-amber-700" aria-hidden />
+                <span>Remove Device ID</span>
+              </Button>
+
+              <div className="flex items-center gap-2">
+                <span className="text-[0.7rem] font-bold text-ink-500">
+                  Change status:
+                </span>
+                <StatusActionGroup
+                  size="sm"
+                  currentStatus={activeProfile.status}
+                  onSelect={(next) =>
+                    setStatusChangeTarget({
+                      memberId: activeProfile.id,
+                      memberName: activeProfile.name,
+                      nextStatus: next as MemberStatus,
+                    })
+                  }
+                  actions={[
+                    { status: 'Approved', label: 'Approved', tone: 'success' },
+                    { status: 'Pending', label: 'Pending', tone: 'warn' },
+                    { status: 'Hold', label: 'Hold', tone: 'info' },
+                    { status: 'Married', label: 'Married', tone: 'info' },
+                    { status: 'Cancel', label: 'Cancel', tone: 'danger' },
+                  ]}
+                  className="justify-start"
+                />
+              </div>
+            </div>
           ) : null
         }
       >
@@ -395,6 +453,21 @@ export default function MembersPage() {
           isLoading={statusMutation.isPending}
           onConfirm={handleConfirmStatusChange}
           onClose={() => setStatusChangeTarget(null)}
+        />
+      )}
+
+      {/* Remove Device Confirmation Dialog */}
+      {removeDeviceTarget && (
+        <ConfirmDialog
+          isOpen={true}
+          title="Remove Device ID"
+          description={`Are you sure you want to remove the registered device ID for "${removeDeviceTarget.name}"? This unlinks their current device and requires re-authentication.`}
+          confirmText="Yes, Remove Device"
+          cancelText="Cancel"
+          variant="danger"
+          isLoading={removeDeviceMutation.isPending}
+          onConfirm={handleConfirmRemoveDevice}
+          onClose={() => setRemoveDeviceTarget(null)}
         />
       )}
     </div>

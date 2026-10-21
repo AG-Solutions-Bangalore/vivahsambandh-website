@@ -12,6 +12,7 @@ import toast from 'react-hot-toast'
 import {
   fetchAdminMembers,
   fetchPendingAdminMembers,
+  removeDeviceId,
   updateMemberCity,
   updateMemberStatus,
 } from '../services/adminApi'
@@ -87,3 +88,30 @@ export function useUpdateMemberCityMutation() {
     },
   })
 }
+
+interface RemoveDeviceIdVariables {
+  id: number | string
+  successMessage?: string
+}
+
+export function useRemoveDeviceIdMutation() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: async ({ id }: RemoveDeviceIdVariables) =>
+      unwrapAction(await removeDeviceId(id)),
+    onSuccess: async (message, variables) => {
+      toast.success(variables.successMessage ?? message)
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: superAdminKeys.adminMembers }),
+        queryClient.invalidateQueries({ queryKey: superAdminKeys.pendingAdminMembers }),
+        queryClient.invalidateQueries({ queryKey: superAdminKeys.members }),
+        queryClient.invalidateQueries({ queryKey: superAdminKeys.pendingMembers }),
+      ])
+    },
+    onError: (error) => {
+      toast.error(error.message)
+    },
+  })
+}
+

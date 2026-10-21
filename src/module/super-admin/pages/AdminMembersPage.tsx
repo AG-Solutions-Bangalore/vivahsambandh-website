@@ -13,6 +13,7 @@ import {
   Clock,
   Mail,
   Phone,
+  Smartphone,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { StatusBadge } from '../components/StatusBadge'
@@ -34,6 +35,7 @@ import { StatusActionGroup } from '../components/StatusActionGroup'
 import { CityAssignmentModal } from '../components/CityAssignmentModal'
 import {
   useAdminMembersQuery,
+  useRemoveDeviceIdMutation,
   useUpdateMemberCityMutation,
   useUpdateMemberStatusMutation,
 } from '../hook/useAdminMembers'
@@ -52,6 +54,7 @@ export default function AdminMembersPage() {
   } = useAdminMembersQuery()
   const cityMutation = useUpdateMemberCityMutation()
   const statusMutation = useUpdateMemberStatusMutation()
+  const removeDeviceMutation = useRemoveDeviceIdMutation()
 
   const [searchQuery, setSearchQuery] = useState('')
   const [statusFilter, setStatusFilter] = useState<string>('All')
@@ -65,6 +68,12 @@ export default function AdminMembersPage() {
     adminId: number
     adminName: string
     nextStatus: AdminMemberStatus
+  } | null>(null)
+
+  // Remove Device Confirmation Modal State
+  const [removeDeviceTarget, setRemoveDeviceTarget] = useState<{
+    id: number | string
+    name: string
   } | null>(null)
 
   const editingCityAdmin = useMemo(
@@ -154,6 +163,22 @@ export default function AdminMembersPage() {
       },
       {
         onSuccess: () => setStatusChangeTarget(null),
+      },
+    )
+  }
+
+  // Execute Remove Device ID
+  const handleConfirmRemoveDevice = () => {
+    if (!removeDeviceTarget) return
+    const { id, name } = removeDeviceTarget
+
+    removeDeviceMutation.mutate(
+      {
+        id,
+        successMessage: `Device ID removed successfully for ${name}.`,
+      },
+      {
+        onSuccess: () => setRemoveDeviceTarget(null),
       },
     )
   }
@@ -324,37 +349,56 @@ export default function AdminMembersPage() {
                   </td>
 
                   <td className="px-4 py-3.5">
-                    <StatusActionGroup
-                      compact
-                      currentStatus={admin.status}
-                      onSelect={(next) =>
-                        setStatusChangeTarget({
-                          adminId: admin.id,
-                          adminName: admin.name,
-                          nextStatus: next as AdminMemberStatus,
-                        })
-                      }
-                      actions={[
-                        {
-                          status: 'Approved',
-                          label: 'Approve',
-                          icon: <CircleCheck className="size-3 text-emerald-600" aria-hidden />,
-                          tone: 'success',
-                        },
-                        {
-                          status: 'Pending',
-                          label: 'Pending',
-                          icon: <Clock className="size-3 text-amber-600" aria-hidden />,
-                          tone: 'warn',
-                        },
-                        {
-                          status: 'Cancel',
-                          label: 'Cancel',
-                          icon: <CircleX className="size-3 text-maroon-600" aria-hidden />,
-                          tone: 'danger',
-                        },
-                      ]}
-                    />
+                    <div className="flex items-center justify-end gap-1.5">
+                      <Button
+                        type="button"
+                        size="xs"
+                        variant="outline"
+                        onClick={() =>
+                          setRemoveDeviceTarget({
+                            id: admin.id,
+                            name: admin.name,
+                          })
+                        }
+                        title="Remove Registered Device ID"
+                        className="cursor-pointer gap-1 rounded-full border-amber-300 bg-amber-50/70 text-[0.7rem] font-medium text-amber-900 hover:bg-amber-100"
+                      >
+                        <Smartphone className="size-3 text-amber-700" aria-hidden />
+                        <span>Reset Device</span>
+                      </Button>
+
+                      <StatusActionGroup
+                        compact
+                        currentStatus={admin.status}
+                        onSelect={(next) =>
+                          setStatusChangeTarget({
+                            adminId: admin.id,
+                            adminName: admin.name,
+                            nextStatus: next as AdminMemberStatus,
+                          })
+                        }
+                        actions={[
+                          {
+                            status: 'Approved',
+                            label: 'Approve',
+                            icon: <CircleCheck className="size-3 text-emerald-600" aria-hidden />,
+                            tone: 'success',
+                          },
+                          {
+                            status: 'Pending',
+                            label: 'Pending',
+                            icon: <Clock className="size-3 text-amber-600" aria-hidden />,
+                            tone: 'warn',
+                          },
+                          {
+                            status: 'Cancel',
+                            label: 'Cancel',
+                            icon: <CircleX className="size-3 text-maroon-600" aria-hidden />,
+                            tone: 'danger',
+                          },
+                        ]}
+                      />
+                    </div>
                   </td>
                 </tr>
               )
@@ -399,6 +443,21 @@ export default function AdminMembersPage() {
           isLoading={statusMutation.isPending}
           onConfirm={handleConfirmStatusChange}
           onClose={() => setStatusChangeTarget(null)}
+        />
+      )}
+
+      {/* Remove Device ID Confirmation Dialog */}
+      {removeDeviceTarget && (
+        <ConfirmDialog
+          isOpen={true}
+          title="Remove Device ID"
+          description={`Are you sure you want to remove the registered device ID for "${removeDeviceTarget.name}"? This unlinks their current device and allows login from a new device.`}
+          confirmText="Yes, Remove Device"
+          cancelText="Cancel"
+          variant="danger"
+          isLoading={removeDeviceMutation.isPending}
+          onConfirm={handleConfirmRemoveDevice}
+          onClose={() => setRemoveDeviceTarget(null)}
         />
       )}
     </div>

@@ -24,6 +24,14 @@ export const STATUS_TONES: Record<string, StatusTone> = {
     chip: 'border-emerald-200 bg-emerald-50 text-emerald-800',
     dot: 'bg-emerald-500 ring-2 ring-emerald-200', dotPlain: 'bg-emerald-500',
   },
+  completed: {
+    chip: 'border-emerald-200 bg-emerald-50 text-emerald-800',
+    dot: 'bg-emerald-500 ring-2 ring-emerald-200', dotPlain: 'bg-emerald-500',
+  },
+  processing: {
+    chip: 'border-navy-200 bg-navy-50 text-navy-800',
+    dot: 'bg-navy-600 ring-2 ring-navy-200', dotPlain: 'bg-navy-600',
+  },
   pending: {
     chip: 'border-amber-200 bg-amber-50 text-amber-800',
     dot: 'bg-amber-500 ring-2 ring-amber-200 animate-pulse', dotPlain: 'bg-amber-500',

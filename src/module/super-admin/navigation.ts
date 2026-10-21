@@ -12,6 +12,7 @@ import {
   Bell,
   FileText,
   HelpCircle,
+  Inbox,
   LayoutDashboard,
   MessageSquare,
   Quote,
@@ -107,6 +108,13 @@ export const PANEL_NAV_ITEMS: PanelNavItem[] = [
     icon: Quote,
     description:
       'Manage matrimonial success reviews, member feedback quotes, and client ratings.',
+  },
+  {
+    label: 'Enquiries',
+    to: '/panel/enquiries',
+    icon: Inbox,
+    description:
+      'Review contact-form enquiries, track them through Pending, Processing and Completed, and export the full report.',
   },
 ]
 

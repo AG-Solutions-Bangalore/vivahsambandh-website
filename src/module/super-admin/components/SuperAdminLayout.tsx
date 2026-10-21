@@ -19,7 +19,7 @@ export function SuperAdminLayout({ children }: SuperAdminLayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false)
 
   return (
-    <div className="bg-cream-50 font-sans text-ink-700 antialiased lg:flex lg:h-screen lg:overflow-hidden">
+    <div className="super-admin-panel bg-cream-50 font-sans text-ink-700 antialiased lg:flex lg:h-screen lg:overflow-hidden">
       {/* Sidebar Navigation */}
       <SuperAdminSidebar
         isOpen={sidebarOpen}

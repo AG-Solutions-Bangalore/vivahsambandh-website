@@ -59,6 +59,9 @@ const NotificationsPage = lazy(
   () => import('./module/super-admin/pages/NotificationsPage'),
 )
 const PanelBlogsPage = lazy(() => import('./module/super-admin/pages/BlogsPage'))
+const PanelEnquiriesPage = lazy(
+  () => import('./module/super-admin/pages/EnquiriesPage'),
+)
 const PanelFaqsPage = lazy(() => import('./module/super-admin/pages/FaqsPage'))
 const PanelTestimonialsPage = lazy(
   () => import('./module/super-admin/pages/TestimonialsPage'),
@@ -258,6 +261,19 @@ export default function App() {
                     <Suspense fallback={null}>
                       <SuperAdminLayout>
                         <PanelBlogsPage />
+                      </SuperAdminLayout>
+                    </Suspense>
+                  </SuperAdminGuard>
+                }
+              />
+
+              <Route
+                path="/panel/enquiries"
+                element={
+                  <SuperAdminGuard>
+                    <Suspense fallback={null}>
+                      <SuperAdminLayout>
+                        <PanelEnquiriesPage />
                       </SuperAdminLayout>
                     </Suspense>
                   </SuperAdminGuard>
