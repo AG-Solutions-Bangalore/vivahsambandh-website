@@ -70,7 +70,7 @@ export default function BlogCard({ item, imageBase }: BlogCardProps) {
       </Link>
 
       <div className="flex flex-1 flex-col p-5 sm:p-6">
-        <h3 className="font-display line-clamp-2 min-h-[3.25rem] text-[17px] font-bold leading-snug text-navy-900 transition-colors duration-300 group-hover:text-maroon-700 sm:min-h-[3.5rem] sm:text-lg">
+        <h3 className="font-display break-words text-[17px] font-bold leading-snug text-navy-900 transition-colors duration-300 group-hover:text-maroon-700 sm:text-lg">
           <Link to={href} title={item.blog_title}>
             {item.blog_title}
           </Link>
