@@ -20,12 +20,24 @@ function ListingSkeleton() {
   return (
     <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 lg:gap-6" aria-hidden="true">
       {[0, 1, 2, 3, 4, 5].map((i) => (
-        <div key={i} className="animate-pulse overflow-hidden rounded-2xl border border-slate-200 bg-white">
-          <div className="aspect-[16/10] bg-slate-100" />
-          <div className="space-y-2 p-5 sm:p-6">
-            <div className="h-3 w-1/3 rounded bg-slate-100" />
-            <div className="h-4 w-full rounded bg-slate-200" />
-            <div className="h-4 w-2/3 rounded bg-slate-200" />
+        <div
+          key={i}
+          className="flex flex-col overflow-hidden rounded-2xl border border-[#EADDC3] bg-white shadow-[0_2px_10px_rgba(16,24,40,0.06)]"
+        >
+          <div className="aspect-[16/9] w-full animate-pulse bg-slate-100" />
+          <div className="flex flex-1 flex-col p-5 sm:p-6">
+            <div className="min-h-[3.25rem] space-y-2 sm:min-h-[3.5rem]">
+              <div className="h-4 w-full animate-pulse rounded bg-slate-200" />
+              <div className="h-4 w-2/3 animate-pulse rounded bg-slate-200" />
+            </div>
+            <div className="mt-2 min-h-[3.9rem] space-y-2.5">
+              <div className="h-3.5 w-full animate-pulse rounded bg-slate-100" />
+              <div className="h-3.5 w-full animate-pulse rounded bg-slate-100" />
+              <div className="h-3.5 w-3/5 animate-pulse rounded bg-slate-100" />
+            </div>
+            <div className="mt-auto pt-4">
+              <div className="h-5 w-24 animate-pulse rounded bg-slate-200" />
+            </div>
           </div>
         </div>
       ))}

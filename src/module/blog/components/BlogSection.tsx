@@ -10,7 +10,7 @@ import { useTranslation } from 'react-i18next'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import { Navigation, A11y } from 'swiper/modules'
 import Reveal from '../../../components/motion/Reveal'
-import { Bar, Text } from '../../../components/skeletons/skeletonShapes'
+import { Bar } from '../../../components/skeletons/skeletonShapes'
 import { useFeaturedBlogsQuery, useFrontBlogsQuery } from '../hook/useBlogs'
 import type { BlogItem } from '../types'
 import BlogCard from './BlogCard'
@@ -60,15 +60,26 @@ function BlogRailSkeleton({ tone }: { tone: 'cream' | 'paper' | 'navy' }) {
           <Bar tone={blockTone} className="mx-auto h-3.5 w-3/4 rounded" />
         </div>
 
-        <div className="mt-8 flex gap-5 px-10 sm:mt-10 sm:px-12">
+        <div className="mt-8 flex gap-5 px-10 sm:mt-10 sm:px-12 lg:gap-6">
           {[0, 1, 2].map((index) => (
             <div
               key={index}
-              className="w-[300px] shrink-0 overflow-hidden rounded-2xl border border-[#EADDC3] bg-white shadow-[0_2px_10px_rgba(16,24,40,0.06)]"
+              className="flex w-[86%] shrink-0 flex-col overflow-hidden rounded-2xl border border-[#EADDC3] bg-white shadow-[0_2px_10px_rgba(16,24,40,0.06)] sm:w-[calc((100%-1.25rem)/2)] lg:w-[calc((100%-3rem)/3)]"
             >
               <Bar className="aspect-[16/9] w-full rounded-none" />
-              <div className="space-y-3 p-5">
-                <Text lines={3} />
+              <div className="flex flex-1 flex-col p-5 sm:p-6">
+                <div className="min-h-[3.25rem] space-y-2 sm:min-h-[3.5rem]">
+                  <Bar tone={blockTone} className="h-4 w-full" />
+                  <Bar tone={blockTone} className="h-4 w-2/3" />
+                </div>
+                <div className="mt-2 min-h-[3.9rem] space-y-2.5">
+                  <Bar tone={blockTone} className="h-3.5 w-full" />
+                  <Bar tone={blockTone} className="h-3.5 w-full" />
+                  <Bar tone={blockTone} className="h-3.5 w-3/5" />
+                </div>
+                <div className="mt-auto pt-4">
+                  <Bar tone={blockTone} className="h-5 w-24" />
+                </div>
               </div>
             </div>
           ))}
