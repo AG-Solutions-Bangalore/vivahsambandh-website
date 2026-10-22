@@ -5,7 +5,7 @@
  * into shared form state through setPhotoFields().
  */
 
-import { useState, useRef, type ChangeEvent } from 'react'
+import { useEffect, useRef, useState, type ChangeEvent } from 'react'
 import { Button } from '@/components/ui/button'
 import { ImageUp, RefreshCw } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
@@ -13,6 +13,10 @@ import ImageCropModal from '../../ImageCropModal'
 import { useRegistrationForm } from '../context'
 import FormSection from '../FormSection'
 import { REGISTRATION_STEP_IDS } from '../steps'
+
+/** Output aspect ratios of the two uploads (width / height). */
+const FULL_PHOTO_ASPECT = 3 / 4
+const FACE_PHOTO_ASPECT = 1
 
 export default function PhotosSection() {
   const { t } = useTranslation()
@@ -24,6 +28,15 @@ export default function PhotosSection() {
   const [cropTarget, setCropTarget] = useState<'full' | 'face' | null>(null)
   const [cropRawSrc, setCropRawSrc] = useState<string | null>(null)
 
+  // The blob URL of the photo being cropped — revoked when it is replaced.
+  const cropUrlRef = useRef<string | null>(null)
+
+  useEffect(() => {
+    return () => {
+      if (cropUrlRef.current) URL.revokeObjectURL(cropUrlRef.current)
+    }
+  }, [])
+
   // File selection for image cropping
   const handleFileSelect = (
     e: ChangeEvent<HTMLInputElement>,
@@ -32,18 +45,27 @@ export default function PhotosSection() {
     const file = e.target.files?.[0]
     if (!file) return
 
-    const reader = new FileReader()
-    reader.onload = () => {
-      setCropRawSrc(reader.result as string)
-      setCropTarget(target)
-    }
-    reader.readAsDataURL(file)
+    // A blob URL keeps a 12 MP phone photo out of a base64 string in memory.
+    const url = URL.createObjectURL(file)
+    if (cropUrlRef.current) URL.revokeObjectURL(cropUrlRef.current)
+    cropUrlRef.current = url
+
+    setCropRawSrc(url)
+    setCropTarget(target)
     e.target.value = ''
   }
 
   const handleCropComplete = (croppedFile: File, previewUrl: string) => {
-    if (cropTarget) {
-      setPhotoFields(cropTarget, croppedFile, previewUrl)
+    if (!cropTarget) return
+    setPhotoFields(cropTarget, croppedFile, previewUrl)
+  }
+
+  const closeCropper = () => {
+    setCropTarget(null)
+    setCropRawSrc(null)
+    if (cropUrlRef.current) {
+      URL.revokeObjectURL(cropUrlRef.current)
+      cropUrlRef.current = null
     }
   }
 
@@ -71,7 +93,9 @@ export default function PhotosSection() {
           </p>
 
           <div className="mt-4 flex flex-1 flex-col items-center justify-center gap-4">
-            <div className="flex h-56 w-44 items-center justify-center overflow-hidden rounded-2xl border-2 border-dashed border-gold-500/50 bg-white">
+            {/* 3:4 frame — matches the cropper's output exactly, so the
+                preview shows the uploaded file without cropping it again. */}
+            <div className="flex h-56 w-42 items-center justify-center overflow-hidden rounded-2xl border-2 border-dashed border-gold-500/50 bg-white">
               {form.full_image_preview ? (
                 <img
                   src={form.full_image_preview}
@@ -197,16 +221,14 @@ export default function PhotosSection() {
       <ImageCropModal
         key={cropTarget || 'none'}
         isOpen={cropTarget !== null}
+        aspect={cropTarget === 'full' ? FULL_PHOTO_ASPECT : FACE_PHOTO_ASPECT}
         title={
           cropTarget === 'full'
             ? t('registrationPage.form.cropFullPhoto', 'Crop Full Length Photo')
             : t('registrationPage.form.cropFacePhoto', 'Crop Full Face Photo')
         }
         imageSrc={cropRawSrc}
-        onClose={() => {
-          setCropTarget(null)
-          setCropRawSrc(null)
-        }}
+        onClose={closeCropper}
         onCropComplete={handleCropComplete}
       />
     </FormSection>

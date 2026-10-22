@@ -444,6 +444,96 @@ html:has(.super-admin-panel)::-webkit-scrollbar {
   animation: panel-skeleton 1.6s ease-in-out infinite;
 }
 
+/* ————— Boot placeholder —————
+   Covers the window between the very first paint and the React mount for
+   routes that are not prerendered (the host serves the SPA fallback there,
+   so #root starts empty and the visitor would stare at a blank page).
+
+   It lives OUTSIDE #root on purpose: the prerender plugin INSERTS the
+   prerendered body at the beginning of #root instead of replacing it, so
+   anything inside #root would end up duplicated below the real content.
+
+   z-index:-1 puts it behind the app shell (which paints an opaque cream
+   background over the viewport), so on prerendered routes it is never seen
+   and on the rest it shows until the app mounts and removes it. */
+.app-boot {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  background: var(--color-cream-50);
+  padding: 4.5rem 1.5rem 3rem;
+}
+
+.app-boot__hero {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  max-width: 42rem;
+  margin: 0 auto;
+}
+
+.app-boot__grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1.25rem;
+  max-width: 72rem;
+  margin: 3rem auto 0;
+}
+
+.app-boot__card {
+  border-radius: 1rem;
+  border: 1px solid var(--color-cream-200);
+  background: #fff;
+  padding: 1rem;
+}
+
+.app-boot__media {
+  aspect-ratio: 16 / 10;
+  border-radius: 0.75rem;
+  background: var(--color-cream-200);
+}
+
+.app-boot__line {
+  height: 0.75rem;
+  border-radius: 9999px;
+  background: var(--color-cream-200);
+}
+
+.app-boot__line--eyebrow {
+  width: 8rem;
+  height: 0.5rem;
+  background: var(--color-gold-200);
+}
+
+.app-boot__line--title {
+  width: 85%;
+  height: 2rem;
+  border-radius: 0.5rem;
+}
+
+.app-boot__line--text {
+  width: 100%;
+}
+
+.app-boot__line--shorter {
+  width: 62%;
+}
+
+.app-boot__line + .app-boot__line {
+  margin-top: 0.6rem;
+}
+
+@media (max-width: 640px) {
+  .app-boot__grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .app-boot__card:not(:first-child) {
+    display: none;
+  }
+}
+
 /* Panel entrance — replaces the (never-compiled) `animate-in fade-in` pair */
 @keyframes panel-fade-in {
   from {

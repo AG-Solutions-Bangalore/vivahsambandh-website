@@ -37,6 +37,18 @@ if (marker.startsWith("ssg:")) {
   markerRoute = routePart || null;
 }
 
+/**
+ * Boot placeholder (see index.html) — covers the gap between the first paint
+ * and the React mount on routes the build did not prerender.
+ *
+ * On a prerendered route the real content is already in the document and
+ * paints over the placeholder, so it is dropped immediately. Everywhere else
+ * it stays until the app mounts (Root removes it), which keeps the visitor
+ * from seeing an empty page.
+ */
+const bootPlaceholder = document.getElementById("app-boot");
+const removeBootPlaceholder = () => bootPlaceholder?.remove();
+
 /** Trailing slashes collapsed ('/hi/' → '/hi', '/register/' → '/register'). */
 const normalizePath = (p: string) => {
   const clean = p.split(/[?#]/)[0];
@@ -93,6 +105,8 @@ const routeMatches =
   markerRoute === null || markerRoute === currentPath;
 
 if (langMatches && routeMatches && isHomeRoute) {
+  // Prerendered markup is on screen — the placeholder is behind it already.
+  removeBootPlaceholder();
   hydrateRoot(container, tree);
 } else {
   const loader = PAGE_LOADERS[currentPath];

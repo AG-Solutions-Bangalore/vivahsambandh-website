@@ -1,6 +1,7 @@
 import { useEffect, useRef, lazy, Suspense } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Route, Routes, useLocation } from 'react-router-dom'
+import { Toaster } from 'react-hot-toast'
 import Footer from './components/Footer'
 import Header from './components/Header'
 import SmoothScroll from './components/motion/SmoothScroll'
@@ -77,61 +78,64 @@ export default function AppServer() {
 
   return (
     <QueryProvider>
+      {/*
+        The toast container has to exist in the prerendered markup as well.
+        It renders a plain <div>, so leaving it out of the server tree made
+        the client's first child differ from the server's — React threw
+        hydration error #418 and threw the whole prerendered page away,
+        re-rendering it from scratch on every load.
+      */}
+      <Toaster />
       <SmoothScroll>
         <div className="min-h-screen bg-cream-50">
           <LanguageSync />
           <ScrollManager />
           <Header />
           <main>
-            <Routes>
-              <Route path="/" element={<HomePage />} />
-              <Route path="/hi" element={<HomePage />} />
-              <Route path="/about" element={<AboutPage />} />
-              <Route path="/hi/about" element={<AboutPage />} />
-              <Route path="/stories" element={<StoriesPage />} />
-              <Route path="/hi/stories" element={<StoriesPage />} />
-              <Route path="/success-stories" element={<StoriesPage />} />
-              <Route path="/hi/success-stories" element={<StoriesPage />} />
-              <Route path="/membership" element={<MembershipPage />} />
-              <Route path="/hi/membership" element={<MembershipPage />} />
-              <Route path="/contact" element={<ContactPage />} />
-              <Route path="/hi/contact" element={<ContactPage />} />
-              <Route path="/download" element={<DownloadPage />} />
-              <Route path="/hi/download" element={<DownloadPage />} />
-              <Route path="/registration" element={<RegistrationPage />} />
-              <Route path="/hi/registration" element={<RegistrationPage />} />
-              <Route path="/register" element={<RegistrationPage />} />
-              <Route path="/hi/register" element={<RegistrationPage />} />
-              <Route path="/admin-register" element={<AdminRegisterPage />} />
-              <Route path="/hi/admin-register" element={<AdminRegisterPage />} />
-              <Route path="/blogs" element={<BlogsPage />} />
-              <Route path="/hi/blogs" element={<BlogsPage />} />
-              <Route
-                path="/blogs/:slug"
-                element={
-                  <Suspense fallback={null}>
-                    <BlogDetailPage />
-                  </Suspense>
-                }
-              />
-              <Route
-                path="/hi/blogs/:slug"
-                element={
-                  <Suspense fallback={null}>
-                    <BlogDetailPage />
-                  </Suspense>
-                }
-              />
-              <Route path="/privacy" element={<PrivacyPage />} />
-              <Route path="/hi/privacy" element={<PrivacyPage />} />
-              <Route path="/terms" element={<TermsPage />} />
-              <Route path="/hi/terms" element={<TermsPage />} />
-              <Route path="/guidelines" element={<GuidelinesPage />} />
-              <Route path="/hi/guidelines" element={<GuidelinesPage />} />
-              <Route path="/help-center" element={<HelpCenterPage />} />
-              <Route path="/hi/help-center" element={<HelpCenterPage />} />
-              <Route path="*" element={<HomePage />} />
-            </Routes>
+            {/*
+              Mirrors the client tree's boundary in App.tsx. The server never
+              suspends here (every page below is imported eagerly), but the
+              boundary has to exist on both sides so the hydrated markup is
+              identical - a Suspense boundary adds no DOM, so the two trees
+              stay in lockstep and the home route hydrates without a mismatch.
+            */}
+            <Suspense fallback={null}>
+              <Routes>
+                <Route path="/" element={<HomePage />} />
+                <Route path="/hi" element={<HomePage />} />
+                <Route path="/about" element={<AboutPage />} />
+                <Route path="/hi/about" element={<AboutPage />} />
+                <Route path="/stories" element={<StoriesPage />} />
+                <Route path="/hi/stories" element={<StoriesPage />} />
+                <Route path="/success-stories" element={<StoriesPage />} />
+                <Route path="/hi/success-stories" element={<StoriesPage />} />
+                <Route path="/membership" element={<MembershipPage />} />
+                <Route path="/hi/membership" element={<MembershipPage />} />
+                <Route path="/contact" element={<ContactPage />} />
+                <Route path="/hi/contact" element={<ContactPage />} />
+                <Route path="/download" element={<DownloadPage />} />
+                <Route path="/hi/download" element={<DownloadPage />} />
+                <Route path="/registration" element={<RegistrationPage />} />
+                <Route path="/hi/registration" element={<RegistrationPage />} />
+                <Route path="/register" element={<RegistrationPage />} />
+                <Route path="/hi/register" element={<RegistrationPage />} />
+                <Route path="/admin-register" element={<AdminRegisterPage />} />
+                <Route path="/hi/admin-register" element={<AdminRegisterPage />} />
+                <Route path="/blogs" element={<BlogsPage />} />
+                <Route path="/hi/blogs" element={<BlogsPage />} />
+                <Route path="/blogs/:slug" element={<BlogDetailPage />} />
+                <Route path="/hi/blogs/:slug" element={<BlogDetailPage />} />
+                <Route path="/privacy" element={<PrivacyPage />} />
+                <Route path="/hi/privacy" element={<PrivacyPage />} />
+                <Route path="/terms" element={<TermsPage />} />
+                <Route path="/hi/terms" element={<TermsPage />} />
+                <Route path="/guidelines" element={<GuidelinesPage />} />
+                <Route path="/hi/guidelines" element={<GuidelinesPage />} />
+                <Route path="/help-center" element={<HelpCenterPage />} />
+                <Route path="/hi/help-center" element={<HelpCenterPage />} />
+                <Route path="*" element={<HomePage />} />
+              </Routes>
+            </Suspense>
           </main>
           <Footer />
         </div>

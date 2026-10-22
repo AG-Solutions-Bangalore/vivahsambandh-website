@@ -7,7 +7,7 @@
  * validators and shadcn-style UI primitives from the main registration form.
  */
 
-import { useId, useRef, useState, type ChangeEvent, type FormEvent } from 'react'
+import { useEffect, useId, useRef, useState, type ChangeEvent, type FormEvent } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
@@ -15,6 +15,7 @@ import { Field } from '@/components/ui/field'
 import { OptionPills } from '@/components/ui/option-pills'
 import { cn } from 'cn'
 import { createAdminRegister } from '../../api/registration.api'
+import ImageCropModal from '../ImageCropModal'
 import type { AdminRegisterFormData } from '../../types'
 import {
   sanitizeName,
@@ -56,6 +57,18 @@ export default function AdminRegisterForm() {
   const [submitResult, setSubmitResult] = useState<SubmitResult | null>(null)
 
   const facePhotoInputRef = useRef<HTMLInputElement>(null)
+
+  // Cropper state — the face photo is cropped to the 1:1 frame below, so the
+  // stored file and the preview are the same image.
+  const [isCropOpen, setIsCropOpen] = useState(false)
+  const [cropRawSrc, setCropRawSrc] = useState<string | null>(null)
+  const cropUrlRef = useRef<string | null>(null)
+
+  useEffect(() => {
+    return () => {
+      if (cropUrlRef.current) URL.revokeObjectURL(cropUrlRef.current)
+    }
+  }, [])
 
   const clearFieldError = (key: keyof AdminRegisterFormData) => {
     setFieldErrors((prev) => {
@@ -116,16 +129,32 @@ export default function AdminRegisterForm() {
     }
     clearFieldError('face_image')
 
-    const reader = new FileReader()
-    reader.onload = () => {
-      setForm((prev) => ({
-        ...prev,
-        face_image: file,
-        face_image_preview: reader.result as string,
-      }))
-    }
-    reader.readAsDataURL(file)
+    // A blob URL keeps a 12 MP phone photo out of a base64 string in memory.
+    const url = URL.createObjectURL(file)
+    if (cropUrlRef.current) URL.revokeObjectURL(cropUrlRef.current)
+    cropUrlRef.current = url
+
+    setCropRawSrc(url)
+    setIsCropOpen(true)
     e.target.value = ''
+  }
+
+  const closeCropper = () => {
+    setIsCropOpen(false)
+    setCropRawSrc(null)
+    if (cropUrlRef.current) {
+      URL.revokeObjectURL(cropUrlRef.current)
+      cropUrlRef.current = null
+    }
+  }
+
+  const handleCropComplete = (croppedFile: File, previewUrl: string) => {
+    setForm((prev) => ({
+      ...prev,
+      face_image: croppedFile,
+      face_image_preview: previewUrl,
+    }))
+    clearFieldError('face_image')
   }
 
   const validateForm = (): FieldErrors => {
@@ -504,7 +533,9 @@ export default function AdminRegisterForm() {
                   size="sm"
                   onClick={() => facePhotoInputRef.current?.click()}
                 >
-                  <span>{form.face_image ? 'Change Photo' : 'Upload Photo'}</span>
+                  <span>
+                    {form.face_image ? 'Change & Crop Photo' : 'Upload & Crop Photo'}
+                  </span>
                 </Button>
               </div>
               {fieldErrors.face_image && (
@@ -518,6 +549,16 @@ export default function AdminRegisterForm() {
             </div>
           </div>
         </div>
+
+        {/* Face Photo Cropper */}
+        <ImageCropModal
+          isOpen={isCropOpen}
+          title="Crop Face Photograph"
+          imageSrc={cropRawSrc}
+          aspect={1}
+          onClose={closeCropper}
+          onCropComplete={handleCropComplete}
+        />
 
         {/* Submit */}
         <div className="flex justify-center border-t border-cream-200 pt-6">

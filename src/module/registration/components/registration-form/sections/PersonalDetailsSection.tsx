@@ -40,6 +40,7 @@ export default function PersonalDetailsSection() {
     communityOptions,
     gotraOptions,
     loadingGotras,
+    loadingOptions,
     conditions,
     isMobileVerifiedNow,
     isMobileComplete,
@@ -177,6 +178,8 @@ export default function PersonalDetailsSection() {
             options={educationOptions}
             placeholder={t('registrationPage.form.educationPlaceholder', 'Select Qualification')}
             error={Boolean(fieldErrors.education_id)}
+            loading={loadingOptions}
+            loadingText={t('registrationPage.form.optionsLoading', 'Loading...')}
             searchable
             searchPlaceholder={t('registrationPage.form.educationSearchPlaceholder', 'Search qualification...')}
             aria-invalid={Boolean(fieldErrors.education_id)}
@@ -192,6 +195,8 @@ export default function PersonalDetailsSection() {
             options={professionOptions}
             placeholder={t('registrationPage.form.professionPlaceholder', 'Select Profession')}
             error={Boolean(fieldErrors.profession_id)}
+            loading={loadingOptions}
+            loadingText={t('registrationPage.form.optionsLoading', 'Loading...')}
             searchable
             searchPlaceholder={t('registrationPage.form.professionSearchPlaceholder', 'Search profession...')}
             aria-invalid={Boolean(fieldErrors.profession_id)}
@@ -325,6 +330,8 @@ export default function PersonalDetailsSection() {
             options={communityOptions}
             placeholder={t('registrationPage.form.communityPlaceholder', 'Select Community')}
             error={Boolean(fieldErrors.community_id)}
+            loading={loadingOptions}
+            loadingText={t('registrationPage.form.optionsLoading', 'Loading...')}
             searchable
             searchPlaceholder={t('registrationPage.form.communitySearchPlaceholder', 'Search community...')}
             aria-invalid={Boolean(fieldErrors.community_id)}

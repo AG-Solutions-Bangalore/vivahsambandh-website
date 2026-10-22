@@ -15,6 +15,7 @@ import {
 } from './module/super-admin/context/SuperAdminAuthContext'
 import { Toaster } from 'react-hot-toast'
 import type { AppLang } from './i18n'
+import { RouteSkeleton } from './components/skeletons/routeSkeleton'
 
 // Code-split non-home routes so the initial homepage bundle is feather-light
 const AboutPage = lazy(() => import('./module/about/pages/AboutPage'))
@@ -176,11 +177,7 @@ export default function App() {
               {/* Super Admin Login */}
               <Route
                 path="/panel-login"
-                element={
-                  <Suspense fallback={null}>
-                    <PanelLoginPage />
-                  </Suspense>
-                }
+                element={<PanelLoginPage />}
               />
 
               {/* Protected Super Admin Panel Routes */}
@@ -426,254 +423,144 @@ export default function App() {
               <ScrollManager />
               <Header />
               <main>
-                <Routes>
-                  {/* Critical Homepage routes stay static & instant */}
-                  <Route path="/" element={<HomePage />} />
-                  <Route path="/hi" element={<HomePage />} />
+                {/*
+                  One boundary for the whole public route tree: every page
+                  below is a lazy chunk, and the fallback is a placeholder
+                  shaped like the page that is loading. A per-route boundary
+                  with a null fallback left the content area empty while the
+                  chunk downloaded - the visitor saw the header and footer
+                  with a hole in between.
+                */}
+                <Suspense fallback={<RouteSkeleton />}>
+                  <Routes>
+                    {/* Critical Homepage routes stay static & instant */}
+                    <Route path="/" element={<HomePage />} />
+                    <Route path="/hi" element={<HomePage />} />
 
-                  {/* Other routes split into isolated on-demand chunks */}
-                  <Route
-                    path="/about"
-                    element={
-                      <Suspense fallback={null}>
-                        <AboutPage />
-                      </Suspense>
-                    }
-                  />
-                  <Route
-                    path="/hi/about"
-                    element={
-                      <Suspense fallback={null}>
-                        <AboutPage />
-                      </Suspense>
-                    }
-                  />
-                  <Route
-                    path="/stories"
-                    element={
-                      <Suspense fallback={null}>
-                        <StoriesPage />
-                      </Suspense>
-                    }
-                  />
-                  <Route
-                    path="/hi/stories"
-                    element={
-                      <Suspense fallback={null}>
-                        <StoriesPage />
-                      </Suspense>
-                    }
-                  />
-                  <Route
-                    path="/success-stories"
-                    element={
-                      <Suspense fallback={null}>
-                        <StoriesPage />
-                      </Suspense>
-                    }
-                  />
-                  <Route
-                    path="/hi/success-stories"
-                    element={
-                      <Suspense fallback={null}>
-                        <StoriesPage />
-                      </Suspense>
-                    }
-                  />
-                  <Route
-                    path="/membership"
-                    element={
-                      <Suspense fallback={null}>
-                        <MembershipPage />
-                      </Suspense>
-                    }
-                  />
-                  <Route
-                    path="/hi/membership"
-                    element={
-                      <Suspense fallback={null}>
-                        <MembershipPage />
-                      </Suspense>
-                    }
-                  />
-                  <Route
-                    path="/contact"
-                    element={
-                      <Suspense fallback={null}>
-                        <ContactPage />
-                      </Suspense>
-                    }
-                  />
-                  <Route
-                    path="/hi/contact"
-                    element={
-                      <Suspense fallback={null}>
-                        <ContactPage />
-                      </Suspense>
-                    }
-                  />
-                  <Route
-                    path="/download"
-                    element={
-                      <Suspense fallback={null}>
-                        <DownloadPage />
-                      </Suspense>
-                    }
-                  />
-                  <Route
-                    path="/hi/download"
-                    element={
-                      <Suspense fallback={null}>
-                        <DownloadPage />
-                      </Suspense>
-                    }
-                  />
-                  <Route
-                    path="/registration"
-                    element={
-                      <Suspense fallback={null}>
-                        <RegistrationPage />
-                      </Suspense>
-                    }
-                  />
-                  <Route
-                    path="/hi/registration"
-                    element={
-                      <Suspense fallback={null}>
-                        <RegistrationPage />
-                      </Suspense>
-                    }
-                  />
-                  <Route
-                    path="/register"
-                    element={
-                      <Suspense fallback={null}>
-                        <RegistrationPage />
-                      </Suspense>
-                    }
-                  />
-                  <Route
-                    path="/hi/register"
-                    element={
-                      <Suspense fallback={null}>
-                        <RegistrationPage />
-                      </Suspense>
-                    }
-                  />
-                  <Route
-                    path="/admin-register"
-                    element={
-                      <Suspense fallback={null}>
-                        <AdminRegisterPage />
-                      </Suspense>
-                    }
-                  />
-                  <Route
-                    path="/hi/admin-register"
-                    element={
-                      <Suspense fallback={null}>
-                        <AdminRegisterPage />
-                      </Suspense>
-                    }
-                  />
-                  <Route
-                    path="/blogs"
-                    element={
-                      <Suspense fallback={null}>
-                        <BlogsPage />
-                      </Suspense>
-                    }
-                  />
-                  <Route
-                    path="/hi/blogs"
-                    element={
-                      <Suspense fallback={null}>
-                        <BlogsPage />
-                      </Suspense>
-                    }
-                  />
-                  <Route
-                    path="/blogs/:slug"
-                    element={
-                      <Suspense fallback={null}>
-                        <BlogDetailPage />
-                      </Suspense>
-                    }
-                  />
-                  <Route
-                    path="/hi/blogs/:slug"
-                    element={
-                      <Suspense fallback={null}>
-                        <BlogDetailPage />
-                      </Suspense>
-                    }
-                  />
-                  <Route
-                    path="/privacy"
-                    element={
-                      <Suspense fallback={null}>
-                        <PrivacyPage />
-                      </Suspense>
-                    }
-                  />
-                  <Route
-                    path="/hi/privacy"
-                    element={
-                      <Suspense fallback={null}>
-                        <PrivacyPage />
-                      </Suspense>
-                    }
-                  />
-                  <Route
-                    path="/terms"
-                    element={
-                      <Suspense fallback={null}>
-                        <TermsPage />
-                      </Suspense>
-                    }
-                  />
-                  <Route
-                    path="/hi/terms"
-                    element={
-                      <Suspense fallback={null}>
-                        <TermsPage />
-                      </Suspense>
-                    }
-                  />
-                  <Route
-                    path="/guidelines"
-                    element={
-                      <Suspense fallback={null}>
-                        <GuidelinesPage />
-                      </Suspense>
-                    }
-                  />
-                  <Route
-                    path="/hi/guidelines"
-                    element={
-                      <Suspense fallback={null}>
-                        <GuidelinesPage />
-                      </Suspense>
-                    }
-                  />
-                  <Route
-                    path="/help-center"
-                    element={
-                      <Suspense fallback={null}>
-                        <HelpCenterPage />
-                      </Suspense>
-                    }
-                  />
-                  <Route
-                    path="/hi/help-center"
-                    element={
-                      <Suspense fallback={null}>
-                        <HelpCenterPage />
-                      </Suspense>
-                    }
-                  />
-                  <Route path="*" element={<HomePage />} />
-                </Routes>
+                    {/* Other routes split into isolated on-demand chunks */}
+                    <Route
+                      path="/about"
+                      element={<AboutPage />}
+                    />
+                    <Route
+                      path="/hi/about"
+                      element={<AboutPage />}
+                    />
+                    <Route
+                      path="/stories"
+                      element={<StoriesPage />}
+                    />
+                    <Route
+                      path="/hi/stories"
+                      element={<StoriesPage />}
+                    />
+                    <Route
+                      path="/success-stories"
+                      element={<StoriesPage />}
+                    />
+                    <Route
+                      path="/hi/success-stories"
+                      element={<StoriesPage />}
+                    />
+                    <Route
+                      path="/membership"
+                      element={<MembershipPage />}
+                    />
+                    <Route
+                      path="/hi/membership"
+                      element={<MembershipPage />}
+                    />
+                    <Route
+                      path="/contact"
+                      element={<ContactPage />}
+                    />
+                    <Route
+                      path="/hi/contact"
+                      element={<ContactPage />}
+                    />
+                    <Route
+                      path="/download"
+                      element={<DownloadPage />}
+                    />
+                    <Route
+                      path="/hi/download"
+                      element={<DownloadPage />}
+                    />
+                    <Route
+                      path="/registration"
+                      element={<RegistrationPage />}
+                    />
+                    <Route
+                      path="/hi/registration"
+                      element={<RegistrationPage />}
+                    />
+                    <Route
+                      path="/register"
+                      element={<RegistrationPage />}
+                    />
+                    <Route
+                      path="/hi/register"
+                      element={<RegistrationPage />}
+                    />
+                    <Route
+                      path="/admin-register"
+                      element={<AdminRegisterPage />}
+                    />
+                    <Route
+                      path="/hi/admin-register"
+                      element={<AdminRegisterPage />}
+                    />
+                    <Route
+                      path="/blogs"
+                      element={<BlogsPage />}
+                    />
+                    <Route
+                      path="/hi/blogs"
+                      element={<BlogsPage />}
+                    />
+                    <Route
+                      path="/blogs/:slug"
+                      element={<BlogDetailPage />}
+                    />
+                    <Route
+                      path="/hi/blogs/:slug"
+                      element={<BlogDetailPage />}
+                    />
+                    <Route
+                      path="/privacy"
+                      element={<PrivacyPage />}
+                    />
+                    <Route
+                      path="/hi/privacy"
+                      element={<PrivacyPage />}
+                    />
+                    <Route
+                      path="/terms"
+                      element={<TermsPage />}
+                    />
+                    <Route
+                      path="/hi/terms"
+                      element={<TermsPage />}
+                    />
+                    <Route
+                      path="/guidelines"
+                      element={<GuidelinesPage />}
+                    />
+                    <Route
+                      path="/hi/guidelines"
+                      element={<GuidelinesPage />}
+                    />
+                    <Route
+                      path="/help-center"
+                      element={<HelpCenterPage />}
+                    />
+                    <Route
+                      path="/hi/help-center"
+                      element={<HelpCenterPage />}
+                    />
+                    <Route path="*" element={<HomePage />} />
+                  </Routes>
+                </Suspense>
               </main>
               <Footer />
             </div>

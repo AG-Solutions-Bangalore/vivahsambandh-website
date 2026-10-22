@@ -5,6 +5,7 @@ import {
   useState,
   type ComponentType,
   type LazyExoticComponent,
+  type ReactNode,
 } from 'react'
 import { refreshScrollTriggers } from '../lib/gsap-setup'
 import { markSectionReady, registerSectionMounter } from '../lib/deferredSections'
@@ -18,6 +19,11 @@ interface DeferredSectionProps {
   minHeight: number
   /** Skeleton backdrop matching the section background. */
   tone?: 'cream' | 'paper' | 'navy'
+  /**
+   * Placeholder shaped like the real section. Falls back to a generic
+   * headline block when omitted.
+   */
+  skeleton?: ReactNode
   /** How early (px) before entering the viewport to start mounting. */
   rootMargin?: number
 }
@@ -44,6 +50,7 @@ export default function DeferredSection({
   component: Section,
   minHeight,
   tone = 'cream',
+  skeleton: skeletonOverride,
   rootMargin = 250,
 }: DeferredSectionProps) {
   const [shouldMount, setShouldMount] = useState(false)
@@ -133,14 +140,19 @@ export default function DeferredSection({
     </div>
   )
 
+  // A section-shaped placeholder keeps the reserved height honest: the
+  // generic fallback above only reserved a blank band, so the page still
+  // jumped once the real section landed.
+  const placeholder = skeletonOverride ?? skeleton
+
   return (
     <div ref={hostRef}>
       {shouldMount ? (
-        <Suspense fallback={skeleton}>
+        <Suspense fallback={placeholder}>
           <Section />
         </Suspense>
       ) : (
-        skeleton
+        placeholder
       )}
     </div>
   )

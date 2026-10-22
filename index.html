@@ -43,6 +43,38 @@
     <title>VivahSambandh — Premium Agarwal Matrimony</title>
   </head>
   <body>
+    <!-- Boot placeholder: shown until the app mounts, but only on routes the
+         build did not prerender (there #root is empty and the visitor would
+         otherwise stare at a blank page). It sits outside #root because the
+         prerender plugin inserts the prerendered body at the START of
+         #root — anything inside would be duplicated below the real content.
+         main.tsx removes it as soon as the app takes over. -->
+    <div id="app-boot" aria-hidden="true">
+      <div class="app-boot__hero">
+        <div class="app-boot__line app-boot__line--eyebrow"></div>
+        <div class="app-boot__line app-boot__line--title"></div>
+        <div class="app-boot__line app-boot__line--title app-boot__line--shorter"></div>
+        <div class="app-boot__line app-boot__line--text"></div>
+        <div class="app-boot__line app-boot__line--text app-boot__line--shorter"></div>
+      </div>
+      <div class="app-boot__grid">
+        <div class="app-boot__card">
+          <div class="app-boot__media"></div>
+          <div class="app-boot__line"></div>
+          <div class="app-boot__line app-boot__line--shorter"></div>
+        </div>
+        <div class="app-boot__card">
+          <div class="app-boot__media"></div>
+          <div class="app-boot__line"></div>
+          <div class="app-boot__line app-boot__line--shorter"></div>
+        </div>
+        <div class="app-boot__card">
+          <div class="app-boot__media"></div>
+          <div class="app-boot__line"></div>
+          <div class="app-boot__line app-boot__line--shorter"></div>
+        </div>
+      </div>
+    </div>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

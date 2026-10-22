@@ -10,6 +10,7 @@ import { useTranslation } from 'react-i18next'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import { Navigation, A11y } from 'swiper/modules'
 import Reveal from '../../../components/motion/Reveal'
+import { Bar, Text } from '../../../components/skeletons/skeletonShapes'
 import { useFeaturedBlogsQuery, useFrontBlogsQuery } from '../hook/useBlogs'
 import type { BlogItem } from '../types'
 import BlogCard from './BlogCard'
@@ -27,6 +28,54 @@ export interface BlogSectionProps {
   tone?: 'cream' | 'paper' | 'navy'
   fallbackItems?: BlogItem[]
   maxItems?: number
+}
+
+/**
+ * Placeholder for the blog rail while the API call is in flight.
+ *
+ * The rail used to render nothing while pending, so the section collapsed to
+ * zero height and the page jumped when the articles arrived.
+ */
+function BlogRailSkeleton({ tone }: { tone: 'cream' | 'paper' | 'navy' }) {
+  const dark = tone === 'navy'
+  const bgCls =
+    tone === 'navy'
+      ? 'bg-[#0B1526]'
+      : tone === 'cream'
+        ? 'bg-[#FFFBF2]'
+        : 'bg-cream-50'
+  const blockTone = dark ? ('dark' as const) : ('light' as const)
+
+  return (
+    <section
+      aria-busy="true"
+      role="status"
+      aria-label="Loading articles"
+      className={`relative overflow-hidden py-12 ${bgCls}`}
+    >
+      <div className="section-pad relative z-10">
+        <div className="mx-auto max-w-2xl space-y-3 text-center">
+          <Bar tone={blockTone} className="mx-auto h-3 w-28 rounded-full bg-gold-200/80" />
+          <Bar tone={blockTone} className="mx-auto h-9 w-3/4 rounded-lg sm:h-11" />
+          <Bar tone={blockTone} className="mx-auto h-3.5 w-3/4 rounded" />
+        </div>
+
+        <div className="mt-8 flex gap-5 px-10 sm:mt-10 sm:px-12">
+          {[0, 1, 2].map((index) => (
+            <div
+              key={index}
+              className="w-[300px] shrink-0 overflow-hidden rounded-2xl border border-[#EADDC3] bg-white shadow-[0_2px_10px_rgba(16,24,40,0.06)]"
+            >
+              <Bar className="aspect-[16/9] w-full rounded-none" />
+              <div className="space-y-3 p-5">
+                <Text lines={3} />
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
 }
 
 export default function BlogSection({
@@ -51,7 +100,9 @@ export default function BlogSection({
   const visible = items.slice(0, maxItems)
 
   if (!visible || visible.length === 0) {
-    return null
+    // Still loading: hold the rail's place with a placeholder instead of
+    // collapsing it — the page must not jump when the articles arrive.
+    return query.isPending ? <BlogRailSkeleton tone={tone} /> : null
   }
 
   const defaults =
