@@ -9,7 +9,7 @@
         "How does VivahSambandh matching work?",
         "VivahSambandh contact and support details"
       ],
-      "tags": ["matrimony", "english", "hindi"],
+      "tags": ["matrimony", "community matrimony", "english", "hindi"],
       "type": "text/markdown; profile=\"urn:air:agent-skills\"",
       "url": "https://vivahsambandh.com/llms.txt"
     }

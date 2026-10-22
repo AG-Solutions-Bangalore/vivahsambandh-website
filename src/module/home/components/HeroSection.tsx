@@ -57,7 +57,7 @@ const TRUST_BADGES = [
 const MATCH_CARDS = [
   {
     id: "bride",
-    href: "#search-bride",
+    href: "/registration",
     photo: img("/images/home/radiant-indian-bride-in-floral-glow.webp"),
     photoSrcSet: imgSrcSet(
       "/images/home/radiant-indian-bride-in-floral-glow-128.webp 128w, /images/home/radiant-indian-bride-in-floral-glow-320.webp 320w, /images/home/radiant-indian-bride-in-floral-glow-640.webp 640w, /images/home/radiant-indian-bride-in-floral-glow.webp 1145w",
@@ -77,7 +77,7 @@ const MATCH_CARDS = [
   },
   {
     id: "groom",
-    href: "#search-groom",
+    href: "/registration",
     photo: img(
       "/images/home/radiant-indian-groom-in-a-golden-wedding-setting.webp",
     ),
@@ -351,7 +351,7 @@ export default function HeroSection() {
                 className="mt-4 sm:mt-5 flex flex-col items-stretch gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:gap-4 relative z-20"
               >
                 <a
-                  href="#register"
+                  href="/registration"
                   title={t("hero.createProfile")}
                   className="group relative inline-flex w-full sm:w-auto items-center justify-center gap-2 sm:gap-2.5 overflow-hidden rounded-full bg-navy-900 px-6 py-3 sm:px-7 sm:py-3 text-[13px] sm:text-sm font-semibold text-white shadow-md shadow-navy-950/20 transition-all duration-300 hover:-translate-y-0.5 hover:bg-navy-800 hover:shadow-lg hover:shadow-navy-950/30 active:scale-[0.97]"
                 >
@@ -371,7 +371,7 @@ export default function HeroSection() {
                   </span>
                 </a>
                 <a
-                  href="#search"
+                  href="/contact"
                   title={t("hero.findMatch")}
                   className="group relative inline-flex w-full sm:w-auto items-center justify-center gap-2 sm:gap-2.5 overflow-hidden rounded-full border border-gold-500/80 bg-white/95 px-6 py-3 sm:px-7 sm:py-3 text-[13px] sm:text-sm font-semibold text-navy-900 shadow-xs backdrop-blur-xs transition-all duration-300 hover:-translate-y-0.5 hover:border-gold-600 hover:bg-gold-50/80 hover:shadow-md hover:shadow-gold-500/15 active:scale-[0.97]"
                 >
@@ -495,7 +495,9 @@ export default function HeroSection() {
               <div className="pointer-events-none absolute -right-16 -bottom-3 sm:-bottom-4 h-32 w-28 sm:h-44 sm:w-36 md:h-52 md:w-44 lg:h-60 lg:w-52 opacity-95 select-none hidden sm:block">
                 <img
                   src={img("/images/home/flower1_image-320.webp")}
-                  srcSet={imgSrcSet("/images/home/flower1_image-320.webp 320w, /images/home/flower1_image-640.webp 640w")}
+                  srcSet={imgSrcSet(
+                    "/images/home/flower1_image-320.webp 320w, /images/home/flower1_image-640.webp 640w",
+                  )}
                   sizes="(max-width: 768px) 9rem, 13rem"
                   width={320}
                   height={480}

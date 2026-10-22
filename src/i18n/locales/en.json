@@ -1,9 +1,9 @@
 {
   "meta": {
     "siteName": "VivahSambandh",
-    "tagline": "Community",
-    "title": "VivahSambandh — Premium Agarwal Matrimony | Tradition Meets New Beginnings",
-    "description": "VivahSambandh connects Agarwal,Jain,Khandelwal,Maheshwari with shared values, traditions and aspirations to create meaningful and lasting relationships."
+    "tagline": "Community Matrimony",
+    "title": "VivahSambandh — Premium Community Matrimony | Tradition Meets New Beginnings",
+    "description": "VivahSambandh connects Agarwal, Jain, Khandelwal and Maheshwari families with shared values, traditions and aspirations to create meaningful and lasting relationships."
   },
   "header": {
     "home": "Home",
@@ -25,10 +25,10 @@
     "downloadOn": "Download on the"
   },
   "hero": {
-    "eyebrow": "A Premium Community Platform",
+    "eyebrow": "A Premium Community Matrimony Platform",
     "titleA": "Tradition Meets",
     "titleB": "New Beginnings",
-    "subtitle": "VivahSambandh connects Agarwal,Jain,Khandelwal,Maheshwari with shared values, traditions and aspirations to create meaningful and lasting relationships.",
+    "subtitle": "VivahSambandh connects Agarwal, Jain, Khandelwal and Maheshwari families with shared values, traditions and aspirations to create meaningful and lasting relationships.",
     "createProfile": "Create Your Profile",
     "findMatch": "Find Your Match",
     "verified": "Verified Profiles",
@@ -52,7 +52,7 @@
     "eyebrow": "About VivahSambandh",
     "titleA": "More Than",
     "titleB": "a Matrimonial Platform",
-    "body": "VivahSambandh is dedicated to bringing Agarwal,Jain,Khandelwal,Maheshwari together through a trusted and modern platform. We respect our traditions, values and cultural heritage while embracing technology to make your search for a life partner simple, secure and meaningful.",
+    "body": "VivahSambandh is dedicated to bringing Agarwal, Jain, Khandelwal and Maheshwari families together through a trusted and modern platform. We respect our traditions, values and cultural heritage while embracing technology to make your search for a life partner simple, secure and meaningful.",
     "cta": "Know More About Us",
     "community": "Our Community",
     "members": "50K+ Happy Members"
@@ -100,7 +100,7 @@
   "cities": {
     "eyebrow": "Browse by city",
     "title": "Find Matches in Your City",
-    "subtitle": "Explore profiles from Agarwal communities across India and worldwide.",
+    "subtitle": "Explore profiles from communities across India and worldwide.",
     "viewAll": "View All Cities",
     "profiles": "Profiles",
     "list": [
@@ -140,7 +140,7 @@
   },
   "why": {
     "eyebrow": "Why choose VivahSambandh",
-    "title": "Designed for Agarwal, Jain, Khandelwal, Maheshwari",
+    "title": "Designed for Agarwal, Jain, Khandelwal & Maheshwari Families",
     "subtitle": "A perfect blend of tradition, trust and technology to help you find a compatible life partner.",
     "cta": "Explore Features",
     "features": [
@@ -168,7 +168,7 @@
     "eyebrow": "Success stories",
     "titleA": "Real People.",
     "titleB": "Real Happiness.",
-    "subtitle": "Thousands of Agarwal,Jain,Khandelwal,Maheshwari found their perfect match through VivahSambandh. Their stories inspire us to create more beautiful beginnings.",
+    "subtitle": "Thousands of Agarwal, Jain, Khandelwal and Maheshwari families found their perfect match through VivahSambandh. Their stories inspire us to create more beautiful beginnings.",
     "cta": "Read Success Stories",
     "verifiedClient": "Verified Client",
     "items": [
@@ -178,7 +178,7 @@
         "city": "Delhi"
       },
       {
-        "quote": "The platform is genuine and trustworthy. We highly recommend VivahSambandh to all Agarwal,Jain,Khandelwal,Maheshwari.",
+        "quote": "The platform is genuine and trustworthy. We highly recommend VivahSambandh to all Agarwal, Jain, Khandelwal and Maheshwari families.",
         "name": "Vikas & Riya",
         "city": "Bengaluru"
       },
@@ -229,11 +229,11 @@
     "eyebrow": "VivahSambandh Mobile App",
     "titleA": "Your Perfect Match,",
     "titleB": "Always With You",
-    "subtitle": "Download India's trusted Community matrimonial app. Search verified profiles, receive instant match notifications, and connect directly with prospective families on iOS and Android.",
+    "subtitle": "Download India's trusted community matrimony app. Search verified profiles, receive instant match notifications, and connect directly with prospective families on iOS and Android.",
     "scanQr": "Scan to Download",
     "scanHelp": "Open your phone camera to install instantly",
     "rating": "4.8 ★ Rated App",
-    "downloadsCount": "50,000+ Agarwal Families",
+    "downloadsCount": "50,000+ Families Across Communities",
     "previewCards": {
       "matchTitle": "New Match Found",
       "matchDesc": "98% Kundali Compatibility • Bansal Gotra",
@@ -247,7 +247,7 @@
       "instant": "Instant Match Alerts",
       "secure": "Safe & Private Chat"
     },
-    "featuresEyebrow": "Built for Modern Agarwal Families",
+    "featuresEyebrow": "Built for Modern Families Across Communities",
     "featuresTitle": "Key Features of the VivahSambandh App",
     "featuresSubtitle": "Experience effortless matchmaking engineered for tradition, strict privacy, and modern convenience.",
     "features": [
@@ -331,7 +331,7 @@
     "items": [
       {
         "q": "What is VivahSambandh?",
-        "a": "VivahSambandh is a premium matrimonial platform exclusively for the Community, blending tradition with modern matchmaking."
+        "a": "VivahSambandh is a premium community matrimony platform for Agarwal, Jain, Khandelwal and Maheshwari families, blending tradition with modern matchmaking."
       },
       {
         "q": "Is my information secure?",
@@ -447,7 +447,7 @@
       "eyebrow": "Community Guidelines",
       "title": "A Respectful Community",
       "updated": "Last updated: January 2026",
-      "intro": "These guidelines keep VivahSambandh safe, genuine and welcoming for every Agarwal family.",
+      "intro": "These guidelines keep VivahSambandh safe, genuine and welcoming for every family.",
       "sections": [
         {
           "h": "Be Genuine",
@@ -521,7 +521,7 @@
     "send": "Send Message"
   },
   "footer": {
-    "about": "A trusted matrimonial platform connecting Agarwal individuals and families through shared values, traditions and meaningful relationships.",
+    "about": "A trusted matrimonial platform connecting families across communities through shared values, traditions and meaningful relationships.",
     "quickLinks": "Quick Links",
     "support": "Support",
     "contactUs": "Contact Us",
@@ -561,19 +561,19 @@
     "storyEyebrow": "Our Story",
     "titleA": "More Than a",
     "titleB": "Matrimonial Platform",
-    "body": "VivahSambandh connects Agarwal,Jain,Khandelwal,Maheshwari through shared values, traditions and modern technology. We are dedicated to creating meaningful and lasting relationships within the Community.",
+    "body": "VivahSambandh connects Agarwal, Jain, Khandelwal and Maheshwari families through shared values, traditions and modern technology. We are dedicated to creating meaningful and lasting relationships within the community.",
     "missionTitle": "Our Mission",
-    "missionBody": "To bring Agarwal,Jain,Khandelwal,Maheshwari together by combining our rich traditions with modern technology, creating a trusted, simple and meaningful platform for lifelong companionship.",
+    "missionBody": "To bring Agarwal, Jain, Khandelwal and Maheshwari families together by combining our rich traditions with modern technology, creating a trusted, simple and meaningful platform for lifelong companionship.",
     "visionTitle": "Our Vision",
-    "visionBody": "To be the most trusted matrimonial platform for the Community, known for our values, authenticity and successful relationships that build brighter families and stronger generations.",
+    "visionBody": "To be the most trusted community matrimony platform for Agarwal, Jain, Khandelwal and Maheshwari families, known for our values, authenticity and successful relationships that build brighter families and stronger generations.",
     "valuesEyebrow": "Our Values",
     "valuesTitleA": "Tradition at Heart.",
     "valuesTitleB": "Trust in Every Connection.",
-    "valuesSubtitle": "Our platform is built on the values that matter most to Agarwal,Jain,Khandelwal,Maheshwari.",
+    "valuesSubtitle": "Our platform is built on the values that matter most to Agarwal, Jain, Khandelwal and Maheshwari families.",
     "values": [
       {
         "title": "Family Values",
-        "desc": "We respect and celebrate Agarwal traditions, values and cultural heritage in every match we make."
+        "desc": "We respect and celebrate traditional values and cultural heritage in every match we make."
       },
       {
         "title": "Verified Profiles",
@@ -585,13 +585,13 @@
       }
     ],
     "whyEyebrow": "Why VivahSambandh?",
-    "whyTitleA": "Built for Agarwal",
+    "whyTitleA": "Built for Our",
     "whyTitleB": "Families, by People Who Understand",
-    "whyBody": "We understand the unique values, preferences and expectations of Agarwal,Jain,Khandelwal,Maheshwari. Our platform is designed to make the search for a life partner simple, trustworthy and meaningful.",
+    "whyBody": "We understand the unique values, preferences and expectations of Agarwal, Jain, Khandelwal and Maheshwari families. Our platform is designed to make the search for a life partner simple, trustworthy and meaningful.",
     "whyPoints": [
       {
-        "title": "Community Focus",
-        "desc": "A dedicated platform exclusively for Agarwal,Jain,Khandelwal,Maheshwari and individuals."
+        "title": "Community Matrimony Focus",
+        "desc": "A dedicated matrimony platform exclusively for Agarwal, Jain, Khandelwal and Maheshwari families and individuals."
       },
       {
         "title": "Meaningful Compatibility",
@@ -627,7 +627,7 @@
     "ctaEyebrow": "Be a part of our story",
     "ctaTitleA": "Your Story",
     "ctaTitleB": "Begins Here",
-    "ctaBody": "Join thousands of Agarwal,Jain,Khandelwal,Maheshwari who have found meaningful and lasting relationships on VivahSambandh.",
+    "ctaBody": "Join thousands of Agarwal, Jain, Khandelwal and Maheshwari families who have found meaningful and lasting relationships on VivahSambandh.",
     "ctaPrimary": "Create Your Profile",
     "ctaSecondary": "Find Your Match"
   },
@@ -710,10 +710,10 @@
   "storiesPage": {
     "breadcrumbHome": "Home",
     "breadcrumbCurrent": "Success Stories",
-    "heroEyebrow": "500+ Agarwal Weddings Celebrated",
+    "heroEyebrow": "500+ Community Weddings Celebrated",
     "heroTitleA": "Real People.",
     "heroTitleB": "Real Happiness.",
-    "heroSubtitle": "Thousands of Agarwal,Jain,Khandelwal,Maheshwari found their perfect match through VivahSambandh. Their heartwarming stories inspire us to create more beautiful beginnings.",
+    "heroSubtitle": "Thousands of Agarwal, Jain, Khandelwal and Maheshwari families found their perfect match through VivahSambandh. Their heartwarming stories inspire us to create more beautiful beginnings.",
     "badges": {
       "verified": "Family Verified",
       "gotras": "18 Gotras United",
@@ -727,7 +727,7 @@
       },
       {
         "value": "18/18",
-        "label": "Agarwal Gotras",
+        "label": "Gotras Covered",
         "sub": "Complete Gotra Coverage"
       },
       {
@@ -750,12 +750,13 @@
       "couple": "Vikas & Riya",
       "quote": "VivahSambandh made our journey simple, respectful and comfortable. Both families connected naturally, and knowing the profiles were strictly verified gave us immense peace of mind.",
       "story": "From initial profile discovery with compatible gotras to in-depth family meetings, the platform ensured mutual respect and full privacy every step of the way.",
-      "tagTitle": "Agarwal Matrimony Union",
+      "tagTitle": "Community Matrimony Union",
       "tagSub": "Verified VivahSambandh Couple"
     },
     "grid": {
       "eyebrow": "Real Couple Stories",
       "title": "Bonds of Trust, Love & Tradition",
+      "tagTitle": "VivahSambandh Community Matrimony",
       "filters": [
         {
           "id": "all",
@@ -848,7 +849,7 @@
     "cta": {
       "eyebrow": "Did You Meet on VivahSambandh?",
       "title": "Share Your Wedding Story With Us",
-      "body": "Inspire thousands of Agarwal,Jain,Khandelwal,Maheshwari searching for their ideal match. Share your wedding photographs and heartwarming journey with our community.",
+      "body": "Inspire thousands of Agarwal, Jain, Khandelwal and Maheshwari families searching for their ideal match. Share your wedding photographs and heartwarming journey with our community.",
       "submit": "Submit Your Story ✉",
       "createProfile": "Create Your Profile"
     }
@@ -859,7 +860,7 @@
     "heroEyebrow": "Transparent & Trusted Membership",
     "heroTitleA": "Invest in the Right",
     "heroTitleB": "Life Partnership.",
-    "heroSubtitle": "Curated matrimonial plans designed exclusively for Agarwal,Jain,Khandelwal,Maheshwari. Strict verification, privacy controls, Kundali compatibility, and dedicated relationship managers.",
+    "heroSubtitle": "Curated matrimonial plans designed exclusively for Agarwal, Jain, Khandelwal and Maheshwari families. Strict verification, privacy controls, Kundali compatibility, and dedicated relationship managers.",
     "trustBadges": {
       "noHidden": "Zero Hidden Charges",
       "privacy": "100% Privacy Control",
@@ -886,7 +887,7 @@
             "included": true
           },
           {
-            "text": "Browse 50,000+ Agarwal profiles",
+            "text": "Browse 50,000+ verified profiles",
             "included": true
           },
           {
@@ -1069,7 +1070,7 @@
     },
     "benefits": {
       "eyebrow": "The VivahSambandh Advantage",
-      "title": "Built With Respect for Agarwal Traditions",
+      "title": "Built With Respect for Community Traditions",
       "items": [
         {
           "icon": "🛡️",
@@ -1079,7 +1080,7 @@
         {
           "icon": "☸️",
           "title": "18 Gotras & Kundali Match",
-          "desc": "Respect for traditional Agarwal Gotra exogamy with instant 36-guna Milan calculations and Kundali compatibility."
+          "desc": "Respect for traditional Gotra exogamy with instant 36-guna Milan calculations and Kundali compatibility."
         },
         {
           "icon": "🔒",

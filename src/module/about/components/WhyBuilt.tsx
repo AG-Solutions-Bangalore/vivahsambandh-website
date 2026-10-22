@@ -87,7 +87,7 @@ function PointIcon({ index }: { index: number }) {
 }
 
 /**
- * "Built for Agarwal,Jain,Khandelwal,Maheshwari, by People Who Understand" —
+ * "Built for Our Families, by People Who Understand" —
  * mandap visual left, 4 icon points right (design's middle cream block).
  */
 export default function WhyBuilt() {

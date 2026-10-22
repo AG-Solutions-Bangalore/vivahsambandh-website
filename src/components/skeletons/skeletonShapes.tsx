@@ -12,7 +12,7 @@
  * state once, so screen readers are not flooded by a hundred empty divs.
  */
 
-import { cn } from 'cn'
+import { cn } from "cn"
 
 /** Surface a block sits on — decides the block colour. */
 export type SkeletonTone = 'light' | 'dark'

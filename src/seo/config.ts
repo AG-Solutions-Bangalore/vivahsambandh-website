@@ -15,18 +15,18 @@ export const COMPANY_CONFIG = {
   },
 
   titles: {
-    en: "VivahSambandh — Premium Agarwal Matrimony | Tradition Meets New Beginnings",
-    hi: "विवाहसंबंध — विश्वसनीय अग्रवाल वैवाहिक मंच | परंपरा से जुड़ें",
+    en: "VivahSambandh — Premium Community Matrimony | Tradition Meets New Beginnings",
+    hi: "विवाहसंबंध — विश्वसनीय समुदाय मैट्रिमोनी | परंपरा से जुड़ें",
   },
 
   descriptions: {
-    en: "VivahSambandh is India’s trusted premium Community platform connecting verified families with shared traditions, Gotra compatibility, and values for lifelong relationships.",
-    hi: "विवाहसंबंध अग्रवाल परिवारों के लिए एक विश्वसनीय वैवाहिक मंच है, जो साझा संस्कारों, मूल्यों और परंपराओं के साथ जीवनसाथी खोजने में आपकी सहायता करता है।",
+    en: "VivahSambandh is India’s trusted premium Community Matrimony platform connecting verified Agarwal, Jain, Khandelwal and Maheshwari families through shared traditions, Gotra compatibility, and values for lifelong relationships.",
+    hi: "विवाहसंबंध अग्रवाल, जैन, खंडेलवाल और माहेश्वरी परिवारों के लिए एक विश्वसनीय समुदाय मैट्रिमोनी मंच है, जो साझा संस्कारों, मूल्यों और परंपराओं के साथ जीवनसाथी खोजने में आपकी सहायता करता है।",
   },
 
   keywords: {
-    en: "Agarwal matrimony, Community, VivahSambandh, Agarwal shaadi, Agarwal brides, Agarwal grooms, Bansal gotra, Mittal gotra, Jindal gotra, Agarwal marriage bureau, premium matrimony India",
-    hi: "अग्रवाल मैट्रिमोनी, विवाहसंबंध, अग्रवाल शादी, अग्रवाल रिश्ते, बंसल गोत्र, मित्तल गोत्र, जिंदल गोत्र, अग्रवाल वैवाहिक मंच",
+    en: "community matrimony, Agarwal matrimony, VivahSambandh, Agarwal shaadi, Agarwal brides, Agarwal grooms, Bansal gotra, Mittal gotra, Jindal gotra, Agarwal marriage bureau, premium matrimony India",
+    hi: "समुदाय मैट्रिमोनी, अग्रवाल मैट्रिमोनी, विवाहसंबंध, अग्रवाल शादी, अग्रवाल रिश्ते, बंसल गोत्र, मित्तल गोत्र, जिंदल गोत्र, अग्रवाल वैवाहिक मंच",
   },
 
   siteOrigin: "https://vivahsambandh.com",
@@ -167,48 +167,48 @@ export const PAGE_SEO: Record<
 > = {
   home: {
     titles: {
-      en: "VivahSambandh — Premium Agarwal Matrimony | Tradition Meets New Beginnings",
-      hi: "विवाहसंबंध — विश्वसनीय अग्रवाल वैवाहिक मंच | परंपरा से जुड़ें",
+      en: "VivahSambandh — Premium Community Matrimony | Tradition Meets New Beginnings",
+      hi: "विवाहसंबंध — विश्वसनीय समुदाय मैट्रिमोनी | परंपरा से जुड़ें",
     },
     descriptions: {
-      en: "VivahSambandh is India’s trusted premium Community platform connecting verified families with shared traditions, Gotra compatibility, and values for lifelong relationships.",
-      hi: "विवाहसंबंध अग्रवाल परिवारों के लिए एक विश्वसनीय वैवाहिक मंच है, जो साझा संस्कारों, मूल्यों और परंपराओं के साथ जीवनसाथी खोजने में आपकी सहायता करता है।",
+      en: "VivahSambandh is India’s trusted premium Community Matrimony platform connecting verified Agarwal, Jain, Khandelwal and Maheshwari families through shared traditions, Gotra compatibility, and values for lifelong relationships.",
+      hi: "विवाहसंबंध अग्रवाल, जैन, खंडेलवाल और माहेश्वरी परिवारों के लिए एक विश्वसनीय समुदाय मैट्रिमोनी मंच है, जो साझा संस्कारों, मूल्यों और परंपराओं के साथ जीवनसाथी खोजने में आपकी सहायता करता है।",
     },
   },
   about: {
     titles: {
-      en: "About Us — VivahSambandh | Trusted Agarwal Matrimony Platform",
-      hi: "हमारे बारे में — विवाहसंबंध | विश्वसनीय अग्रवाल वैवाहिक मंच",
+      en: "About Us — VivahSambandh | Trusted Community Matrimony Platform",
+      hi: "हमारे बारे में — विवाहसंबंध | विश्वसनीय समुदाय मैट्रिमोनी मंच",
     },
     descriptions: {
-      en: "Learn about VivahSambandh — India’s trusted Community platform built on tradition, strict verification and family values to help families find their perfect match.",
-      hi: "विवाहसंबंध के बारे में जानें — परंपरा, कड़े सत्यापन और पारिवारिक मूल्यों पर आधारित अग्रवाल परिवारों के लिए विश्वसनीय वैवाहिक मंच।",
+      en: "Learn about VivahSambandh — India’s trusted Community Matrimony platform built on tradition, strict verification and family values to help families find their perfect match.",
+      hi: "विवाहसंबंध के बारे में जानें — परंपरा, कड़े सत्यापन और पारिवारिक मूल्यों पर आधारित समुदाय मैट्रिमोनी मंच जो परिवारों को सही जीवनसाथी खोजने में मदद करता है।",
     },
   },
   stories: {
     titles: {
-      en: "Success Stories — VivahSambandh | Agarwal Matrimony Weddings",
-      hi: "सफलता की कहानियां — विवाहसंबंध | सफल अग्रवाल विवाह",
+      en: "Success Stories — VivahSambandh | Community Matrimony Weddings",
+      hi: "सफलता की कहानियां — विवाहसंबंध | सफल सामुदायिक विवाह",
     },
     descriptions: {
-      en: "Read inspiring wedding stories of 500+ Agarwal couples who found their life partner through VivahSambandh with shared values and family trust.",
-      hi: "विवाहसंबंध के माध्यम से जुड़े 500+ अग्रवाल दंपत्तियों की सुखद विवाह गाथाएं पढ़ें और अपनी शादी की कहानी साझा करें।",
+      en: "Read inspiring wedding stories of 500+ couples who found their life partner through VivahSambandh with shared values and family trust.",
+      hi: "विवाहसंबंध के माध्यम से जुड़े 500+ दंपत्तियों की सुखद विवाह गाथाएं पढ़ें और अपनी शादी की कहानी साझा करें।",
     },
   },
   membership: {
     titles: {
-      en: "Membership Plans — VivahSambandh | Premium Agarwal Matrimony",
+      en: "Membership Plans — VivahSambandh | Premium Community Matrimony",
       hi: "सदस्यता योजनाएं — विवाहसंबंध | पारदर्शी एवं भरोसेमंद प्लान",
     },
     descriptions: {
-      en: "Explore transparent membership plans for Agarwal,Jain,Khandelwal,Maheshwari. Verified profile access, Kundali matching, and dedicated matchmaker guidance.",
-      hi: "अग्रवाल परिवारों के लिए पारदर्शी सदस्यता योजनाएं देखें — सत्यापित प्रोफाइल, कुंडली मिलान और व्यक्तिगत परामर्शदाता सहायता।",
+      en: "Explore transparent membership plans for Agarwal, Jain, Khandelwal and Maheshwari families. Verified profile access, Kundali matching, and dedicated matchmaker guidance.",
+      hi: "अग्रवाल, जैन, खंडेलवाल और माहेश्वरी परिवारों के लिए पारदर्शी सदस्यता योजनाएं देखें — सत्यापित प्रोफाइल, कुंडली मिलान और व्यक्तिगत परामर्शदाता सहायता।",
     },
   },
   contact: {
     titles: {
-      en: "Contact Us — VivahSambandh | Agarwal Matrimony Support",
-      hi: "संपर्क करें — विवाहसंबंध | अग्रवाल मैट्रिमोनी सहायता",
+      en: "Contact Us — VivahSambandh | Community Matrimony Support",
+      hi: "संपर्क करें — विवाहसंबंध | समुदाय मैट्रिमोनी सहायता",
     },
     descriptions: {
       en: "Have a question or need support? Contact the VivahSambandh team by phone, email or visit our office — we reply within 24 hours.",
@@ -221,8 +221,8 @@ export const PAGE_SEO: Record<
       hi: "ब्लॉग — विवाहसंबंध | रिश्तों की जानकारियां और सामुदायिक कहानियां",
     },
     descriptions: {
-      en: "Browse every VivahSambandh article — relationship guidance, wedding tips and Community updates.",
-      hi: "विवाहसंबंध के सभी लेख देखें — रिश्तों का मार्गदर्शन, शादी के टिप्स और अग्रवाल सामुदायिक अपडेट।",
+      en: "Browse every VivahSambandh article — relationship guidance, wedding tips and community matrimony updates.",
+      hi: "विवाहसंबंध के सभी लेख देखें — रिश्तों का मार्गदर्शन, शादी के टिप्स और सामुदायिक अपडेट।",
     },
   },
   privacy: {
@@ -267,18 +267,18 @@ export const PAGE_SEO: Record<
   },
   registration: {
     titles: {
-      en: "Bio-Data Registration — VivahSambandh Matrimony | Register Your Profile",
-      hi: "विवाह संबंध पंजीकरण — बायोडाटा रजिस्टर करें | विवाहसंबंध मैट्रिमोनी",
+      en: "Bio-Data Registration — VivahSambandh Community Matrimony | Register Your Profile",
+      hi: "विवाह संबंध पंजीकरण — बायोडाटा रजिस्टर करें | समुदाय मैट्रिमोनी",
     },
     descriptions: {
-      en: "Register your verified bio-data on VivahSambandh. Trusted matrimony matchmaking for Agarwal, Jain, Khandelwal, and Maheshwari communities.",
-      hi: "विवाह संबंध में अपना सत्यापित बायोडाटा पंजीकृत करें। अग्रवाल, जैन, खंडेलवाल और माहेश्वरी समाज के लिए विश्वसनीय वैवाहिक मंच।",
+      en: "Register your verified bio-data on VivahSambandh. Trusted community matrimony matchmaking for Agarwal, Jain, Khandelwal, and Maheshwari communities.",
+      hi: "विवाह संबंध में अपना सत्यापित बायोडाटा पंजीकृत करें। अग्रवाल, जैन, खंडेलवाल और माहेश्वरी समाज के लिए विश्वसनीय समुदाय मैट्रिमोनी मंच।",
     },
   },
   download: {
     titles: {
-      en: "Download VivahSambandh App — Premium Matrimony on Android & iOS",
-      hi: "विवाहसंबंध ऐप डाउनलोड करें — Android व iOS पर विश्वसनीय मैट्रिमोनी",
+      en: "Download VivahSambandh App — Premium Community Matrimony on Android & iOS",
+      hi: "विवाहसंबंध ऐप डाउनलोड करें — Android व iOS पर विश्वसनीय समुदाय मैट्रिमोनी",
     },
     descriptions: {
       en: "Download the VivahSambandh mobile app for Android and iOS. Connect with verified matches, receive instant alerts, and find your life partner on the go.",
@@ -287,8 +287,8 @@ export const PAGE_SEO: Record<
   },
   "admin-register": {
     titles: {
-      en: "Admin Registration — VivahSambandh Matrimony Portal",
-      hi: "एडमिन पंजीकरण — विवाहसंबंध मैट्रिमोनी पोर्टल",
+      en: "Admin Registration — VivahSambandh Community Matrimony Portal",
+      hi: "एडमिन पंजीकरण — विवाहसंबंध समुदाय मैट्रिमोनी पोर्टल",
     },
     descriptions: {
       en: "Administrative registration portal for VivahSambandh community coordinators and verified managers.",
