@@ -1,7 +1,7 @@
 /**
  * @file src/module/super-admin/pages/FaqsPage.tsx
- * FAQ management for the Super Admin Panel: list FAQ groups, view nested Q&As,
- * toggle status, and delete.
+ * FAQ management for the Super Admin Panel: list FAQ groups, toggle status,
+ * and delete.
  *
  * Creating and editing happen on their own screens — a group holds a whole
  * stack of questions, which is far too much to edit inside a dialog — so
@@ -10,13 +10,12 @@
 
 import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Plus, RefreshCw, Eye, Pencil, Trash2, Layers } from "lucide-react";
+import { Plus, RefreshCw, Pencil, Trash2, Layers } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "cn";
 import { ConfirmDialog } from "../components/ConfirmDialog";
 import { PanelCard } from "../components/PanelCard";
 import { PanelPageHeader } from "../components/PanelPageHeader";
-import { PanelModal } from "../components/PanelModal";
 import { PanelPagination } from "../components/PanelPagination";
 import { PanelSearch } from "../components/PanelSearch";
 import { PanelToolbar } from "../components/PanelToolbar";
@@ -28,14 +27,12 @@ import {
   PanelTableHeadCell,
 } from "../components/PanelTable";
 import { PanelFilterSelect } from "../components/PanelFilterSelect";
-import { StatusBadge } from "../components/StatusBadge";
 import { StatusSwitch } from "../components/StatusSwitch";
 import { panelDescription } from "../navigation";
 import { errorMessage } from "../hook/errors";
 import { DEFAULT_PER_PAGE, useServerSearch } from "../hook/useServerList";
 import {
   useDeleteFaqMutation,
-  useFaqQuery,
   useFaqsQuery,
   useUpdateFaqStatusMutation,
 } from "../hook/useFaqs";
@@ -66,11 +63,6 @@ export default function FaqsPage() {
 
   const statusMutation = useUpdateFaqStatusMutation();
   const deleteMutation = useDeleteFaqMutation();
-
-  // Inspector state
-  const [inspectingId, setInspectingId] = useState<number | null>(null);
-  const { data: inspectedRecord, isLoading: isLoadingDetail } =
-    useFaqQuery(inspectingId);
 
   // Delete FAQ group state
   const [deleteTargetId, setDeleteTargetId] = useState<number | null>(null);
@@ -116,7 +108,6 @@ export default function FaqsPage() {
       {
         onSuccess: () => {
           setDeleteTargetId(null);
-          if (inspectingId === id) setInspectingId(null);
         },
       },
     );
@@ -245,17 +236,6 @@ export default function FaqsPage() {
                         type="button"
                         size="icon-xs"
                         variant="outline"
-                        onClick={() => setInspectingId(item.id)}
-                        title="View Questions"
-                        aria-label="View questions"
-                        className="cursor-pointer rounded-full border-navy-200 text-navy-700 hover:bg-navy-50"
-                      >
-                        <Eye className="size-3.5 text-navy-700" aria-hidden />
-                      </Button>
-                      <Button
-                        type="button"
-                        size="icon-xs"
-                        variant="outline"
                         onClick={() => navigate(`${LIST_PATH}/${item.id}/edit`)}
                         title="Edit FAQ Group"
                         aria-label="Edit FAQ group"
@@ -296,119 +276,6 @@ export default function FaqsPage() {
           />
         </PanelTableFooter>
       </PanelCard>
-
-      {/* Inspect/View Modal */}
-      <PanelModal
-        isOpen={inspectingId !== null}
-        onClose={() => setInspectingId(null)}
-        title={
-          inspectedRecord
-            ? `FAQ Group: ${inspectedRecord.faq_for}`
-            : "FAQ Group Details"
-        }
-        size="lg"
-        footer={
-          <div className="flex w-full items-center justify-between">
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={() => {
-                const target = inspectedRecord;
-                setInspectingId(null);
-                if (target) setDeleteTargetId(target.id);
-              }}
-              className="cursor-pointer gap-1.5 rounded-full border-maroon-200 bg-maroon-50 text-xs font-bold text-maroon-800 hover:bg-maroon-100"
-            >
-              <Trash2 className="size-3.5" />
-              <span>Delete Group</span>
-            </Button>
-
-            <div className="flex items-center gap-2">
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={() => {
-                  const target = inspectedRecord;
-                  setInspectingId(null);
-                  if (target) navigate(`${LIST_PATH}/${target.id}/edit`);
-                }}
-                className="cursor-pointer gap-1.5 rounded-full border-gold-300 bg-gold-50 text-xs font-bold text-gold-900 hover:bg-gold-100"
-              >
-                <Pencil className="size-3.5" />
-                <span>Edit Group</span>
-              </Button>
-              <Button
-                type="button"
-                size="sm"
-                onClick={() => setInspectingId(null)}
-                className="cursor-pointer rounded-full bg-navy-900 px-5 text-xs font-bold text-white hover:bg-navy-700"
-              >
-                Done
-              </Button>
-            </div>
-          </div>
-        }
-      >
-        {isLoadingDetail ? (
-          <div className="space-y-4 py-12 text-center text-xs text-ink-500">
-            <RefreshCw className="mx-auto size-5 animate-spin text-gold-600" />
-            Loading FAQ details…
-          </div>
-        ) : inspectedRecord ? (
-          <div className="space-y-5">
-            <div className="flex items-center justify-between border-b border-cream-200 pb-3">
-              <div>
-                <span className="text-xs font-semibold text-ink-500">
-                  Target Area:
-                </span>
-                <span className="ml-2 font-bold text-navy-900">
-                  {inspectedRecord.faq_for}
-                </span>
-              </div>
-              <StatusBadge status={inspectedRecord.faq_status} />
-            </div>
-
-            <div className="space-y-3.5 max-h-[60vh] overflow-y-auto pr-1">
-              <h4 className="text-[0.68rem] font-bold tracking-[0.14em] text-navy-900 uppercase">
-                Questions & Answers ({inspectedRecord.subs?.length ?? 0})
-              </h4>
-              {!inspectedRecord.subs || inspectedRecord.subs.length === 0 ? (
-                <p className="text-xs text-ink-500 italic">
-                  No questions in this group.
-                </p>
-              ) : (
-                inspectedRecord.subs.map((sub, idx) => (
-                  <div
-                    key={sub.id ?? idx}
-                    className="rounded-xl border border-cream-200 bg-cream-50/60 p-4"
-                  >
-                    <div className="flex items-start justify-between gap-3">
-                      <div>
-                        {sub.faq_heading && (
-                          <span className="mb-1 block text-[10px] font-bold tracking-wider text-gold-700 uppercase">
-                            {sub.faq_heading}
-                          </span>
-                        )}
-                        <h5 className="text-xs font-bold text-navy-900 leading-snug">
-                          {idx + 1}. {sub.faq_que}
-                        </h5>
-                      </div>
-                      <span className="shrink-0 rounded-md border border-cream-200 bg-white px-2 py-0.5 font-mono text-[10px] font-bold text-ink-600 shadow-2xs">
-                        Order {sub.faq_sort}
-                      </span>
-                    </div>
-                    <p className="mt-2 text-xs leading-relaxed text-ink-800 whitespace-pre-wrap">
-                      {sub.faq_ans}
-                    </p>
-                  </div>
-                ))
-              )}
-            </div>
-          </div>
-        ) : null}
-      </PanelModal>
 
       {/* Delete Group Dialog */}
       {deleteTarget && (

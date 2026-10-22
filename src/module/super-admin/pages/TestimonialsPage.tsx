@@ -1,8 +1,8 @@
 /**
  * @file src/module/super-admin/pages/TestimonialsPage.tsx
  * Testimonial & Success Stories management for the Super Admin Panel:
- * list reviews, search and filter, view story details, create new testimonials,
- * edit existing reviews, toggle status, and delete records.
+ * list reviews, search and filter, create new testimonials, edit existing
+ * reviews, toggle status, and delete records.
  */
 
 import { useMemo, useState } from "react";
@@ -10,13 +10,10 @@ import {
   Quote,
   Plus,
   RefreshCw,
-  Eye,
   Pencil,
   Trash2,
   Star,
-  Calendar,
   Layers,
-  User,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -37,7 +34,6 @@ import {
   PanelTableHeadCell,
 } from "../components/PanelTable";
 import { PanelFilterSelect } from "../components/PanelFilterSelect";
-import { StatusBadge } from "../components/StatusBadge";
 import { StatusSwitch } from "../components/StatusSwitch";
 import { panelDescription } from "../navigation";
 import { errorMessage } from "../hook/errors";
@@ -179,9 +175,6 @@ export default function TestimonialsPage() {
   const [editingRecord, setEditingRecord] = useState<TestimonialRecord | null>(
     null,
   );
-  const [viewingRecord, setViewingRecord] = useState<TestimonialRecord | null>(
-    null,
-  );
   const [deleteTarget, setDeleteTarget] = useState<TestimonialRecord | null>(
     null,
   );
@@ -321,12 +314,6 @@ export default function TestimonialsPage() {
         successMessage: "Testimonial updated successfully!",
       });
       setEditingRecord(null);
-      if (viewingRecord?.id === editingRecord.id) {
-        setViewingRecord({
-          ...viewingRecord,
-          ...payload,
-        });
-      }
     } catch {
       // Toast handled by mutation
     }
@@ -357,7 +344,6 @@ export default function TestimonialsPage() {
       {
         onSuccess: () => {
           setDeleteTarget(null);
-          if (viewingRecord?.id === id) setViewingRecord(null);
         },
       },
     );
@@ -536,18 +522,6 @@ export default function TestimonialsPage() {
 
                   <td className="px-4 py-3.5 text-right whitespace-nowrap">
                     <div className="flex items-center justify-end gap-1.5">
-                      <Button
-                        type="button"
-                        size="icon-xs"
-                        variant="outline"
-                        onClick={() => setViewingRecord(item)}
-                        title="Inspect Testimonial"
-                        aria-label="Inspect testimonial"
-                        className="cursor-pointer rounded-full border-navy-200 text-navy-700 hover:bg-navy-50"
-                      >
-                        <Eye className="size-3.5 text-navy-700" aria-hidden />
-                      </Button>
-
                       <Button
                         type="button"
                         size="icon-xs"
@@ -881,123 +855,6 @@ export default function TestimonialsPage() {
             )}
           </div>
         </div>
-      </PanelModal>
-
-      {/* INSPECT MODAL */}
-      <PanelModal
-        isOpen={Boolean(viewingRecord)}
-        onClose={() => setViewingRecord(null)}
-        title="Testimonial Details"
-        description="Review inspection & client attribution details."
-        size="md"
-        footer={
-          <div className="flex w-full items-center justify-between">
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={() => {
-                const target = viewingRecord;
-                setViewingRecord(null);
-                if (target) setDeleteTarget(target);
-              }}
-              className="cursor-pointer gap-1.5 rounded-full border-maroon-200 bg-maroon-50 text-xs font-bold text-maroon-800 hover:bg-maroon-100"
-            >
-              <Trash2 className="size-3.5" />
-              <span>Delete</span>
-            </Button>
-
-            <div className="flex items-center gap-2">
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={() => {
-                  const target = viewingRecord;
-                  setViewingRecord(null);
-                  if (target) handleOpenEdit(target);
-                }}
-                className="cursor-pointer gap-1.5 rounded-full border-gold-300 bg-gold-50 text-xs font-bold text-gold-900 hover:bg-gold-100"
-              >
-                <Pencil className="size-3.5" />
-                <span>Edit</span>
-              </Button>
-              <Button
-                type="button"
-                size="sm"
-                onClick={() => setViewingRecord(null)}
-                className="cursor-pointer rounded-full bg-navy-900 px-5 text-xs font-bold text-white hover:bg-navy-700"
-              >
-                Done
-              </Button>
-            </div>
-          </div>
-        }
-      >
-        {viewingRecord && (
-          <div className="space-y-5">
-            {/* Header info */}
-            <div className="flex items-start justify-between gap-4 border-b border-cream-200 pb-4">
-              <div className="flex items-center gap-3">
-                <div className="flex size-11 items-center justify-center rounded-full bg-gold-500 font-serif text-sm font-bold text-white shadow-sm">
-                  {(viewingRecord.testimonial_client_name || "C")
-                    .trim()
-                    .charAt(0)
-                    .toUpperCase()}
-                </div>
-                <div>
-                  <h3 className="text-sm font-bold text-navy-900">
-                    {viewingRecord.testimonial_client_name ||
-                      "Anonymous Client"}
-                  </h3>
-                  <div className="mt-1 flex items-center gap-2">
-                    <span className="inline-flex items-center gap-1 rounded-md border border-gold-300 bg-gold-50 px-2 py-0.5 text-xs font-bold text-gold-900">
-                      <Layers className="size-3 text-gold-600" />
-                      Section: {viewingRecord.testimonial_for || "home"}
-                    </span>
-                    <StatusBadge
-                      status={viewingRecord.testimonial_status}
-                      size="sm"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              <div className="text-right">
-                <StarRating
-                  rating={Number(viewingRecord.testimonial_rating) || 5}
-                  size="md"
-                />
-              </div>
-            </div>
-
-            {/* Testimonial Quote display */}
-            <div className="relative rounded-2xl border border-gold-200/80 bg-gold-50/40 p-5">
-              <Quote className="absolute top-3 right-3 size-7 text-gold-300/80" />
-              <p className="relative font-serif text-xs leading-relaxed italic text-navy-950">
-                "{viewingRecord.testimonial_description}"
-              </p>
-            </div>
-
-            {/* Meta details */}
-            <div className="grid grid-cols-2 gap-3 text-xs text-ink-600">
-              <div className="flex items-center gap-2 rounded-xl border border-cream-200 bg-cream-50/70 p-2.5">
-                <Calendar className="size-3.5 text-ink-400" />
-                <span>
-                  Date:{" "}
-                  {formatDate(
-                    viewingRecord.testimonial_created_date ||
-                      viewingRecord.created_at,
-                  )}
-                </span>
-              </div>
-              <div className="flex items-center gap-2 rounded-xl border border-cream-200 bg-cream-50/70 p-2.5">
-                <User className="size-3.5 text-ink-400" />
-                <span>{viewingRecord.testimonial_for}</span>
-              </div>
-            </div>
-          </div>
-        )}
       </PanelModal>
 
       {/* DELETE CONFIRM DIALOG */}
