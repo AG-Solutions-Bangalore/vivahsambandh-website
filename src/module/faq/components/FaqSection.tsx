@@ -138,8 +138,7 @@ export default function FaqSection({
       : pagePath("/contact", lang));
 
   const ctaLabel =
-    ctaText ||
-    t("faq.contactUs", t("header.contact", "Contact Us"));
+    ctaText || t("faq.contactUs", t("header.contact", "Contact Us"));
 
   /**
    * CRM slugs this section may query. Derived from the page route so the
@@ -147,8 +146,10 @@ export default function FaqSection({
    * with no FAQs of its own gets an empty result, not another page's.
    */
   const pageAliases = page ? getPageSlugAliases(page) : null;
-  const primarySlug = pageAliases ? pageAliases[0] : slug ?? "home";
-  const aliasSlugs = pageAliases ? pageAliases.slice(1) : fallbackSlugs ?? null;
+  const primarySlug = pageAliases ? pageAliases[0] : (slug ?? "home");
+  const aliasSlugs = pageAliases
+    ? pageAliases.slice(1)
+    : (fallbackSlugs ?? null);
 
   const { groups, isPending, isEmpty } = useGroupedFaqs(primarySlug, {
     fallbackSlugs: aliasSlugs,
@@ -174,7 +175,8 @@ export default function FaqSection({
   }
 
   const total = flatItems.length;
-  const safeActiveIdx = total === 0 ? 0 : Math.min(activeQuestionIdx, total - 1);
+  const safeActiveIdx =
+    total === 0 ? 0 : Math.min(activeQuestionIdx, total - 1);
 
   /**
    * Sliding window of `DIAL_SIZE` questions over the full list. The window
@@ -215,7 +217,7 @@ export default function FaqSection({
       <img
         src={img("/images/home/flower1_image-320.webp")}
         srcSet={imgSrcSet(
-          "/images/home/flower1_image-192.webp 192w, /images/home/flower1_image-320.webp 320w, /images/home/flower1_image-640.webp 640w"
+          "/images/home/flower1_image-192.webp 192w, /images/home/flower1_image-320.webp 320w, /images/home/flower1_image-640.webp 640w",
         )}
         sizes="(max-width: 640px) 120px, (max-width: 1024px) 200px, 280px"
         width={320}
@@ -238,7 +240,6 @@ export default function FaqSection({
               <span>{eyebrow || t("faq.eyebrow", "FAQ")}</span>
               <span className="text-gold-500 text-xs">❖</span>
             </div>
-
 
             {/* Section Heading */}
             <h2 className="text-2xl sm:text-3xl lg:text-[34px] font-serif font-bold text-navy-900 leading-[1.18] mb-2.5">
@@ -264,7 +265,7 @@ export default function FaqSection({
               {subtitle ||
                 t(
                   "faq.subtitle",
-                  "Find answers to common questions about VivahSambandh."
+                  "Find answers to common questions about VivahSambandh.",
                 )}
             </p>
           </div>
@@ -445,31 +446,6 @@ export default function FaqSection({
                           )}
                         </div>
                       </div>
-
-                      {/* Pagination Indicator Dots — one per visible question */}
-                      <div className="flex justify-center items-center gap-1.5 mt-3 pointer-events-auto">
-                        {visibleItems.map((_entry, dotIdx) => {
-                          const globalIdx = windowStart + dotIdx;
-                          return (
-                            <button
-                              key={globalIdx}
-                              type="button"
-                              aria-label={`Go to question ${globalIdx + 1}`}
-                              onClick={() => setActiveQuestionIdx(globalIdx)}
-                              className={`transition-all duration-300 rounded-full cursor-pointer ${
-                                safeActiveIdx === globalIdx
-                                  ? "w-2.5 h-2 bg-maroon-600"
-                                  : "w-2 h-2 bg-maroon-200 hover:bg-maroon-300"
-                              }`}
-                            />
-                          );
-                        })}
-                        {total > DIAL_SIZE && (
-                          <span className="ml-1.5 text-[10px] font-semibold tabular-nums text-ink-600">
-                            {safeActiveIdx + 1} / {total}
-                          </span>
-                        )}
-                      </div>
                     </div>
                   </div>
                 </div>
@@ -593,4 +569,3 @@ export default function FaqSection({
     </section>
   );
 }
-
