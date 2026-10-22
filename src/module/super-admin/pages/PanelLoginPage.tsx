@@ -1,6 +1,6 @@
 /**
  * @file src/module/super-admin/pages/PanelLoginPage.tsx
- * Dedicated authentication page for Super Admin Panel at `/panel-login`.
+ * Dedicated authentication page for Super Admin Panel at `/crm-login`.
  * Features 10-digit mobile number login and mobile + email password recovery.
  */
 

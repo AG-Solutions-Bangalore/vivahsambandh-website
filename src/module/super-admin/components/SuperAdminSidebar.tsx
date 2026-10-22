@@ -25,7 +25,7 @@ export function SuperAdminSidebar({ isOpen, onClose }: SuperAdminSidebarProps) {
   const handleLogout = () => {
     logout()
     setShowLogoutConfirm(false)
-    navigate('/panel-login', { replace: true })
+    navigate('/crm-login', { replace: true })
   }
 
   return (
@@ -151,7 +151,7 @@ export function SuperAdminSidebar({ isOpen, onClose }: SuperAdminSidebarProps) {
       <ConfirmDialog
         isOpen={showLogoutConfirm}
         title="Sign Out from Super Admin"
-        description="Are you sure you want to end your Super Admin session? You will need to login again at /panel-login."
+        description="Are you sure you want to end your Super Admin session? You will need to login again at /crm-login."
         confirmText="Yes, Sign Out"
         cancelText="Stay Signed In"
         variant="danger"

@@ -150,7 +150,7 @@ function ScrollManager() {
 export default function App() {
   const { i18n } = useTranslation()
   const { pathname } = useLocation()
-  const isPanelRoute = pathname.startsWith('/panel') || pathname === '/panel-login'
+  const isPanelRoute = pathname.startsWith('/panel') || pathname === '/crm-login'
 
   /**
    * Panel screens all sit inside the same guard + layout shell. The editor
@@ -184,7 +184,7 @@ export default function App() {
             <Routes>
               {/* Super Admin Login */}
               <Route
-                path="/panel-login"
+                path="/crm-login"
                 element={<PanelLoginPage />}
               />
 

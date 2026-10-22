@@ -98,14 +98,14 @@ export function useSuperAdminAuth(): SuperAdminAuthContextValue {
 
 /**
  * Route protection guard for all Super Admin panel routes.
- * Redirects unauthenticated users directly to `/panel-login`.
+ * Redirects unauthenticated users directly to `/crm-login`.
  */
 export function SuperAdminGuard({ children }: { children: ReactNode }) {
   const { isAuthenticated } = useSuperAdminAuth()
   const location = useLocation()
 
   if (!isAuthenticated) {
-    return <Navigate to="/panel-login" state={{ from: location }} replace />
+    return <Navigate to="/crm-login" state={{ from: location }} replace />
   }
 
   return <>{children}</>
