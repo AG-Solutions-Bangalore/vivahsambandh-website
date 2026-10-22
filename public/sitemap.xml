@@ -41,36 +41,36 @@
     <xhtml:link rel="alternate" hreflang="en" href="https://vivahsambandh.com/stories"/>
     <xhtml:link rel="alternate" hreflang="hi" href="https://vivahsambandh.com/hi/stories"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://vivahsambandh.com/stories"/>
-    <lastmod>2026-09-19</lastmod>
+    <lastmod>2026-10-22</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.90</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://vivahsambandh.com/hi/stories</loc>
     <xhtml:link rel="alternate" hreflang="en" href="https://vivahsambandh.com/stories"/>
     <xhtml:link rel="alternate" hreflang="hi" href="https://vivahsambandh.com/hi/stories"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://vivahsambandh.com/stories"/>
-    <lastmod>2026-09-19</lastmod>
+    <lastmod>2026-10-22</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.90</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://vivahsambandh.com/membership</loc>
     <xhtml:link rel="alternate" hreflang="en" href="https://vivahsambandh.com/membership"/>
     <xhtml:link rel="alternate" hreflang="hi" href="https://vivahsambandh.com/hi/membership"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://vivahsambandh.com/membership"/>
-    <lastmod>2026-09-19</lastmod>
+    <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.90</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://vivahsambandh.com/hi/membership</loc>
     <xhtml:link rel="alternate" hreflang="en" href="https://vivahsambandh.com/membership"/>
     <xhtml:link rel="alternate" hreflang="hi" href="https://vivahsambandh.com/hi/membership"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://vivahsambandh.com/membership"/>
-    <lastmod>2026-09-19</lastmod>
+    <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.90</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://vivahsambandh.com/blogs</loc>
@@ -131,18 +131,18 @@
     <xhtml:link rel="alternate" hreflang="en" href="https://vivahsambandh.com/download"/>
     <xhtml:link rel="alternate" hreflang="hi" href="https://vivahsambandh.com/hi/download"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://vivahsambandh.com/download"/>
-    <lastmod>2026-10-22</lastmod>
+    <lastmod>2026-09-19</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.90</priority>
   </url>
   <url>
     <loc>https://vivahsambandh.com/hi/download</loc>
     <xhtml:link rel="alternate" hreflang="en" href="https://vivahsambandh.com/download"/>
     <xhtml:link rel="alternate" hreflang="hi" href="https://vivahsambandh.com/hi/download"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://vivahsambandh.com/download"/>
-    <lastmod>2026-10-22</lastmod>
+    <lastmod>2026-09-19</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.90</priority>
   </url>
   <url>
     <loc>https://vivahsambandh.com/help-center</loc>

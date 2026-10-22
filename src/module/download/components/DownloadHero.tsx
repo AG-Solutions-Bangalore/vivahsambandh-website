@@ -49,9 +49,9 @@ export default function DownloadHero() {
                 <StoreBadge
                   store="play"
                   className="bg-transparent rounded-full border !border-white/10 !py-3 !px-5"
-                /> 
-                <StoreBadge 
-                  store="apple" 
+                />
+                <StoreBadge
+                  store="apple"
                   className="bg-transparent rounded-full border !border-white/10 !py-3 !px-5"
                 />
               </div>
@@ -73,14 +73,6 @@ export default function DownloadHero() {
                 </span>
                 <span className="font-semibold text-white">
                   {t("downloadPage.rating")}
-                </span>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-gold-500/20 text-gold-400 text-xs font-bold">
-                  🛡️
-                </span>
-                <span className="font-semibold text-white">
-                  {t("downloadPage.downloadsCount")}
                 </span>
               </div>
             </div>

@@ -222,6 +222,7 @@ export default function PhotosSection() {
         key={cropTarget || 'none'}
         isOpen={cropTarget !== null}
         aspect={cropTarget === 'full' ? FULL_PHOTO_ASPECT : FACE_PHOTO_ASPECT}
+        outputSize={cropTarget === 'full' ? 800 : 600}
         title={
           cropTarget === 'full'
             ? t('registrationPage.form.cropFullPhoto', 'Crop Full Length Photo')

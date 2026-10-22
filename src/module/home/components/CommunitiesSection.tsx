@@ -1,93 +1,100 @@
-import { useState } from 'react'
-import { useTranslation } from 'react-i18next'
-import { Link } from 'react-router-dom'
-import { cn } from 'cn'
-import Reveal, { RevealGroup } from '../../../components/motion/Reveal'
-import { pagePath } from '../../../constants/navigation'
-import type { AppLang } from '../../../i18n'
+import { useState } from "react";
+import { useTranslation } from "react-i18next";
+import { Link } from "react-router-dom";
+import { cn } from "cn";
+import Reveal, { RevealGroup } from "../../../components/motion/Reveal";
+import { pagePath } from "../../../constants/navigation";
+import type { AppLang } from "../../../i18n";
 
 interface CommunityInfo {
-  id: string
-  name: string
-  tag: string
-  gotras: string
-  count: string
-  heritage: string
-  ctaText: string
+  id: string;
+  name: string;
+  tag: string;
+  gotras: string;
+
+  heritage: string;
+  ctaText: string;
 }
 
 export default function CommunitiesSection() {
-  const { t, i18n } = useTranslation()
+  const { t, i18n } = useTranslation();
   const lang: AppLang =
-    i18n.resolvedLanguage === 'hi' || i18n.language === 'hi' ? 'hi' : 'en'
-  const registerHref = pagePath('/register', lang)
+    i18n.resolvedLanguage === "hi" || i18n.language === "hi" ? "hi" : "en";
+  const registerHref = pagePath("/register", lang);
 
-  const [selectedCommunity, setSelectedCommunity] = useState<string | null>(null)
+  const [selectedCommunity, setSelectedCommunity] = useState<string | null>(
+    null,
+  );
 
   const communities: CommunityInfo[] = [
     {
-      id: 'agarwal',
-      name: t('communities.list.0.name', { defaultValue: 'Agarwal' }),
-      tag: t('communities.list.0.tag', { defaultValue: '18 Sacred Gotras' }),
-      gotras: t('communities.list.0.gotras', {
-        defaultValue: 'Bansal, Mittal, Jindal, Singhal, Garg, Goyal, Kansal & more',
+      id: "agarwal",
+      name: t("communities.list.0.name", { defaultValue: "Agarwal" }),
+      tag: t("communities.list.0.tag", { defaultValue: "18 Sacred Gotras" }),
+      gotras: t("communities.list.0.gotras", {
+        defaultValue:
+          "Bansal, Mittal, Jindal, Singhal, Garg, Goyal, Kansal & more",
       }),
-      count: t('communities.list.0.count', { defaultValue: '22,000+ Profiles' }),
-      heritage: t('communities.list.0.heritage', {
-        defaultValue: 'Maharaja Agrasen Lineage & Heritage',
+
+      heritage: t("communities.list.0.heritage", {
+        defaultValue: "Maharaja Agrasen Lineage & Heritage",
       }),
-      ctaText: t('communities.explore', { defaultValue: 'Explore Agarwal Matches' }),
-    },
-    {
-      id: 'jain',
-      name: t('communities.list.1.name', { defaultValue: 'Jain' }),
-      tag: t('communities.list.1.tag', {
-        defaultValue: 'Digambar & Svetambar Traditions',
-      }),
-      gotras: t('communities.list.1.gotras', {
-        defaultValue: 'Murtipujak, Terapanthi, Sthanakvasi & Deravasi',
-      }),
-      count: t('communities.list.1.count', { defaultValue: '12,000+ Profiles' }),
-      heritage: t('communities.list.1.heritage', {
-        defaultValue: 'Ahimsa, Simplicity & Spiritual Values',
-      }),
-      ctaText: t('communities.explore', { defaultValue: 'Explore Jain Matches' }),
-    },
-    {
-      id: 'khandelwal',
-      name: t('communities.list.2.name', { defaultValue: 'Khandelwal' }),
-      tag: t('communities.list.2.tag', { defaultValue: 'Vaishya Heritage' }),
-      gotras: t('communities.list.2.gotras', {
-        defaultValue: 'Kulshreshtha, Dhamani, Dangayach, Rawat, Dusad & more',
-      }),
-      count: t('communities.list.2.count', { defaultValue: '8,500+ Profiles' }),
-      heritage: t('communities.list.2.heritage', {
-        defaultValue: 'Sage Khandela Lineage & Business Ethics',
-      }),
-      ctaText: t('communities.explore', {
-        defaultValue: 'Explore Khandelwal Matches',
+      ctaText: t("communities.explore", {
+        defaultValue: "Explore Agarwal Matches",
       }),
     },
     {
-      id: 'maheshwari',
-      name: t('communities.list.3.name', { defaultValue: 'Maheshwari' }),
-      tag: t('communities.list.3.tag', { defaultValue: '72 Sacred Khams' }),
-      gotras: t('communities.list.3.gotras', {
-        defaultValue: 'Didwana & Marwari Lineage, Deep Cultural Values',
+      id: "jain",
+      name: t("communities.list.1.name", { defaultValue: "Jain" }),
+      tag: t("communities.list.1.tag", {
+        defaultValue: "Digambar & Svetambar Traditions",
       }),
-      count: t('communities.list.3.count', { defaultValue: '9,500+ Profiles' }),
-      heritage: t('communities.list.3.heritage', {
-        defaultValue: 'Lord Mahesh Heritage & Philanthropy',
+      gotras: t("communities.list.1.gotras", {
+        defaultValue: "Murtipujak, Terapanthi, Sthanakvasi & Deravasi",
       }),
-      ctaText: t('communities.explore', {
-        defaultValue: 'Explore Maheshwari Matches',
+
+      heritage: t("communities.list.1.heritage", {
+        defaultValue: "Ahimsa, Simplicity & Spiritual Values",
+      }),
+      ctaText: t("communities.explore", {
+        defaultValue: "Explore Jain Matches",
       }),
     },
-  ]
+    {
+      id: "khandelwal",
+      name: t("communities.list.2.name", { defaultValue: "Khandelwal" }),
+      tag: t("communities.list.2.tag", { defaultValue: "Vaishya Heritage" }),
+      gotras: t("communities.list.2.gotras", {
+        defaultValue: "Kulshreshtha, Dhamani, Dangayach, Rawat, Dusad & more",
+      }),
+
+      heritage: t("communities.list.2.heritage", {
+        defaultValue: "Sage Khandela Lineage & Business Ethics",
+      }),
+      ctaText: t("communities.explore", {
+        defaultValue: "Explore Khandelwal Matches",
+      }),
+    },
+    {
+      id: "maheshwari",
+      name: t("communities.list.3.name", { defaultValue: "Maheshwari" }),
+      tag: t("communities.list.3.tag", { defaultValue: "72 Sacred Khams" }),
+      gotras: t("communities.list.3.gotras", {
+        defaultValue: "Didwana & Marwari Lineage, Deep Cultural Values",
+      }),
+
+      heritage: t("communities.list.3.heritage", {
+        defaultValue: "Lord Mahesh Heritage & Philanthropy",
+      }),
+      ctaText: t("communities.explore", {
+        defaultValue: "Explore Maheshwari Matches",
+      }),
+    },
+  ];
 
   const handleToggle = (id: string) => {
-    setSelectedCommunity((prev) => (prev === id ? null : id))
-  }
+    setSelectedCommunity((prev) => (prev === id ? null : id));
+  };
 
   return (
     <section
@@ -110,14 +117,19 @@ export default function CommunitiesSection() {
             <div>
               {/* Eyebrow */}
               <div className="inline-flex items-center gap-2">
-                <span className="text-gold-600 text-sm font-bold" aria-hidden="true">
+                <span
+                  className="text-gold-600 text-sm font-bold"
+                  aria-hidden="true"
+                >
                   ☸
                 </span>
                 <span
                   data-eyebrow
                   className="text-[11px] sm:text-xs font-bold tracking-[0.2em] uppercase text-gold-700"
                 >
-                  {t('communities.eyebrow', { defaultValue: 'Browse by community' })}
+                  {t("communities.eyebrow", {
+                    defaultValue: "Browse by community",
+                  })}
                 </span>
                 <div
                   className="inline-flex items-center gap-1 text-gold-500/80"
@@ -130,14 +142,16 @@ export default function CommunitiesSection() {
 
               {/* Title */}
               <h2 className="font-display mt-2 text-2xl sm:text-3xl lg:text-4xl font-bold text-navy-950">
-                {t('communities.title', { defaultValue: 'Find Matches by Community' })}
+                {t("communities.title", {
+                  defaultValue: "Find Matches by Community",
+                })}
               </h2>
 
               {/* Subtitle */}
               <p className="mt-1.5 max-w-2xl text-xs sm:text-sm text-ink-600 font-medium">
-                {t('communities.subtitle', {
+                {t("communities.subtitle", {
                   defaultValue:
-                    'Explore verified matrimonial profiles across Agarwal, Jain, Khandelwal, and Maheshwari families.',
+                    "Explore verified matrimonial profiles across Agarwal, Jain, Khandelwal, and Maheshwari families.",
                 })}
               </p>
             </div>
@@ -146,11 +160,15 @@ export default function CommunitiesSection() {
             <div className="shrink-0">
               <Link
                 to={registerHref}
-                title={t('communities.register', { defaultValue: 'Register Free Bio-Data' })}
+                title={t("communities.register", {
+                  defaultValue: "Register Free Bio-Data",
+                })}
                 className="group inline-flex items-center gap-2 rounded-full border border-maroon-600/25 bg-white/70 px-4 py-2 text-xs font-bold text-maroon-700 shadow-xs transition-all duration-300 hover:-translate-y-0.5 hover:border-maroon-600 hover:bg-maroon-600 hover:text-white hover:shadow-lg sm:px-5 sm:py-2.5 sm:text-sm"
               >
                 <span>
-                  {t('communities.register', { defaultValue: 'Register Free Bio-Data' })}
+                  {t("communities.register", {
+                    defaultValue: "Register Free Bio-Data",
+                  })}
                 </span>
                 <span
                   className="transition-transform duration-300 group-hover:translate-x-0.5"
@@ -173,7 +191,7 @@ export default function CommunitiesSection() {
             className="mt-6 flex flex-wrap items-center gap-2.5 sm:mt-7 sm:gap-3"
           >
             {communities.map((comm) => {
-              const isSelected = selectedCommunity === comm.id
+              const isSelected = selectedCommunity === comm.id;
 
               return (
                 <button
@@ -182,25 +200,25 @@ export default function CommunitiesSection() {
                   aria-pressed={isSelected}
                   onClick={() => handleToggle(comm.id)}
                   className={cn(
-                    'group inline-flex cursor-pointer items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold transition-all duration-300 outline-none select-none sm:px-5 sm:py-2.5',
-                    'focus-visible:ring-2 focus-visible:ring-gold-500/60',
+                    "group inline-flex cursor-pointer items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold transition-all duration-300 outline-none select-none sm:px-5 sm:py-2.5",
+                    "focus-visible:ring-2 focus-visible:ring-gold-500/60",
                     isSelected
-                      ? '-translate-y-0.5 border border-navy-950 bg-navy-950 text-white shadow-md ring-2 ring-gold-500/40'
-                      : 'border border-cream-300 bg-white/70 text-navy-950 hover:-translate-y-0.5 hover:border-gold-500 hover:bg-gold-50/60 active:scale-95',
+                      ? "-translate-y-0.5 border border-navy-950 bg-navy-950 text-white shadow-md ring-2 ring-gold-500/40"
+                      : "border border-cream-300 bg-white/70 text-navy-950 hover:-translate-y-0.5 hover:border-gold-500 hover:bg-gold-50/60 active:scale-95",
                   )}
                 >
                   <span
                     className={cn(
-                      'size-1.5 rounded-full transition-colors duration-300',
+                      "size-1.5 rounded-full transition-colors duration-300",
                       isSelected
-                        ? 'bg-gold-400'
-                        : 'bg-gold-500/40 group-hover:bg-gold-600',
+                        ? "bg-gold-400"
+                        : "bg-gold-500/40 group-hover:bg-gold-600",
                     )}
                     aria-hidden="true"
                   />
                   <span>{comm.name}</span>
                 </button>
-              )
+              );
             })}
 
             {selectedCommunity && (
@@ -209,7 +227,7 @@ export default function CommunitiesSection() {
                 onClick={() => setSelectedCommunity(null)}
                 className="ml-1 cursor-pointer rounded-full border border-cream-300 bg-white/70 px-3 py-2 text-xs font-semibold text-ink-600 transition-all duration-300 hover:border-maroon-400 hover:text-maroon-700"
               >
-                {t('communities.clearFilter', { defaultValue: 'Show All' })}
+                {t("communities.clearFilter", { defaultValue: "Show All" })}
               </button>
             )}
           </div>
@@ -225,19 +243,19 @@ export default function CommunitiesSection() {
           stagger={0.08}
         >
           {communities.map((comm) => {
-            const isSelected = selectedCommunity === comm.id
-            const isFilteredOut = selectedCommunity !== null && !isSelected
+            const isSelected = selectedCommunity === comm.id;
+            const isFilteredOut = selectedCommunity !== null && !isSelected;
 
             return (
               <article
                 key={comm.id}
                 data-reveal-item
                 className={cn(
-                  'group relative flex flex-col items-center rounded-2xl border bg-white pt-11 pb-3 text-center shadow-xs transition-all duration-300',
+                  "group relative flex flex-col items-center rounded-2xl border bg-white pt-11 pb-3 text-center shadow-xs transition-all duration-300",
                   isSelected
-                    ? '-translate-y-1 border-gold-500 bg-gradient-to-b from-gold-50/50 via-white to-white ring-2 ring-gold-500/40 shadow-lift'
-                    : 'border-gold-500/25 hover:-translate-y-1.5 hover:border-gold-500/70 hover:shadow-lift',
-                  isFilteredOut && 'opacity-40 saturate-50',
+                    ? "-translate-y-1 border-gold-500 bg-gradient-to-b from-gold-50/50 via-white to-white ring-2 ring-gold-500/40 shadow-lift"
+                    : "border-gold-500/25 hover:-translate-y-1.5 hover:border-gold-500/70 hover:shadow-lift",
+                  isFilteredOut && "opacity-40 saturate-50",
                 )}
               >
                 {/* Monogram medallion: first letter of the community name,
@@ -245,24 +263,23 @@ export default function CommunitiesSection() {
                 <span
                   aria-hidden="true"
                   className={cn(
-                    'font-display absolute -top-7 left-1/2 flex size-14 -translate-x-1/2 items-center justify-center rounded-full border text-2xl font-bold ring-4 ring-white transition-all duration-300',
+                    "font-display absolute -top-7 left-1/2 flex size-14 -translate-x-1/2 items-center justify-center rounded-full border text-2xl font-bold ring-4 ring-white transition-all duration-300",
                     isSelected
-                      ? 'border-navy-800 bg-navy-950 text-gold-400 shadow-gold group-hover:scale-105'
-                      : 'border-gold-500/50 bg-gradient-to-b from-gold-100 to-gold-50 text-gold-800 shadow-[0_6px_16px_-6px_rgb(183_121_31/0.5)] group-hover:scale-105',
+                      ? "border-navy-800 bg-navy-950 text-gold-400 shadow-gold group-hover:scale-105"
+                      : "border-gold-500/50 bg-gradient-to-b from-gold-100 to-gold-50 text-gold-800 shadow-[0_6px_16px_-6px_rgb(183_121_31/0.5)] group-hover:scale-105",
                   )}
                 >
                   {comm.name.charAt(0)}
                 </span>
 
                 {/* Profile count */}
-                <span className="absolute top-3.5 right-3.5 inline-flex items-center rounded-full border border-gold-500/25 bg-gold-50 px-2.5 py-1 text-[10px] font-bold tracking-wide text-gold-800 tabular-nums">
-                  {comm.count}
-                </span>
 
                 <h3 className="font-display text-2xl font-bold text-navy-950 sm:text-[1.7rem]">
                   {comm.name}
                 </h3>
-                <p className="mt-1 text-xs font-bold text-gold-700">{comm.tag}</p>
+                <p className="mt-1 text-xs font-bold text-gold-700">
+                  {comm.tag}
+                </p>
 
                 {/* Ornament divider */}
                 <div
@@ -281,9 +298,13 @@ export default function CommunitiesSection() {
                 {/* Key Gotras / Traditions — anchored to card bottom */}
                 <div className="mt-auto w-full px-5 pt-4">
                   <p className="text-[10px] font-bold tracking-[0.16em] uppercase text-navy-800">
-                    {t('communities.gotrasLabel', { defaultValue: 'Key Gotras / Traditions' })}
+                    {t("communities.gotrasLabel", {
+                      defaultValue: "Key Gotras / Traditions",
+                    })}
                   </p>
-                  <p className="mt-1 text-[11px] leading-snug text-ink-500">{comm.gotras}</p>
+                  <p className="mt-1 text-[11px] leading-snug text-ink-500">
+                    {comm.gotras}
+                  </p>
                 </div>
 
                 {/* Direct action — inverts to navy on hover */}
@@ -293,7 +314,7 @@ export default function CommunitiesSection() {
                     className="group/cta flex w-full items-center justify-between rounded-xl bg-cream-100 px-4 py-2.5 text-xs font-bold text-navy-950 transition-all duration-300 hover:bg-navy-950 hover:text-white hover:shadow-gold"
                   >
                     <span>
-                      {t('communities.findMatches', {
+                      {t("communities.findMatches", {
                         defaultValue: `Find ${comm.name} Matches`,
                         name: comm.name,
                       })}
@@ -307,10 +328,10 @@ export default function CommunitiesSection() {
                   </Link>
                 </div>
               </article>
-            )
+            );
           })}
         </RevealGroup>
       </div>
     </section>
-  )
+  );
 }

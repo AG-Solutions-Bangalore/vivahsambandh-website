@@ -68,9 +68,25 @@ export default function ImageCropModal({
 
   const imageRef = useRef<HTMLImageElement>(null)
   const dialogRef = useRef<HTMLDivElement>(null)
+  const boxRef = useRef<HTMLDivElement>(null)
   const dragPointerId = useRef<number | null>(null)
   /** The dialog takes focus once per open — never while the user is dragging. */
   const focusedRef = useRef(false)
+
+  // Mouse wheel zoom over crop viewport
+  useEffect(() => {
+    const el = boxRef.current
+    if (!el || !isOpen) return
+    const onWheel = (e: WheelEvent) => {
+      e.preventDefault()
+      const delta = e.deltaY < 0 ? 0.08 : -0.08
+      setScale((prev) => Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, Number((prev + delta).toFixed(2)))))
+    }
+    el.addEventListener('wheel', onWheel, { passive: false })
+    return () => {
+      el.removeEventListener('wheel', onWheel)
+    }
+  }, [isOpen])
 
   // A new photo resets the framing. Adjusting state during render (instead of
   // in an effect) keeps the reset in the same commit as the new image.
@@ -206,6 +222,9 @@ export default function ImageCropModal({
     ctx.fillStyle = '#ffffff'
     ctx.fillRect(0, 0, output.width, output.height)
 
+    ctx.imageSmoothingEnabled = true
+    ctx.imageSmoothingQuality = 'high'
+
     // Same transform the preview uses, scaled up to the output resolution:
     // pivot on the centre, apply the drag offset, then the zoom.
     ctx.translate(output.width / 2, output.height / 2)
@@ -271,8 +290,9 @@ export default function ImageCropModal({
         </div>
 
         {/* Crop workspace */}
-        <div className="flex flex-col items-center p-6">
+        <div className="flex flex-col items-center p-4 sm:p-6">
           <div
+            ref={boxRef}
             onPointerDown={handlePointerDown}
             onPointerMove={handlePointerMove}
             onPointerUp={endDrag}
@@ -286,36 +306,45 @@ export default function ImageCropModal({
             role="group"
             aria-label={t('registrationPage.form.cropViewport', 'Crop viewport')}
           >
-            {geometry ? (
-              <img
-                ref={imageRef}
-                src={imageSrc}
-                alt={t('registrationPage.form.cropPreview', 'Crop preview')}
-                draggable={false}
-                onLoad={(event) => {
-                  const target = event.currentTarget
-                  setNaturalSize({
-                    width: target.naturalWidth,
-                    height: target.naturalHeight,
-                  })
-                }}
-                onError={() => setLoadError(true)}
-                style={{
-                  width: `${geometry.drawWidth}px`,
-                  height: `${geometry.drawHeight}px`,
-                  maxWidth: 'none',
-                  maxHeight: 'none',
-                  position: 'absolute',
-                  left: '50%',
-                  top: '50%',
-                  transform: `translate(-50%, -50%) translate(${clamped.x}px, ${clamped.y}px) scale(${scale})`,
-                  transition: isDragging ? 'none' : 'transform 0.05s ease-out',
-                  userSelect: 'none',
-                  pointerEvents: 'none',
-                }}
-                className="will-change-transform"
-              />
-            ) : (
+            {/*
+              The photo is always in the DOM — its load event is what
+              produces the intrinsic size the geometry is derived from.
+              Until then it stays invisible behind the "preparing" hint.
+            */}
+            <img
+              ref={imageRef}
+              src={imageSrc}
+              alt={t('registrationPage.form.cropPreview', 'Crop preview')}
+              draggable={false}
+              onLoad={(event) => {
+                const target = event.currentTarget
+                setNaturalSize({
+                  width: target.naturalWidth,
+                  height: target.naturalHeight,
+                })
+              }}
+              onError={() => setLoadError(true)}
+              style={
+                geometry
+                  ? {
+                      width: `${geometry.drawWidth}px`,
+                      height: `${geometry.drawHeight}px`,
+                      maxWidth: 'none',
+                      maxHeight: 'none',
+                      position: 'absolute',
+                      left: '50%',
+                      top: '50%',
+                      transform: `translate(-50%, -50%) translate(${clamped.x}px, ${clamped.y}px) scale(${scale})`,
+                      transition: isDragging ? 'none' : 'transform 0.05s ease-out',
+                      userSelect: 'none',
+                      pointerEvents: 'none',
+                    }
+                  : { position: 'absolute', opacity: 0, pointerEvents: 'none' }
+              }
+              className="will-change-transform"
+            />
+
+            {!geometry ? (
               <div className="flex flex-col items-center gap-2 text-cream-200/70">
                 {loadError ? (
                   <p className="px-4 text-center text-xs font-semibold text-maroon-200">
@@ -333,6 +362,14 @@ export default function ImageCropModal({
                   </>
                 )}
               </div>
+            ) : null}
+
+            {/* Circular guide outline for 1:1 avatars */}
+            {aspect === 1 && (
+              <div
+                aria-hidden="true"
+                className="pointer-events-none absolute inset-0 rounded-full border border-gold-400/40 shadow-[0_0_0_9999px_rgba(10,28,56,0.3)]"
+              />
             )}
 
             {/* Rule-of-thirds guide */}

@@ -527,16 +527,29 @@ export default function AdminRegisterForm() {
                   className="sr-only"
                   aria-label="Select face photograph"
                 />
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={() => facePhotoInputRef.current?.click()}
-                >
-                  <span>
-                    {form.face_image ? 'Change & Crop Photo' : 'Upload & Crop Photo'}
-                  </span>
-                </Button>
+                <div className="flex flex-wrap items-center justify-center gap-2">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => facePhotoInputRef.current?.click()}
+                  >
+                    <span>
+                      {form.face_image ? 'Change Photo' : 'Upload & Crop Photo'}
+                    </span>
+                  </Button>
+                  {cropRawSrc && form.face_image && (
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setIsCropOpen(true)}
+                      className="text-xs font-semibold text-ink-600 hover:text-navy-900"
+                    >
+                      Crop Again
+                    </Button>
+                  )}
+                </div>
               </div>
               {fieldErrors.face_image && (
                 <p
