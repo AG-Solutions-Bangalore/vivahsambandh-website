@@ -5,7 +5,7 @@
  * edit existing reviews, toggle status, and delete records.
  */
 
-import { useMemo, useState } from 'react'
+import { useMemo, useState } from "react";
 import {
   Quote,
   Plus,
@@ -17,92 +17,107 @@ import {
   Calendar,
   Layers,
   User,
-} from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Textarea } from '@/components/ui/textarea'
-import { cn } from 'cn'
-import { ConfirmDialog } from '../components/ConfirmDialog'
-import { PanelCard } from '../components/PanelCard'
-import { PanelPageHeader } from '../components/PanelPageHeader'
-import { PanelModal } from '../components/PanelModal'
-import { PanelPagination } from '../components/PanelPagination'
-import { PanelSearch } from '../components/PanelSearch'
-import { PanelToolbar } from '../components/PanelToolbar'
-import { PanelEmpty, PanelError } from '../components/PanelState'
-import { PanelTableSkeleton } from '../components/PanelSkeleton'
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { cn } from "cn";
+import { ConfirmDialog } from "../components/ConfirmDialog";
+import { PanelCard } from "../components/PanelCard";
+import { PanelPageHeader } from "../components/PanelPageHeader";
+import { PanelModal } from "../components/PanelModal";
+import { PanelPagination } from "../components/PanelPagination";
+import { PanelSearch } from "../components/PanelSearch";
+import { PanelToolbar } from "../components/PanelToolbar";
+import { PanelEmpty, PanelError } from "../components/PanelState";
+import { PanelTableSkeleton } from "../components/PanelSkeleton";
 import {
   PanelTable,
   PanelTableFooter,
   PanelTableHeadCell,
-} from '../components/PanelTable'
-import { PanelFilterSelect } from '../components/PanelFilterSelect'
-import { StatusBadge } from '../components/StatusBadge'
-import { StatusSwitch } from '../components/StatusSwitch'
-import { panelDescription } from '../navigation'
-import { errorMessage } from '../hook/errors'
-import { DEFAULT_PER_PAGE, useServerSearch } from '../hook/useServerList'
-import { formatDate } from '../utils/format'
+} from "../components/PanelTable";
+import { PanelFilterSelect } from "../components/PanelFilterSelect";
+import { StatusBadge } from "../components/StatusBadge";
+import { StatusSwitch } from "../components/StatusSwitch";
+import { panelDescription } from "../navigation";
+import { errorMessage } from "../hook/errors";
+import { DEFAULT_PER_PAGE, useServerSearch } from "../hook/useServerList";
+import { formatDate } from "../utils/format";
+import { SearchableSelect } from "@/components/common/SearchableSelect";
+import { normalizePageSlug, PAGE_SLUG_ALIASES } from "@/lib/page-slug";
+import { usePageTwoOptions } from "../hook/useFaqs";
 import {
   useCreateTestimonialMutation,
   useDeleteTestimonialMutation,
   useTestimonialsQuery,
   useUpdateTestimonialMutation,
   useUpdateTestimonialStatusMutation,
-} from '../hook/useTestimonials'
+} from "../hook/useTestimonials";
 import type {
   TestimonialPayload,
   TestimonialRecord,
   TestimonialStatus,
-} from '../types'
+} from "../types";
 
-const STATUS_FILTERS = ['All', 'Active', 'Inactive'] as const
+/** Human labels for the canonical routes the site renders. */
+const ROUTE_LABELS: Record<string, string> = {
+  home: "Home",
+  about: "About Us",
+  blogs: "Blogs",
+  contact: "Contact",
+  download: "Download",
+  stories: "Success Stories",
+  membership: "Membership",
+  registration: "Registration",
+};
+
+const STATUS_FILTERS = ["All", "Active", "Inactive"] as const;
 
 interface TestimonialFormState {
-  testimonial_client_name: string
-  testimonial_for: string
-  testimonial_rating: number
-  testimonial_description: string
-  testimonial_status: TestimonialStatus
+  testimonial_client_name: string;
+  testimonial_for: string;
+  testimonial_rating: number;
+  testimonial_description: string;
+  testimonial_status: TestimonialStatus;
 }
 
 const DEFAULT_FORM: TestimonialFormState = {
-  testimonial_client_name: '',
-  testimonial_for: 'home',
+  testimonial_client_name: "",
+  testimonial_for: "home",
   testimonial_rating: 5,
-  testimonial_description: '',
-  testimonial_status: 'Active',
-}
+  testimonial_description: "",
+  testimonial_status: "Active",
+};
 
 /** Star rating display and interactive picker */
 function StarRating({
   rating,
   onChange,
-  size = 'md',
+  size = "md",
   interactive = false,
 }: {
-  rating: number
-  onChange?: (val: number) => void
-  size?: 'sm' | 'md' | 'lg'
-  interactive?: boolean
+  rating: number;
+  onChange?: (val: number) => void;
+  size?: "sm" | "md" | "lg";
+  interactive?: boolean;
 }) {
-  const [hoverRating, setHoverRating] = useState<number | null>(null)
-  const current = hoverRating ?? Math.round(Number(rating) || 5)
+  const [hoverRating, setHoverRating] = useState<number | null>(null);
+  const current = hoverRating ?? Math.round(Number(rating) || 5);
 
   const sizeClasses = {
-    sm: 'size-3.5',
-    md: 'size-4',
-    lg: 'size-5',
-  }[size]
+    sm: "size-3.5",
+    md: "size-4",
+    lg: "size-5",
+  }[size];
 
   return (
     <div
       className="inline-flex items-center gap-0.5"
-      role={interactive ? 'radiogroup' : undefined}
+      role={interactive ? "radiogroup" : undefined}
       aria-label={`Rating: ${rating} out of 5 stars`}
     >
       {[1, 2, 3, 4, 5].map((starVal) => {
-        const isFilled = starVal <= current
+        const isFilled = starVal <= current;
         return (
           <button
             key={starVal}
@@ -112,33 +127,34 @@ function StarRating({
             onMouseEnter={() => interactive && setHoverRating(starVal)}
             onMouseLeave={() => interactive && setHoverRating(null)}
             className={cn(
-              'transition-transform focus:outline-none',
-              interactive && 'cursor-pointer hover:scale-125 focus-visible:scale-125',
-              !interactive && 'cursor-default',
+              "transition-transform focus:outline-none",
+              interactive &&
+                "cursor-pointer hover:scale-125 focus-visible:scale-125",
+              !interactive && "cursor-default",
             )}
           >
             <Star
               className={cn(
                 sizeClasses,
                 isFilled
-                  ? 'fill-amber-400 text-amber-400 drop-shadow-2xs'
-                  : 'fill-cream-200 text-cream-300',
+                  ? "fill-amber-400 text-amber-400 drop-shadow-2xs"
+                  : "fill-cream-200 text-cream-300",
               )}
             />
           </button>
-        )
+        );
       })}
       <span className="ml-1.5 font-bold text-navy-900 tabular-nums">
         {Number(rating).toFixed(1)}
       </span>
     </div>
-  )
+  );
 }
 
 export default function TestimonialsPage() {
-  const { searchInput, setSearchInput, searchTerm } = useServerSearch()
-  const [statusFilter, setStatusFilter] = useState<string>('All')
-  const [page, setPage] = useState(1)
+  const { searchInput, setSearchInput, searchTerm } = useServerSearch();
+  const [statusFilter, setStatusFilter] = useState<string>("All");
+  const [page, setPage] = useState(1);
 
   const {
     records: testimonials,
@@ -151,125 +167,170 @@ export default function TestimonialsPage() {
     search: searchTerm || undefined,
     page,
     per_page: DEFAULT_PER_PAGE,
-  })
+  });
 
-  const createMutation = useCreateTestimonialMutation()
-  const updateMutation = useUpdateTestimonialMutation()
-  const statusMutation = useUpdateTestimonialStatusMutation()
-  const deleteMutation = useDeleteTestimonialMutation()
-
+  const createMutation = useCreateTestimonialMutation();
+  const updateMutation = useUpdateTestimonialMutation();
+  const statusMutation = useUpdateTestimonialStatusMutation();
+  const deleteMutation = useDeleteTestimonialMutation();
 
   // Modals state
-  const [isCreateOpen, setIsCreateOpen] = useState(false)
-  const [editingRecord, setEditingRecord] = useState<TestimonialRecord | null>(null)
-  const [viewingRecord, setViewingRecord] = useState<TestimonialRecord | null>(null)
-  const [deleteTarget, setDeleteTarget] = useState<TestimonialRecord | null>(null)
+  const [isCreateOpen, setIsCreateOpen] = useState(false);
+  const [editingRecord, setEditingRecord] = useState<TestimonialRecord | null>(
+    null,
+  );
+  const [viewingRecord, setViewingRecord] = useState<TestimonialRecord | null>(
+    null,
+  );
+  const [deleteTarget, setDeleteTarget] = useState<TestimonialRecord | null>(
+    null,
+  );
 
   // Form State
-  const [formState, setFormState] = useState<TestimonialFormState>(DEFAULT_FORM)
-  const [formErrors, setFormErrors] = useState<Record<string, string>>({})
+  const [formState, setFormState] =
+    useState<TestimonialFormState>(DEFAULT_FORM);
+  const [formErrors, setFormErrors] = useState<Record<string, string>>({});
+
+  const { data: pageOptions = [] } = usePageTwoOptions();
+
+  const pageSlugs = useMemo(
+    () =>
+      pageOptions.map((p) => {
+        const slug = normalizePageSlug(p.page_two_url);
+        return {
+          value: slug,
+          label: `${p.page_two_name || slug} (${slug})`,
+        };
+      }),
+    [pageOptions],
+  );
+
+  const placementOptions = useMemo(() => {
+    const canonical = Object.entries(PAGE_SLUG_ALIASES).map(
+      ([route, aliases]) => ({
+        value: aliases[0],
+        label: `${ROUTE_LABELS[route] ?? route} (${aliases[0]})`,
+      }),
+    );
+
+    const list = [...canonical];
+    for (const option of pageSlugs) {
+      if (!list.some((o) => o.value === option.value)) list.push(option);
+    }
+
+    const currentTarget = normalizePageSlug(formState.testimonial_for);
+    if (currentTarget && !list.some((o) => o.value === currentTarget)) {
+      list.unshift({
+        value: currentTarget,
+        label: `${currentTarget} (${currentTarget})`,
+      });
+    }
+    return list;
+  }, [pageSlugs, formState.testimonial_for]);
 
   // The API filters the search on the server; the status column is not
   // filterable there yet, so it is applied to the rows of the current page.
   const filtered = useMemo(
     () =>
-      statusFilter === 'All'
+      statusFilter === "All"
         ? testimonials
         : testimonials.filter((t) => t.testimonial_status === statusFilter),
     [testimonials, statusFilter],
-  )
+  );
 
   // Open Create Modal
   const handleOpenCreate = () => {
-    setFormState(DEFAULT_FORM)
-    setFormErrors({})
-    setIsCreateOpen(true)
-  }
+    setFormState(DEFAULT_FORM);
+    setFormErrors({});
+    setIsCreateOpen(true);
+  };
 
   // Open Edit Modal
   const handleOpenEdit = (record: TestimonialRecord) => {
-    setEditingRecord(record)
+    setEditingRecord(record);
     setFormState({
-      testimonial_client_name: record.testimonial_client_name || '',
-      testimonial_for: record.testimonial_for || 'home',
+      testimonial_client_name: record.testimonial_client_name || "",
+      testimonial_for: record.testimonial_for || "home",
       testimonial_rating: Number(record.testimonial_rating) || 5,
-      testimonial_description: record.testimonial_description || '',
-      testimonial_status: record.testimonial_status || 'Active',
-    })
-    setFormErrors({})
-  }
+      testimonial_description: record.testimonial_description || "",
+      testimonial_status: record.testimonial_status || "Active",
+    });
+    setFormErrors({});
+  };
 
   // Validation
   const validateForm = (): boolean => {
-    const errors: Record<string, string> = {}
+    const errors: Record<string, string> = {};
     if (!formState.testimonial_client_name.trim()) {
-      errors.testimonial_client_name = 'Client name is required.'
+      errors.testimonial_client_name = "Client name is required.";
     }
     if (!formState.testimonial_for.trim()) {
-      errors.testimonial_for = 'Target placement (e.g. "home") is required.'
+      errors.testimonial_for = "Please select a page placement.";
     }
     if (!formState.testimonial_description.trim()) {
-      errors.testimonial_description = 'Testimonial quote/description is required.'
+      errors.testimonial_description =
+        "Testimonial quote/description is required.";
     } else if (formState.testimonial_description.trim().length < 10) {
-      errors.testimonial_description = 'Description should be at least 10 characters.'
+      errors.testimonial_description =
+        "Description should be at least 10 characters.";
     }
 
-    setFormErrors(errors)
-    return Object.keys(errors).length === 0
-  }
+    setFormErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
 
   // Save Create
   const handleCreateSubmit = async () => {
-    if (!validateForm()) return
+    if (!validateForm()) return;
 
     const payload: TestimonialPayload = {
       testimonial_client_name: formState.testimonial_client_name.trim(),
-      testimonial_for: formState.testimonial_for.trim(),
+      testimonial_for: normalizePageSlug(formState.testimonial_for.trim()),
       testimonial_rating: formState.testimonial_rating,
       testimonial_description: formState.testimonial_description.trim(),
       testimonial_status: formState.testimonial_status,
-    }
+    };
 
     try {
       await createMutation.mutateAsync({
         payload,
         successMessage: `Testimonial for "${payload.testimonial_client_name}" added successfully!`,
-      })
-      setIsCreateOpen(false)
+      });
+      setIsCreateOpen(false);
     } catch {
       // Toast handled by mutation
     }
-  }
+  };
 
   // Save Edit
   const handleEditSubmit = async () => {
-    if (!editingRecord || !validateForm()) return
+    if (!editingRecord || !validateForm()) return;
 
     const payload: TestimonialPayload = {
       testimonial_client_name: formState.testimonial_client_name.trim(),
-      testimonial_for: formState.testimonial_for.trim(),
+      testimonial_for: normalizePageSlug(formState.testimonial_for.trim()),
       testimonial_rating: formState.testimonial_rating,
       testimonial_description: formState.testimonial_description.trim(),
       testimonial_status: formState.testimonial_status,
-    }
+    };
 
     try {
       await updateMutation.mutateAsync({
         id: editingRecord.id,
         payload,
-        successMessage: 'Testimonial updated successfully!',
-      })
-      setEditingRecord(null)
+        successMessage: "Testimonial updated successfully!",
+      });
+      setEditingRecord(null);
       if (viewingRecord?.id === editingRecord.id) {
         setViewingRecord({
           ...viewingRecord,
           ...payload,
-        })
+        });
       }
     } catch {
       // Toast handled by mutation
     }
-  }
+  };
 
   // Toggle status
   const handleToggleStatus = async (
@@ -280,33 +341,33 @@ export default function TestimonialsPage() {
       id: record.id,
       status: nextStatus,
       successMessage: `Testimonial marked as ${nextStatus}.`,
-    })
-  }
+    });
+  };
 
   // Confirm delete
   const handleConfirmDelete = () => {
-    if (!deleteTarget) return
-    const id = deleteTarget.id
+    if (!deleteTarget) return;
+    const id = deleteTarget.id;
 
     deleteMutation.mutate(
       {
         id,
-        successMessage: 'Testimonial removed successfully.',
+        successMessage: "Testimonial removed successfully.",
       },
       {
         onSuccess: () => {
-          setDeleteTarget(null)
-          if (viewingRecord?.id === id) setViewingRecord(null)
+          setDeleteTarget(null);
+          if (viewingRecord?.id === id) setViewingRecord(null);
         },
       },
-    )
-  }
+    );
+  };
 
   return (
     <div className="space-y-6">
       <PanelPageHeader
         title="Testimonials & Client Reviews"
-        description={panelDescription('/panel/testimonials')}
+        description={panelDescription("/panel/testimonials")}
         actions={
           <div className="flex items-center gap-2">
             <Button
@@ -318,7 +379,10 @@ export default function TestimonialsPage() {
               className="cursor-pointer rounded-full border-cream-300 bg-cream-50 text-xs font-semibold text-navy-900 hover:bg-cream-100/70"
             >
               <RefreshCw
-                className={cn('size-3.5 text-navy-700', isFetching && 'animate-spin')}
+                className={cn(
+                  "size-3.5 text-navy-700",
+                  isFetching && "animate-spin",
+                )}
                 aria-hidden
               />
               <span>Refresh</span>
@@ -361,21 +425,21 @@ export default function TestimonialsPage() {
           <PanelTableSkeleton rows={5} columns={6} />
         ) : error ? (
           <PanelError
-            message={errorMessage(error, 'Could not load testimonials.')}
+            message={errorMessage(error, "Could not load testimonials.")}
             onRetry={() => void refetch()}
           />
         ) : filtered.length === 0 ? (
           <PanelEmpty
             icon={<Quote className="size-6 text-gold-600" />}
             title={
-              searchInput || statusFilter !== 'All'
-                ? 'No matching testimonials'
-                : 'No testimonials found'
+              searchInput || statusFilter !== "All"
+                ? "No matching testimonials"
+                : "No testimonials found"
             }
             description={
-              searchInput || statusFilter !== 'All'
-                ? 'Try adjusting your search query or filter.'
-                : 'Start showcasing authentic matrimonial matches and client reviews by creating one.'
+              searchInput || statusFilter !== "All"
+                ? "Try adjusting your search query or filter."
+                : "Start showcasing authentic matrimonial matches and client reviews by creating one."
             }
             action={
               <Button
@@ -397,7 +461,9 @@ export default function TestimonialsPage() {
                 <PanelTableHeadCell>Client / Couple</PanelTableHeadCell>
                 <PanelTableHeadCell>Target Section</PanelTableHeadCell>
                 <PanelTableHeadCell>Rating</PanelTableHeadCell>
-                <PanelTableHeadCell className="max-w-md">Review Excerpt</PanelTableHeadCell>
+                <PanelTableHeadCell className="max-w-md">
+                  Review Excerpt
+                </PanelTableHeadCell>
                 <PanelTableHeadCell>Status</PanelTableHeadCell>
                 <PanelTableHeadCell>Date</PanelTableHeadCell>
                 <PanelTableHeadCell align="right">Actions</PanelTableHeadCell>
@@ -405,11 +471,11 @@ export default function TestimonialsPage() {
             }
           >
             {filtered.map((item, index) => {
-              const initial = (item.testimonial_client_name || 'C')
+              const initial = (item.testimonial_client_name || "C")
                 .trim()
                 .charAt(0)
-                .toUpperCase()
-              const ratingNum = Number(item.testimonial_rating) || 5
+                .toUpperCase();
+              const ratingNum = Number(item.testimonial_rating) || 5;
 
               return (
                 <tr
@@ -427,7 +493,7 @@ export default function TestimonialsPage() {
                       </div>
                       <div>
                         <div className="text-xs font-bold text-navy-900 group-hover:text-gold-700">
-                          {item.testimonial_client_name || 'Anonymous Client'}
+                          {item.testimonial_client_name || "Anonymous Client"}
                         </div>
                         <div className="text-[11px] font-medium text-ink-500">
                           Verified Story
@@ -439,7 +505,7 @@ export default function TestimonialsPage() {
                   <td className="px-4 py-3.5">
                     <span className="inline-flex items-center gap-1.5 rounded-lg border border-gold-300 bg-gold-50/90 px-2.5 py-1 text-xs font-bold text-gold-900 shadow-2xs">
                       <Layers className="size-3 text-gold-600" aria-hidden />
-                      {item.testimonial_for || 'home'}
+                      {item.testimonial_for || "home"}
                     </span>
                   </td>
 
@@ -463,7 +529,9 @@ export default function TestimonialsPage() {
                   </td>
 
                   <td className="px-4 py-3.5 whitespace-nowrap text-xs font-medium text-ink-500">
-                    {formatDate(item.testimonial_created_date || item.created_at)}
+                    {formatDate(
+                      item.testimonial_created_date || item.created_at,
+                    )}
                   </td>
 
                   <td className="px-4 py-3.5 text-right whitespace-nowrap">
@@ -505,7 +573,7 @@ export default function TestimonialsPage() {
                     </div>
                   </td>
                 </tr>
-              )
+              );
             })}
           </PanelTable>
         )}
@@ -517,7 +585,7 @@ export default function TestimonialsPage() {
             isFetching={isFetching}
             summary={
               <span>
-                Showing <strong>{filtered.length}</strong> of{' '}
+                Showing <strong>{filtered.length}</strong> of{" "}
                 <strong>{meta.total}</strong> reviews
               </span>
             }
@@ -548,7 +616,7 @@ export default function TestimonialsPage() {
               disabled={createMutation.isPending}
               className="cursor-pointer rounded-full bg-gold-600 px-5 text-xs font-bold text-white shadow-gold hover:bg-gold-700"
             >
-              {createMutation.isPending ? 'Publishing…' : 'Create Testimonial'}
+              {createMutation.isPending ? "Publishing…" : "Create Testimonial"}
             </Button>
           </>
         }
@@ -568,8 +636,9 @@ export default function TestimonialsPage() {
               }
               placeholder="e.g. Rahul & Sunita Mittal"
               className={cn(
-                'h-10 rounded-xl border-cream-300 bg-cream-50/70 text-xs font-medium text-navy-900 focus-visible:border-gold-500 focus-visible:ring-gold-500/40',
-                formErrors.testimonial_client_name && 'border-maroon-400 focus-visible:ring-maroon-400',
+                "h-10 rounded-xl border-cream-300 bg-cream-50/70 text-xs font-medium text-navy-900 focus-visible:border-gold-500 focus-visible:ring-gold-500/40",
+                formErrors.testimonial_client_name &&
+                  "border-maroon-400 focus-visible:ring-maroon-400",
               )}
             />
             {formErrors.testimonial_client_name && (
@@ -580,30 +649,34 @@ export default function TestimonialsPage() {
           </div>
 
           <div>
-            <label className="mb-1.5 block text-[0.68rem] font-bold tracking-[0.14em] text-navy-900 uppercase">
-              Target Section / Page <span className="text-maroon-600">*</span>
+            <label
+              htmlFor="create-testimonial-for"
+              className="mb-1.5 block text-[0.68rem] font-bold tracking-[0.14em] text-navy-900 uppercase"
+            >
+              Page Placement <span className="text-maroon-600">*</span>
             </label>
-            <Input
-              value={formState.testimonial_for}
-              onChange={(e) =>
+            <SearchableSelect
+              id="create-testimonial-for"
+              value={normalizePageSlug(formState.testimonial_for)}
+              onChange={(val) =>
                 setFormState((prev) => ({
                   ...prev,
-                  testimonial_for: e.target.value,
+                  testimonial_for: normalizePageSlug(val),
                 }))
               }
-              placeholder="e.g. home, landing, stories"
-              className={cn(
-                'h-10 rounded-xl border-cream-300 bg-cream-50/70 text-xs font-medium text-navy-900 focus-visible:border-gold-500 focus-visible:ring-gold-500/40',
-                formErrors.testimonial_for && 'border-maroon-400 focus-visible:ring-maroon-400',
-              )}
+              options={placementOptions}
+              placeholder="Search or select page..."
+              error={Boolean(formErrors.testimonial_for)}
             />
+            <p className="mt-1 text-[11px] text-ink-500">
+              Select which website page displays this testimonial. Type to
+              search by page name or URL slug.
+            </p>
             {formErrors.testimonial_for ? (
-              <p className="mt-1 text-xs text-maroon-600">{formErrors.testimonial_for}</p>
-            ) : (
-              <p className="mt-1 text-[0.7rem] text-ink-500">
-                Where this review should be displayed (e.g. "home")
+              <p className="mt-1 text-xs text-maroon-600">
+                {formErrors.testimonial_for}
               </p>
-            )}
+            ) : null}
           </div>
 
           <div>
@@ -640,9 +713,9 @@ export default function TestimonialsPage() {
               rows={4}
               placeholder="Write the matrimonial review or success experience shared by the client..."
               className={cn(
-                'rounded-xl border border-cream-300 bg-cream-50/70 p-3 text-xs font-medium text-navy-900 focus-visible:border-gold-500 focus-visible:ring-2 focus-visible:ring-gold-500/40 focus-visible:outline-none',
+                "rounded-xl border border-cream-300 bg-cream-50/70 p-3 text-xs font-medium text-navy-900 focus-visible:border-gold-500 focus-visible:ring-2 focus-visible:ring-gold-500/40 focus-visible:outline-none",
                 formErrors.testimonial_description &&
-                  'border-maroon-400 focus-visible:ring-maroon-400',
+                  "border-maroon-400 focus-visible:ring-maroon-400",
               )}
             />
             {formErrors.testimonial_description && (
@@ -677,7 +750,7 @@ export default function TestimonialsPage() {
               disabled={updateMutation.isPending}
               className="cursor-pointer rounded-full bg-gold-600 px-5 text-xs font-bold text-white shadow-gold hover:bg-gold-700"
             >
-              {updateMutation.isPending ? 'Saving…' : 'Save Changes'}
+              {updateMutation.isPending ? "Saving…" : "Save Changes"}
             </Button>
           </>
         }
@@ -697,8 +770,9 @@ export default function TestimonialsPage() {
               }
               placeholder="e.g. Rahul & Sunita Mittal"
               className={cn(
-                'h-10 rounded-xl border-cream-300 bg-cream-50/70 text-xs font-medium text-navy-900 focus-visible:border-gold-500 focus-visible:ring-gold-500/40',
-                formErrors.testimonial_client_name && 'border-maroon-400 focus-visible:ring-maroon-400',
+                "h-10 rounded-xl border-cream-300 bg-cream-50/70 text-xs font-medium text-navy-900 focus-visible:border-gold-500 focus-visible:ring-gold-500/40",
+                formErrors.testimonial_client_name &&
+                  "border-maroon-400 focus-visible:ring-maroon-400",
               )}
             />
             {formErrors.testimonial_client_name && (
@@ -710,26 +784,35 @@ export default function TestimonialsPage() {
 
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div>
-              <label className="mb-1.5 block text-[0.68rem] font-bold tracking-[0.14em] text-navy-900 uppercase">
-                Target Section / Page <span className="text-maroon-600">*</span>
+              <label
+                htmlFor="edit-testimonial-for"
+                className="mb-1.5 block text-[0.68rem] font-bold tracking-[0.14em] text-navy-900 uppercase"
+              >
+                Page Placement (faq_for){" "}
+                <span className="text-maroon-600">*</span>
               </label>
-              <Input
-                value={formState.testimonial_for}
-                onChange={(e) =>
+              <SearchableSelect
+                id="edit-testimonial-for"
+                value={normalizePageSlug(formState.testimonial_for)}
+                onChange={(val) =>
                   setFormState((prev) => ({
                     ...prev,
-                    testimonial_for: e.target.value,
+                    testimonial_for: normalizePageSlug(val),
                   }))
                 }
-                placeholder="e.g. home, landing"
-                className={cn(
-                  'h-10 rounded-xl border-cream-300 bg-cream-50/70 text-xs font-medium text-navy-900 focus-visible:border-gold-500 focus-visible:ring-gold-500/40',
-                  formErrors.testimonial_for && 'border-maroon-400 focus-visible:ring-maroon-400',
-                )}
+                options={placementOptions}
+                placeholder="Search or select page..."
+                error={Boolean(formErrors.testimonial_for)}
               />
-              {formErrors.testimonial_for && (
-                <p className="mt-1 text-xs text-maroon-600">{formErrors.testimonial_for}</p>
-              )}
+              <p className="mt-1 text-[11px] text-ink-500">
+                Select which website page displays this testimonial. Type to
+                search by page name or URL slug.
+              </p>
+              {formErrors.testimonial_for ? (
+                <p className="mt-1 text-xs text-maroon-600">
+                  {formErrors.testimonial_for}
+                </p>
+              ) : null}
             </div>
 
             <div>
@@ -785,9 +868,9 @@ export default function TestimonialsPage() {
               }
               rows={4}
               className={cn(
-                'rounded-xl border border-cream-300 bg-cream-50/70 p-3 text-xs font-medium text-navy-900 focus-visible:border-gold-500 focus-visible:ring-2 focus-visible:ring-gold-500/40 focus-visible:outline-none',
+                "rounded-xl border border-cream-300 bg-cream-50/70 p-3 text-xs font-medium text-navy-900 focus-visible:border-gold-500 focus-visible:ring-2 focus-visible:ring-gold-500/40 focus-visible:outline-none",
                 formErrors.testimonial_description &&
-                  'border-maroon-400 focus-visible:ring-maroon-400',
+                  "border-maroon-400 focus-visible:ring-maroon-400",
               )}
             />
             {formErrors.testimonial_description && (
@@ -813,9 +896,9 @@ export default function TestimonialsPage() {
               variant="outline"
               size="sm"
               onClick={() => {
-                const target = viewingRecord
-                setViewingRecord(null)
-                if (target) setDeleteTarget(target)
+                const target = viewingRecord;
+                setViewingRecord(null);
+                if (target) setDeleteTarget(target);
               }}
               className="cursor-pointer gap-1.5 rounded-full border-maroon-200 bg-maroon-50 text-xs font-bold text-maroon-800 hover:bg-maroon-100"
             >
@@ -829,9 +912,9 @@ export default function TestimonialsPage() {
                 variant="outline"
                 size="sm"
                 onClick={() => {
-                  const target = viewingRecord
-                  setViewingRecord(null)
-                  if (target) handleOpenEdit(target)
+                  const target = viewingRecord;
+                  setViewingRecord(null);
+                  if (target) handleOpenEdit(target);
                 }}
                 className="cursor-pointer gap-1.5 rounded-full border-gold-300 bg-gold-50 text-xs font-bold text-gold-900 hover:bg-gold-100"
               >
@@ -856,21 +939,25 @@ export default function TestimonialsPage() {
             <div className="flex items-start justify-between gap-4 border-b border-cream-200 pb-4">
               <div className="flex items-center gap-3">
                 <div className="flex size-11 items-center justify-center rounded-full bg-gold-500 font-serif text-sm font-bold text-white shadow-sm">
-                  {(viewingRecord.testimonial_client_name || 'C')
+                  {(viewingRecord.testimonial_client_name || "C")
                     .trim()
                     .charAt(0)
                     .toUpperCase()}
                 </div>
                 <div>
                   <h3 className="text-sm font-bold text-navy-900">
-                    {viewingRecord.testimonial_client_name || 'Anonymous Client'}
+                    {viewingRecord.testimonial_client_name ||
+                      "Anonymous Client"}
                   </h3>
                   <div className="mt-1 flex items-center gap-2">
                     <span className="inline-flex items-center gap-1 rounded-md border border-gold-300 bg-gold-50 px-2 py-0.5 text-xs font-bold text-gold-900">
                       <Layers className="size-3 text-gold-600" />
-                      Section: {viewingRecord.testimonial_for || 'home'}
+                      Section: {viewingRecord.testimonial_for || "home"}
                     </span>
-                    <StatusBadge status={viewingRecord.testimonial_status} size="sm" />
+                    <StatusBadge
+                      status={viewingRecord.testimonial_status}
+                      size="sm"
+                    />
                   </div>
                 </div>
               </div>
@@ -896,7 +983,11 @@ export default function TestimonialsPage() {
               <div className="flex items-center gap-2 rounded-xl border border-cream-200 bg-cream-50/70 p-2.5">
                 <Calendar className="size-3.5 text-ink-400" />
                 <span>
-                  Date: {formatDate(viewingRecord.testimonial_created_date || viewingRecord.created_at)}
+                  Date:{" "}
+                  {formatDate(
+                    viewingRecord.testimonial_created_date ||
+                      viewingRecord.created_at,
+                  )}
                 </span>
               </div>
               <div className="flex items-center gap-2 rounded-xl border border-cream-200 bg-cream-50/70 p-2.5">
@@ -917,11 +1008,13 @@ export default function TestimonialsPage() {
         description={
           deleteTarget
             ? `Are you sure you want to permanently delete the review by "${deleteTarget.testimonial_client_name}"? If the database prohibits deletion, it will be automatically deactivated.`
-            : ''
+            : ""
         }
-        confirmText={deleteMutation.isPending ? 'Deleting…' : 'Delete Testimonial'}
+        confirmText={
+          deleteMutation.isPending ? "Deleting…" : "Delete Testimonial"
+        }
         variant="danger"
       />
     </div>
-  )
+  );
 }
