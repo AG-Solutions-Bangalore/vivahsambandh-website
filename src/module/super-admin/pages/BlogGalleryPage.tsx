@@ -499,16 +499,6 @@ export default function BlogGalleryPage() {
                         </button>
                       </div>
                     </div>
-
-                    {/* Metadata card footer */}
-                    <div className="flex items-center justify-between border-t border-cream-200/80 px-3.5 py-2.5 text-[0.7rem] text-ink-500">
-                      <span className="font-semibold text-navy-950">
-                        {item.title || 'Untitled image'}
-                      </span>
-                      <span className="text-[0.66rem] text-ink-400">
-                        SI/NO: {index + 1}
-                      </span>
-                    </div>
                   </div>
                 );
               })}
