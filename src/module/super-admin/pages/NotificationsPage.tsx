@@ -394,25 +394,26 @@ export default function NotificationsPage() {
                   <div className="flex items-center justify-end gap-1.5">
                     <Button
                       type="button"
-                      size="xs"
+                      size="icon-xs"
                       variant="outline"
                       onClick={() => setInspectingId(item.id)}
                       title="View notification details"
-                      className="cursor-pointer rounded-full border-navy-200 text-[0.7rem] text-navy-900 hover:bg-navy-50"
+                      aria-label="View notification details"
+                      className="cursor-pointer rounded-full border-navy-200 text-navy-700 hover:bg-navy-50"
                     >
-                      <Eye className="size-3 text-navy-700" aria-hidden />
-                      <span>Details</span>
+                      <Eye className="size-3.5 text-navy-700" aria-hidden />
                     </Button>
 
                     <Button
                       type="button"
-                      size="xs"
+                      size="icon-xs"
                       variant="outline"
                       onClick={() => setDeleteTargetId(item.id)}
                       title="Delete Notification"
-                      className="cursor-pointer rounded-full border-maroon-200 bg-maroon-50 text-[0.7rem] text-maroon-800 hover:bg-maroon-100"
+                      aria-label="Delete notification"
+                      className="cursor-pointer rounded-full border-maroon-200 bg-maroon-50 text-maroon-800 hover:bg-maroon-100"
                     >
-                      <Trash2 className="size-3" aria-hidden />
+                      <Trash2 className="size-3.5" aria-hidden />
                     </Button>
                   </div>
                 </td>

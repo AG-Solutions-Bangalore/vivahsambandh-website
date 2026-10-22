@@ -243,35 +243,36 @@ export default function FaqsPage() {
                     <div className="flex items-center justify-end gap-1.5">
                       <Button
                         type="button"
-                        size="xs"
+                        size="icon-xs"
                         variant="outline"
                         onClick={() => setInspectingId(item.id)}
                         title="View Questions"
-                        className="cursor-pointer rounded-full border-navy-200 text-[0.7rem] text-navy-900 hover:bg-navy-50"
+                        aria-label="View questions"
+                        className="cursor-pointer rounded-full border-navy-200 text-navy-700 hover:bg-navy-50"
                       >
-                        <Eye className="size-3 text-navy-700" aria-hidden />
-                        <span>View</span>
+                        <Eye className="size-3.5 text-navy-700" aria-hidden />
                       </Button>
                       <Button
                         type="button"
-                        size="xs"
+                        size="icon-xs"
                         variant="outline"
                         onClick={() => navigate(`${LIST_PATH}/${item.id}/edit`)}
                         title="Edit FAQ Group"
-                        className="cursor-pointer rounded-full border-gold-300 bg-gold-50/50 text-[0.7rem] font-bold text-gold-900 hover:bg-gold-100"
+                        aria-label="Edit FAQ group"
+                        className="cursor-pointer rounded-full border-gold-300 bg-gold-50/50 text-gold-900 hover:bg-gold-100"
                       >
-                        <Pencil className="size-3" aria-hidden />
-                        <span>Edit</span>
+                        <Pencil className="size-3.5" aria-hidden />
                       </Button>
                       <Button
                         type="button"
-                        size="xs"
+                        size="icon-xs"
                         variant="outline"
                         onClick={() => setDeleteTargetId(item.id)}
                         title="Delete FAQ Group"
-                        className="cursor-pointer rounded-full border-maroon-200 bg-maroon-50 text-[0.7rem] text-maroon-800 hover:bg-maroon-100"
+                        aria-label="Delete FAQ group"
+                        className="cursor-pointer rounded-full border-maroon-200 bg-maroon-50 text-maroon-800 hover:bg-maroon-100"
                       >
-                        <Trash2 className="size-3" aria-hidden />
+                        <Trash2 className="size-3.5" aria-hidden />
                       </Button>
                     </div>
                   </td>

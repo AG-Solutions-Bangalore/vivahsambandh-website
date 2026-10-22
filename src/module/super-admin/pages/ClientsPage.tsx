@@ -437,37 +437,40 @@ export default function ClientsPage() {
                     {/* Inspect details */}
                     <Button
                       type="button"
-                      size="xs"
+                      size="icon-xs"
                       variant="outline"
                       onClick={() => setInspectId(client.id)}
                       title="View details"
-                      className="cursor-pointer rounded-full border-cream-300 bg-white text-[0.7rem] text-navy-700 hover:bg-cream-100"
+                      aria-label="View client details"
+                      className="cursor-pointer rounded-full border-cream-300 bg-white text-navy-700 hover:bg-cream-100"
                     >
-                      <Eye className="size-3" aria-hidden />
+                      <Eye className="size-3.5" aria-hidden />
                     </Button>
 
                     {/* Edit client */}
                     <Button
                       type="button"
-                      size="xs"
+                      size="icon-xs"
                       variant="outline"
                       onClick={() => handleOpenEdit(client)}
                       title="Edit client"
-                      className="cursor-pointer rounded-full border-cream-300 bg-white text-[0.7rem] text-navy-700 hover:bg-cream-100"
+                      aria-label="Edit client"
+                      className="cursor-pointer rounded-full border-cream-300 bg-white text-navy-700 hover:bg-cream-100"
                     >
-                      <Pencil className="size-3" aria-hidden />
+                      <Pencil className="size-3.5" aria-hidden />
                     </Button>
 
                     {/* Delete */}
                     <Button
                       type="button"
-                      size="xs"
+                      size="icon-xs"
                       variant="outline"
                       onClick={() => setDeleteTarget(client)}
                       title="Delete client"
-                      className="cursor-pointer rounded-full border-maroon-200 bg-maroon-50 text-[0.7rem] text-maroon-800 hover:bg-maroon-100"
+                      aria-label="Delete client"
+                      className="cursor-pointer rounded-full border-maroon-200 bg-maroon-50 text-maroon-800 hover:bg-maroon-100"
                     >
-                      <Trash2 className="size-3" aria-hidden />
+                      <Trash2 className="size-3.5" aria-hidden />
                     </Button>
                   </div>
                 </td>

@@ -538,37 +538,38 @@ export default function TestimonialsPage() {
                     <div className="flex items-center justify-end gap-1.5">
                       <Button
                         type="button"
-                        size="xs"
+                        size="icon-xs"
                         variant="outline"
                         onClick={() => setViewingRecord(item)}
                         title="Inspect Testimonial"
-                        className="cursor-pointer rounded-full border-navy-200 text-[0.7rem] text-navy-900 hover:bg-navy-50"
+                        aria-label="Inspect testimonial"
+                        className="cursor-pointer rounded-full border-navy-200 text-navy-700 hover:bg-navy-50"
                       >
-                        <Eye className="size-3 text-navy-700" />
-                        <span>View</span>
+                        <Eye className="size-3.5 text-navy-700" aria-hidden />
                       </Button>
 
                       <Button
                         type="button"
-                        size="xs"
+                        size="icon-xs"
                         variant="outline"
                         onClick={() => handleOpenEdit(item)}
                         title="Edit Testimonial"
-                        className="cursor-pointer rounded-full border-gold-300 bg-gold-50/50 text-[0.7rem] font-bold text-gold-900 hover:bg-gold-100"
+                        aria-label="Edit testimonial"
+                        className="cursor-pointer rounded-full border-gold-300 bg-gold-50/50 text-gold-900 hover:bg-gold-100"
                       >
-                        <Pencil className="size-3" />
-                        <span>Edit</span>
+                        <Pencil className="size-3.5" aria-hidden />
                       </Button>
 
                       <Button
                         type="button"
-                        size="xs"
+                        size="icon-xs"
                         variant="outline"
                         onClick={() => setDeleteTarget(item)}
                         title="Delete Testimonial"
-                        className="cursor-pointer rounded-full border-maroon-200 bg-maroon-50 text-[0.7rem] text-maroon-800 hover:bg-maroon-100"
+                        aria-label="Delete testimonial"
+                        className="cursor-pointer rounded-full border-maroon-200 bg-maroon-50 text-maroon-800 hover:bg-maroon-100"
                       >
-                        <Trash2 className="size-3" />
+                        <Trash2 className="size-3.5" aria-hidden />
                       </Button>
                     </div>
                   </td>

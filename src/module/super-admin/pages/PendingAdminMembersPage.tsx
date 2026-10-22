@@ -276,10 +276,11 @@ export default function PendingAdminMembersPage() {
                       <button
                         type="button"
                         onClick={() => handleOpenCityModal(admin.id)}
-                        className="ml-1 inline-flex cursor-pointer items-center gap-1 text-[0.68rem] font-bold text-gold-700 transition-colors hover:text-gold-600 focus-visible:ring-2 focus-visible:ring-gold-500 focus-visible:outline-none"
+                        title="Set cities"
+                        aria-label="Set cities"
+                        className="ml-1 inline-flex size-6 cursor-pointer items-center justify-center rounded-full border border-gold-200 bg-gold-50 text-gold-700 transition-colors hover:bg-gold-100 focus-visible:ring-2 focus-visible:ring-gold-500 focus-visible:outline-none"
                       >
-                        <MapPin className="size-3" aria-hidden />
-                        <span>Set Cities</span>
+                        <MapPin className="size-3.5" aria-hidden />
                       </button>
                     </div>
                   </td>

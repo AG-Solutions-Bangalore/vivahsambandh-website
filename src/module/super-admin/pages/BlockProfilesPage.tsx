@@ -200,14 +200,14 @@ export default function BlockProfilesPage() {
                   <td className="px-4 py-3.5">
                     <Button
                       type="button"
-                      size="xs"
+                      size="icon-xs"
                       variant="outline"
                       onClick={() => setDeleteTargetId(rec.id)}
                       title="Delete Block Record"
-                      className="cursor-pointer rounded-full border-maroon-200 bg-maroon-50 text-[0.7rem] text-maroon-800 hover:bg-maroon-100"
+                      aria-label="Delete block record"
+                      className="cursor-pointer rounded-full border-maroon-200 bg-maroon-50 text-maroon-800 hover:bg-maroon-100"
                     >
-                      <Trash2 className="size-3" aria-hidden />
-                      <span>Delete</span>
+                      <Trash2 className="size-3.5" aria-hidden />
                     </Button>
                   </td>
                 </tr>

@@ -93,13 +93,14 @@ export function NewsletterTable({
               <div className="flex items-center justify-end gap-1.5">
                 <Button
                   type="button"
-                  size="xs"
+                  size="icon-xs"
                   variant="outline"
                   onClick={() => setDeleteTarget(subscriber)}
                   title="Remove subscriber"
-                  className="cursor-pointer rounded-full border-maroon-200 bg-maroon-50 text-[0.7rem] text-maroon-800 hover:bg-maroon-100"
+                  aria-label="Remove subscriber"
+                  className="cursor-pointer rounded-full border-maroon-200 bg-maroon-50 text-maroon-800 hover:bg-maroon-100"
                 >
-                  <Trash2 className="size-3" aria-hidden />
+                  <Trash2 className="size-3.5" aria-hidden />
                 </Button>
               </div>
             </td>

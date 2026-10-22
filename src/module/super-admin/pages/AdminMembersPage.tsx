@@ -332,10 +332,10 @@ export default function AdminMembersPage() {
                         type="button"
                         onClick={() => handleOpenCityModal(admin.id)}
                         title="Edit City Assignments"
-                        className="ml-1 inline-flex cursor-pointer items-center gap-1 text-[0.68rem] font-bold text-gold-700 transition-colors hover:text-gold-600 focus-visible:ring-2 focus-visible:ring-gold-500 focus-visible:outline-none"
+                        aria-label="Edit city assignments"
+                        className="ml-1 inline-flex size-6 cursor-pointer items-center justify-center rounded-full border border-gold-200 bg-gold-50 text-gold-700 transition-colors hover:bg-gold-100 focus-visible:ring-2 focus-visible:ring-gold-500 focus-visible:outline-none"
                       >
-                        <Edit2 className="size-3" aria-hidden />
-                        <span>Edit</span>
+                        <Edit2 className="size-3.5" aria-hidden />
                       </button>
                     </div>
                   </td>
@@ -348,7 +348,7 @@ export default function AdminMembersPage() {
                     <div className="flex items-center justify-end gap-1.5">
                       <Button
                         type="button"
-                        size="xs"
+                        size="icon-xs"
                         variant="outline"
                         onClick={() =>
                           setRemoveDeviceTarget({
@@ -357,10 +357,10 @@ export default function AdminMembersPage() {
                           })
                         }
                         title="Remove Registered Device ID"
-                        className="cursor-pointer gap-1 rounded-full border-amber-300 bg-amber-50/70 text-[0.7rem] font-medium text-amber-900 hover:bg-amber-100"
+                        aria-label="Remove registered device ID"
+                        className="cursor-pointer rounded-full border-amber-300 bg-amber-50/70 text-amber-900 hover:bg-amber-100"
                       >
-                        <Smartphone className="size-3 text-amber-700" aria-hidden />
-                        <span>Reset Device</span>
+                        <Smartphone className="size-3.5 text-amber-700" aria-hidden />
                       </Button>
 
                       <StatusActionGroup

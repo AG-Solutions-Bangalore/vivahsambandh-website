@@ -406,14 +406,14 @@ export default function EnquiriesPage() {
                   <div className="flex items-center justify-end gap-1.5">
                     <Button
                       type="button"
-                      size="xs"
+                      size="icon-xs"
                       variant="outline"
                       onClick={() => setInspectingId(enquiry.id)}
                       title="View enquiry details"
-                      className="cursor-pointer rounded-full border-navy-200 text-[0.7rem] text-navy-900 hover:bg-navy-50"
+                      aria-label="View enquiry details"
+                      className="cursor-pointer rounded-full border-navy-200 text-navy-700 hover:bg-navy-50"
                     >
-                      <Eye className="size-3 text-navy-700" aria-hidden />
-                      <span>View</span>
+                      <Eye className="size-3.5 text-navy-700" aria-hidden />
                     </Button>
 
                     <StatusActionGroup

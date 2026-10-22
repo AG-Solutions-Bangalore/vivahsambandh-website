@@ -272,19 +272,19 @@ export default function MembersPage() {
                   <div className="flex items-center justify-end gap-1.5">
                     <Button
                       type="button"
-                      size="xs"
+                      size="icon-xs"
                       variant="outline"
                       onClick={() => setActiveProfileId(member.id)}
                       title="View Full Profile Details"
-                      className="cursor-pointer rounded-full border-navy-200 text-[0.7rem] text-navy-900 hover:bg-navy-50"
+                      aria-label="View full profile details"
+                      className="cursor-pointer rounded-full border-navy-200 text-navy-700 hover:bg-navy-50"
                     >
-                      <Eye className="size-3 text-navy-700" aria-hidden />
-                      <span>View</span>
+                      <Eye className="size-3.5 text-navy-700" aria-hidden />
                     </Button>
 
                     <Button
                       type="button"
-                      size="xs"
+                      size="icon-xs"
                       variant="outline"
                       onClick={() =>
                         setRemoveDeviceTarget({
@@ -293,10 +293,10 @@ export default function MembersPage() {
                         })
                       }
                       title="Remove Registered Device ID"
-                      className="cursor-pointer gap-1 rounded-full border-amber-300 bg-amber-50/70 text-[0.7rem] font-medium text-amber-900 hover:bg-amber-100"
+                      aria-label="Remove registered device ID"
+                      className="cursor-pointer rounded-full border-amber-300 bg-amber-50/70 text-amber-900 hover:bg-amber-100"
                     >
-                      <Smartphone className="size-3 text-amber-700" aria-hidden />
-                      <span>Reset Device</span>
+                      <Smartphone className="size-3.5 text-amber-700" aria-hidden />
                     </Button>
 
                     <StatusActionGroup

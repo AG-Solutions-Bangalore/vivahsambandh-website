@@ -328,25 +328,26 @@ export default function CategoriesPage() {
                   <div className="flex items-center justify-end gap-1.5">
                     <Button
                       type="button"
-                      size="xs"
+                      size="icon-xs"
                       variant="outline"
                       onClick={() => handleOpenEdit(category)}
                       title="Edit category"
-                      className="cursor-pointer rounded-full border-gold-300 bg-gold-50 text-[0.7rem] text-gold-800 hover:bg-gold-100"
+                      aria-label="Edit category"
+                      className="cursor-pointer rounded-full border-gold-300 bg-gold-50 text-gold-800 hover:bg-gold-100"
                     >
-                      <Pencil className="size-3" aria-hidden />
-                      <span>Edit</span>
+                      <Pencil className="size-3.5" aria-hidden />
                     </Button>
 
                     <Button
                       type="button"
-                      size="xs"
+                      size="icon-xs"
                       variant="outline"
                       onClick={() => setDeleteTarget(category)}
                       title="Delete category"
-                      className="cursor-pointer rounded-full border-maroon-200 bg-maroon-50 text-[0.7rem] text-maroon-800 hover:bg-maroon-100"
+                      aria-label="Delete category"
+                      className="cursor-pointer rounded-full border-maroon-200 bg-maroon-50 text-maroon-800 hover:bg-maroon-100"
                     >
-                      <Trash2 className="size-3" aria-hidden />
+                      <Trash2 className="size-3.5" aria-hidden />
                     </Button>
                   </div>
                 </td>
