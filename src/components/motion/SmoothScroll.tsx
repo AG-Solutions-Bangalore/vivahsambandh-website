@@ -42,7 +42,13 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
         ) as HTMLAnchorElement | null
         if (!anchor) return
         const hash = anchor.getAttribute('href')
-        if (!hash || hash === '#') return
+        if (!hash || hash === '#') {
+          // Bare "#" → jump to top (reduced motion: no smoothing).
+          e.preventDefault()
+          window.scrollTo({ top: 0, behavior: 'auto' })
+          safeReplaceState(window.location.pathname)
+          return
+        }
         // Deferred below-fold section: mount it first, then jump instantly.
         const targetId = resolveHashId(hash)
         if (DEFERRED_SECTION_IDS.has(targetId)) {

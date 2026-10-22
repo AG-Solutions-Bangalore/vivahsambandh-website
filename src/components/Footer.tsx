@@ -148,13 +148,23 @@ export default function Footer() {
             <ul className="mt-3.5 space-y-2 text-xs text-white/75 sm:text-sm">
               {quickLinks.map((link) => (
                 <li key={link.key}>
-                  <Link
-                    to={link.href}
-                    title={link.label}
-                    className="transition hover:text-gold-300"
-                  >
-                    {link.label}
-                  </Link>
+                  {link.href.startsWith("#") ? (
+                    <a
+                      href={link.href}
+                      title={link.label}
+                      className="transition hover:text-gold-300"
+                    >
+                      {link.label}
+                    </a>
+                  ) : (
+                    <Link
+                      to={link.href}
+                      title={link.label}
+                      className="transition hover:text-gold-300"
+                    >
+                      {link.label}
+                    </Link>
+                  )}
                 </li>
               ))}
             </ul>
