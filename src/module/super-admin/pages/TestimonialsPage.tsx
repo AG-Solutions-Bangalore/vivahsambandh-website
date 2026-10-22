@@ -17,8 +17,6 @@ import {
   Calendar,
   Layers,
   User,
-  CheckCircle2,
-  XCircle,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -40,6 +38,7 @@ import {
 } from '../components/PanelTable'
 import { PanelFilterSelect } from '../components/PanelFilterSelect'
 import { StatusBadge } from '../components/StatusBadge'
+import { StatusSwitch } from '../components/StatusSwitch'
 import { panelDescription } from '../navigation'
 import { errorMessage } from '../hook/errors'
 import { DEFAULT_PER_PAGE, useServerSearch } from '../hook/useServerList'
@@ -273,10 +272,11 @@ export default function TestimonialsPage() {
   }
 
   // Toggle status
-  const handleToggleStatus = (record: TestimonialRecord) => {
-    const nextStatus: TestimonialStatus =
-      record.testimonial_status === 'Active' ? 'Inactive' : 'Active'
-    statusMutation.mutate({
+  const handleToggleStatus = async (
+    record: TestimonialRecord,
+    nextStatus: TestimonialStatus,
+  ) => {
+    await statusMutation.mutateAsync({
       id: record.id,
       status: nextStatus,
       successMessage: `Testimonial marked as ${nextStatus}.`,
@@ -454,7 +454,12 @@ export default function TestimonialsPage() {
                   </td>
 
                   <td className="px-4 py-3.5 whitespace-nowrap">
-                    <StatusBadge status={item.testimonial_status} size="sm" />
+                    <StatusSwitch
+                      status={item.testimonial_status}
+                      onStatusChange={(nextStatus) =>
+                        handleToggleStatus(item, nextStatus)
+                      }
+                    />
                   </td>
 
                   <td className="px-4 py-3.5 whitespace-nowrap text-xs font-medium text-ink-500">
@@ -485,33 +490,6 @@ export default function TestimonialsPage() {
                       >
                         <Pencil className="size-3" />
                         <span>Edit</span>
-                      </Button>
-
-                      <Button
-                        type="button"
-                        size="xs"
-                        variant="outline"
-                        onClick={() => handleToggleStatus(item)}
-                        disabled={statusMutation.isPending}
-                        title={`Toggle status to ${item.testimonial_status === 'Active' ? 'Inactive' : 'Active'}`}
-                        className={cn(
-                          'cursor-pointer rounded-full text-[0.7rem] font-bold',
-                          item.testimonial_status === 'Active'
-                            ? 'border-emerald-200 bg-emerald-50 text-emerald-800 hover:bg-emerald-100'
-                            : 'border-cream-300 bg-cream-50 text-ink-500 hover:bg-cream-100',
-                        )}
-                      >
-                        {item.testimonial_status === 'Active' ? (
-                          <span className="flex items-center gap-1">
-                            <CheckCircle2 className="size-3 text-emerald-600" />
-                            <span>Active</span>
-                          </span>
-                        ) : (
-                          <span className="flex items-center gap-1">
-                            <XCircle className="size-3 text-ink-400" />
-                            <span>Inactive</span>
-                          </span>
-                        )}
                       </Button>
 
                       <Button

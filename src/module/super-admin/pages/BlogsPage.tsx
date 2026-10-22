@@ -22,7 +22,6 @@ import {
   RefreshCw,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { cn } from 'cn'
 import { PanelCard } from '../components/PanelCard'
 import { PanelPageHeader } from '../components/PanelPageHeader'
 import { PanelModal } from '../components/PanelModal'
@@ -39,6 +38,7 @@ import {
 import { PanelFilterSelect } from '../components/PanelFilterSelect'
 import { CategorySelect } from '../components/CategorySelect'
 import { StatusBadge } from '../components/StatusBadge'
+import { StatusSwitch } from '../components/StatusSwitch'
 import { BlogPlacementChips } from '../components/BlogEditorForm'
 import { panelDescription } from '../navigation'
 import { errorMessage } from '../hook/errors'
@@ -104,10 +104,8 @@ export default function BlogsPage() {
     setPage(1)
   }
 
-  const handleToggleStatus = (blog: BlogRecord) => {
-    const nextStatus: BlogStatus = blog.status === 'Active' ? 'Inactive' : 'Active'
-
-    statusMutation.mutate(
+  const handleToggleStatus = async (blog: BlogRecord, nextStatus: BlogStatus) => {
+    await statusMutation.mutateAsync(
       {
         id: blog.id,
         status: nextStatus,
@@ -268,7 +266,12 @@ export default function BlogsPage() {
                 </td>
 
                 <td className="px-4 py-3.5">
-                  <StatusBadge status={blog.status} size="sm" />
+                  <StatusSwitch
+                    status={blog.status}
+                    onStatusChange={(nextStatus) =>
+                      handleToggleStatus(blog, nextStatus)
+                    }
+                  />
                 </td>
 
                 <td className="px-4 py-3.5">
@@ -314,23 +317,6 @@ export default function BlogsPage() {
                     >
                       <Pencil className="size-3" aria-hidden />
                       <span>Edit</span>
-                    </Button>
-
-                    <Button
-                      type="button"
-                      size="xs"
-                      variant="outline"
-                      onClick={() => handleToggleStatus(blog)}
-                      disabled={statusMutation.isPending}
-                      title={blog.status === 'Active' ? 'Mark as inactive' : 'Mark as active'}
-                      className={cn(
-                        'cursor-pointer rounded-full text-[0.7rem]',
-                        blog.status === 'Active'
-                          ? 'border-maroon-200 bg-maroon-50 text-maroon-800 hover:bg-maroon-100'
-                          : 'border-emerald-200 bg-emerald-50 text-emerald-800 hover:bg-emerald-100',
-                      )}
-                    >
-                      {blog.status === 'Active' ? 'Unpublish' : 'Publish'}
                     </Button>
                   </div>
                 </td>

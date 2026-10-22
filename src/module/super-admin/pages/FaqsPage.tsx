@@ -36,6 +36,7 @@ import {
 } from '../components/PanelTable'
 import { PanelFilterSelect } from '../components/PanelFilterSelect'
 import { StatusBadge } from '../components/StatusBadge'
+import { StatusSwitch } from '../components/StatusSwitch'
 import { panelDescription } from '../navigation'
 import { errorMessage } from '../hook/errors'
 import { DEFAULT_PER_PAGE, useServerSearch } from '../hook/useServerList'
@@ -98,9 +99,8 @@ export default function FaqsPage() {
   )
 
   // Status toggle
-  const handleToggleStatus = (record: FaqRecord) => {
-    const nextStatus: FaqStatus = record.faq_status === 'Active' ? 'Inactive' : 'Active'
-    statusMutation.mutate({
+  const handleToggleStatus = async (record: FaqRecord, nextStatus: FaqStatus) => {
+    await statusMutation.mutateAsync({
       id: record.id,
       status: nextStatus,
       successMessage: `FAQ group set to ${nextStatus}.`,
@@ -212,7 +212,7 @@ export default function FaqsPage() {
             head={
               <>
                 <PanelTableHeadCell>SI/NO</PanelTableHeadCell>
-                <PanelTableHeadCell>Target Section</PanelTableHeadCell>
+                <PanelTableHeadCell>Page Placement</PanelTableHeadCell>
                 <PanelTableHeadCell>Accordion Structure</PanelTableHeadCell>
                 <PanelTableHeadCell>Status</PanelTableHeadCell>
                 <PanelTableHeadCell align="right">Actions</PanelTableHeadCell>
@@ -238,7 +238,12 @@ export default function FaqsPage() {
                     </span>
                   </td>
                   <td className="px-4 py-3">
-                    <StatusBadge status={item.faq_status} />
+                    <StatusSwitch
+                      status={item.faq_status}
+                      onStatusChange={(nextStatus) =>
+                        handleToggleStatus(item, nextStatus)
+                      }
+                    />
                   </td>
                   <td className="px-4 py-3 text-right">
                     <div className="flex items-center justify-end gap-1.5">
@@ -263,32 +268,6 @@ export default function FaqsPage() {
                       >
                         <Pencil className="size-3" aria-hidden />
                         <span>Edit</span>
-                      </Button>
-                      <Button
-                        type="button"
-                        size="xs"
-                        variant="outline"
-                        onClick={() => handleToggleStatus(item)}
-                        disabled={statusMutation.isPending}
-                        title={`Set to ${item.faq_status === 'Active' ? 'Inactive' : 'Active'}`}
-                        className={cn(
-                          'cursor-pointer rounded-full text-[0.7rem] font-bold',
-                          item.faq_status === 'Active'
-                            ? 'border-emerald-200 bg-emerald-50 text-emerald-800 hover:bg-emerald-100'
-                            : 'border-cream-300 bg-cream-50 text-ink-500 hover:bg-cream-100',
-                        )}
-                      >
-                        {item.faq_status === 'Active' ? (
-                          <span className="flex items-center gap-1">
-                            <span className="size-1.5 rounded-full bg-emerald-600" />
-                            <span>Active</span>
-                          </span>
-                        ) : (
-                          <span className="flex items-center gap-1">
-                            <span className="size-1.5 rounded-full bg-ink-400" />
-                            <span>Inactive</span>
-                          </span>
-                        )}
                       </Button>
                       <Button
                         type="button"

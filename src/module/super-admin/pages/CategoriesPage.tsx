@@ -10,7 +10,7 @@
  */
 
 import { useMemo, useState } from 'react'
-import { CheckCircle2, Pencil, Plus, RefreshCw, Tags, Trash2, XCircle } from 'lucide-react'
+import { Pencil, Plus, RefreshCw, Tags, Trash2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { cn } from 'cn'
@@ -30,7 +30,7 @@ import {
   PanelTableHeadCell,
 } from '../components/PanelTable'
 import { PanelFilterSelect } from '../components/PanelFilterSelect'
-import { StatusBadge } from '../components/StatusBadge'
+import { StatusSwitch } from '../components/StatusSwitch'
 import { panelDescription } from '../navigation'
 import { errorMessage } from '../hook/errors'
 import { DEFAULT_PER_PAGE, useServerSearch } from '../hook/useServerList'
@@ -159,11 +159,11 @@ export default function CategoriesPage() {
     )
   }
 
-  const handleToggleStatus = (category: Category) => {
-    const nextStatus: CategoryStatus =
-      category.status === 'Active' ? 'Inactive' : 'Active'
-
-    statusMutation.mutate({
+  const handleToggleStatus = async (
+    category: Category,
+    nextStatus: CategoryStatus,
+  ) => {
+    await statusMutation.mutateAsync({
       id: category.id,
       category_status: nextStatus,
       successMessage: `"${category.name}" marked as ${nextStatus}.`,
@@ -316,7 +316,12 @@ export default function CategoriesPage() {
                 </td>
 
                 <td className="px-4 py-3.5">
-                  <StatusBadge status={category.status} size="sm" />
+                  <StatusSwitch
+                    status={category.status}
+                    onStatusChange={(nextStatus) =>
+                      handleToggleStatus(category, nextStatus)
+                    }
+                  />
                 </td>
 
                 <td className="px-4 py-3.5">
@@ -331,31 +336,6 @@ export default function CategoriesPage() {
                     >
                       <Pencil className="size-3" aria-hidden />
                       <span>Edit</span>
-                    </Button>
-
-                    <Button
-                      type="button"
-                      size="xs"
-                      variant="outline"
-                      onClick={() => handleToggleStatus(category)}
-                      disabled={statusMutation.isPending}
-                      title={
-                        category.status === 'Active'
-                          ? 'Mark as inactive'
-                          : 'Mark as active'
-                      }
-                      className={cn(
-                        'cursor-pointer rounded-full text-[0.7rem]',
-                        category.status === 'Active'
-                          ? 'border-maroon-200 bg-maroon-50 text-maroon-800 hover:bg-maroon-100'
-                          : 'border-emerald-200 bg-emerald-50 text-emerald-800 hover:bg-emerald-100',
-                      )}
-                    >
-                      {category.status === 'Active' ? (
-                        <XCircle className="size-3" aria-hidden />
-                      ) : (
-                        <CheckCircle2 className="size-3" aria-hidden />
-                      )}
                     </Button>
 
                     <Button

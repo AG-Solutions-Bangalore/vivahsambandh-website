@@ -14,7 +14,6 @@ import {
   Pencil,
   Trash2,
   CheckCircle2,
-  XCircle,
   Upload,
   Image as ImageIcon,
 } from 'lucide-react'
@@ -37,6 +36,7 @@ import {
 } from '../components/PanelTable'
 import { PanelFilterSelect } from '../components/PanelFilterSelect'
 import { StatusBadge } from '../components/StatusBadge'
+import { StatusSwitch } from '../components/StatusSwitch'
 import { panelDescription } from '../navigation'
 import { errorMessage } from '../hook/errors'
 import { DEFAULT_PER_PAGE, useServerSearch } from '../hook/useServerList'
@@ -247,9 +247,11 @@ export default function ClientsPage() {
   }
 
   // Toggle quick status
-  const handleToggleStatus = (client: ClientRecord) => {
-    const nextStatus: ClientStatus = client.clients_status === 'Active' ? 'Inactive' : 'Active'
-    statusMutation.mutate({
+  const handleToggleStatus = async (
+    client: ClientRecord,
+    nextStatus: ClientStatus,
+  ) => {
+    await statusMutation.mutateAsync({
       id: client.id,
       clients_status: nextStatus,
       successMessage: `Client marked as ${nextStatus}.`,
@@ -421,7 +423,12 @@ export default function ClientsPage() {
 
                 {/* Status */}
                 <td className="px-4 py-3 text-xs">
-                  <StatusBadge status={client.clients_status} size="sm" />
+                  <StatusSwitch
+                    status={client.clients_status}
+                    onStatusChange={(nextStatus) =>
+                      handleToggleStatus(client, nextStatus)
+                    }
+                  />
                 </td>
 
                 {/* Actions */}
@@ -449,32 +456,6 @@ export default function ClientsPage() {
                       className="cursor-pointer rounded-full border-cream-300 bg-white text-[0.7rem] text-navy-700 hover:bg-cream-100"
                     >
                       <Pencil className="size-3" aria-hidden />
-                    </Button>
-
-                    {/* Status toggle */}
-                    <Button
-                      type="button"
-                      size="xs"
-                      variant="outline"
-                      onClick={() => handleToggleStatus(client)}
-                      disabled={statusMutation.isPending}
-                      title={
-                        client.clients_status === 'Active'
-                          ? 'Deactivate client'
-                          : 'Activate client'
-                      }
-                      className={cn(
-                        'cursor-pointer rounded-full text-[0.7rem]',
-                        client.clients_status === 'Active'
-                          ? 'border-emerald-200 bg-emerald-50 text-emerald-800 hover:bg-emerald-100'
-                          : 'border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100',
-                      )}
-                    >
-                      {client.clients_status === 'Active' ? (
-                        <CheckCircle2 className="size-3 text-emerald-600" aria-hidden />
-                      ) : (
-                        <XCircle className="size-3 text-slate-500" aria-hidden />
-                      )}
                     </Button>
 
                     {/* Delete */}
