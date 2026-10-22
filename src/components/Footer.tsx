@@ -22,11 +22,8 @@ export default function Footer() {
   const quickLinks = getNavItems(t, appLang, pathname);
 
   const support = [
-    { label: t("footer.helpCenter"), href: pagePath("/help-center", appLang) },
     { label: t("footer.privacy"), href: pagePath("/privacy", appLang) },
     { label: t("footer.terms"), href: pagePath("/terms", appLang) },
-    { label: t("footer.guidelines"), href: pagePath("/guidelines", appLang) },
-    { label: t("footer.sitemap"), href: "/sitemap.xml" },
   ];
 
   const company = useCompanyDetails(appLang);
