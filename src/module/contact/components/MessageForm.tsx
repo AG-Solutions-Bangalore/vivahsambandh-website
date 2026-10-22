@@ -2,7 +2,6 @@ import { useState, type FormEvent, type ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import Reveal from '../../../components/motion/Reveal'
 import { useEnquiryMutation } from '../hook/useEnquiry'
-import { getEnquiryFrom, getUtmParams } from '../../../lib/api/utm'
 import { img } from '../../../lib/image'
 import {
   sanitizeName,
@@ -155,8 +154,7 @@ export default function MessageForm() {
         enquiryMobile: formData.phone.trim(),
         enquirySubject: formData.subject.trim(),
         enquiryMessage: formData.message.trim(),
-        enquiryFrom: getEnquiryFrom('Contact Page'),
-        ...getUtmParams(),
+        enquiryFrom: 'contact',
       })
       setSent(true)
       setFieldErrors({})

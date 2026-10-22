@@ -1,8 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import Reveal from "../../../components/motion/Reveal";
-import { homePath } from "../../../constants/navigation";
-import type { AppLang } from "../../../i18n";
 import { img, imgSrcSet } from "../../../lib/image";
 
 /**
@@ -10,10 +8,7 @@ import { img, imgSrcSet } from "../../../lib/image";
  * CTAs (design's pre-footer block).
  */
 export default function ContactCta() {
-  const { t, i18n } = useTranslation();
-  const lang: AppLang =
-    i18n.resolvedLanguage === "hi" || i18n.language === "hi" ? "hi" : "en";
-  const home = homePath(lang);
+  const { t } = useTranslation();
 
   return (
     <section className="relative isolate sm:-mb-1 sm:pt-16 overflow-hidden bg-cream-50 py-10 sm:py-12">
