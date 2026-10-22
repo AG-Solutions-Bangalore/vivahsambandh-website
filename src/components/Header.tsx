@@ -26,17 +26,16 @@ export default function Header() {
   const navItems = getNavItems(t, lang, pathname)
   const brandHref = homePath(lang)
 
-  // Entrance + hide-on-scroll-down (auto-show on scroll-up / at top).
+  // Entrance only — the header itself stays pinned to the top at all times.
   // Motion loads lazily: desktop enhances on mount; mobile waits for first
   // scroll/touch or idle so header motion never steals LCP bandwidth.
   useEffect(() => {
-    let trigger: { kill: () => void } | null = null
     let cancelled = false
 
     const wireMotion = () => {
       if (cancelled) return
       void ensureMotion()
-        .then(({ gsap, ScrollTrigger }) => {
+        .then(({ gsap }) => {
           const header = headerRef.current
           if (cancelled || !header || prefersReducedMotion()) return
 
@@ -60,33 +59,6 @@ export default function Header() {
               })
             }
           }
-
-          // Hide on scroll down, reveal on scroll up. Disabled while the
-          // mobile drawer is open (tracked via data attribute below).
-          let hidden = false
-          const setHidden = (next: boolean) => {
-            if (hidden === next) return
-            hidden = next
-            gsap.to(header, {
-              yPercent: next ? -110 : 0,
-              duration: 0.35,
-              ease: 'power3.out',
-              overwrite: 'auto',
-            })
-          }
-          trigger = ScrollTrigger.create({
-            start: 0,
-            end: 'max',
-            onUpdate: (self) => {
-              if (header.dataset.drawerOpen === 'true') return
-              if (self.scroll() <= 80) {
-                setHidden(false)
-                return
-              }
-              if (self.direction === 1) setHidden(true)
-              else if (self.direction === -1) setHidden(false)
-            },
-          })
         })
         .catch(() => {
           /* motion failed to load — header stays visible and static */
@@ -106,16 +78,12 @@ export default function Header() {
         clearTimeout(timer)
         window.removeEventListener('scroll', onMove)
         window.removeEventListener('touchstart', onMove)
-        trigger?.kill()
-        trigger = null
       }
     }
 
     wireMotion()
     return () => {
       cancelled = true
-      trigger?.kill()
-      trigger = null
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
@@ -126,7 +94,6 @@ export default function Header() {
   // double-invokes updaters — locking inside would lock/unlock twice).
   const syncDrawer = (next: boolean) => {
     setOpen(next)
-    if (headerRef.current) headerRef.current.dataset.drawerOpen = String(next)
     if (next) lockPageScroll()
     else unlockPageScroll()
   }
@@ -136,8 +103,7 @@ export default function Header() {
   return (
     <header
       ref={headerRef}
-      data-drawer-open="false"
-      className="sticky top-0 z-50 border-b border-gold-500/25 bg-cream-50/90 backdrop-blur will-change-transform"
+      className="fixed inset-x-0 top-0 z-50 border-b border-gold-500/25 bg-cream-50/90 backdrop-blur will-change-transform"
     >
       <div className="section-pad flex h-16 items-center justify-between gap-2 sm:gap-3">
         {/* Brand Logo */}

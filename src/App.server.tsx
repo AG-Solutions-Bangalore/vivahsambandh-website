@@ -91,6 +91,9 @@ export default function AppServer() {
           <LanguageSync />
           <ScrollManager />
           <Header />
+          {/* Mirror of the client tree's fixed-header offset — keeps the
+              prerendered markup and the first client render identical. */}
+          <div className="h-[65px]" aria-hidden="true" />
           <main>
             {/*
               Mirrors the client tree's boundary in App.tsx. The server never

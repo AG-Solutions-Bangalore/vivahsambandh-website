@@ -422,6 +422,9 @@ export default function App() {
               <LanguageSync />
               <ScrollManager />
               <Header />
+              {/* Offset for the fixed header (h-16 + 1px border) so page
+                  content starts exactly where it did with the sticky header. */}
+              <div className="h-[65px]" aria-hidden="true" />
               <main>
                 {/*
                   One boundary for the whole public route tree: every page

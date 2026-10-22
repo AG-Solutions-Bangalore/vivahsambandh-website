@@ -44,7 +44,7 @@ export default function PersonalDetailsSection() {
     loadingOptions,
     conditions,
     isMobileVerifiedNow,
-    isMobileComplete,
+    openOtpModal,
   } = useRegistrationForm()
 
   const { isEmployed, isBusiness, isOtherProfession, showIncome, isDivorced, hasPriorMarriage, showChildrenWith } =
