@@ -1,27 +1,27 @@
-import { useEffect, useRef, lazy, Suspense, type ReactNode } from 'react'
+import { lazy, Suspense, useEffect, useRef, type ReactNode } from 'react'
+import { Toaster } from 'react-hot-toast'
 import { useTranslation } from 'react-i18next'
-import { Route, Routes, useLocation, Navigate } from 'react-router-dom'
+import { Navigate, Route, Routes, useLocation } from 'react-router-dom'
+import DropdownScrollGuard from './components/common/DropdownScrollGuard'
 import Footer from './components/Footer'
 import Header from './components/Header'
 import SmoothScroll from './components/motion/SmoothScroll'
-import DropdownScrollGuard from './components/common/DropdownScrollGuard'
-import { getLenis, resolveHashId, scrollToAnchor } from './lib/scroll'
+import { RouteSkeleton } from './components/skeletons/routeSkeleton'
+import type { AppLang } from './i18n'
+import { QueryProvider } from './lib/api/queryClient'
 import { DEFERRED_SECTION_IDS, whenSectionReady } from './lib/deferredSections'
 import { refreshScrollTriggers } from './lib/gsap-setup'
+import { getLenis, resolveHashId, scrollToAnchor } from './lib/scroll'
 import HomePage from './module/home/pages/HomePage'
-import { QueryProvider } from './lib/api/queryClient'
 import {
   SuperAdminAuthProvider,
   SuperAdminGuard,
 } from './module/super-admin/context/SuperAdminAuthContext'
-import { Toaster } from 'react-hot-toast'
-import type { AppLang } from './i18n'
-import { RouteSkeleton } from './components/skeletons/routeSkeleton'
 
 // Code-split non-home routes so the initial homepage bundle is feather-light
 const AboutPage = lazy(() => import('./module/about/pages/AboutPage'))
 const StoriesPage = lazy(() => import('./module/stories/pages/StoriesPage'))
-const MembershipPage = lazy(() => import('./module/membership/pages/MembershipPage'))
+// const MembershipPage = lazy(() => import('./module/membership/pages/MembershipPage'))
 const BlogsPage = lazy(() => import('./module/blog/pages/BlogsPage'))
 const BlogDetailPage = lazy(() => import('./module/blog/pages/BlogDetailPage'))
 const ContactPage = lazy(() => import('./module/contact/pages/ContactPage'))
