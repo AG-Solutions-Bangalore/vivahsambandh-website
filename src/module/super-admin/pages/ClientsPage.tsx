@@ -10,7 +10,6 @@ import {
   Briefcase,
   Plus,
   RefreshCw,
-  Eye,
   Pencil,
   Trash2,
   CheckCircle2,

@@ -1,7 +1,5 @@
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
-import { homePath } from "../../../constants/navigation";
-import type { AppLang } from "../../../i18n";
 import Reveal from "../../../components/motion/Reveal";
 import { img, imgSrcSet } from "../../../lib/image";
 
@@ -10,10 +8,7 @@ import { img, imgSrcSet } from "../../../lib/image";
  * navy solid + gold outline pills (design's pre-footer block).
  */
 export default function CtaBand() {
-  const { t, i18n } = useTranslation();
-  const lang: AppLang =
-    i18n.resolvedLanguage === "hi" || i18n.language === "hi" ? "hi" : "en";
-  const home = homePath(lang);
+  const { t } = useTranslation();
 
   return (
     <section className="relative isolate overflow-hidden bg-cream-50 py-14 sm:py-18 lg:py-24">
