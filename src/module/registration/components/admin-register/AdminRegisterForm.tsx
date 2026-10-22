@@ -12,10 +12,13 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Field } from '@/components/ui/field'
+import { Checkbox } from '@/components/ui/checkbox'
 import { OptionPills } from '@/components/ui/option-pills'
 import { cn } from 'cn'
 import { createAdminRegister } from '../../api/registration.api'
 import ImageCropModal from '../ImageCropModal'
+import TermsModal from '../TermsModal'
+import OtpVerificationModal from '../OtpVerificationModal'
 import type { AdminRegisterFormData } from '../../types'
 import {
   sanitizeName,
@@ -40,6 +43,7 @@ const initialAdminFormState: AdminRegisterFormData = {
   mobile: '',
   face_image: null,
   face_image_preview: '',
+  agree_terms: false,
 }
 
 type FieldErrors = Partial<Record<keyof AdminRegisterFormData, string>>
@@ -55,6 +59,14 @@ export default function AdminRegisterForm() {
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({})
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitResult, setSubmitResult] = useState<SubmitResult | null>(null)
+  const [termsOpen, setTermsOpen] = useState(false)
+  const [isOtpModalOpen, setIsOtpModalOpen] = useState(false)
+  const [otpMode, setOtpMode] = useState<'inline' | 'submit'>('submit')
+  const [isMobileVerified, setIsMobileVerified] = useState(false)
+  const [verifiedMobileNumber, setVerifiedMobileNumber] = useState('')
+
+  const isMobileVerifiedNow =
+    isMobileVerified && form.mobile === verifiedMobileNumber
 
   const facePhotoInputRef = useRef<HTMLInputElement>(null)
 
@@ -98,6 +110,10 @@ export default function AdminRegisterForm() {
   const handleMobileChange = (e: ChangeEvent<HTMLInputElement>) => {
     const sanitized = sanitizeDigits(e.target.value, 10)
     clearFieldError('mobile')
+    if (isMobileVerified && sanitized !== verifiedMobileNumber) {
+      setIsMobileVerified(false)
+      setVerifiedMobileNumber('')
+    }
     setForm((prev) => ({ ...prev, mobile: sanitized }))
   }
 
@@ -108,6 +124,14 @@ export default function AdminRegisterForm() {
     (e: React.ClipboardEvent<HTMLInputElement | HTMLTextAreaElement>) => {
       handleSanitizedPaste(e, sanitizer, (cleaned) => {
         clearFieldError(fieldName)
+        if (
+          fieldName === 'mobile' &&
+          isMobileVerified &&
+          cleaned !== verifiedMobileNumber
+        ) {
+          setIsMobileVerified(false)
+          setVerifiedMobileNumber('')
+        }
         setForm((prev) => ({ ...prev, [fieldName]: cleaned }))
       })
     }
@@ -141,11 +165,6 @@ export default function AdminRegisterForm() {
 
   const closeCropper = () => {
     setIsCropOpen(false)
-    setCropRawSrc(null)
-    if (cropUrlRef.current) {
-      URL.revokeObjectURL(cropUrlRef.current)
-      cropUrlRef.current = null
-    }
   }
 
   const handleCropComplete = (croppedFile: File, previewUrl: string) => {
@@ -155,6 +174,22 @@ export default function AdminRegisterForm() {
       face_image_preview: previewUrl,
     }))
     clearFieldError('face_image')
+  }
+
+  const resetAdminForm = () => {
+    setForm(initialAdminFormState)
+    setFieldErrors({})
+    setTermsOpen(false)
+    setIsCropOpen(false)
+    setCropRawSrc(null)
+    setIsOtpModalOpen(false)
+    setOtpMode('submit')
+    setIsMobileVerified(false)
+    setVerifiedMobileNumber('')
+    if (cropUrlRef.current) {
+      URL.revokeObjectURL(cropUrlRef.current)
+      cropUrlRef.current = null
+    }
   }
 
   const validateForm = (): FieldErrors => {
@@ -179,22 +214,15 @@ export default function AdminRegisterForm() {
 
     if (!form.face_image) errors.face_image = 'Please upload a face photograph'
 
+    if (!form.agree_terms) {
+      errors.agree_terms =
+        'You must agree to the Terms & Conditions before submitting'
+    }
+
     return errors
   }
 
-  const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault()
-    setSubmitResult(null)
-
-    const errors = validateForm()
-    setFieldErrors(errors)
-    if (Object.keys(errors).length > 0) {
-      const firstKey = Object.keys(errors)[0]
-      const el = document.getElementById(`${inputId}-${firstKey}`)
-      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' })
-      return
-    }
-
+  const submitRegistration = async () => {
     setIsSubmitting(true)
 
     // FormData matching the create-admin-register API spec exactly:
@@ -217,8 +245,7 @@ export default function AdminRegisterForm() {
         message: res.message || 'Submission could not be completed.',
       })
       if (res.success) {
-        setForm(initialAdminFormState)
-        setFieldErrors({})
+        resetAdminForm()
       }
       window.scrollTo({ top: 0, behavior: 'smooth' })
     } catch (err) {
@@ -233,6 +260,38 @@ export default function AdminRegisterForm() {
     } finally {
       setIsSubmitting(false)
     }
+  }
+
+  const handleOtpVerified = () => {
+    setIsMobileVerified(true)
+    setVerifiedMobileNumber(form.mobile)
+    setIsOtpModalOpen(false)
+    clearFieldError('mobile')
+    if (otpMode === 'submit') {
+      void submitRegistration()
+    }
+  }
+
+  const handleSubmit = (e: FormEvent) => {
+    e.preventDefault()
+    setSubmitResult(null)
+
+    const errors = validateForm()
+    setFieldErrors(errors)
+    if (Object.keys(errors).length > 0) {
+      const firstKey = Object.keys(errors)[0]
+      const el = document.getElementById(`${inputId}-${firstKey}`)
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      return
+    }
+
+    if (!isMobileVerifiedNow) {
+      setOtpMode('submit')
+      setIsOtpModalOpen(true)
+      return
+    }
+
+    void submitRegistration()
   }
 
   const inputCls = (key: keyof AdminRegisterFormData) =>
@@ -267,8 +326,7 @@ export default function AdminRegisterForm() {
           type="button"
           onClick={() => {
             setSubmitResult(null)
-            setForm(initialAdminFormState)
-            setFieldErrors({})
+            resetAdminForm()
           }}
           className="mt-8 px-8 py-3 text-sm font-bold bg-navy-900 text-white hover:bg-navy-800 shadow-md"
         >
@@ -378,25 +436,55 @@ export default function AdminRegisterForm() {
             id={`${inputId}-mobile`}
             label="Mobile Number"
             required
+            hint={
+              isMobileVerifiedNow
+                ? 'Verified'
+                : form.mobile.length === 10
+                  ? '10 digits'
+                  : `${form.mobile.length}/10 digits`
+            }
             error={fieldErrors.mobile}
           >
-            <Input
-              id={`${inputId}-mobile`}
-              type="tel"
-              name="mobile"
-              inputMode="numeric"
-              maxLength={10}
-              value={form.mobile}
-              onChange={handleMobileChange}
-              onPaste={handlePasteCapture(
-                'mobile',
-                (val) => sanitizeDigits(val, 10),
-              )}
-              placeholder="10-digit mobile number"
-              className={inputCls('mobile')}
-              aria-invalid={Boolean(fieldErrors.mobile)}
-              aria-describedby={fieldErrors.mobile ? `${inputId}-mobile-error` : undefined}
-            />
+            <div className="relative">
+              <Input
+                id={`${inputId}-mobile`}
+                type="tel"
+                name="mobile"
+                inputMode="numeric"
+                autoComplete="tel"
+                maxLength={10}
+                value={form.mobile}
+                onChange={handleMobileChange}
+                onPaste={handlePasteCapture(
+                  'mobile',
+                  (val) => sanitizeDigits(val, 10),
+                )}
+                placeholder="10-digit mobile number"
+                className={cn(
+                  inputCls('mobile'),
+                  isMobileVerifiedNow &&
+                    'border-emerald-500 bg-emerald-50/20 pr-24 text-emerald-950 focus-visible:border-emerald-600 focus-visible:ring-emerald-500/20',
+                )}
+                aria-invalid={Boolean(fieldErrors.mobile)}
+                aria-describedby={fieldErrors.mobile ? `${inputId}-mobile-error` : undefined}
+              />
+              {isMobileVerifiedNow ? (
+                <span className="absolute right-2.5 top-1/2 inline-flex -translate-y-1/2 items-center gap-1 rounded-full border border-emerald-300 bg-emerald-100 px-2.5 py-0.5 text-[11px] font-bold text-emerald-800">
+                  Verified
+                </span>
+              ) : form.mobile.length === 10 ? (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setOtpMode('inline')
+                    setIsOtpModalOpen(true)
+                  }}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 cursor-pointer rounded-full border border-gold-500/40 bg-gold-50 px-3 py-1 text-[11px] font-bold text-gold-800 transition hover:bg-gold-100"
+                >
+                  Verify
+                </button>
+              ) : null}
+            </div>
           </Field>
 
           {/* Email */}
@@ -561,6 +649,54 @@ export default function AdminRegisterForm() {
               )}
             </div>
           </div>
+
+          {/* Terms & Conditions */}
+          <div id={`${inputId}-agree_terms`} className="sm:col-span-2">
+            <div
+              className={cn(
+                'rounded-2xl border p-4 transition sm:p-5',
+                fieldErrors.agree_terms
+                  ? 'border-maroon-500 bg-maroon-50/20'
+                  : 'border-cream-300 bg-cream-50/70 focus-within:border-gold-500/50',
+              )}
+            >
+              <div className="flex items-start gap-3">
+                <Checkbox
+                  id={`${inputId}-agree-terms`}
+                  checked={form.agree_terms}
+                  onCheckedChange={(checked) => {
+                    setForm((prev) => ({ ...prev, agree_terms: checked === true }))
+                    clearFieldError('agree_terms')
+                  }}
+                  error={Boolean(fieldErrors.agree_terms)}
+                  className="mt-0.5 size-5"
+                  aria-label="Agree to Terms and Conditions"
+                />
+                <label
+                  htmlFor={`${inputId}-agree-terms`}
+                  className="cursor-pointer text-[13px] leading-relaxed text-navy-900 sm:text-sm"
+                >
+                  I have read, understood and agree to the{' '}
+                  <button
+                    type="button"
+                    onClick={() => setTermsOpen(true)}
+                    className="font-bold text-gold-700 underline underline-offset-2 transition hover:text-gold-800"
+                  >
+                    Terms &amp; Conditions
+                  </button>{' '}
+                  governing community bio-data verification and honorary matchmaking support.
+                </label>
+              </div>
+              {fieldErrors.agree_terms && (
+                <p
+                  role="alert"
+                  className="mt-2 flex items-start gap-1.5 text-xs font-semibold text-maroon-600"
+                >
+                  {fieldErrors.agree_terms}
+                </p>
+              )}
+            </div>
+          </div>
         </div>
 
         {/* Face Photo Cropper */}
@@ -571,6 +707,22 @@ export default function AdminRegisterForm() {
           aspect={1}
           onClose={closeCropper}
           onCropComplete={handleCropComplete}
+        />
+
+        {/* Terms & Conditions Modal */}
+        <TermsModal isOpen={termsOpen} onClose={() => setTermsOpen(false)} />
+
+        {/* Firebase Phone OTP Verification Modal */}
+        <OtpVerificationModal
+          isOpen={isOtpModalOpen}
+          mobile={form.mobile}
+          mode={otpMode}
+          onVerified={handleOtpVerified}
+          onClose={() => setIsOtpModalOpen(false)}
+          onChangeNumber={() => {
+            setIsOtpModalOpen(false)
+            document.getElementById(`${inputId}-mobile`)?.focus()
+          }}
         />
 
         {/* Submit */}
