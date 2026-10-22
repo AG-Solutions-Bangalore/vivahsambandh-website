@@ -15,6 +15,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { SearchableSelect } from "@/components/common/SearchableSelect";
 import { normalizePageSlug, PAGE_SLUG_ALIASES } from "@/lib/page-slug";
+import { cn } from "cn";
 import type { FaqPayload, FaqStatus } from "../types";
 import { useDeleteFaqSubMutation, usePageTwoOptions } from "../hook/useFaqs";
 import {
@@ -50,6 +51,11 @@ interface FaqEditorFormProps {
   initialValues: FaqFormValues;
   /** The group being edited — set so saved questions can be deleted. */
   groupId?: number;
+  /**
+   * Whether the form is in edit mode. When false (creation mode), status is
+   * not shown to the user and defaults to Active.
+   */
+  isEdit?: boolean;
   isSubmitting?: boolean;
   onSubmit: (payload: FaqPayload) => void;
 }
@@ -58,6 +64,7 @@ export function FaqEditorForm({
   formId,
   initialValues,
   groupId,
+  isEdit = false,
   isSubmitting = false,
   onSubmit,
 }: FaqEditorFormProps) {
@@ -200,7 +207,12 @@ export function FaqEditorForm({
   return (
     <form id={formId} onSubmit={handleSubmit} className="space-y-6">
       {/* Group level fields */}
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+      <div
+        className={cn(
+          "grid grid-cols-1 gap-4",
+          isEdit ? "sm:grid-cols-2" : "",
+        )}
+      >
         <div>
           <label htmlFor="faq-for" className={LABEL_CLASS}>
             Page Placement (faq_for){" "}
@@ -223,25 +235,27 @@ export function FaqEditorForm({
           ) : null}
         </div>
 
-        <div>
-          <label htmlFor="faq-status" className={LABEL_CLASS}>
-            Group Status
-          </label>
-          <select
-            id="faq-status"
-            value={values.faq_status}
-            onChange={(event) =>
-              update("faq_status", event.target.value as FaqStatus)
-            }
-            className="h-10 w-full cursor-pointer rounded-xl border border-cream-300 bg-cream-50/70 px-3 text-xs font-semibold text-navy-900 focus-visible:border-gold-500 focus-visible:ring-2 focus-visible:ring-gold-500/40 focus-visible:outline-none"
-          >
-            <option value="Active">Active (Visible)</option>
-            <option value="Inactive">Inactive (Hidden)</option>
-          </select>
-          <p className="mt-1 text-[11px] text-ink-500">
-            Set active to display on the live website.
-          </p>
-        </div>
+        {isEdit && (
+          <div>
+            <label htmlFor="faq-status" className={LABEL_CLASS}>
+              Group Status
+            </label>
+            <select
+              id="faq-status"
+              value={values.faq_status}
+              onChange={(event) =>
+                update("faq_status", event.target.value as FaqStatus)
+              }
+              className="h-10 w-full cursor-pointer rounded-xl border border-cream-300 bg-cream-50/70 px-3 text-xs font-semibold text-navy-900 focus-visible:border-gold-500 focus-visible:ring-2 focus-visible:ring-gold-500/40 focus-visible:outline-none"
+            >
+              <option value="Active">Active (Visible)</option>
+              <option value="Inactive">Inactive (Hidden)</option>
+            </select>
+            <p className="mt-1 text-[11px] text-ink-500">
+              Set active to display on the live website.
+            </p>
+          </div>
+        )}
       </div>
 
       {/* Question builder */}

@@ -136,6 +136,7 @@ export default function BlogEditorPage() {
             formId={FORM_ID}
             initialValues={blogToFormValues(record)}
             currentBannerUrl={record.banner_image ?? null}
+            isEdit
             isSubmitting={isSubmitting}
             onSubmit={handleSubmit}
           />
@@ -146,6 +147,7 @@ export default function BlogEditorPage() {
             initialValues={emptyBlogForm()}
             autoSlug
             requireBanner
+            isEdit={false}
             isSubmitting={isSubmitting}
             onSubmit={handleSubmit}
           />

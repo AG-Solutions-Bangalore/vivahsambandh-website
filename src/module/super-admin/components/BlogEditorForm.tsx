@@ -39,6 +39,11 @@ interface BlogEditorFormProps {
    * image it already has, so the requirement is opt-in.
    */
   requireBanner?: boolean
+  /**
+   * Whether the form is in edit mode. When false (creation mode), status is
+   * not shown to the user and defaults to Active.
+   */
+  isEdit?: boolean
   isSubmitting?: boolean
   onSubmit: (payload: BlogPayload) => void
 }
@@ -49,6 +54,7 @@ export function BlogEditorForm({
   currentBannerUrl,
   autoSlug = false,
   requireBanner = false,
+  isEdit = false,
   isSubmitting = false,
   onSubmit,
 }: BlogEditorFormProps) {
@@ -419,23 +425,30 @@ export function BlogEditorForm({
       </div>
 
       {/* Status + placement */}
-      <div className="grid gap-4 sm:grid-cols-3">
-        <div>
-          <label htmlFor="blog-status" className={LABEL_CLASS}>
-            Status
-          </label>
-          <select
-            id="blog-status"
-            value={values.blog_status}
-            onChange={(event) =>
-              update('blog_status', event.target.value as BlogStatus)
-            }
-            className="h-10 w-full cursor-pointer rounded-xl border border-cream-300 bg-cream-50/70 px-3 text-xs font-semibold text-navy-900 focus-visible:border-gold-500 focus-visible:ring-2 focus-visible:ring-gold-500/40 focus-visible:outline-none"
-          >
-            <option value="Active">Active</option>
-            <option value="Inactive">Inactive</option>
-          </select>
-        </div>
+      <div
+        className={cn(
+          'grid gap-4',
+          isEdit ? 'sm:grid-cols-3' : 'sm:grid-cols-2',
+        )}
+      >
+        {isEdit && (
+          <div>
+            <label htmlFor="blog-status" className={LABEL_CLASS}>
+              Status
+            </label>
+            <select
+              id="blog-status"
+              value={values.blog_status}
+              onChange={(event) =>
+                update('blog_status', event.target.value as BlogStatus)
+              }
+              className="h-10 w-full cursor-pointer rounded-xl border border-cream-300 bg-cream-50/70 px-3 text-xs font-semibold text-navy-900 focus-visible:border-gold-500 focus-visible:ring-2 focus-visible:ring-gold-500/40 focus-visible:outline-none"
+            >
+              <option value="Active">Active</option>
+              <option value="Inactive">Inactive</option>
+            </select>
+          </div>
+        )}
 
         <label
           htmlFor="blog-front"

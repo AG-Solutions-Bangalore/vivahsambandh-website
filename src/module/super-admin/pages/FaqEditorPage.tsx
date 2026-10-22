@@ -138,6 +138,7 @@ export default function FaqEditorPage() {
             formId={FORM_ID}
             initialValues={faqToFormValues(record)}
             groupId={record.id}
+            isEdit
             isSubmitting={isSubmitting}
             onSubmit={handleSubmit}
           />
@@ -146,6 +147,7 @@ export default function FaqEditorPage() {
             key="create"
             formId={FORM_ID}
             initialValues={emptyFaqForm()}
+            isEdit={false}
             isSubmitting={isSubmitting}
             onSubmit={handleSubmit}
           />

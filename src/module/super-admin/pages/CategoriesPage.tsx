@@ -426,29 +426,6 @@ export default function CategoriesPage() {
               className="h-10 rounded-xl border-cream-300 text-xs"
             />
           </div>
-
-          <div>
-            <label
-              htmlFor="create-category-status"
-              className="mb-1.5 block text-[0.68rem] font-bold tracking-[0.14em] text-navy-900 uppercase"
-            >
-              Status
-            </label>
-            <select
-              id="create-category-status"
-              value={form.category_status}
-              onChange={(event) =>
-                setForm((prev) => ({
-                  ...prev,
-                  category_status: event.target.value as CategoryStatus,
-                }))
-              }
-              className="h-10 w-full cursor-pointer rounded-xl border border-cream-300 bg-cream-50/70 px-3 text-xs font-semibold text-navy-900 focus-visible:border-gold-500 focus-visible:ring-2 focus-visible:ring-gold-500/40 focus-visible:outline-none"
-            >
-              <option value="Active">Active</option>
-              <option value="Inactive">Inactive</option>
-            </select>
-          </div>
         </form>
       </PanelModal>
 

@@ -579,52 +579,31 @@ export default function TestimonialsPage() {
             )}
           </div>
 
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <div>
-              <label className="mb-1.5 block text-[0.68rem] font-bold tracking-[0.14em] text-navy-900 uppercase">
-                Target Section / Page <span className="text-maroon-600">*</span>
-              </label>
-              <Input
-                value={formState.testimonial_for}
-                onChange={(e) =>
-                  setFormState((prev) => ({
-                    ...prev,
-                    testimonial_for: e.target.value,
-                  }))
-                }
-                placeholder="e.g. home, landing, stories"
-                className={cn(
-                  'h-10 rounded-xl border-cream-300 bg-cream-50/70 text-xs font-medium text-navy-900 focus-visible:border-gold-500 focus-visible:ring-gold-500/40',
-                  formErrors.testimonial_for && 'border-maroon-400 focus-visible:ring-maroon-400',
-                )}
-              />
-              {formErrors.testimonial_for ? (
-                <p className="mt-1 text-xs text-maroon-600">{formErrors.testimonial_for}</p>
-              ) : (
-                <p className="mt-1 text-[0.7rem] text-ink-500">
-                  Where this review should be displayed (e.g. "home")
-                </p>
+          <div>
+            <label className="mb-1.5 block text-[0.68rem] font-bold tracking-[0.14em] text-navy-900 uppercase">
+              Target Section / Page <span className="text-maroon-600">*</span>
+            </label>
+            <Input
+              value={formState.testimonial_for}
+              onChange={(e) =>
+                setFormState((prev) => ({
+                  ...prev,
+                  testimonial_for: e.target.value,
+                }))
+              }
+              placeholder="e.g. home, landing, stories"
+              className={cn(
+                'h-10 rounded-xl border-cream-300 bg-cream-50/70 text-xs font-medium text-navy-900 focus-visible:border-gold-500 focus-visible:ring-gold-500/40',
+                formErrors.testimonial_for && 'border-maroon-400 focus-visible:ring-maroon-400',
               )}
-            </div>
-
-            <div>
-              <label className="mb-1.5 block text-[0.68rem] font-bold tracking-[0.14em] text-navy-900 uppercase">
-                Initial Status
-              </label>
-              <select
-                value={formState.testimonial_status}
-                onChange={(e) =>
-                  setFormState((prev) => ({
-                    ...prev,
-                    testimonial_status: e.target.value as TestimonialStatus,
-                  }))
-                }
-                className="h-10 w-full cursor-pointer rounded-xl border border-cream-300 bg-cream-50/70 px-3 text-xs font-semibold text-navy-900 focus-visible:border-gold-500 focus-visible:ring-2 focus-visible:ring-gold-500/40 focus-visible:outline-none"
-              >
-                <option value="Active">Active (Visible)</option>
-                <option value="Inactive">Inactive (Hidden)</option>
-              </select>
-            </div>
+            />
+            {formErrors.testimonial_for ? (
+              <p className="mt-1 text-xs text-maroon-600">{formErrors.testimonial_for}</p>
+            ) : (
+              <p className="mt-1 text-[0.7rem] text-ink-500">
+                Where this review should be displayed (e.g. "home")
+              </p>
+            )}
           </div>
 
           <div>
