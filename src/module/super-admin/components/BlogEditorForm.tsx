@@ -16,6 +16,7 @@ import { RichTextEditor } from '@/components/ui/ckeditor'
 import { cn } from 'cn'
 import type { BlogPayload, BlogStatus } from '../types'
 import { slugify, type BlogFormValues } from './blogForm'
+import { CategorySelect } from './CategorySelect'
 
 /** Field label used across the form. */
 const LABEL_CLASS =
@@ -269,17 +270,16 @@ export function BlogEditorForm({
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
           <label htmlFor="blog-category" className={LABEL_CLASS}>
-            Category ID
+            Category
           </label>
-          <Input
+          <CategorySelect
             id="blog-category"
-            type="text"
-            placeholder="e.g. 4"
             value={values.blog_categories_ids}
-            onChange={(event) =>
-              update('blog_categories_ids', event.target.value)
-            }
-            className={INPUT_CLASS}
+            onChange={(value) => update('blog_categories_ids', value)}
+            showLabel={false}
+            placeholder="Select a category"
+            disabled={isSubmitting}
+            className="[&_button]:rounded-xl"
           />
         </div>
 

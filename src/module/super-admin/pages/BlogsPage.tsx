@@ -34,6 +34,7 @@ import {
   PanelTableHeadCell,
 } from '../components/PanelTable'
 import { PanelFilterSelect } from '../components/PanelFilterSelect'
+import { CategorySelect } from '../components/CategorySelect'
 import { StatusBadge } from '../components/StatusBadge'
 import {
   BlogEditorForm,
@@ -62,6 +63,7 @@ const EDIT_FORM_ID = 'blog-edit-form'
 export default function BlogsPage() {
   const { searchInput, setSearchInput, searchTerm } = useServerSearch()
   const [statusFilter, setStatusFilter] = useState<string>('All')
+  const [categoryFilter, setCategoryFilter] = useState<string>('')
   const [page, setPage] = useState(1)
 
   const {
@@ -75,6 +77,7 @@ export default function BlogsPage() {
     search: searchTerm || undefined,
     page,
     per_page: DEFAULT_PER_PAGE,
+    category_id: categoryFilter || undefined,
   })
 
   const createMutation = useCreateBlogMutation()
@@ -112,7 +115,13 @@ export default function BlogsPage() {
     [blogs, statusFilter],
   )
 
-  const hasFilters = searchInput.trim() !== '' || statusFilter !== 'All'
+  const hasFilters =
+    searchInput.trim() !== '' || statusFilter !== 'All' || categoryFilter !== ''
+
+  const handleCategoryFilterChange = (value: string) => {
+    setCategoryFilter(value)
+    setPage(1)
+  }
 
   const handleCreateSubmit = (payload: BlogPayload) => {
     createMutation.mutate(
@@ -219,6 +228,14 @@ export default function BlogsPage() {
             onChange={setStatusFilter}
             showStatusDots
           />
+          <CategorySelect
+            id="filter-blog-category"
+            label="Category"
+            value={categoryFilter}
+            onChange={handleCategoryFilterChange}
+            includeAll
+            className="w-full sm:w-52"
+          />
         </PanelToolbar>
 
         {isLoading ? (
@@ -247,6 +264,7 @@ export default function BlogsPage() {
                   onClick={() => {
                     setSearchInput('')
                     setStatusFilter('All')
+                    setCategoryFilter('')
                     setPage(1)
                   }}
                   className="mt-4 cursor-pointer rounded-full border-cream-300 text-xs font-semibold"

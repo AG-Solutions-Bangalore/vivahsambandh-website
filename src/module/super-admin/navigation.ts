@@ -19,6 +19,7 @@ import {
   MessageSquare,
   Quote,
   ShieldCheck,
+  Tags,
   UserCheck,
   UserPlus,
   Users,
@@ -66,6 +67,13 @@ export const PANEL_NAV_GROUPS: PanelNavGroup[] = [
         icon: FileText,
         description:
           'Create, edit and publish articles, control placement, and manage metadata.',
+      },
+      {
+        label: 'Category',
+        to: '/panel/categories',
+        icon: Tags,
+        description:
+          'Manage the categories that group blog articles and drive the category filters.',
       },
       {
         label: 'Client',
