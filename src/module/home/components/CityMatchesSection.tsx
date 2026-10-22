@@ -80,11 +80,10 @@ export default function CityMatchesSection() {
             const cityName = t(city.nameKey, { defaultValue: city.defaultName })
 
             return (
-              <a
+              <div
                 key={`${city.id}-${idx}`}
-                href={`#city-${city.id}`}
                 title={cityName}
-                className="group flex-shrink-0 w-44 sm:w-52 md:w-60 flex flex-col overflow-hidden rounded-2xl border border-gold-500/30 bg-white p-1.5 transition-all duration-300 hover:-translate-y-1.5 hover:border-gold-500 hover:shadow-lg focus:outline-hidden focus:ring-2 focus:ring-gold-500 sm:p-2"
+                className="group flex-shrink-0 w-44 sm:w-52 md:w-60 flex flex-col overflow-hidden rounded-2xl border border-gold-500/30 bg-white p-1.5 transition-all duration-300 hover:-translate-y-1.5 hover:border-gold-500 hover:shadow-lg sm:p-2"
               >
                 {/* City Monument Image (Aspect 4/3 with rounded corners) */}
                 <div className="relative aspect-[4/3] w-full overflow-hidden rounded-xl bg-gold-50">
@@ -111,7 +110,7 @@ export default function CityMatchesSection() {
                     {city.count} {t('cities.profiles')}
                   </p>
                 </div>
-              </a>
+              </div>
             )
           })}
         </div>
