@@ -112,8 +112,8 @@ export default function AppServer() {
                 <Route path="/hi/stories" element={<StoriesPage />} />
                 <Route path="/success-stories" element={<StoriesPage />} />
                 <Route path="/hi/success-stories" element={<StoriesPage />} />
-                <Route path="/membership" element={<MembershipPage />} />
-                <Route path="/hi/membership" element={<MembershipPage />} />
+                {/* <Route path="/membership" element={<MembershipPage />} />
+                <Route path="/hi/membership" element={<MembershipPage />} /> */}
                 <Route path="/contact" element={<ContactPage />} />
                 <Route path="/hi/contact" element={<ContactPage />} />
                 <Route path="/download" element={<DownloadPage />} />

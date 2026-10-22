@@ -118,8 +118,8 @@ export const SUPPORTED_SSG_ROUTES = [
   "/hi/stories",
   "/success-stories",
   "/hi/success-stories",
-  "/membership",
-  "/hi/membership",
+  // "/membership",
+  // "/hi/membership",
   "/contact",
   "/hi/contact",
   "/blogs",
@@ -307,7 +307,7 @@ export function resolvePageKey(pathname = "/"): PageKey {
   if (withoutLang === "/about") return "about";
   if (withoutLang === "/stories" || withoutLang === "/success-stories")
     return "stories";
-  if (withoutLang === "/membership") return "membership";
+  // if (withoutLang === "/membership") return "membership";
   if (withoutLang === "/contact") return "contact";
   if (withoutLang === "/blogs" || withoutLang.startsWith("/blogs/"))
     return "blogs";

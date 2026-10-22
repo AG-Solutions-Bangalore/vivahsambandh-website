@@ -465,14 +465,14 @@ export default function App() {
                       path="/hi/success-stories"
                       element={<StoriesPage />}
                     />
-                    <Route
+                    {/* <Route
                       path="/membership"
                       element={<MembershipPage />}
                     />
                     <Route
                       path="/hi/membership"
                       element={<MembershipPage />}
-                    />
+                    /> */}
                     <Route
                       path="/contact"
                       element={<ContactPage />}
