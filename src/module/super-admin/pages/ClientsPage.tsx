@@ -5,7 +5,7 @@
  * toggle visibility, and delete records.
  */
 
-import { useMemo, useState, useRef } from 'react'
+import { useMemo, useState, useRef } from "react";
 import {
   Briefcase,
   Plus,
@@ -16,31 +16,31 @@ import {
   CheckCircle2,
   Upload,
   Image as ImageIcon,
-} from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { cn } from 'cn'
-import { ConfirmDialog } from '../components/ConfirmDialog'
-import { PanelCard } from '../components/PanelCard'
-import { PanelPageHeader } from '../components/PanelPageHeader'
-import { PanelModal } from '../components/PanelModal'
-import { PanelPagination } from '../components/PanelPagination'
-import { PanelSearch } from '../components/PanelSearch'
-import { PanelToolbar } from '../components/PanelToolbar'
-import { PanelEmpty, PanelError } from '../components/PanelState'
-import { PanelTableSkeleton, SkeletonText } from '../components/PanelSkeleton'
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { cn } from "cn";
+import { ConfirmDialog } from "../components/ConfirmDialog";
+import { PanelCard } from "../components/PanelCard";
+import { PanelPageHeader } from "../components/PanelPageHeader";
+import { PanelModal } from "../components/PanelModal";
+import { PanelPagination } from "../components/PanelPagination";
+import { PanelSearch } from "../components/PanelSearch";
+import { PanelToolbar } from "../components/PanelToolbar";
+import { PanelEmpty, PanelError } from "../components/PanelState";
+import { PanelTableSkeleton, SkeletonText } from "../components/PanelSkeleton";
 import {
   PanelTable,
   PanelTableFooter,
   PanelTableHeadCell,
-} from '../components/PanelTable'
-import { PanelFilterSelect } from '../components/PanelFilterSelect'
-import { StatusBadge } from '../components/StatusBadge'
-import { StatusSwitch } from '../components/StatusSwitch'
-import { panelDescription } from '../navigation'
-import { errorMessage } from '../hook/errors'
-import { DEFAULT_PER_PAGE, useServerSearch } from '../hook/useServerList'
-import { formatDate } from '../utils/format'
+} from "../components/PanelTable";
+import { PanelFilterSelect } from "../components/PanelFilterSelect";
+import { StatusBadge } from "../components/StatusBadge";
+import { StatusSwitch } from "../components/StatusSwitch";
+import { panelDescription } from "../navigation";
+import { errorMessage } from "../hook/errors";
+import { DEFAULT_PER_PAGE, useServerSearch } from "../hook/useServerList";
+import { formatDate } from "../utils/format";
 import {
   useClientQuery,
   useClientsQuery,
@@ -48,32 +48,33 @@ import {
   useDeleteClientMutation,
   useUpdateClientMutation,
   useUpdateClientStatusMutation,
-} from '../hook/useClients'
-import { convertToWebpFile, isWebpFile } from '@/lib/image'
-import type { ClientRecord, ClientStatus } from '../types'
+} from "../hook/useClients";
+import { convertToWebpFile, isWebpFile } from "@/lib/image";
+import type { ClientRecord, ClientStatus } from "../types";
 
-const STATUS_FILTERS = ['All', 'Active', 'Inactive'] as const
+const STATUS_FILTERS = ["All", "Active", "Inactive"] as const;
 
 interface ClientFormState {
-  clients_name: string
-  clients_image: File | null
-  existing_image_url?: string | null
-  clients_status: ClientStatus
+  clients_name: string;
+  clients_image: File | null;
+  existing_image_url?: string | null;
+  clients_status: ClientStatus;
 }
 
 const DEFAULT_FORM: ClientFormState = {
-  clients_name: '',
+  clients_name: "",
   clients_image: null,
   existing_image_url: null,
-  clients_status: 'Active',
-}
+  clients_status: "Active",
+};
 
 export default function ClientsPage() {
-  const [page, setPage] = useState(1)
-  const [statusFilter, setStatusFilter] = useState<(typeof STATUS_FILTERS)[number]>('All')
+  const [page, setPage] = useState(1);
+  const [statusFilter, setStatusFilter] =
+    useState<(typeof STATUS_FILTERS)[number]>("All");
 
   // Search input state with debounced server query
-  const { searchInput, setSearchInput, searchTerm } = useServerSearch()
+  const { searchInput, setSearchInput, searchTerm } = useServerSearch();
 
   // Query parameters sent to GET /client
   const queryParams = useMemo(
@@ -81,10 +82,10 @@ export default function ClientsPage() {
       page,
       per_page: DEFAULT_PER_PAGE,
       search: searchTerm || undefined,
-      clients_status: statusFilter === 'All' ? undefined : statusFilter,
+      clients_status: statusFilter === "All" ? undefined : statusFilter,
     }),
     [page, searchTerm, statusFilter],
-  )
+  );
 
   const {
     records: clients,
@@ -93,158 +94,163 @@ export default function ClientsPage() {
     isFetching,
     error,
     refetch,
-  } = useClientsQuery(queryParams)
+  } = useClientsQuery(queryParams);
 
   // Modals state
-  const [inspectId, setInspectId] = useState<number | string | null>(null)
-  const [createModalOpen, setCreateModalOpen] = useState(false)
-  const [editTarget, setEditTarget] = useState<ClientRecord | null>(null)
-  const [deleteTarget, setDeleteTarget] = useState<ClientRecord | null>(null)
+  const [inspectId, setInspectId] = useState<number | string | null>(null);
+  const [createModalOpen, setCreateModalOpen] = useState(false);
+  const [editTarget, setEditTarget] = useState<ClientRecord | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<ClientRecord | null>(null);
 
   // Direct single-client query: executes GET /client/{id}
   const {
     data: inspectedClient,
     isLoading: isInspectLoading,
     error: inspectError,
-  } = useClientQuery(inspectId)
+  } = useClientQuery(inspectId);
 
   // Use the image URL from the list as the primary preview source
   const clientFromList = useMemo(
-    () => (inspectId ? clients.find((c) => String(c.id) === String(inspectId)) : null),
+    () =>
+      inspectId
+        ? clients.find((c) => String(c.id) === String(inspectId))
+        : null,
     [clients, inspectId],
-  )
+  );
 
   const inspectedImage =
     clientFromList?.clients_image ||
-    (inspectedClient?.clients_image && inspectedClient.clients_image.startsWith('http')
+    (inspectedClient?.clients_image &&
+    inspectedClient.clients_image.startsWith("http")
       ? inspectedClient.clients_image
       : null) ||
     (inspectedClient?.clients_image
-      ? `https://vivahsambandh.com/crmapi/public/assets/images/client_images/${inspectedClient.clients_image.replace(/^\/+/, '')}`
-      : null)
+      ? `https://vivahsambandh.com/crmapi/public/assets/images/client_images/${inspectedClient.clients_image.replace(/^\/+/, "")}`
+      : null);
 
   // Form states
-  const [createForm, setCreateForm] = useState<ClientFormState>(DEFAULT_FORM)
-  const [editForm, setEditForm] = useState<ClientFormState>(DEFAULT_FORM)
+  const [createForm, setCreateForm] = useState<ClientFormState>(DEFAULT_FORM);
+  const [editForm, setEditForm] = useState<ClientFormState>(DEFAULT_FORM);
 
   // File input refs
-  const createFileInputRef = useRef<HTMLInputElement>(null)
-  const editFileInputRef = useRef<HTMLInputElement>(null)
+  const createFileInputRef = useRef<HTMLInputElement>(null);
+  const editFileInputRef = useRef<HTMLInputElement>(null);
 
   // Mutations
-  const createMutation = useCreateClientMutation()
-  const updateMutation = useUpdateClientMutation()
-  const statusMutation = useUpdateClientStatusMutation()
-  const deleteMutation = useDeleteClientMutation()
+  const createMutation = useCreateClientMutation();
+  const updateMutation = useUpdateClientMutation();
+  const statusMutation = useUpdateClientStatusMutation();
+  const deleteMutation = useDeleteClientMutation();
 
   // Reset pagination on filter change
   const handleStatusFilterChange = (val: string) => {
-    setStatusFilter(val as (typeof STATUS_FILTERS)[number])
-    setPage(1)
-  }
+    setStatusFilter(val as (typeof STATUS_FILTERS)[number]);
+    setPage(1);
+  };
 
-  const [isConvertingImage, setIsConvertingImage] = useState(false)
+  const [isConvertingImage, setIsConvertingImage] = useState(false);
 
   // Handle file selection with automatic WebP conversion
   const handleFileChange = async (file: File | null, isEdit = false) => {
     if (!file) {
       if (isEdit) {
-        setEditForm((prev) => ({ ...prev, clients_image: null }))
+        setEditForm((prev) => ({ ...prev, clients_image: null }));
       } else {
-        setCreateForm((prev) => ({ ...prev, clients_image: null }))
+        setCreateForm((prev) => ({ ...prev, clients_image: null }));
       }
-      return
+      return;
     }
 
     try {
-      setIsConvertingImage(true)
-      const webpFile = await convertToWebpFile(file)
+      setIsConvertingImage(true);
+      const webpFile = await convertToWebpFile(file);
       if (isEdit) {
-        setEditForm((prev) => ({ ...prev, clients_image: webpFile }))
+        setEditForm((prev) => ({ ...prev, clients_image: webpFile }));
       } else {
-        setCreateForm((prev) => ({ ...prev, clients_image: webpFile }))
+        setCreateForm((prev) => ({ ...prev, clients_image: webpFile }));
       }
     } finally {
-      setIsConvertingImage(false)
+      setIsConvertingImage(false);
     }
-  }
+  };
 
   // Open Edit Modal
   const handleOpenEdit = (client: ClientRecord) => {
-    setEditTarget(client)
+    setEditTarget(client);
     setEditForm({
       clients_name: client.clients_name,
       clients_image: null,
       existing_image_url: client.clients_image,
       clients_status: client.clients_status,
-    })
-  }
+    });
+  };
 
   // Handle Form Submission for Creating Client
   const handleCreateSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!createForm.clients_name.trim() || isConvertingImage) return
+    e.preventDefault();
+    if (!createForm.clients_name.trim() || isConvertingImage) return;
 
-    let imageFile = createForm.clients_image
+    let imageFile = createForm.clients_image;
     if (imageFile && !isWebpFile(imageFile)) {
-      imageFile = await convertToWebpFile(imageFile)
+      imageFile = await convertToWebpFile(imageFile);
     }
 
-    const formData = new FormData()
-    formData.append('clients_name', createForm.clients_name.trim())
+    const formData = new FormData();
+    formData.append("clients_name", createForm.clients_name.trim());
     if (imageFile) {
-      formData.append('clients_image', imageFile)
+      formData.append("clients_image", imageFile);
     }
 
     createMutation.mutate(
       {
         payload: formData,
-        successMessage: 'Client created successfully.',
+        successMessage: "Client created successfully.",
       },
       {
         onSuccess: () => {
-          setCreateModalOpen(false)
-          setCreateForm(DEFAULT_FORM)
-          if (createFileInputRef.current) createFileInputRef.current.value = ''
+          setCreateModalOpen(false);
+          setCreateForm(DEFAULT_FORM);
+          if (createFileInputRef.current) createFileInputRef.current.value = "";
         },
       },
-    )
-  }
+    );
+  };
 
   // Handle Form Submission for Updating Client
   const handleEditSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!editTarget || !editForm.clients_name.trim() || isConvertingImage) return
+    e.preventDefault();
+    if (!editTarget || !editForm.clients_name.trim() || isConvertingImage)
+      return;
 
-    let imageFile = editForm.clients_image
+    let imageFile = editForm.clients_image;
     if (imageFile && !isWebpFile(imageFile)) {
-      imageFile = await convertToWebpFile(imageFile)
+      imageFile = await convertToWebpFile(imageFile);
     }
 
-    const formData = new FormData()
-    formData.append('clients_name', editForm.clients_name.trim())
-    formData.append('clients_status', editForm.clients_status)
-    formData.append('_method', 'PUT')
+    const formData = new FormData();
+    formData.append("clients_name", editForm.clients_name.trim());
+    formData.append("clients_status", editForm.clients_status);
+    formData.append("_method", "PUT");
 
     if (imageFile) {
-      formData.append('clients_image', imageFile)
+      formData.append("clients_image", imageFile);
     }
 
     updateMutation.mutate(
       {
         id: editTarget.id,
         payload: formData,
-        successMessage: 'Client updated successfully.',
+        successMessage: "Client updated successfully.",
       },
       {
         onSuccess: () => {
-          setEditTarget(null)
-          setEditForm(DEFAULT_FORM)
-          if (editFileInputRef.current) editFileInputRef.current.value = ''
+          setEditTarget(null);
+          setEditForm(DEFAULT_FORM);
+          if (editFileInputRef.current) editFileInputRef.current.value = "";
         },
       },
-    )
-  }
+    );
+  };
 
   // Toggle quick status
   const handleToggleStatus = async (
@@ -255,34 +261,36 @@ export default function ClientsPage() {
       id: client.id,
       clients_status: nextStatus,
       successMessage: `Client marked as ${nextStatus}.`,
-    })
-  }
+    });
+  };
 
   // Confirm delete action
   const handleConfirmDelete = () => {
-    if (!deleteTarget) return
+    if (!deleteTarget) return;
     deleteMutation.mutate(
       {
         id: deleteTarget.id,
-        successMessage: 'Client deleted successfully.',
+        successMessage: "Client deleted successfully.",
       },
       {
         onSuccess: () => setDeleteTarget(null),
       },
-    )
-  }
+    );
+  };
 
   // Pagination display stats
-  const firstRow = meta.total ? (meta.current_page - 1) * meta.per_page + 1 : 0
-  const lastRow = meta.total ? Math.min(meta.total, meta.current_page * meta.per_page) : 0
+  const firstRow = meta.total ? (meta.current_page - 1) * meta.per_page + 1 : 0;
+  const lastRow = meta.total
+    ? Math.min(meta.total, meta.current_page * meta.per_page)
+    : 0;
 
-  const hasFilters = Boolean(searchTerm) || statusFilter !== 'All'
+  const hasFilters = Boolean(searchTerm) || statusFilter !== "All";
 
   return (
     <div className="space-y-6">
       <PanelPageHeader
         title="Clients"
-        description={panelDescription('/panel/clients')}
+        description={panelDescription("/panel/clients")}
         actions={
           <div className="flex items-center gap-2">
             <Button
@@ -293,7 +301,12 @@ export default function ClientsPage() {
               disabled={isFetching}
               className="cursor-pointer gap-2 rounded-full border-cream-300 bg-cream-50 text-xs font-semibold text-navy-900 hover:bg-cream-100/70"
             >
-              <RefreshCw className={cn('size-3.5 text-navy-700', isFetching && 'animate-spin')} />
+              <RefreshCw
+                className={cn(
+                  "size-3.5 text-navy-700",
+                  isFetching && "animate-spin",
+                )}
+              />
               <span>Refresh</span>
             </Button>
 
@@ -301,8 +314,8 @@ export default function ClientsPage() {
               type="button"
               size="sm"
               onClick={() => {
-                setCreateForm(DEFAULT_FORM)
-                setCreateModalOpen(true)
+                setCreateForm(DEFAULT_FORM);
+                setCreateModalOpen(true);
               }}
               className="cursor-pointer gap-2 rounded-full bg-gold-600 text-xs font-bold text-white shadow-gold hover:bg-gold-700"
             >
@@ -337,16 +350,18 @@ export default function ClientsPage() {
           <PanelTableSkeleton rows={5} columns={3} />
         ) : error ? (
           <PanelError
-            message={errorMessage(error, 'Could not load clients.')}
+            message={errorMessage(error, "Could not load clients.")}
             onRetry={() => void refetch()}
           />
         ) : clients.length === 0 ? (
           <PanelEmpty
-            title={hasFilters ? 'No matching clients found' : 'No clients added yet'}
+            title={
+              hasFilters ? "No matching clients found" : "No clients added yet"
+            }
             description={
               hasFilters
-                ? 'Try adjusting your search terms or filter selection.'
-                : 'Add client partners and brand logos to showcase them on the platform.'
+                ? "Try adjusting your search terms or filter selection."
+                : "Add client partners and brand logos to showcase them on the platform."
             }
             action={
               hasFilters ? (
@@ -355,9 +370,9 @@ export default function ClientsPage() {
                   variant="outline"
                   size="sm"
                   onClick={() => {
-                    setSearchInput('')
-                    setStatusFilter('All')
-                    setPage(1)
+                    setSearchInput("");
+                    setStatusFilter("All");
+                    setPage(1);
                   }}
                   className="rounded-full border-cream-300 text-xs"
                 >
@@ -368,8 +383,8 @@ export default function ClientsPage() {
                   type="button"
                   size="sm"
                   onClick={() => {
-                    setCreateForm(DEFAULT_FORM)
-                    setCreateModalOpen(true)
+                    setCreateForm(DEFAULT_FORM);
+                    setCreateModalOpen(true);
                   }}
                   className="rounded-full bg-gold-600 text-xs text-white hover:bg-gold-700"
                 >
@@ -404,8 +419,10 @@ export default function ClientsPage() {
                           alt={client.clients_name}
                           className="size-full object-contain p-1"
                           onError={(e) => {
-                            e.currentTarget.style.display = 'none'
-                            e.currentTarget.parentElement?.classList.add('bg-cream-100')
+                            e.currentTarget.style.display = "none";
+                            e.currentTarget.parentElement?.classList.add(
+                              "bg-cream-100",
+                            );
                           }}
                         />
                       ) : (
@@ -415,7 +432,7 @@ export default function ClientsPage() {
 
                     <div className="min-w-0">
                       <span className="block truncate font-semibold text-navy-950 text-sm">
-                        {client.clients_name || 'Unnamed Client'}
+                        {client.clients_name || "Unnamed Client"}
                       </span>
                     </div>
                   </div>
@@ -434,19 +451,6 @@ export default function ClientsPage() {
                 {/* Actions */}
                 <td className="px-4 py-3 text-right">
                   <div className="flex items-center justify-end gap-1.5">
-                    {/* Inspect details */}
-                    <Button
-                      type="button"
-                      size="icon-xs"
-                      variant="outline"
-                      onClick={() => setInspectId(client.id)}
-                      title="View details"
-                      aria-label="View client details"
-                      className="cursor-pointer rounded-full border-cream-300 bg-white text-navy-700 hover:bg-cream-100"
-                    >
-                      <Eye className="size-3.5" aria-hidden />
-                    </Button>
-
                     {/* Edit client */}
                     <Button
                       type="button"
@@ -486,8 +490,8 @@ export default function ClientsPage() {
             isFetching={isFetching}
             summary={
               <span>
-                Showing <strong>{firstRow}</strong>–<strong>{lastRow}</strong> of{' '}
-                <strong>{meta.total}</strong> clients
+                Showing <strong>{firstRow}</strong>–<strong>{lastRow}</strong>{" "}
+                of <strong>{meta.total}</strong> clients
               </span>
             }
           />
@@ -497,7 +501,11 @@ export default function ClientsPage() {
       {/* Inspect Modal (Calls GET /client/{id}) */}
       <PanelModal
         isOpen={inspectId !== null}
-        title={inspectedClient?.clients_name ? `Client: ${inspectedClient.clients_name}` : 'Client Details'}
+        title={
+          inspectedClient?.clients_name
+            ? `Client: ${inspectedClient.clients_name}`
+            : "Client Details"
+        }
         description="Detailed record fetched directly from /client/{id}."
         icon={<Briefcase className="size-5" />}
         size="md"
@@ -520,7 +528,7 @@ export default function ClientsPage() {
         ) : inspectError ? (
           <div className="py-8 text-center">
             <p className="text-sm font-semibold text-maroon-700">
-              {errorMessage(inspectError, 'Could not find client by ID.')}
+              {errorMessage(inspectError, "Could not find client by ID.")}
             </p>
             <p className="mt-1 text-xs text-ink-500">
               Please check if the client ID exists in the database.
@@ -541,10 +549,12 @@ export default function ClientsPage() {
                         clientFromList?.clients_image &&
                         e.currentTarget.src !== clientFromList.clients_image
                       ) {
-                        e.currentTarget.src = clientFromList.clients_image
+                        e.currentTarget.src = clientFromList.clients_image;
                       } else {
-                        e.currentTarget.style.display = 'none'
-                        e.currentTarget.parentElement?.classList.add('bg-cream-100')
+                        e.currentTarget.style.display = "none";
+                        e.currentTarget.parentElement?.classList.add(
+                          "bg-cream-100",
+                        );
                       }
                     }}
                   />
@@ -556,7 +566,10 @@ export default function ClientsPage() {
                 {inspectedClient.clients_name}
               </h3>
               <div className="mt-1">
-                <StatusBadge status={inspectedClient.clients_status} size="sm" />
+                <StatusBadge
+                  status={inspectedClient.clients_status}
+                  size="sm"
+                />
               </div>
             </div>
 
@@ -593,7 +606,6 @@ export default function ClientsPage() {
         ) : null}
       </PanelModal>
 
-
       {/* Add Client Modal */}
       <PanelModal
         isOpen={createModalOpen}
@@ -615,10 +627,12 @@ export default function ClientsPage() {
             <Button
               type="button"
               onClick={handleCreateSubmit}
-              disabled={createMutation.isPending || !createForm.clients_name.trim()}
+              disabled={
+                createMutation.isPending || !createForm.clients_name.trim()
+              }
               className="cursor-pointer rounded-full bg-maroon-700 px-5 text-xs font-bold text-white hover:bg-maroon-800 disabled:opacity-50"
             >
-              {createMutation.isPending ? 'Saving…' : 'Create Client'}
+              {createMutation.isPending ? "Saving…" : "Create Client"}
             </Button>
           </>
         }
@@ -632,7 +646,10 @@ export default function ClientsPage() {
               type="text"
               value={createForm.clients_name}
               onChange={(e) =>
-                setCreateForm((prev) => ({ ...prev, clients_name: e.target.value }))
+                setCreateForm((prev) => ({
+                  ...prev,
+                  clients_name: e.target.value,
+                }))
               }
               placeholder="e.g. Acme Corporation"
               required
@@ -656,8 +673,8 @@ export default function ClientsPage() {
                 type="file"
                 accept="image/webp,.webp,image/*"
                 onChange={(e) => {
-                  const file = e.target.files?.[0] || null
-                  void handleFileChange(file, false)
+                  const file = e.target.files?.[0] || null;
+                  void handleFileChange(file, false);
                 }}
                 className="hidden"
                 id="create-client-image"
@@ -673,10 +690,10 @@ export default function ClientsPage() {
                 <Upload className="size-3.5" />
                 <span>
                   {isConvertingImage
-                    ? 'Converting to WebP…'
+                    ? "Converting to WebP…"
                     : createForm.clients_image
-                      ? 'Change File'
-                      : 'Choose Logo'}
+                      ? "Change File"
+                      : "Choose Logo"}
                 </span>
               </Button>
 
@@ -694,7 +711,9 @@ export default function ClientsPage() {
             </div>
 
             <p className="mt-2 text-[0.7rem] text-ink-500">
-              The backend requires images in <strong>.webp</strong> format. If you choose a PNG or JPG, it is automatically converted to .webp before uploading.
+              The backend requires images in <strong>.webp</strong> format. If
+              you choose a PNG or JPG, it is automatically converted to .webp
+              before uploading.
             </p>
 
             {createForm.clients_image && (
@@ -731,10 +750,12 @@ export default function ClientsPage() {
             <Button
               type="button"
               onClick={handleEditSubmit}
-              disabled={updateMutation.isPending || !editForm.clients_name.trim()}
+              disabled={
+                updateMutation.isPending || !editForm.clients_name.trim()
+              }
               className="cursor-pointer rounded-full bg-maroon-700 px-5 text-xs font-bold text-white hover:bg-maroon-800 disabled:opacity-50"
             >
-              {updateMutation.isPending ? 'Saving…' : 'Save Changes'}
+              {updateMutation.isPending ? "Saving…" : "Save Changes"}
             </Button>
           </>
         }
@@ -748,7 +769,10 @@ export default function ClientsPage() {
               type="text"
               value={editForm.clients_name}
               onChange={(e) =>
-                setEditForm((prev) => ({ ...prev, clients_name: e.target.value }))
+                setEditForm((prev) => ({
+                  ...prev,
+                  clients_name: e.target.value,
+                }))
               }
               placeholder="e.g. Acme Corporation"
               required
@@ -772,8 +796,8 @@ export default function ClientsPage() {
                 type="file"
                 accept="image/webp,.webp,image/*"
                 onChange={(e) => {
-                  const file = e.target.files?.[0] || null
-                  void handleFileChange(file, true)
+                  const file = e.target.files?.[0] || null;
+                  void handleFileChange(file, true);
                 }}
                 className="hidden"
                 id="edit-client-image"
@@ -789,12 +813,12 @@ export default function ClientsPage() {
                 <Upload className="size-3.5" />
                 <span>
                   {isConvertingImage
-                    ? 'Converting to WebP…'
+                    ? "Converting to WebP…"
                     : editForm.clients_image
-                      ? 'Change File'
+                      ? "Change File"
                       : editForm.existing_image_url
-                        ? 'Replace Logo'
-                        : 'Choose Logo'}
+                        ? "Replace Logo"
+                        : "Choose Logo"}
                 </span>
               </Button>
 
@@ -812,7 +836,9 @@ export default function ClientsPage() {
             </div>
 
             <p className="mt-2 text-[0.7rem] text-ink-500">
-              The backend requires images in <strong>.webp</strong> format. If you choose a PNG or JPG, it is automatically converted to .webp before uploading.
+              The backend requires images in <strong>.webp</strong> format. If
+              you choose a PNG or JPG, it is automatically converted to .webp
+              before uploading.
             </p>
 
             {/* Existing or new image preview */}
@@ -867,11 +893,11 @@ export default function ClientsPage() {
         description={
           deleteTarget
             ? `Are you sure you want to permanently delete "${deleteTarget.clients_name}"? If the database prohibits deletion, it will be automatically deactivated.`
-            : ''
+            : ""
         }
-        confirmText={deleteMutation.isPending ? 'Deleting…' : 'Delete Client'}
+        confirmText={deleteMutation.isPending ? "Deleting…" : "Delete Client"}
         variant="danger"
       />
     </div>
-  )
+  );
 }
