@@ -7,12 +7,12 @@ import { useMutation, type UseMutationOptions } from '@tanstack/react-query'
 import { subscribeNewsletter } from '../api/newsletter.api'
 import type {
   NewsletterSubscribePayload,
-  NewsletterSubscribeResponse,
+  NewsletterSubscribeResult,
 } from '../types'
 
 export function useNewsletterSubscribeMutation(
   options?: UseMutationOptions<
-    NewsletterSubscribeResponse,
+    NewsletterSubscribeResult,
     Error,
     NewsletterSubscribePayload
   >,

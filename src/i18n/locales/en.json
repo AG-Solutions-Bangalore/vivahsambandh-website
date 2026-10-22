@@ -546,7 +546,9 @@
     "successTitle": "You're on the list!",
     "successBody": "Watch your inbox for our next newsletter.",
     "errorBody": "Could not subscribe right now. Please try again.",
-    "privacyNote": "We only use your address for this mailing. We never share it."
+    "privacyNote": "We only use your address for this mailing. We never share it.",
+    "alreadyTitle": "You're already on the list",
+    "alreadyBody": "This address is already subscribed — nothing more to do."
   },
   "adminRegisterPage": {
     "eyebrow": "Admin Register",

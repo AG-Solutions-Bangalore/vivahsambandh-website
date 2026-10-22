@@ -29,7 +29,9 @@ export default function NewsletterSignup({
   const { t } = useTranslation()
   const [email, setEmail] = useState('')
   const [error, setError] = useState<string | null>(null)
-  const [sent, setSent] = useState(false)
+  const [outcome, setOutcome] = useState<
+    'subscribed' | 'already_subscribed' | null
+  >(null)
   const mutation = useNewsletterSubscribeMutation()
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
@@ -43,8 +45,8 @@ export default function NewsletterSignup({
     }
 
     try {
-      await mutation.mutateAsync({ newsletter_email: email.trim() })
-      setSent(true)
+      const response = await mutation.mutateAsync({ newsletter_email: email.trim() })
+      setOutcome(response.outcome)
       setEmail('')
     } catch (err) {
       const message =
@@ -56,7 +58,9 @@ export default function NewsletterSignup({
     }
   }
 
-  if (sent) {
+  if (outcome) {
+    const already = outcome === 'already_subscribed'
+
     return (
       <div
         className={cn(
@@ -72,10 +76,17 @@ export default function NewsletterSignup({
         </span>
         <div>
           <p className="font-display text-sm font-bold text-white sm:text-base">
-            {t('newsletter.successTitle', "You're on the list!")}
+            {already
+              ? t('newsletter.alreadyTitle', "You're already on the list")
+              : t('newsletter.successTitle', "You're on the list!")}
           </p>
           <p className="mt-0.5 text-xs leading-relaxed text-white/70">
-            {t('newsletter.successBody', 'Watch your inbox for our next newsletter.')}
+            {already
+              ? t(
+                  'newsletter.alreadyBody',
+                  'This address is already subscribed — nothing more to do.',
+                )
+              : t('newsletter.successBody', 'Watch your inbox for our next newsletter.')}
           </p>
         </div>
       </div>
