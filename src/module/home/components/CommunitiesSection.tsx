@@ -5,6 +5,7 @@ import { cn } from "cn";
 import Reveal, { RevealGroup } from "../../../components/motion/Reveal";
 import { pagePath } from "../../../constants/navigation";
 import type { AppLang } from "../../../i18n";
+import { img, imgSrcSet } from "../../../lib/image";
 
 interface CommunityInfo {
   id: string;
@@ -106,6 +107,38 @@ export default function CommunitiesSection() {
       <div aria-hidden="true" className="pointer-events-none absolute inset-0">
         <div className="absolute top-[-6rem] left-1/2 h-72 w-[46rem] max-w-full -translate-x-1/2 rounded-full bg-gold-400/10 blur-3xl" />
         <div className="absolute right-[-6rem] bottom-[-8rem] size-72 rounded-full bg-maroon-400/[0.06] blur-3xl" />
+      </div>
+
+      {/* ============================================================== */}
+      {/* Decorative Floral Corner: L-shape at bottom-left               */}
+      {/* Mirrors the About section flower style                         */}
+      {/* ============================================================== */}
+      <div
+        className="pointer-events-none absolute left-0 bottom-0 z-0 select-none"
+        aria-hidden="true"
+      >
+        {/* Horizontal arm along bottom edge (extends rightwards) */}
+        <img
+          src={img("/images/home/flower3_image.webp")}
+          srcSet={imgSrcSet("/images/home/flower3_image-320.webp 320w, /images/home/flower3_image-640.webp 640w, /images/home/flower3_image.webp 942w")}
+          sizes="(max-width: 640px) 35vw, (max-width: 1024px) 16rem, 24rem"
+          width={942}
+          height={1670}
+          alt=""
+          className="absolute left-0 bottom-0 w-28 sm:w-36 md:w-44 lg:w-52 xl:w-64 h-auto object-contain origin-bottom-left -rotate-90 -scale-y-100 opacity-90"
+          loading="lazy"
+        />
+        {/* Vertical arm along left edge (extends upwards) */}
+        <img
+          src={img("/images/home/flower3_image.webp")}
+          srcSet={imgSrcSet("/images/home/flower3_image-320.webp 320w, /images/home/flower3_image-640.webp 640w, /images/home/flower3_image.webp 942w")}
+          sizes="(max-width: 640px) 18vw, (max-width: 1024px) 9rem, 13rem"
+          width={942}
+          height={1670}
+          alt=""
+          className="relative left-0 bottom-0 w-24 sm:w-28 md:w-36 lg:w-44 xl:w-52 h-auto object-contain object-left-bottom opacity-95"
+          loading="lazy"
+        />
       </div>
 
       <div className="section-pad relative z-10">
