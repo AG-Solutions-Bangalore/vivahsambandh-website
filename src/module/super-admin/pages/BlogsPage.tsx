@@ -227,11 +227,11 @@ export default function BlogsPage() {
             head={
               <>
                 <PanelTableHeadCell>SI/NO</PanelTableHeadCell>
+                <PanelTableHeadCell>Banner</PanelTableHeadCell>
                 <PanelTableHeadCell>Article</PanelTableHeadCell>
                 <PanelTableHeadCell>Placement</PanelTableHeadCell>
-                <PanelTableHeadCell>Status</PanelTableHeadCell>
-                <PanelTableHeadCell>Banner</PanelTableHeadCell>
                 <PanelTableHeadCell>Last Updated</PanelTableHeadCell>
+                <PanelTableHeadCell>Status</PanelTableHeadCell>
                 <PanelTableHeadCell align="right">Actions</PanelTableHeadCell>
               </>
             }
@@ -240,6 +240,21 @@ export default function BlogsPage() {
               <tr key={blog.id} className="transition-colors hover:bg-cream-50/70">
                 <td className="px-4 py-3.5 text-xs font-bold text-navy-800">
                   {index + 1}
+                </td>
+
+                <td className="px-4 py-3.5">
+                  {blog.banner_image ? (
+                    <img
+                      src={blog.banner_image}
+                      alt={blog.banner_image_alt ?? blog.banner_image_name ?? 'Article banner'}
+                      className="h-12 w-20 rounded-lg border border-cream-300 object-cover"
+                    />
+                  ) : (
+                    <span className="inline-flex items-center gap-1 rounded-md border border-cream-300 bg-cream-50 px-2 py-0.5 text-[0.7rem] text-ink-400 italic">
+                      <ImageIcon className="size-3" aria-hidden />
+                      None
+                    </span>
+                  )}
                 </td>
 
                 <td className="max-w-md px-4 py-3.5">
@@ -265,6 +280,10 @@ export default function BlogsPage() {
                   />
                 </td>
 
+                <td className="px-4 py-3.5 text-ink-500">
+                  {formatDate(blog.updated_date ?? blog.created_date)}
+                </td>
+
                 <td className="px-4 py-3.5">
                   <StatusSwitch
                     status={blog.status}
@@ -275,48 +294,29 @@ export default function BlogsPage() {
                 </td>
 
                 <td className="px-4 py-3.5">
-                  {blog.banner_image ? (
-                    <img
-                      src={blog.banner_image}
-                      alt={blog.banner_image_alt ?? blog.banner_image_name ?? 'Article banner'}
-                      className="h-12 w-20 rounded-lg border border-cream-300 object-cover"
-                    />
-                  ) : (
-                    <span className="inline-flex items-center gap-1 rounded-md border border-cream-300 bg-cream-50 px-2 py-0.5 text-[0.7rem] text-ink-400 italic">
-                      <ImageIcon className="size-3" aria-hidden />
-                      None
-                    </span>
-                  )}
-                </td>
-
-                <td className="px-4 py-3.5 text-ink-500">
-                  {formatDate(blog.updated_date ?? blog.created_date)}
-                </td>
-
-                <td className="px-4 py-3.5">
                   <div className="flex items-center justify-end gap-1.5">
                     <Button
                       type="button"
-                      size="xs"
+                      size="icon-xs"
                       variant="outline"
                       onClick={() => setInspectingId(blog.id)}
                       title="View article details"
-                      className="cursor-pointer rounded-full border-navy-200 text-[0.7rem] text-navy-900 hover:bg-navy-50"
+                      aria-label="View article details"
+                      className="cursor-pointer rounded-full border-navy-200 text-navy-700 hover:bg-navy-50"
                     >
-                      <Eye className="size-3 text-navy-700" aria-hidden />
-                      <span>View</span>
+                      <Eye className="size-3.5 text-navy-700" aria-hidden />
                     </Button>
 
                     <Button
                       type="button"
-                      size="xs"
+                      size="icon-xs"
                       variant="outline"
                       onClick={() => navigate(`${LIST_PATH}/${blog.id}/edit`)}
                       title="Edit article"
-                      className="cursor-pointer rounded-full border-gold-300 bg-gold-50 text-[0.7rem] text-gold-800 hover:bg-gold-100"
+                      aria-label="Edit article"
+                      className="cursor-pointer rounded-full border-gold-300 bg-gold-50 text-gold-800 hover:bg-gold-100"
                     >
-                      <Pencil className="size-3" aria-hidden />
-                      <span>Edit</span>
+                      <Pencil className="size-3.5" aria-hidden />
                     </Button>
                   </div>
                 </td>
