@@ -603,7 +603,7 @@ export default function PersonalDetailsSection() {
       <div className="mt-6 border-t border-cream-200 pt-6">
         <h3 className="mb-4 flex items-center gap-2 text-[13px] font-semibold text-navy-900">
           <Users className="size-4 shrink-0" aria-hidden="true" />
-          {t('registrationPage.form.parentsSiblingsHeading', 'Parents & Siblings')}
+          {t('registrationPage.form.parentsSiblingsHeading', 'Family Details')}
         </h3>
         {/* Parents Row */}
         <div className="grid grid-cols-1 gap-x-5 gap-y-6 sm:grid-cols-2">
