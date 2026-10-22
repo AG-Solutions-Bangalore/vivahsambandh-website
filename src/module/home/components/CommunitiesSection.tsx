@@ -11,10 +11,6 @@ interface CommunityInfo {
   id: string;
   name: string;
   tag: string;
-  gotras: string;
-
-  heritage: string;
-  ctaText: string;
 }
 
 export default function CommunitiesSection() {
@@ -32,17 +28,6 @@ export default function CommunitiesSection() {
       id: "agarwal",
       name: t("communities.list.0.name", { defaultValue: "Agarwal" }),
       tag: t("communities.list.0.tag", { defaultValue: "18 Sacred Gotras" }),
-      gotras: t("communities.list.0.gotras", {
-        defaultValue:
-          "Bansal, Mittal, Jindal, Singhal, Garg, Goyal, Kansal & more",
-      }),
-
-      heritage: t("communities.list.0.heritage", {
-        defaultValue: "Maharaja Agrasen Lineage & Heritage",
-      }),
-      ctaText: t("communities.explore", {
-        defaultValue: "Explore Agarwal Matches",
-      }),
     },
     {
       id: "jain",
@@ -50,46 +35,16 @@ export default function CommunitiesSection() {
       tag: t("communities.list.1.tag", {
         defaultValue: "Digambar & Svetambar Traditions",
       }),
-      gotras: t("communities.list.1.gotras", {
-        defaultValue: "Murtipujak, Terapanthi, Sthanakvasi & Deravasi",
-      }),
-
-      heritage: t("communities.list.1.heritage", {
-        defaultValue: "Ahimsa, Simplicity & Spiritual Values",
-      }),
-      ctaText: t("communities.explore", {
-        defaultValue: "Explore Jain Matches",
-      }),
     },
     {
       id: "khandelwal",
       name: t("communities.list.2.name", { defaultValue: "Khandelwal" }),
       tag: t("communities.list.2.tag", { defaultValue: "Vaishya Heritage" }),
-      gotras: t("communities.list.2.gotras", {
-        defaultValue: "Kulshreshtha, Dhamani, Dangayach, Rawat, Dusad & more",
-      }),
-
-      heritage: t("communities.list.2.heritage", {
-        defaultValue: "Sage Khandela Lineage & Business Ethics",
-      }),
-      ctaText: t("communities.explore", {
-        defaultValue: "Explore Khandelwal Matches",
-      }),
     },
     {
       id: "maheshwari",
       name: t("communities.list.3.name", { defaultValue: "Maheshwari" }),
       tag: t("communities.list.3.tag", { defaultValue: "72 Sacred Khams" }),
-      gotras: t("communities.list.3.gotras", {
-        defaultValue: "Didwana & Marwari Lineage, Deep Cultural Values",
-      }),
-
-      heritage: t("communities.list.3.heritage", {
-        defaultValue: "Lord Mahesh Heritage & Philanthropy",
-      }),
-      ctaText: t("communities.explore", {
-        defaultValue: "Explore Maheshwari Matches",
-      }),
     },
   ];
 
@@ -101,64 +56,49 @@ export default function CommunitiesSection() {
     <section
       id="communities"
       aria-label="Communities We Serve"
-      className="relative overflow-x-clip overflow-y-visible bg-cream-50 pt-8 pb-14 sm:pt-10 sm:pb-18"
+      className="relative overflow-hidden bg-cream-50 pt-10 pb-14 sm:pt-12 sm:pb-18"
     >
       {/* Ambient warmth: soft gold glow above, faint maroon glow below */}
-      <div aria-hidden="true" className="pointer-events-none absolute inset-0 overflow-hidden">
+      <div aria-hidden="true" className="pointer-events-none absolute inset-0">
         <div className="absolute top-[-6rem] left-1/2 h-72 w-[46rem] max-w-full -translate-x-1/2 rounded-full bg-gold-400/10 blur-3xl" />
         <div className="absolute right-[-6rem] bottom-[-8rem] size-72 rounded-full bg-maroon-400/[0.06] blur-3xl" />
       </div>
 
       {/* ============================================================== */}
-      {/* Seamless Floral Bridge: connects About Us to Communities       */}
-      {/* Starts at bottom of About Us and flows into top of Community   */}
+      {/* L-shaped Floral Decoration: bottom-left corner                 */}
+      {/* Vertical arm: flower3 along left edge                          */}
+      {/* Horizontal arm: flower4 along bottom-left edge                 */}
       {/* ============================================================== */}
-
-      {/* Right side connector vine */}
+      {/* Vertical arm of L — left edge */}
       <img
-        src={img("/images/home/flower4_image.webp")}
-        srcSet={imgSrcSet("/images/home/flower4_image-320.webp 320w, /images/home/flower4_image-640.webp 640w, /images/home/flower4_image.webp 942w")}
-        sizes="(max-width: 640px) 16vw, (max-width: 1024px) 9rem, 13rem"
+        src={img("/images/home/flower3_image.webp")}
+        srcSet={imgSrcSet(
+          "/images/home/flower3_image-320.webp 320w, /images/home/flower3_image-640.webp 640w, /images/home/flower3_image.webp 942w",
+        )}
+        sizes="(max-width: 640px) 14vw, (max-width: 1024px) 8rem, 11rem"
         width={942}
         height={1670}
         alt="Decorative flower garland"
         title="Decorative flower garland"
-        className="pointer-events-none absolute right-0 -top-36 sm:-top-44 lg:-top-52 z-0 w-24 sm:w-28 md:w-36 lg:w-44 xl:w-52 max-w-[16vw] h-auto object-contain object-right-top select-none opacity-95"
+        className="pointer-events-none absolute left-0 bottom-0 z-0 w-20 sm:w-24 md:w-32 lg:w-40 xl:w-48 max-w-[14vw] h-auto object-contain object-left-bottom select-none opacity-90"
         loading="lazy"
         aria-hidden="true"
       />
-
-      {/* ============================================================== */}
-      {/* Decorative Floral Corner: L-shape at bottom-left               */}
-      {/* Mirrors the About section flower style                         */}
-      {/* ============================================================== */}
-      <div
-        className="pointer-events-none absolute left-0 bottom-0 z-0 select-none"
+      {/* Horizontal arm of L — bottom-left, rotated 90° CW */}
+      <img
+        src={img("/images/home/flower4_image.webp")}
+        srcSet={imgSrcSet(
+          "/images/home/flower4_image-320.webp 320w, /images/home/flower4_image-640.webp 640w, /images/home/flower4_image.webp 942w",
+        )}
+        sizes="(max-width: 640px) 14vw, (max-width: 1024px) 8rem, 11rem"
+        width={942}
+        height={1670}
+        alt="Decorative flower garland"
+        title="Decorative flower garland"
+        className="pointer-events-none absolute left-0 bottom-0 z-0 w-20 sm:w-24 md:w-32 lg:w-40 xl:w-48 max-w-[14vw] h-auto object-contain object-left-bottom select-none opacity-90 origin-bottom-left rotate-90"
+        loading="lazy"
         aria-hidden="true"
-      >
-        {/* Horizontal arm along bottom edge (extends rightwards) */}
-        <img
-          src={img("/images/home/flower3_image.webp")}
-          srcSet={imgSrcSet("/images/home/flower3_image-320.webp 320w, /images/home/flower3_image-640.webp 640w, /images/home/flower3_image.webp 942w")}
-          sizes="(max-width: 640px) 35vw, (max-width: 1024px) 16rem, 24rem"
-          width={942}
-          height={1670}
-          alt=""
-          className="absolute left-0 bottom-0 w-28 sm:w-36 md:w-44 lg:w-52 xl:w-64 h-auto object-contain origin-bottom-left -rotate-90 -scale-y-100 opacity-90"
-          loading="lazy"
-        />
-        {/* Vertical arm along left edge (extends upwards) */}
-        <img
-          src={img("/images/home/flower3_image.webp")}
-          srcSet={imgSrcSet("/images/home/flower3_image-320.webp 320w, /images/home/flower3_image-640.webp 640w, /images/home/flower3_image.webp 942w")}
-          sizes="(max-width: 640px) 18vw, (max-width: 1024px) 9rem, 13rem"
-          width={942}
-          height={1670}
-          alt=""
-          className="relative left-0 bottom-0 w-24 sm:w-28 md:w-36 lg:w-44 xl:w-52 h-auto object-contain object-left-bottom opacity-95"
-          loading="lazy"
-        />
-      </div>
+      />
 
       <div className="section-pad relative z-10">
         {/* ============================================================== */}
@@ -332,32 +272,6 @@ export default function CommunitiesSection() {
                 <p className="mt-1 text-xs font-bold text-gold-700">
                   {comm.tag}
                 </p>
-
-                {/* Ornament divider */}
-                <div
-                  aria-hidden="true"
-                  className="mt-3 flex items-center gap-1.5 text-gold-500/70"
-                >
-                  <span className="h-px w-6 bg-gold-500/50" />
-                  <span className="text-[8px]">◆</span>
-                  <span className="h-px w-6 bg-gold-500/50" />
-                </div>
-
-                <p className="mt-3 px-5 text-xs leading-relaxed font-medium text-ink-600">
-                  {comm.heritage}
-                </p>
-
-                {/* Key Gotras / Traditions — anchored to card bottom */}
-                <div className="mt-auto w-full px-5 pt-4">
-                  <p className="text-[10px] font-bold tracking-[0.16em] uppercase text-navy-800">
-                    {t("communities.gotrasLabel", {
-                      defaultValue: "Key Gotras / Traditions",
-                    })}
-                  </p>
-                  <p className="mt-1 text-[11px] leading-snug text-ink-500">
-                    {comm.gotras}
-                  </p>
-                </div>
 
                 {/* Direct action — inverts to navy on hover */}
                 <div className="mt-4 w-full border-t border-cream-200 p-3">

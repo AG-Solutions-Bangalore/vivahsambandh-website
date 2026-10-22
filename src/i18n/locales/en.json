@@ -1295,8 +1295,9 @@
       "stepSubmit": "Submit",
       "back": "Back",
       "continue": "Continue",
-      "stepHint": "Fill in the details on this page. You can move between steps at any time.",
-      "stepsIncompleteHint": "Finish every step to submit. We will take you to whatever is still missing."
+      "stepHint": "Complete the required details on this step to unlock the next one.",
+      "stepsIncompleteHint": "Finish every step to submit. We will take you to whatever is still missing.",
+      "stepPreferencesPhotos": "Preferences & Photos"
     }
   }
 }

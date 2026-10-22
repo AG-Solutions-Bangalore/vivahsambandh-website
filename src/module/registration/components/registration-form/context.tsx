@@ -142,6 +142,12 @@ export interface RegistrationFormContextValue {
    */
   validateStep: (step: number) => boolean
   /**
+   * Validate every step BEFORE `step`, in order. On the first gap it switches
+   * to that step and reveals its errors. Returns true when the visitor may
+   * enter `step`.
+   */
+  validateStepsBefore: (step: number) => boolean
+  /**
    * Validate every step in order. On the first incomplete step it switches
    * to it, reveals its errors and focuses the first invalid control.
    * Returns true only when the whole form is complete.
@@ -556,6 +562,35 @@ export function RegistrationFormProvider({ children }: PropsWithChildren) {
   )
 
   /**
+   * Validate every step before `step`, in order. The first gap wins: the
+   * wizard switches to it, reveals its errors and focuses the first invalid
+   * control. Returns true when entering `step` is allowed.
+   */
+  const validateStepsBefore = useCallback(
+    (step: number): boolean => {
+      const { errorList } = validateRegistrationForm(form, conditions, baseId)
+
+      for (let index = 0; index < step; index += 1) {
+        const definition = REGISTRATION_STEPS[index]
+        const items = errorList.filter((item) => definition.fields.includes(item.key))
+        if (items.length === 0) continue
+
+        const stepErrors: FieldErrors = {}
+        for (const item of items) stepErrors[item.key] = item.error
+
+        setFieldErrors(stepErrors)
+        setCurrentStep(index)
+        // The step has to render before its controls exist in the DOM.
+        setTimeout(() => focusAndScrollToField(items[0].id), 160)
+        return false
+      }
+
+      return true
+    },
+    [form, conditions, baseId, focusAndScrollToField],
+  )
+
+  /**
    * Validate every step in order. The first incomplete step wins: the wizard
    * switches to it, reveals its errors and focuses the first invalid control.
    */
@@ -848,6 +883,7 @@ function convertTo24HourTime(timeStr: string): string {
     currentStep,
     goToStep,
     validateStep,
+    validateStepsBefore,
     validateAllSteps,
   }
 
