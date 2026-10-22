@@ -4,6 +4,7 @@ import { Route, Routes, useLocation, Navigate } from 'react-router-dom'
 import Footer from './components/Footer'
 import Header from './components/Header'
 import SmoothScroll from './components/motion/SmoothScroll'
+import DropdownScrollGuard from './components/common/DropdownScrollGuard'
 import { getLenis, resolveHashId, scrollToAnchor } from './lib/scroll'
 import { DEFERRED_SECTION_IDS, whenSectionReady } from './lib/deferredSections'
 import { refreshScrollTriggers } from './lib/gsap-setup'
@@ -177,6 +178,7 @@ export default function App() {
     <QueryProvider>
       <SuperAdminAuthProvider>
         <Toaster />
+        <DropdownScrollGuard />
         {isPanelRoute ? (
           <div className="min-h-screen bg-cream-50">
             <Routes>

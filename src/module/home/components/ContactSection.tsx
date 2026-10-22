@@ -336,7 +336,7 @@ export default function ContactSection() {
                         onPaste={handlePasteCapture("phone")}
                         aria-label={t("contact.phone")}
                         aria-invalid={Boolean(errors.phone)}
-                        placeholder={`${t("contact.phone")} * (10 digits)`}
+                        placeholder={`${t("contact.phone")} *`}
                         className={`w-full rounded-xl border py-3 pr-4 pl-11 text-sm text-navy-900 placeholder:text-ink-400 focus:outline-hidden focus:ring-1 ${
                           errors.phone
                             ? "border-maroon-500 bg-maroon-50/30 focus:border-maroon-600 focus:ring-maroon-500/20"
@@ -369,7 +369,7 @@ export default function ContactSection() {
                         onPaste={handlePasteCapture("message")}
                         aria-label={t("contact.message")}
                         aria-invalid={Boolean(errors.message)}
-                        placeholder={`${t("contact.message")} * (min. 10 chars)`}
+                        placeholder={`${t("contact.message")} *`}
                         className={`w-full rounded-xl border py-3 pr-4 pl-11 text-sm text-navy-900 placeholder:text-ink-400 focus:outline-hidden focus:ring-1 ${
                           errors.message
                             ? "border-maroon-500 bg-maroon-50/30 focus:border-maroon-600 focus:ring-maroon-500/20"

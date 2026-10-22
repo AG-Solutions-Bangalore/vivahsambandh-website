@@ -1,16 +1,19 @@
-import { useTranslation } from 'react-i18next'
-import Reveal from '../../../components/motion/Reveal'
-import { CITIES } from '../data/cities'
+import { useTranslation } from "react-i18next";
+import Reveal from "../../../components/motion/Reveal";
+import { CITIES } from "../data/cities";
 
 export default function CityMatchesSection() {
-  const { t } = useTranslation()
+  const { t } = useTranslation();
 
   // Two identical blocks of cities so when track translates -50%, it seamlessly resets with 0 jump and 0 empty gap.
-  const citiesTrack = [...CITIES, ...CITIES]
-  const marqueeCities = [...citiesTrack, ...citiesTrack]
+  const citiesTrack = [...CITIES, ...CITIES];
+  const marqueeCities = [...citiesTrack, ...citiesTrack];
 
   return (
-    <section id="search" className="relative overflow-hidden bg-cream-50 py-12 sm:py-16">
+    <section
+      id="search"
+      className="relative overflow-hidden bg-cream-50 py-12 sm:py-16"
+    >
       <div className="section-pad relative z-10">
         {/* ============================================================== */}
         {/* Section Header: Eyebrow, Title, Subtitle, and View All link    */}
@@ -20,22 +23,28 @@ export default function CityMatchesSection() {
             <div>
               {/* Eyebrow */}
               <div className="inline-flex items-center gap-2">
-                <span className="text-gold-600 text-sm font-bold" aria-hidden="true">
+                <span
+                  className="text-gold-600 text-sm font-bold"
+                  aria-hidden="true"
+                >
                   ☸
                 </span>
-                <span data-eyebrow className="text-[11px] sm:text-xs font-bold tracking-[0.2em] uppercase text-gold-700">
-                  {t('cities.eyebrow')}
+                <span
+                  data-eyebrow
+                  className="text-[11px] sm:text-xs font-bold tracking-[0.2em] uppercase text-gold-700"
+                >
+                  {t("cities.eyebrow")}
                 </span>
               </div>
 
               {/* Title */}
               <h2 className="font-display mt-2 text-2xl sm:text-3xl lg:text-4xl font-bold text-navy-950">
-                {t('cities.title')}
+                {t("cities.title")}
               </h2>
 
               {/* Subtitle */}
               <p className="mt-1.5 text-xs sm:text-sm text-ink-600 font-medium">
-                {t('cities.subtitle')}
+                {t("cities.subtitle")}
               </p>
             </div>
           </div>
@@ -60,7 +69,9 @@ export default function CityMatchesSection() {
         {/* Continuous Horizontal Ribbon — pre-filled across entire viewport on load */}
         <div className="cities-marquee flex gap-4 px-4 sm:gap-6">
           {marqueeCities.map((city, idx) => {
-            const cityName = t(city.nameKey, { defaultValue: city.defaultName })
+            const cityName = t(city.nameKey, {
+              defaultValue: city.defaultName,
+            });
 
             return (
               <div
@@ -89,15 +100,12 @@ export default function CityMatchesSection() {
                   <h3 className="font-display truncate text-xs font-bold text-navy-950 transition-colors group-hover:text-maroon-700 sm:text-sm">
                     {cityName}
                   </h3>
-                  <p className="mt-0.5 text-[10px] font-semibold text-sky-700 sm:text-[11px]">
-                    {city.count} {t('cities.profiles')}
-                  </p>
                 </div>
               </div>
-            )
+            );
           })}
         </div>
       </div>
     </section>
-  )
+  );
 }
