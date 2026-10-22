@@ -179,17 +179,16 @@ export default function FaqSection({
     total === 0 ? 0 : Math.min(activeQuestionIdx, total - 1);
 
   /**
-   * Sliding window of `DIAL_SIZE` questions over the full list. The window
-   * follows the active question so every FAQ stays reachable on the 5-node arc.
+   * Fixed sets of `DIAL_SIZE` questions. The set never slides, so questions
+   * from two sets are never shown on the dial at the same time — each set is
+   * a self-contained page (the last set may hold fewer than `DIAL_SIZE`).
    */
-  const windowStart =
-    total <= DIAL_SIZE
-      ? 0
-      : Math.min(Math.max(0, safeActiveIdx - 2), total - DIAL_SIZE);
-  const visibleItems = flatItems.slice(windowStart, windowStart + DIAL_SIZE);
+  const activeSetIndex = Math.floor(safeActiveIdx / DIAL_SIZE);
+  const setStart = activeSetIndex * DIAL_SIZE;
+  const visibleItems = flatItems.slice(setStart, setStart + DIAL_SIZE);
 
-  /** Slot (0–4) of the active question inside the visible window. */
-  const activeSlot = safeActiveIdx - windowStart;
+  /** Slot (0–4) of the active question inside the current set. */
+  const activeSlot = safeActiveIdx - setStart;
 
   const activeEntry = flatItems[safeActiveIdx];
   const activeItem = activeEntry?.item;
@@ -198,14 +197,36 @@ export default function FaqSection({
   const activeHeading = activeEntry?.heading ?? null;
   const ActiveIcon = NODE_ICONS[safeActiveIdx % NODE_ICONS.length];
 
+  /**
+   * Two-level navigation.
+   * 1. Inside a set the arrows move one question at a time.
+   * 2. At a set boundary they page to the adjacent set:
+   *    Next on the last question → first question of the next set.
+   *    Prev on the first question → last question of the previous set.
+   * Both directions wrap around the whole list, staying circular.
+   */
   const handlePrev = () => {
     if (total === 0) return;
-    setActiveQuestionIdx((prev) => (prev <= 0 ? total - 1 : prev - 1));
+    setActiveQuestionIdx((prev) => {
+      const prevSetStart = Math.floor(prev / DIAL_SIZE) * DIAL_SIZE;
+      if (prev > prevSetStart) return prev - 1;
+      const lastIdx = total - 1;
+      const lastSetStart = Math.floor(lastIdx / DIAL_SIZE) * DIAL_SIZE;
+      const targetSetStart =
+        prevSetStart === 0 ? lastSetStart : prevSetStart - DIAL_SIZE;
+      return Math.min(targetSetStart + DIAL_SIZE - 1, lastIdx);
+    });
   };
 
   const handleNext = () => {
     if (total === 0) return;
-    setActiveQuestionIdx((prev) => (prev >= total - 1 ? 0 : prev + 1));
+    setActiveQuestionIdx((prev) => {
+      const setStart = Math.floor(prev / DIAL_SIZE) * DIAL_SIZE;
+      const setEnd = Math.min(setStart + DIAL_SIZE - 1, total - 1);
+      if (prev < setEnd) return prev + 1;
+      const nextSetStart = setStart + DIAL_SIZE;
+      return nextSetStart >= total ? 0 : nextSetStart;
+    });
   };
 
   return (
@@ -327,7 +348,7 @@ export default function FaqSection({
                     {visibleItems.map((entry, slot) => {
                       const node = DIAL_NODES[slot];
                       if (!node) return null;
-                      const globalIdx = windowStart + slot;
+                      const globalIdx = setStart + slot;
                       const isActive = safeActiveIdx === globalIdx;
                       const Icon = NODE_ICONS[slot % NODE_ICONS.length];
                       const q = getFaqQuestion(entry.item);
@@ -455,7 +476,7 @@ export default function FaqSection({
                   {/* Scrollable Question Pills */}
                   <div className="w-full flex gap-2 overflow-x-auto pb-2.5 mb-4 scrollbar-none justify-start px-2">
                     {visibleItems.map((entry, slot) => {
-                      const globalIdx = windowStart + slot;
+                      const globalIdx = setStart + slot;
                       const isActive = safeActiveIdx === globalIdx;
                       const Icon = NODE_ICONS[slot % NODE_ICONS.length];
                       const q = getFaqQuestion(entry.item);
@@ -539,7 +560,7 @@ export default function FaqSection({
                   {/* Pagination Dots for Mobile */}
                   <div className="flex justify-center items-center gap-1.5 mt-3">
                     {visibleItems.map((_entry, dotIdx) => {
-                      const globalIdx = windowStart + dotIdx;
+                      const globalIdx = setStart + dotIdx;
                       return (
                         <button
                           key={globalIdx}
