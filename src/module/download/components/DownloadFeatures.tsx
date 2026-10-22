@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next'
+import { RevealGroup } from '../../../components/motion/Reveal'
 
 interface AppFeatureItem {
   title: string
@@ -9,7 +10,7 @@ function FeatureIcon({ index }: { index: number }) {
   switch (index) {
     case 0:
       return (
-        <svg viewBox="0 0 24 24" className="h-6 w-6" fill="none" stroke="currentColor" strokeWidth="2">
+        <svg viewBox="0 0 24 24" className="h-7 w-7" fill="none" stroke="currentColor" strokeWidth="2">
           <path
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -19,7 +20,7 @@ function FeatureIcon({ index }: { index: number }) {
       )
     case 1:
       return (
-        <svg viewBox="0 0 24 24" className="h-6 w-6" fill="none" stroke="currentColor" strokeWidth="2">
+        <svg viewBox="0 0 24 24" className="h-7 w-7" fill="none" stroke="currentColor" strokeWidth="2">
           <path
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -29,7 +30,7 @@ function FeatureIcon({ index }: { index: number }) {
       )
     case 2:
       return (
-        <svg viewBox="0 0 24 24" className="h-6 w-6" fill="none" stroke="currentColor" strokeWidth="2">
+        <svg viewBox="0 0 24 24" className="h-7 w-7" fill="none" stroke="currentColor" strokeWidth="2">
           <path
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -39,7 +40,7 @@ function FeatureIcon({ index }: { index: number }) {
       )
     case 3:
       return (
-        <svg viewBox="0 0 24 24" className="h-6 w-6" fill="none" stroke="currentColor" strokeWidth="2">
+        <svg viewBox="0 0 24 24" className="h-7 w-7" fill="none" stroke="currentColor" strokeWidth="2">
           <path
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -49,7 +50,7 @@ function FeatureIcon({ index }: { index: number }) {
       )
     case 4:
       return (
-        <svg viewBox="0 0 24 24" className="h-6 w-6" fill="none" stroke="currentColor" strokeWidth="2">
+        <svg viewBox="0 0 24 24" className="h-7 w-7" fill="none" stroke="currentColor" strokeWidth="2">
           <path
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -59,7 +60,7 @@ function FeatureIcon({ index }: { index: number }) {
       )
     default:
       return (
-        <svg viewBox="0 0 24 24" className="h-6 w-6" fill="none" stroke="currentColor" strokeWidth="2">
+        <svg viewBox="0 0 24 24" className="h-7 w-7" fill="none" stroke="currentColor" strokeWidth="2">
           <path
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -75,7 +76,7 @@ export default function DownloadFeatures() {
   const rawFeatures = (t('downloadPage.features', { returnObjects: true }) as AppFeatureItem[]) || []
 
   return (
-    <section className="relative bg-white py-16 sm:py-24 border-t border-gold-500/20">
+    <section className="relative bg-cream-50 py-16 sm:py-24 border-t border-gold-500/20">
       <div className="section-pad">
         {/* Header */}
         <div className="mx-auto max-w-2xl text-center">
@@ -83,7 +84,7 @@ export default function DownloadFeatures() {
             <span>✦</span>
             <span>{t('downloadPage.featuresEyebrow')}</span>
           </div>
-          <h2 className="font-display mt-3 text-2xl font-bold text-navy-900 sm:text-3xl lg:text-4xl">
+          <h2 className="font-display mt-3 text-2xl font-bold text-navy-900 sm:text-3xl lg:text-4xl  md:text-nowrap">
             {t('downloadPage.featuresTitle')}
           </h2>
           <p className="mt-3 text-sm text-ink-600 sm:text-base">
@@ -92,24 +93,59 @@ export default function DownloadFeatures() {
         </div>
 
         {/* Feature Cards Grid (Always visible, ultra-fast CSS transitions) */}
-        <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <RevealGroup
+          className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
+          stagger={0.08}
+        >
           {rawFeatures.map((feature, i) => (
-            <div
+            <article
               key={feature.title}
-              className="group relative rounded-3xl border border-gold-500/25 bg-gradient-to-b from-[#FFFDF9] to-white p-6 sm:p-7 shadow-xs transition-all duration-300 hover:-translate-y-1 hover:border-gold-500 hover:shadow-[0_12px_30px_rgba(212,175,55,0.12)]"
+              data-reveal-item
+              className="group relative overflow-hidden rounded-[1.75rem] border border-gold-500/25 bg-gradient-to-b from-white to-[#FFFCF6] p-6 shadow-[0_2px_12px_rgba(7,17,31,0.04)] transition-all duration-500 hover:-translate-y-2 hover:border-gold-500/60 hover:shadow-[0_24px_55px_-24px_rgba(183,121,31,0.45)] sm:p-7"
             >
-              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gold-500/15 text-maroon-700 transition-colors duration-300 group-hover:bg-maroon-600 group-hover:text-white shadow-xs">
+              {/* Jaali texture + warm corner glow */}
+              <div
+                className="bg-jaali pointer-events-none absolute inset-0 opacity-30 transition-opacity duration-500 group-hover:opacity-60"
+                aria-hidden="true"
+              />
+              <div
+                className="pointer-events-none absolute -right-10 -top-10 size-36 rounded-full bg-gold-500/10 blur-2xl transition-colors duration-500 group-hover:bg-gold-500/20"
+                aria-hidden="true"
+              />
+              <span
+                className="pointer-events-none absolute inset-x-0 top-0 h-px scale-x-0 bg-gradient-to-r from-transparent via-gold-500 to-transparent transition-transform duration-500 group-hover:scale-x-100"
+                aria-hidden="true"
+              />
+
+              {/* Card number */}
+              <span
+                className="font-display pointer-events-none absolute right-5 top-4 text-3xl font-black leading-none text-gold-500/15 transition-colors duration-500 group-hover:text-gold-500/30"
+                aria-hidden="true"
+              >
+                {String(i + 1).padStart(2, '0')}
+              </span>
+
+              {/* Arched gold medallion, inverting to maroon on hover */}
+              <div className="relative z-10 inline-flex h-14 w-14 items-center justify-center rounded-t-[1.4rem] rounded-b-xl border border-gold-500/40 bg-gradient-to-b from-[#FFF7E8] to-[#FCEECC] text-maroon-700 shadow-[inset_0_1px_0_rgba(255,255,255,0.85),0_4px_10px_-6px_rgba(183,121,31,0.4)] transition-all duration-500 group-hover:scale-105 group-hover:border-maroon-700 group-hover:from-maroon-600 group-hover:to-maroon-700 group-hover:text-white group-hover:shadow-[0_10px_24px_-10px_rgba(163,51,77,0.65)]">
                 <FeatureIcon index={i} />
               </div>
-              <h3 className="font-display mt-5 text-base font-bold text-navy-900 sm:text-lg">
+
+              <h3 className="font-display relative z-10 mt-5 text-lg font-bold text-navy-900 transition-colors duration-300 group-hover:text-maroon-700 sm:text-xl">
                 {feature.title}
               </h3>
-              <p className="mt-2 text-xs leading-relaxed text-ink-600 sm:text-sm">
+              <p className="relative z-10 mt-2 text-xs leading-relaxed text-ink-600 sm:text-sm">
                 {feature.desc}
               </p>
-            </div>
+
+              {/* Ornament divider that draws out on hover */}
+              <div className="relative z-10 mt-6 flex items-center gap-2" aria-hidden="true">
+                <span className="h-px w-8 bg-gradient-to-r from-gold-500/80 to-gold-500/0 transition-all duration-500 group-hover:w-16" />
+                <span className="size-1.5 rotate-45 border border-gold-500/60 bg-gold-500/30 transition-all duration-500 group-hover:border-gold-500 group-hover:bg-gold-500" />
+                <span className="size-1 rounded-full bg-gold-500/40 transition-colors duration-500 group-hover:bg-gold-500/80" />
+              </div>
+            </article>
           ))}
-        </div>
+        </RevealGroup>
       </div>
     </section>
   )
