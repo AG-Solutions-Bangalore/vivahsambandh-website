@@ -43,6 +43,7 @@ import {
 } from "../components/PanelTable";
 import { PanelFilterSelect } from "../components/PanelFilterSelect";
 import { RemoteImage } from "../components/RemoteImage";
+import { formatDate } from "../utils/format";
 import { cn } from "cn";
 import {
   useCreateNotificationMutation,
@@ -370,7 +371,9 @@ export default function NotificationsPage() {
                 <td className="px-4 py-3.5">
                   <span className="flex items-center gap-1.5 font-medium text-ink-500">
                     <Calendar className="size-3.5 text-ink-400" aria-hidden />
-                    {item.notification_date || "—"}
+                    {item.notification_date
+                      ? formatDate(item.notification_date)
+                      : "—"}
                   </span>
                 </td>
 
@@ -721,7 +724,7 @@ export default function NotificationsPage() {
                 Target: {inspectedRecord.notification_for}
               </span>
               <span className="text-xs text-ink-500">
-                Date: {inspectedRecord.notification_date}
+                Date: {formatDate(inspectedRecord.notification_date)}
               </span>
             </div>
 

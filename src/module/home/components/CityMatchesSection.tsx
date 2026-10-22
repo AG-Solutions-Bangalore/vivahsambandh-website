@@ -38,23 +38,6 @@ export default function CityMatchesSection() {
                 {t('cities.subtitle')}
               </p>
             </div>
-
-            {/* "View All Cities →" link */}
-            <div>
-              <a
-                href="#all-cities"
-                title={t('cities.viewAll')}
-                className="group inline-flex items-center gap-1.5 text-xs sm:text-sm font-bold text-maroon-700 transition hover:text-maroon-800"
-              >
-                <span>{t('cities.viewAll')}</span>
-                <span
-                  className="transition-transform duration-300 group-hover:translate-x-1"
-                  aria-hidden="true"
-                >
-                  →
-                </span>
-              </a>
-            </div>
           </div>
         </Reveal>
       </div>

@@ -25,6 +25,7 @@ import { PanelListSkeleton, Skeleton, SkeletonText } from '../components/PanelSk
 import { PanelError } from '../components/PanelState'
 import { ProfileAvatar } from '../components/ProfileAvatar'
 import { RemoteImage } from '../components/RemoteImage'
+import { formatDate } from '../utils/format'
 import { useDashboardOverview } from '../hook/useDashboardOverview'
 import { errorMessage } from '../hook/errors'
 import toast from 'react-hot-toast'
@@ -455,7 +456,7 @@ export default function DashboardOverviewPage() {
                   </a>
                 ) : null}
                 <span className="shrink-0 text-[0.68rem] text-ink-400">
-                  {notif.notification_date}
+                  {formatDate(notif.notification_date)}
                 </span>
               </li>
             ))}

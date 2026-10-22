@@ -175,17 +175,6 @@ export default function PanelLoginPage() {
     }
   };
 
-  const handleOpenForgot = () => {
-    setMode("forgot");
-    setLoginErrors({});
-    setForgotErrors({});
-    setForgotSuccess(null);
-    // Prefill mobile if already typed in login
-    if (mobileNumber.trim()) {
-      setForgotMobile(mobileNumber.trim());
-    }
-  };
-
   const handleBackToLogin = () => {
     setMode("login");
     setForgotErrors({});

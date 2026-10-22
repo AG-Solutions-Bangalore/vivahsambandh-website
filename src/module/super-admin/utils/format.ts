@@ -6,13 +6,13 @@
 
 const dateFormatter = new Intl.DateTimeFormat('en-IN', {
   day: '2-digit',
-  month: 'short',
+  month: '2-digit',
   year: 'numeric',
 })
 
 const numberFormatter = new Intl.NumberFormat('en-IN')
 
-/** Formats an ISO timestamp as `21 Oct 2026`, or falls back to the raw text. */
+/** Formats an ISO timestamp as `21/10/2026`, or falls back to the raw text. */
 export function formatDate(value?: string | null): string {
   if (!value) return '—'
   const parsed = new Date(value)
