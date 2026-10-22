@@ -13,6 +13,8 @@ export { default as FeedbackPage } from './pages/FeedbackPage'
 export { default as BlockProfilesPage } from './pages/BlockProfilesPage'
 export { default as NotificationsPage } from './pages/NotificationsPage'
 export { default as BlogsPage } from './pages/BlogsPage'
+export { default as BlogEditorPage } from './pages/BlogEditorPage'
+export { default as FaqEditorPage } from './pages/FaqEditorPage'
 export { default as BlogGalleryPage } from './pages/BlogGalleryPage'
 export { default as FaqsPage } from './pages/FaqsPage'
 export { default as TestimonialsPage } from './pages/TestimonialsPage'
@@ -53,6 +55,14 @@ export {
   slugify,
   type BlogFormValues,
 } from './components/blogForm'
+export { FaqEditorForm } from './components/FaqEditorForm'
+export {
+  emptyFaqForm,
+  faqFormToPayload,
+  faqToFormValues,
+  type FaqFormValues,
+  type FaqSubFormValues,
+} from './components/faqForm'
 
 export {
   SuperAdminAuthProvider,

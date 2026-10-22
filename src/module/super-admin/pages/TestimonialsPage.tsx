@@ -393,7 +393,7 @@ export default function TestimonialsPage() {
           <PanelTable
             head={
               <>
-                <PanelTableHeadCell>ID</PanelTableHeadCell>
+                <PanelTableHeadCell>SI/NO</PanelTableHeadCell>
                 <PanelTableHeadCell>Client / Couple</PanelTableHeadCell>
                 <PanelTableHeadCell>Target Section</PanelTableHeadCell>
                 <PanelTableHeadCell>Rating</PanelTableHeadCell>
@@ -404,7 +404,7 @@ export default function TestimonialsPage() {
               </>
             }
           >
-            {filtered.map((item) => {
+            {filtered.map((item, index) => {
               const initial = (item.testimonial_client_name || 'C')
                 .trim()
                 .charAt(0)
@@ -416,8 +416,8 @@ export default function TestimonialsPage() {
                   key={item.id}
                   className="group transition-colors hover:bg-cream-50/70"
                 >
-                  <td className="px-4 py-3.5 font-mono text-xs font-bold text-navy-800">
-                    {item.id}
+                  <td className="px-4 py-3.5 text-xs font-bold text-navy-800">
+                    {index + 1}
                   </td>
 
                   <td className="px-4 py-3.5">
@@ -944,7 +944,7 @@ export default function TestimonialsPage() {
               </div>
               <div className="flex items-center gap-2 rounded-xl border border-cream-200 bg-cream-50/70 p-2.5">
                 <User className="size-3.5 text-ink-400" />
-                <span>ID: {viewingRecord.id}</span>
+                <span>{viewingRecord.testimonial_for}</span>
               </div>
             </div>
           </div>

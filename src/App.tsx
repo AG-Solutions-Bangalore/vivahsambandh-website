@@ -1,4 +1,4 @@
-import { useEffect, useRef, lazy, Suspense } from 'react'
+import { useEffect, useRef, lazy, Suspense, type ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Route, Routes, useLocation, Navigate } from 'react-router-dom'
 import Footer from './components/Footer'
@@ -75,6 +75,12 @@ const PanelClientsPage = lazy(
 const PanelCategoriesPage = lazy(
   () => import('./module/super-admin/pages/CategoriesPage'),
 )
+const PanelBlogEditorPage = lazy(
+  () => import('./module/super-admin/pages/BlogEditorPage'),
+)
+const PanelFaqEditorPage = lazy(
+  () => import('./module/super-admin/pages/FaqEditorPage'),
+)
 
 /**
  * URL is the source of truth for language: `/hi*` → Hindi, else English.
@@ -134,6 +140,19 @@ export default function App() {
   const { i18n } = useTranslation()
   const { pathname } = useLocation()
   const isPanelRoute = pathname.startsWith('/panel') || pathname === '/panel-login'
+
+  /**
+   * Panel screens all sit inside the same guard + layout shell. The editor
+   * screens are long forms, so they get a screen of their own instead of a
+   * dialog — this wraps whichever one they render.
+   */
+  const panelScreen = (screen: ReactNode) => (
+    <SuperAdminGuard>
+      <Suspense fallback={null}>
+        <SuperAdminLayout>{screen}</SuperAdminLayout>
+      </Suspense>
+    </SuperAdminGuard>
+  )
 
   // Translated copy changes layout heights → re-measure ScrollTriggers.
   useEffect(() => {
@@ -292,6 +311,16 @@ export default function App() {
                 }
               />
 
+              {/* The article form is too long for a dialog — it gets its own screen. */}
+              <Route
+                path="/panel/blogs/new"
+                element={panelScreen(<PanelBlogEditorPage />)}
+              />
+              <Route
+                path="/panel/blogs/:id/edit"
+                element={panelScreen(<PanelBlogEditorPage />)}
+              />
+
               <Route
                 path="/panel/enquiries"
                 element={
@@ -316,6 +345,16 @@ export default function App() {
                     </Suspense>
                   </SuperAdminGuard>
                 }
+              />
+
+              {/* A FAQ group holds a stack of questions — it needs a full page. */}
+              <Route
+                path="/panel/faqs/new"
+                element={panelScreen(<PanelFaqEditorPage />)}
+              />
+              <Route
+                path="/panel/faqs/:id/edit"
+                element={panelScreen(<PanelFaqEditorPage />)}
               />
 
               <Route

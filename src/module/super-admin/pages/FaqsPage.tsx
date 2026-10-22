@@ -1,10 +1,15 @@
 /**
  * @file src/module/super-admin/pages/FaqsPage.tsx
  * FAQ management for the Super Admin Panel: list FAQ groups, view nested Q&As,
- * create new FAQ groups with sub-items, edit questions, toggle status, and delete.
+ * toggle status, and delete.
+ *
+ * Creating and editing happen on their own screens — a group holds a whole
+ * stack of questions, which is far too much to edit inside a dialog — so
+ * this page only links to them.
  */
 
 import { useMemo, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import {
   Plus,
   RefreshCw,
@@ -14,8 +19,6 @@ import {
   Layers,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Textarea } from '@/components/ui/textarea'
 import { cn } from 'cn'
 import { ConfirmDialog } from '../components/ConfirmDialog'
 import { PanelCard } from '../components/PanelCard'
@@ -37,49 +40,19 @@ import { panelDescription } from '../navigation'
 import { errorMessage } from '../hook/errors'
 import { DEFAULT_PER_PAGE, useServerSearch } from '../hook/useServerList'
 import {
-  useCreateFaqMutation,
   useDeleteFaqMutation,
-  useDeleteFaqSubMutation,
   useFaqQuery,
   useFaqsQuery,
-  useUpdateFaqMutation,
   useUpdateFaqStatusMutation,
 } from '../hook/useFaqs'
-import { fetchFaqById } from '../services/faqApi'
-import type { FaqPayload, FaqRecord, FaqStatus } from '../types'
+import type { FaqRecord, FaqStatus } from '../types'
 
 const STATUS_FILTERS = ['All', 'Active', 'Inactive'] as const
 
-interface SubFormState {
-  id?: number
-  faq_sort: number | string
-  faq_heading: string
-  faq_que: string
-  faq_ans: string
-  faq_status: FaqStatus
-}
-
-interface FaqFormState {
-  faq_for: string
-  faq_status: FaqStatus
-  subs: SubFormState[]
-}
-
-const DEFAULT_SUB: SubFormState = {
-  faq_sort: 1,
-  faq_heading: '',
-  faq_que: '',
-  faq_ans: '',
-  faq_status: 'Active',
-}
-
-const DEFAULT_FORM: FaqFormState = {
-  faq_for: 'home',
-  faq_status: 'Active',
-  subs: [{ ...DEFAULT_SUB }],
-}
+const LIST_PATH = '/panel/faqs'
 
 export default function FaqsPage() {
+  const navigate = useNavigate()
   const { searchInput, setSearchInput, searchTerm } = useServerSearch()
   const [statusFilter, setStatusFilter] = useState<string>('All')
   const [page, setPage] = useState(1)
@@ -97,18 +70,8 @@ export default function FaqsPage() {
     per_page: DEFAULT_PER_PAGE,
   })
 
-  const createMutation = useCreateFaqMutation()
-  const updateMutation = useUpdateFaqMutation()
   const statusMutation = useUpdateFaqStatusMutation()
   const deleteMutation = useDeleteFaqMutation()
-  const deleteSubMutation = useDeleteFaqSubMutation()
-
-
-  // Modals
-  const [isCreateOpen, setIsCreateOpen] = useState(false)
-  const [editingRecord, setEditingRecord] = useState<FaqRecord | null>(null)
-  const [formState, setFormState] = useState<FaqFormState>(DEFAULT_FORM)
-  const [formErrors, setFormErrors] = useState<Record<string, string>>({})
 
   // Inspector state
   const [inspectingId, setInspectingId] = useState<number | null>(null)
@@ -133,202 +96,6 @@ export default function FaqsPage() {
         : faqs.filter((item) => item.faq_status.toLowerCase() === statusFilter.toLowerCase()),
     [faqs, statusFilter],
   )
-
-  // Open Create Modal
-  const handleOpenCreate = () => {
-    setFormState({
-      faq_for: 'home',
-      faq_status: 'Active',
-      subs: [{ ...DEFAULT_SUB, faq_sort: 1 }],
-    })
-    setFormErrors({})
-    setIsCreateOpen(true)
-  }
-
-  const [isLoadingEdit, setIsLoadingEdit] = useState(false)
-
-  // Open Edit Modal
-  const handleOpenEdit = async (record: FaqRecord) => {
-    setIsCreateOpen(false)
-    setFormErrors({})
-    setEditingRecord(record)
-    setIsLoadingEdit(true)
-
-    setFormState({
-      faq_for: record.faq_for,
-      faq_status: record.faq_status,
-      subs:
-        record.subs && record.subs.length > 0
-          ? record.subs.map((s, idx) => ({
-              id: s.id,
-              faq_sort: s.faq_sort ?? idx + 1,
-              faq_heading: s.faq_heading || '',
-              faq_que: s.faq_que || '',
-              faq_ans: s.faq_ans || '',
-              faq_status: (s.faq_status as FaqStatus) || 'Active',
-            }))
-          : [{ ...DEFAULT_SUB, faq_sort: 1 }],
-    })
-
-    try {
-      const res = await fetchFaqById(record.id)
-      if (res.data) {
-        const full = res.data
-        setEditingRecord(full)
-        setFormState({
-          faq_for: full.faq_for,
-          faq_status: full.faq_status,
-          subs:
-            full.subs && full.subs.length > 0
-              ? full.subs.map((s, idx) => ({
-                  id: s.id,
-                  faq_sort: s.faq_sort ?? idx + 1,
-                  faq_heading: s.faq_heading || '',
-                  faq_que: s.faq_que || '',
-                  faq_ans: s.faq_ans || '',
-                  faq_status: (s.faq_status as FaqStatus) || 'Active',
-                }))
-              : [{ ...DEFAULT_SUB, faq_sort: 1 }],
-        })
-      }
-    } catch {
-      // Keep existing state
-    } finally {
-      setIsLoadingEdit(false)
-    }
-  }
-
-  // Sub-items management in form
-  const handleAddSub = () => {
-    setFormState((prev) => ({
-      ...prev,
-      subs: [
-        ...prev.subs,
-        {
-          faq_sort: prev.subs.length + 1,
-          faq_heading: '',
-          faq_que: '',
-          faq_ans: '',
-          faq_status: 'Active',
-        },
-      ],
-    }))
-  }
-
-  const handleUpdateSub = (index: number, patch: Partial<SubFormState>) => {
-    setFormState((prev) => {
-      const nextSubs = [...prev.subs]
-      nextSubs[index] = { ...nextSubs[index], ...patch }
-      return { ...prev, subs: nextSubs }
-    })
-  }
-
-  const handleRemoveSub = async (index: number) => {
-    const sub = formState.subs[index]
-    if (sub.id && editingRecord) {
-      if (!confirm('Are you sure you want to permanently delete this sub-question?')) {
-        return
-      }
-      try {
-        await deleteSubMutation.mutateAsync({
-          subId: sub.id,
-          faqId: editingRecord.id,
-          successMessage: 'Sub-question deleted.',
-        })
-      } catch {
-        return
-      }
-    }
-    setFormState((prev) => {
-      const next = prev.subs.filter((_, i) => i !== index)
-      return {
-        ...prev,
-        subs: next.length > 0 ? next : [{ ...DEFAULT_SUB, faq_sort: 1 }],
-      }
-    })
-  }
-
-  // Validation
-  const validateForm = (): boolean => {
-    const errors: Record<string, string> = {}
-    if (!formState.faq_for.trim()) {
-      errors.faq_for = 'Section/Target (e.g. "home") is required.'
-    }
-
-    if (formState.subs.length === 0) {
-      errors.subs = 'At least one question is required.'
-    } else {
-      formState.subs.forEach((sub, i) => {
-        if (!sub.faq_que.trim()) {
-          errors[`sub_${i}_que`] = `Question ${i + 1} is required.`
-        }
-        if (!sub.faq_ans.trim()) {
-          errors[`sub_${i}_ans`] = `Answer ${i + 1} is required.`
-        }
-      })
-    }
-
-    setFormErrors(errors)
-    return Object.keys(errors).length === 0
-  }
-
-  // Save Create
-  const handleCreateSubmit = async () => {
-    if (!validateForm()) return
-
-    const payload: FaqPayload = {
-      faq_for: formState.faq_for.trim(),
-      faq_status: formState.faq_status,
-      subs: formState.subs.map((s, idx) => ({
-        faq_sort: s.faq_sort || idx + 1,
-        faq_for: formState.faq_for.trim(),
-        faq_heading: s.faq_heading.trim(),
-        faq_que: s.faq_que.trim(),
-        faq_ans: s.faq_ans.trim(),
-        faq_status: s.faq_status === 'Active' ? 1 : 0,
-      })),
-    }
-
-    try {
-      await createMutation.mutateAsync({
-        payload,
-        successMessage: `FAQ group for "${payload.faq_for}" created successfully!`,
-      })
-      setIsCreateOpen(false)
-    } catch {
-      // toast shown by mutation
-    }
-  }
-
-  // Save Edit
-  const handleEditSubmit = async () => {
-    if (!editingRecord || !validateForm()) return
-
-    const payload: FaqPayload = {
-      faq_for: formState.faq_for.trim(),
-      faq_status: formState.faq_status,
-      subs: formState.subs.map((s, idx) => ({
-        id: s.id,
-        faq_sort: s.faq_sort || idx + 1,
-        faq_for: formState.faq_for.trim(),
-        faq_heading: s.faq_heading.trim(),
-        faq_que: s.faq_que.trim(),
-        faq_ans: s.faq_ans.trim(),
-        faq_status: s.faq_status === 'Active' ? 1 : 0,
-      })),
-    }
-
-    try {
-      await updateMutation.mutateAsync({
-        id: editingRecord.id,
-        payload,
-        successMessage: `FAQ group for "${payload.faq_for}" updated successfully!`,
-      })
-      setEditingRecord(null)
-    } catch {
-      // toast shown by mutation
-    }
-  }
 
   // Status toggle
   const handleToggleStatus = (record: FaqRecord) => {
@@ -383,7 +150,7 @@ export default function FaqsPage() {
             <Button
               type="button"
               size="sm"
-              onClick={handleOpenCreate}
+              onClick={() => navigate(`${LIST_PATH}/new`)}
               className="cursor-pointer rounded-full bg-gold-600 text-xs font-bold text-white shadow-gold hover:bg-gold-700"
             >
               <Plus className="size-4" aria-hidden />
@@ -432,7 +199,7 @@ export default function FaqsPage() {
               <Button
                 type="button"
                 size="sm"
-                onClick={handleOpenCreate}
+                onClick={() => navigate(`${LIST_PATH}/new`)}
                 className="cursor-pointer rounded-full bg-gold-600 text-xs font-bold text-white shadow-gold hover:bg-gold-700"
               >
                 <Plus className="size-4" aria-hidden />
@@ -444,7 +211,7 @@ export default function FaqsPage() {
           <PanelTable
             head={
               <>
-                <PanelTableHeadCell>ID</PanelTableHeadCell>
+                <PanelTableHeadCell>SI/NO</PanelTableHeadCell>
                 <PanelTableHeadCell>Target Section</PanelTableHeadCell>
                 <PanelTableHeadCell>Accordion Structure</PanelTableHeadCell>
                 <PanelTableHeadCell>Status</PanelTableHeadCell>
@@ -452,11 +219,11 @@ export default function FaqsPage() {
               </>
             }
           >
-            {filtered.map((item) => {
+            {filtered.map((item, index) => {
               return (
                 <tr key={item.id} className="transition-colors hover:bg-cream-100/40">
-                  <td className="px-4 py-3 text-xs font-bold text-navy-900">
-                    {item.id}
+                  <td className="px-4 py-3 text-xs font-bold text-navy-800">
+                    {index + 1}
                   </td>
                   <td className="px-4 py-3 text-sm font-semibold text-navy-900">
                     <span className="inline-flex items-center gap-1.5 rounded-lg border border-gold-300 bg-gold-50/90 px-2.5 py-1 text-xs font-bold text-gold-900 shadow-2xs">
@@ -490,7 +257,7 @@ export default function FaqsPage() {
                         type="button"
                         size="xs"
                         variant="outline"
-                        onClick={() => void handleOpenEdit(item)}
+                        onClick={() => navigate(`${LIST_PATH}/${item.id}/edit`)}
                         title="Edit FAQ Group"
                         className="cursor-pointer rounded-full border-gold-300 bg-gold-50/50 text-[0.7rem] font-bold text-gold-900 hover:bg-gold-100"
                       >
@@ -591,7 +358,7 @@ export default function FaqsPage() {
                 onClick={() => {
                   const target = inspectedRecord
                   setInspectingId(null)
-                  if (target) void handleOpenEdit(target)
+                  if (target) navigate(`${LIST_PATH}/${target.id}/edit`)
                 }}
                 className="cursor-pointer gap-1.5 rounded-full border-gold-300 bg-gold-50 text-xs font-bold text-gold-900 hover:bg-gold-100"
               >
@@ -662,211 +429,6 @@ export default function FaqsPage() {
           </div>
         ) : null}
       </PanelModal>
-
-      {/* Create / Edit Modal */}
-      <PanelModal
-        isOpen={isCreateOpen || editingRecord !== null}
-        onClose={() => {
-          setIsCreateOpen(false)
-          setEditingRecord(null)
-        }}
-        title={editingRecord ? 'Edit FAQ Group' : 'Create FAQ Group'}
-        size="lg"
-        footer={
-          <div className="flex items-center justify-end gap-2">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => {
-                setIsCreateOpen(false)
-                setEditingRecord(null)
-              }}
-              className="cursor-pointer rounded-full border-cream-300 text-xs font-semibold"
-            >
-              Cancel
-            </Button>
-            <Button
-              type="button"
-              onClick={editingRecord ? handleEditSubmit : handleCreateSubmit}
-              disabled={createMutation.isPending || updateMutation.isPending || isLoadingEdit}
-              className="cursor-pointer rounded-full bg-gold-600 px-5 text-xs font-bold text-white shadow-gold hover:bg-gold-700"
-            >
-              {createMutation.isPending || updateMutation.isPending ? (
-                <RefreshCw className="size-3.5 animate-spin" />
-              ) : null}
-              <span>{editingRecord ? 'Save Changes' : 'Create FAQ Group'}</span>
-            </Button>
-          </div>
-        }
-      >
-        {isLoadingEdit ? (
-          <div className="flex flex-col items-center justify-center py-16 text-center">
-            <RefreshCw className="mb-2 size-6 animate-spin text-gold-600" />
-            <p className="text-xs font-semibold text-navy-900">Loading existing questions…</p>
-          </div>
-        ) : (
-          <div className="space-y-6">
-          {/* Group Level Fields */}
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <div>
-              <label className="mb-1.5 block text-[0.68rem] font-bold tracking-[0.14em] text-navy-900 uppercase">
-                Section / Target (e.g. "home", "about") <span className="text-maroon-600">*</span>
-              </label>
-              <Input
-                value={formState.faq_for}
-                onChange={(e) =>
-                  setFormState((prev) => ({ ...prev, faq_for: e.target.value }))
-                }
-                placeholder="e.g. home"
-                className="h-10 rounded-xl border border-cream-300 bg-cream-50/70 px-3 text-xs font-medium text-navy-900 focus-visible:border-gold-500 focus-visible:ring-2 focus-visible:ring-gold-500/40 focus-visible:outline-none"
-              />
-              {formErrors.faq_for && (
-                <p className="mt-1 text-xs text-maroon-600">{formErrors.faq_for}</p>
-              )}
-            </div>
-
-            <div>
-              <label className="mb-1.5 block text-[0.68rem] font-bold tracking-[0.14em] text-navy-900 uppercase">
-                Group Status
-              </label>
-              <select
-                value={formState.faq_status}
-                onChange={(e) =>
-                  setFormState((prev) => ({
-                    ...prev,
-                    faq_status: e.target.value as FaqStatus,
-                  }))
-                }
-                className="h-10 w-full cursor-pointer rounded-xl border border-cream-300 bg-cream-50/70 px-3 text-xs font-semibold text-navy-900 focus-visible:border-gold-500 focus-visible:ring-2 focus-visible:ring-gold-500/40 focus-visible:outline-none"
-              >
-                <option value="Active">Active (Visible)</option>
-                <option value="Inactive">Inactive (Hidden)</option>
-              </select>
-            </div>
-          </div>
-
-          {/* Sub-items builder */}
-          <div className="space-y-4 border-t border-cream-200 pt-5">
-            <div className="flex items-center justify-between">
-              <div>
-                <h4 className="text-[0.68rem] font-bold tracking-[0.14em] text-navy-900 uppercase">
-                  Questions & Answers ({formState.subs.length})
-                </h4>
-                <p className="text-[11px] text-ink-500">
-                  Add questions that will appear in this section's accordion.
-                </p>
-              </div>
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={handleAddSub}
-                className="cursor-pointer rounded-full border-gold-400 bg-gold-50/70 text-xs font-bold text-navy-900 hover:bg-gold-100"
-              >
-                <Plus className="size-3.5" />
-                <span>Add Question</span>
-              </Button>
-            </div>
-
-            {formErrors.subs && (
-              <p className="text-xs text-maroon-600">{formErrors.subs}</p>
-            )}
-
-            <div className="space-y-4">
-              {formState.subs.map((sub, idx) => (
-                <div
-                  key={sub.id ?? idx}
-                  className="rounded-xl border border-cream-300 bg-cream-50/40 p-4 shadow-xs"
-                >
-                  <div className="mb-3 flex items-center justify-between border-b border-cream-200/80 pb-2">
-                    <span className="text-xs font-bold text-navy-900">
-                      Question {idx + 1}
-                    </span>
-                    <button
-                      type="button"
-                      onClick={() => handleRemoveSub(idx)}
-                      disabled={formState.subs.length === 1}
-                      className="cursor-pointer inline-flex items-center gap-1 rounded-full border border-maroon-200 bg-maroon-50 px-2.5 py-0.5 text-[0.7rem] font-bold text-maroon-700 hover:bg-maroon-100 disabled:opacity-40"
-                    >
-                      <Trash2 className="size-3" />
-                      <span>Remove</span>
-                    </button>
-                  </div>
-
-                  <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-                    <div className="sm:col-span-2">
-                      <label className="mb-1 block text-[11px] font-bold text-ink-700">
-                        Heading / Category (Optional)
-                      </label>
-                      <Input
-                        value={sub.faq_heading}
-                        onChange={(e) =>
-                          handleUpdateSub(idx, { faq_heading: e.target.value })
-                        }
-                        placeholder="e.g. Account Security"
-                        className="h-9 rounded-xl border border-cream-300 bg-white px-3 text-xs font-medium text-navy-900 focus-visible:border-gold-500 focus-visible:ring-2 focus-visible:ring-gold-500/40 focus-visible:outline-none"
-                      />
-                    </div>
-                    <div>
-                      <label className="mb-1 block text-[11px] font-bold text-ink-700">
-                        Sort Order
-                      </label>
-                      <Input
-                        type="number"
-                        value={sub.faq_sort}
-                        onChange={(e) =>
-                          handleUpdateSub(idx, { faq_sort: e.target.value })
-                        }
-                        className="h-9 rounded-xl border border-cream-300 bg-white px-3 text-xs font-medium text-navy-900 focus-visible:border-gold-500 focus-visible:ring-2 focus-visible:ring-gold-500/40 focus-visible:outline-none"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="mt-3">
-                    <label className="mb-1 block text-[11px] font-bold text-ink-700">
-                      Question <span className="text-maroon-600">*</span>
-                    </label>
-                    <Input
-                      value={sub.faq_que}
-                      onChange={(e) =>
-                        handleUpdateSub(idx, { faq_que: e.target.value })
-                      }
-                      placeholder="e.g. How does profile verification work?"
-                      className="h-9 rounded-xl border border-cream-300 bg-white px-3 text-xs font-medium text-navy-900 focus-visible:border-gold-500 focus-visible:ring-2 focus-visible:ring-gold-500/40 focus-visible:outline-none"
-                    />
-                    {formErrors[`sub_${idx}_que`] && (
-                      <p className="mt-1 text-[11px] text-maroon-600">
-                        {formErrors[`sub_${idx}_que`]}
-                      </p>
-                    )}
-                  </div>
-
-                  <div className="mt-3">
-                    <label className="mb-1 block text-[11px] font-bold text-ink-700">
-                      Answer <span className="text-maroon-600">*</span>
-                    </label>
-                    <Textarea
-                      rows={3}
-                      value={sub.faq_ans}
-                      onChange={(e) =>
-                        handleUpdateSub(idx, { faq_ans: e.target.value })
-                      }
-                      placeholder="Write comprehensive, clear answer..."
-                      className="rounded-xl border border-cream-300 bg-white p-3 text-xs font-medium text-navy-900 focus-visible:border-gold-500 focus-visible:ring-2 focus-visible:ring-gold-500/40 focus-visible:outline-none"
-                    />
-                    {formErrors[`sub_${idx}_ans`] && (
-                      <p className="mt-1 text-[11px] text-maroon-600">
-                        {formErrors[`sub_${idx}_ans`]}
-                      </p>
-                    )}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      )}
-    </PanelModal>
 
       {/* Delete Group Dialog */}
       {deleteTarget && (

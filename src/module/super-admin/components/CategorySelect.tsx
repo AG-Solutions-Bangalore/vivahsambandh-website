@@ -56,7 +56,7 @@ export function CategorySelect({
         : []),
       ...categories.map((category) => ({
         value: String(category.id),
-        label: category.name || `Category ${category.id}`,
+        label: category.name || 'Untitled category',
       })),
     ],
     [allLabel, categories, includeAll],

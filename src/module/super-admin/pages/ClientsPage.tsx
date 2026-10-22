@@ -580,15 +580,6 @@ export default function ClientsPage() {
             <div className="grid grid-cols-2 gap-3">
               <div className="rounded-xl border border-cream-300 bg-white p-3">
                 <span className="text-[0.66rem] font-bold tracking-wider text-ink-400 uppercase">
-                  Client ID
-                </span>
-                <p className="mt-1 font-semibold text-navy-900">
-                  {inspectedClient.id}
-                </p>
-              </div>
-
-              <div className="rounded-xl border border-cream-300 bg-white p-3">
-                <span className="text-[0.66rem] font-bold tracking-wider text-ink-400 uppercase">
                   Status
                 </span>
                 <p className="mt-1 font-semibold text-navy-900">

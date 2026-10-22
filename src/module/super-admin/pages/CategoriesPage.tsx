@@ -288,22 +288,26 @@ export default function CategoriesPage() {
             caption="Categories available for blog articles"
             head={
               <>
+                <PanelTableHeadCell>SI/NO</PanelTableHeadCell>
                 <PanelTableHeadCell>Category</PanelTableHeadCell>
                 <PanelTableHeadCell>Status</PanelTableHeadCell>
                 <PanelTableHeadCell align="right">Actions</PanelTableHeadCell>
               </>
             }
           >
-            {filtered.map((category) => (
+            {filtered.map((category, index) => (
               <tr
                 key={category.id}
                 className="transition-colors hover:bg-cream-50/70"
               >
+                <td className="px-4 py-3.5 text-xs font-bold text-navy-800">
+                  {index + 1}
+                </td>
+
                 <td className="px-4 py-3.5">
                   <p className="text-sm font-bold text-navy-900">
                     {category.name || 'Untitled category'}
                   </p>
-                  <p className="mt-0.5 text-[0.7rem] text-ink-500">ID: {category.id}</p>
                   {category.description ? (
                     <p className="mt-1 line-clamp-2 leading-relaxed text-ink-600">
                       {category.description}

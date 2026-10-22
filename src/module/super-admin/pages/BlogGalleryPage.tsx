@@ -392,7 +392,7 @@ export default function BlogGalleryPage() {
         ) : (
           <div className="p-6">
             <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-              {galleryItems.map((item) => {
+              {galleryItems.map((item, index) => {
                 const imageUrl = item.gallery_image;
                 const isCopied = imageUrl ? copiedUrl === imageUrl : false;
 
@@ -514,10 +514,10 @@ export default function BlogGalleryPage() {
                     {/* Metadata card footer */}
                     <div className="flex items-center justify-between border-t border-cream-200/80 px-3.5 py-2.5 text-[0.7rem] text-ink-500">
                       <span className="font-semibold text-navy-950">
-                        {item.title || `${item.id}`}
+                        {item.title || 'Untitled image'}
                       </span>
-                      <span className="font-mono text-[0.66rem] text-ink-400">
-                        ID: {item.id}
+                      <span className="text-[0.66rem] text-ink-400">
+                        SI/NO: {index + 1}
                       </span>
                     </div>
                   </div>
