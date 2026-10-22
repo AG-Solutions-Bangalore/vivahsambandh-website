@@ -1,8 +1,5 @@
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import {
-  getCompanyHours,
-} from "../../../constants/company";
 import { useAppLanguage } from "../../../i18n/useAppLanguage";
 import type { ContactFormData } from "../types";
 import Reveal, { RevealGroup } from "../../../components/motion/Reveal";
@@ -171,9 +168,6 @@ export default function ContactSection() {
                   >
                     {phone}
                   </a>
-                  <p className="text-xs text-ink-500">
-                    {getCompanyHours(lang)}
-                  </p>
                 </div>
               </div>
 

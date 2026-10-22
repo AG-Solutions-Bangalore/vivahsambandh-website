@@ -36,7 +36,7 @@ function CardIcon({ index }: { index: number }) {
 }
 
 /**
- * Four contact-channel cards (Call / Email / Address / Hours) —
+ * Three contact-channel cards (Call / Email / Address) —
  * cream cards, gold icon medallions, per design.
  */
 export default function InfoCards() {
@@ -49,7 +49,7 @@ export default function InfoCards() {
       title: t('contactPage.callTitle'),
       value: phone,
       href: phoneLink,
-      note: t('contactPage.callNote'),
+      note: '',
     },
     {
       title: t('contactPage.emailTitle'),
@@ -62,17 +62,12 @@ export default function InfoCards() {
       value: address,
       note: t('contactPage.addressNote'),
     },
-    {
-      title: t('contactPage.hoursTitle'),
-      value: t('contactPage.hoursValue'),
-      note: t('contactPage.hoursNote'),
-    },
   ]
 
   return (
     <section aria-label="Contact channels" className="relative bg-cream-50 pb-8 sm:pb-10">
       <div className="section-pad">
-        <RevealGroup className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 sm:gap-5" stagger={0.08}>
+        <RevealGroup className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 sm:gap-5" stagger={0.08}>
           {cards.map((card, i) => (
             <article
               key={card.title}
@@ -99,7 +94,9 @@ export default function InfoCards() {
                     {card.value}
                   </span>
                 )}
-                <span className="mt-0.5 block text-[11px] sm:text-xs text-ink-500">{card.note}</span>
+                {card.note && (
+                  <span className="mt-0.5 block text-[11px] sm:text-xs text-ink-500">{card.note}</span>
+                )}
               </span>
             </article>
           ))}
