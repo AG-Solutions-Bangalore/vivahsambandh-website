@@ -61,7 +61,7 @@ export default function CityMatchesSection() {
 
       {/* ============================================================== */}
       {/* Infinite Auto-Scroll Marquee: pre-filled on load with 0 gaps   */}
-      {/* Pauses automatically on hover so cards are easily clickable     */}
+      {/* Pauses automatically on hover                                   */}
       {/* ============================================================== */}
       <div className="relative mt-8 sm:mt-10 overflow-hidden py-3">
         {/* Left & Right Edge Vignette Gradient Masks */}
