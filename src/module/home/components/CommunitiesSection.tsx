@@ -101,13 +101,32 @@ export default function CommunitiesSection() {
     <section
       id="communities"
       aria-label="Communities We Serve"
-      className="relative overflow-hidden bg-cream-50 pt-10 pb-14 sm:pt-12 sm:pb-18"
+      className="relative overflow-x-clip overflow-y-visible bg-cream-50 pt-8 pb-14 sm:pt-10 sm:pb-18"
     >
       {/* Ambient warmth: soft gold glow above, faint maroon glow below */}
-      <div aria-hidden="true" className="pointer-events-none absolute inset-0">
+      <div aria-hidden="true" className="pointer-events-none absolute inset-0 overflow-hidden">
         <div className="absolute top-[-6rem] left-1/2 h-72 w-[46rem] max-w-full -translate-x-1/2 rounded-full bg-gold-400/10 blur-3xl" />
         <div className="absolute right-[-6rem] bottom-[-8rem] size-72 rounded-full bg-maroon-400/[0.06] blur-3xl" />
       </div>
+
+      {/* ============================================================== */}
+      {/* Seamless Floral Bridge: connects About Us to Communities       */}
+      {/* Starts at bottom of About Us and flows into top of Community   */}
+      {/* ============================================================== */}
+
+      {/* Right side connector vine */}
+      <img
+        src={img("/images/home/flower4_image.webp")}
+        srcSet={imgSrcSet("/images/home/flower4_image-320.webp 320w, /images/home/flower4_image-640.webp 640w, /images/home/flower4_image.webp 942w")}
+        sizes="(max-width: 640px) 16vw, (max-width: 1024px) 9rem, 13rem"
+        width={942}
+        height={1670}
+        alt="Decorative flower garland"
+        title="Decorative flower garland"
+        className="pointer-events-none absolute right-0 -top-36 sm:-top-44 lg:-top-52 z-0 w-24 sm:w-28 md:w-36 lg:w-44 xl:w-52 max-w-[16vw] h-auto object-contain object-right-top select-none opacity-95"
+        loading="lazy"
+        aria-hidden="true"
+      />
 
       {/* ============================================================== */}
       {/* Decorative Floral Corner: L-shape at bottom-left               */}

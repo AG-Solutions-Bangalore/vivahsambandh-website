@@ -12,34 +12,8 @@ export default function AboutSection() {
   const aboutHref = pagePath('/about', lang)
 
   return (
-    <section id="about" className="relative isolate overflow-hidden bg-cream-50 pt-4 sm:pt-6 lg:pt-8 pb-16 sm:pb-20 lg:pb-24">
-      {/* ============================================================== */}
-      {/* Decorative Floral Vines: small, behind content, edge-anchored   */}
-      {/* ============================================================== */}
-      <img
-        src={img("/images/home/flower3_image.webp")}
-        srcSet={imgSrcSet("/images/home/flower3_image-320.webp 320w, /images/home/flower3_image-640.webp 640w, /images/home/flower3_image.webp 942w")}
-        sizes="(max-width: 640px) 16vw, (max-width: 1024px) 9rem, 13rem"
-        width={942}
-        height={1670}
-        alt="Decorative flower garland"
-        title="Decorative flower garland"
-        className="pointer-events-none absolute left-0 -bottom-6 z-0 w-24 sm:w-28 md:w-36 lg:w-44 xl:w-52 max-w-[16vw] h-auto object-contain object-left-bottom  select-none opacity-95"
-        loading="lazy"
-        aria-hidden="true"
-      />
-      <img
-        src={img("/images/home/flower4_image.webp")}
-        srcSet={imgSrcSet("/images/home/flower4_image-320.webp 320w, /images/home/flower4_image-640.webp 640w, /images/home/flower4_image.webp 942w")}
-        sizes="(max-width: 640px) 16vw, (max-width: 1024px) 9rem, 13rem"
-        width={942}
-        height={1670}
-        alt="Decorative flower garland"
-        title="Decorative flower garland"
-        className="pointer-events-none absolute right-0 bottom-0 z-0 w-24 sm:w-28 md:w-36 lg:w-44 xl:w-52 max-w-[16vw] h-auto object-contain object-right-bottom select-none opacity-95"
-        loading="lazy"
-        aria-hidden="true"
-      />
+    <section id="about" className="relative isolate overflow-x-clip overflow-y-visible bg-cream-50 pt-4 sm:pt-6 lg:pt-8 pb-12 sm:pb-16 lg:pb-20">
+      {/* Main Content Container: Clean, fresh layout and balanced gaps  */}
 
       {/* ============================================================== */}
       {/* Main Content Container: Clean, fresh layout and balanced gaps  */}
