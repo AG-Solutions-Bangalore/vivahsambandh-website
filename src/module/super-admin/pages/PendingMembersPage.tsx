@@ -3,19 +3,18 @@
  * Moderation queue for reviewing and approving newly registered matrimonial members.
  */
 
-import { useState, useMemo } from 'react'
+import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import {
   UserPlus,
   RefreshCw,
   Eye,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { StatusBadge } from '../components/StatusBadge'
 import { ConfirmDialog } from '../components/ConfirmDialog'
 import { PanelCard } from '../components/PanelCard'
 import { PanelPageHeader } from '../components/PanelPageHeader'
 import { panelDescription } from '../navigation'
-import { PanelModal } from '../components/PanelModal'
 import { PanelPagination } from '../components/PanelPagination'
 import { PanelSearch } from '../components/PanelSearch'
 import { PanelToolbar } from '../components/PanelToolbar'
@@ -27,9 +26,7 @@ import {
   PanelTableHeadCell,
 } from '../components/PanelTable'
 import { ProfileAvatar } from '../components/ProfileAvatar'
-import { ProfileDetails } from '../components/ProfileDetails'
 import { RowStatusSelect } from '../components/RowStatusSelect'
-import { StatusActionGroup } from '../components/StatusActionGroup'
 import { usePendingMembersQuery } from '../hook/useMembers'
 import { useUpdateMemberStatusMutation } from '../hook/useAdminMembers'
 import { errorMessage } from '../hook/errors'
@@ -45,11 +42,11 @@ const DECISION_STATUSES: readonly MemberStatus[] = [
 ]
 
 export default function PendingMembersPage() {
+  const navigate = useNavigate()
   const { searchInput, setSearchInput, searchTerm } = useServerSearch()
   const [page, setPage] = useState(1)
 
   const {
-    data: allPendingMembers = [],
     records: pendingMembers,
     meta,
     isLoading,
@@ -63,21 +60,12 @@ export default function PendingMembersPage() {
   })
   const statusMutation = useUpdateMemberStatusMutation()
 
-  // Profile Drawer / Modal — only the id is kept so the modal always renders
-  // the freshest record from the query cache.
-  const [activeProfileId, setActiveProfileId] = useState<number | null>(null)
-
   // Decision Modal
   const [decisionTarget, setDecisionTarget] = useState<{
     memberId: number
     memberName: string
     nextStatus: MemberStatus
   } | null>(null)
-
-  const activeProfile = useMemo(
-    () => allPendingMembers.find((m) => m.id === activeProfileId) ?? null,
-    [allPendingMembers, activeProfileId],
-  )
 
   const handleConfirmDecision = () => {
     if (!decisionTarget) return
@@ -92,7 +80,6 @@ export default function PendingMembersPage() {
       {
         onSuccess: () => {
           setDecisionTarget(null)
-          setActiveProfileId(null)
         },
       },
     )
@@ -212,7 +199,18 @@ export default function PendingMembersPage() {
                 </td>
 
                 <td className="px-4 py-3.5">
-                  <StatusBadge status="Pending" />
+                  <RowStatusSelect
+                    value="Pending"
+                    options={DECISION_STATUSES}
+                    label={`Review ${member.name}`}
+                    onSelect={(next) =>
+                      setDecisionTarget({
+                        memberId: member.id,
+                        memberName: member.name,
+                        nextStatus: next,
+                      })
+                    }
+                  />
                 </td>
 
                 <td className="px-4 py-3.5">
@@ -221,26 +219,13 @@ export default function PendingMembersPage() {
                       type="button"
                       size="icon-xs"
                       variant="outline"
-                      onClick={() => setActiveProfileId(member.id)}
-                      title="Inspect full biodata"
-                      aria-label="Inspect full biodata"
+                      onClick={() => navigate(`/panel/pending-members/${member.id}`)}
+                      title="View full details"
+                      aria-label="View full member details"
                       className="cursor-pointer rounded-full border-navy-200 text-navy-700 hover:bg-navy-50"
                     >
                       <Eye className="size-3.5 text-navy-700" aria-hidden />
                     </Button>
-
-                    <RowStatusSelect
-                      value="Pending"
-                      options={DECISION_STATUSES}
-                      label={`Review ${member.name}`}
-                      onSelect={(next) =>
-                        setDecisionTarget({
-                          memberId: member.id,
-                          memberName: member.name,
-                          nextStatus: next,
-                        })
-                      }
-                    />
                   </div>
                 </td>
               </tr>
@@ -261,58 +246,6 @@ export default function PendingMembersPage() {
           />
         </PanelTableFooter>
       </PanelCard>
-
-      {/* Profile Inspection Modal */}
-      <PanelModal
-        isOpen={Boolean(activeProfile)}
-        title={activeProfile?.name ?? ''}
-        description={
-          activeProfile
-            ? `${activeProfile.gender} • Registered for review`
-            : undefined
-        }
-        icon={
-          activeProfile ? (
-            <ProfileAvatar
-              src={activeProfile.face_image}
-              name={activeProfile.name}
-              size="md"
-              tone="navy"
-            />
-          ) : null
-        }
-        size="lg"
-        onClose={() => setActiveProfileId(null)}
-        footer={
-          activeProfile ? (
-            <StatusActionGroup
-              size="sm"
-              currentStatus="Pending"
-              onSelect={(next) =>
-                setDecisionTarget({
-                  memberId: activeProfile.id,
-                  memberName: activeProfile.name,
-                  nextStatus: next as MemberStatus,
-                })
-              }
-              actions={[
-                { status: 'Cancel', label: 'Reject Profile', tone: 'danger' },
-                { status: 'Hold', label: 'Put on Hold', tone: 'warn' },
-                { status: 'Approved', label: 'Approve & Publish', tone: 'success' },
-              ]}
-            />
-          ) : null
-        }
-      >
-        {activeProfile ? (
-          <>
-            <div className="mb-4">
-              <StatusBadge status="Pending" />
-            </div>
-            <ProfileDetails member={activeProfile} />
-          </>
-        ) : null}
-      </PanelModal>
 
       {/* Decision Confirmation Modal */}
       {decisionTarget && (

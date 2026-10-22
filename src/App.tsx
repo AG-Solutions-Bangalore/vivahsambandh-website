@@ -52,6 +52,12 @@ const MembersPage = lazy(() => import('./module/super-admin/pages/MembersPage'))
 const PendingMembersPage = lazy(
   () => import('./module/super-admin/pages/PendingMembersPage'),
 )
+const MemberDetailPage = lazy(
+  () => import('./module/super-admin/pages/MemberDetailPage'),
+)
+const AdminMemberDetailPage = lazy(
+  () => import('./module/super-admin/pages/AdminMemberDetailPage'),
+)
 const FeedbackPage = lazy(() => import('./module/super-admin/pages/FeedbackPage'))
 const BlockProfilesPage = lazy(
   () => import('./module/super-admin/pages/BlockProfilesPage'),
@@ -210,12 +216,36 @@ export default function App() {
                 }
               />
               <Route
+                path="/panel/admin-members/:id"
+                element={
+                  <SuperAdminGuard>
+                    <Suspense fallback={null}>
+                      <SuperAdminLayout>
+                        <AdminMemberDetailPage />
+                      </SuperAdminLayout>
+                    </Suspense>
+                  </SuperAdminGuard>
+                }
+              />
+              <Route
                 path="/panel/pending-admin-members"
                 element={
                   <SuperAdminGuard>
                     <Suspense fallback={null}>
                       <SuperAdminLayout>
                         <PendingAdminMembersPage />
+                      </SuperAdminLayout>
+                    </Suspense>
+                  </SuperAdminGuard>
+                }
+              />
+              <Route
+                path="/panel/pending-admin-members/:id"
+                element={
+                  <SuperAdminGuard>
+                    <Suspense fallback={null}>
+                      <SuperAdminLayout>
+                        <AdminMemberDetailPage pending />
                       </SuperAdminLayout>
                     </Suspense>
                   </SuperAdminGuard>
@@ -234,12 +264,36 @@ export default function App() {
                 }
               />
               <Route
+                path="/panel/members/:id"
+                element={
+                  <SuperAdminGuard>
+                    <Suspense fallback={null}>
+                      <SuperAdminLayout>
+                        <MemberDetailPage />
+                      </SuperAdminLayout>
+                    </Suspense>
+                  </SuperAdminGuard>
+                }
+              />
+              <Route
                 path="/panel/pending-members"
                 element={
                   <SuperAdminGuard>
                     <Suspense fallback={null}>
                       <SuperAdminLayout>
                         <PendingMembersPage />
+                      </SuperAdminLayout>
+                    </Suspense>
+                  </SuperAdminGuard>
+                }
+              />
+              <Route
+                path="/panel/pending-members/:id"
+                element={
+                  <SuperAdminGuard>
+                    <Suspense fallback={null}>
+                      <SuperAdminLayout>
+                        <MemberDetailPage pending />
                       </SuperAdminLayout>
                     </Suspense>
                   </SuperAdminGuard>

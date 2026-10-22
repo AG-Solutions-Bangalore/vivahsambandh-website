@@ -3,36 +3,36 @@
  * Member feedback and inquiry management: view, search, and delete records with confirmation dialog.
  */
 
-import { useState, useMemo } from 'react'
-import { MessageSquare, RefreshCw, Trash2, Calendar, Eye } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { ConfirmDialog } from '../components/ConfirmDialog'
-import { PanelCard } from '../components/PanelCard'
-import { PanelPageHeader } from '../components/PanelPageHeader'
-import { panelDescription } from '../navigation'
-import { PanelModal } from '../components/PanelModal'
-import { PanelPagination } from '../components/PanelPagination'
-import { PanelSearch } from '../components/PanelSearch'
-import { PanelToolbar } from '../components/PanelToolbar'
-import { PanelEmpty, PanelError } from '../components/PanelState'
-import { PanelTableSkeleton } from '../components/PanelSkeleton'
-import { ProfileAvatar } from '../components/ProfileAvatar'
+import { useState, useMemo } from "react";
+import { MessageSquare, RefreshCw, Trash2, Calendar } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { ConfirmDialog } from "../components/ConfirmDialog";
+import { PanelCard } from "../components/PanelCard";
+import { PanelPageHeader } from "../components/PanelPageHeader";
+import { panelDescription } from "../navigation";
+import { PanelModal } from "../components/PanelModal";
+import { PanelPagination } from "../components/PanelPagination";
+import { PanelSearch } from "../components/PanelSearch";
+import { PanelToolbar } from "../components/PanelToolbar";
+import { PanelEmpty, PanelError } from "../components/PanelState";
+import { PanelTableSkeleton } from "../components/PanelSkeleton";
+import { ProfileAvatar } from "../components/ProfileAvatar";
 import {
   PanelTable,
   PanelTableFooter,
   PanelTableHeadCell,
-} from '../components/PanelTable'
+} from "../components/PanelTable";
 import {
   useDeleteFeedbackMutation,
   useFeedbacksQuery,
-} from '../hook/useFeedbacks'
-import { errorMessage } from '../hook/errors'
-import { DEFAULT_PER_PAGE, useServerSearch } from '../hook/useServerList'
-import { formatDate } from '../utils/format'
+} from "../hook/useFeedbacks";
+import { errorMessage } from "../hook/errors";
+import { DEFAULT_PER_PAGE, useServerSearch } from "../hook/useServerList";
+import { formatDate } from "../utils/format";
 
 export default function FeedbackPage() {
-  const { searchInput, setSearchInput, searchTerm } = useServerSearch()
-  const [page, setPage] = useState(1)
+  const { searchInput, setSearchInput, searchTerm } = useServerSearch();
+  const [page, setPage] = useState(1);
 
   const {
     data: allFeedbacks = [],
@@ -46,48 +46,50 @@ export default function FeedbackPage() {
     search: searchTerm || undefined,
     page,
     per_page: DEFAULT_PER_PAGE,
-  })
-  const deleteMutation = useDeleteFeedbackMutation()
+  });
+  const deleteMutation = useDeleteFeedbackMutation();
 
   // View Modal — only the id is kept so the modal renders the cached record.
-  const [viewingFeedbackId, setViewingFeedbackId] = useState<number | null>(null)
+  const [viewingFeedbackId, setViewingFeedbackId] = useState<number | null>(
+    null,
+  );
 
   // Delete Modal
-  const [deleteTargetId, setDeleteTargetId] = useState<number | null>(null)
+  const [deleteTargetId, setDeleteTargetId] = useState<number | null>(null);
 
   const viewingFeedback = useMemo(
     () => allFeedbacks.find((fb) => fb.id === viewingFeedbackId) ?? null,
     [allFeedbacks, viewingFeedbackId],
-  )
+  );
 
   const deleteTarget = useMemo(
     () => allFeedbacks.find((fb) => fb.id === deleteTargetId) ?? null,
     [allFeedbacks, deleteTargetId],
-  )
+  );
 
   const handleDelete = () => {
-    if (!deleteTarget) return
-    const targetId = deleteTarget.id
+    if (!deleteTarget) return;
+    const targetId = deleteTarget.id;
 
     deleteMutation.mutate(
       {
         id: targetId,
-        successMessage: 'Feedback record deleted successfully.',
+        successMessage: "Feedback record deleted successfully.",
       },
       {
         onSuccess: () => {
-          setDeleteTargetId(null)
-          setViewingFeedbackId(null)
+          setDeleteTargetId(null);
+          setViewingFeedbackId(null);
         },
       },
-    )
-  }
+    );
+  };
 
   return (
     <div className="space-y-6">
       <PanelPageHeader
         title="User Feedback & Support Reviews"
-        description={panelDescription('/panel/feedback')}
+        description={panelDescription("/panel/feedback")}
         actions={
           <Button
             type="button"
@@ -97,7 +99,10 @@ export default function FeedbackPage() {
             disabled={isFetching}
             className="cursor-pointer rounded-full border-cream-300 text-xs font-semibold"
           >
-            <RefreshCw className={isFetching ? 'size-3.5 animate-spin' : 'size-3.5'} aria-hidden />
+            <RefreshCw
+              className={isFetching ? "size-3.5 animate-spin" : "size-3.5"}
+              aria-hidden
+            />
             <span>Refresh List</span>
           </Button>
         }
@@ -120,7 +125,7 @@ export default function FeedbackPage() {
         ) : error ? (
           <PanelError
             title="Could not load feedback"
-            message={errorMessage(error, 'Failed to load feedback records.')}
+            message={errorMessage(error, "Failed to load feedback records.")}
             onRetry={() => void refetch()}
           />
         ) : feedbacks.length === 0 ? (
@@ -129,8 +134,8 @@ export default function FeedbackPage() {
             title="No Feedback Records"
             description={
               searchInput
-                ? 'No feedback entries matched your search keywords.'
-                : 'No feedback submissions found in the database.'
+                ? "No feedback entries matched your search keywords."
+                : "No feedback submissions found in the database."
             }
             action={
               searchInput ? (
@@ -138,7 +143,7 @@ export default function FeedbackPage() {
                   type="button"
                   variant="outline"
                   size="xs"
-                  onClick={() => setSearchInput('')}
+                  onClick={() => setSearchInput("")}
                   className="mt-4 cursor-pointer rounded-full border-cream-300 text-xs font-semibold"
                 >
                   Clear search
@@ -159,7 +164,10 @@ export default function FeedbackPage() {
             }
           >
             {feedbacks.map((fb) => (
-              <tr key={fb.id} className="transition-colors hover:bg-cream-50/70">
+              <tr
+                key={fb.id}
+                className="transition-colors hover:bg-cream-50/70"
+              >
                 <td className="px-4 py-3.5">
                   <div className="flex items-center gap-2.5">
                     <ProfileAvatar
@@ -170,7 +178,7 @@ export default function FeedbackPage() {
                     />
                     <div>
                       <p className="font-bold text-navy-900">
-                        {fb.name || 'Anonymous User'}
+                        {fb.name || "Anonymous User"}
                       </p>
                     </div>
                   </div>
@@ -185,24 +193,12 @@ export default function FeedbackPage() {
                 <td className="px-4 py-3.5">
                   <span className="flex items-center gap-1.5 text-ink-500">
                     <Calendar className="size-3 text-ink-400" aria-hidden />
-                    {fb.created_at ? formatDate(fb.created_at) : 'Recent'}
+                    {fb.created_at ? formatDate(fb.created_at) : "Recent"}
                   </span>
                 </td>
 
                 <td className="px-4 py-3.5">
                   <div className="flex items-center justify-end gap-1.5">
-                    <Button
-                      type="button"
-                      size="icon-xs"
-                      variant="outline"
-                      onClick={() => setViewingFeedbackId(fb.id)}
-                      title="Read feedback"
-                      aria-label="Read feedback"
-                      className="cursor-pointer rounded-full border-navy-200 text-navy-700 hover:bg-navy-50"
-                    >
-                      <Eye className="size-3.5 text-navy-700" aria-hidden />
-                    </Button>
-
                     <Button
                       type="button"
                       size="icon-xs"
@@ -241,7 +237,7 @@ export default function FeedbackPage() {
         title="Feedback Details"
         description={
           viewingFeedback
-            ? `From: ${viewingFeedback.name || 'Anonymous User'}`
+            ? `From: ${viewingFeedback.name || "Anonymous User"}`
             : undefined
         }
         icon={<MessageSquare className="size-5" />}
@@ -253,7 +249,7 @@ export default function FeedbackPage() {
               variant="destructive"
               size="sm"
               onClick={() => {
-                if (viewingFeedback) setDeleteTargetId(viewingFeedback.id)
+                if (viewingFeedback) setDeleteTargetId(viewingFeedback.id);
               }}
               className="mr-auto cursor-pointer rounded-full text-xs font-semibold"
             >
@@ -284,7 +280,7 @@ export default function FeedbackPage() {
         <ConfirmDialog
           isOpen={true}
           title="Delete Feedback Record"
-          description={`Are you sure you want to delete this feedback from "${deleteTarget.name || 'User'}"? This action cannot be reversed.`}
+          description={`Are you sure you want to delete this feedback from "${deleteTarget.name || "User"}"? This action cannot be reversed.`}
           confirmText="Yes, Delete Feedback"
           cancelText="Cancel"
           variant="danger"
@@ -294,5 +290,5 @@ export default function FeedbackPage() {
         />
       )}
     </div>
-  )
+  );
 }

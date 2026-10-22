@@ -4,16 +4,17 @@
  */
 
 import { useState, useMemo } from 'react'
+import { useNavigate } from 'react-router-dom'
 import {
   ShieldCheck,
   RefreshCw,
   Edit2,
+  Eye,
   Mail,
   Phone,
   Smartphone,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { StatusBadge } from '../components/StatusBadge'
 import { ConfirmDialog } from '../components/ConfirmDialog'
 import { PanelCard } from '../components/PanelCard'
 import { PanelPageHeader } from '../components/PanelPageHeader'
@@ -49,6 +50,7 @@ const STATUS_OPTIONS = STATUS_FILTERS.filter(
 )
 
 export default function AdminMembersPage() {
+  const navigate = useNavigate()
   const { searchInput, setSearchInput, searchTerm } = useServerSearch()
   const [statusFilter, setStatusFilter] = useState<string>('All')
   const [page, setPage] = useState(1)
@@ -342,11 +344,34 @@ export default function AdminMembersPage() {
                   </td>
 
                   <td className="px-4 py-3.5">
-                    <StatusBadge status={admin.status} />
+                    <RowStatusSelect
+                      value={admin.status}
+                      options={STATUS_OPTIONS}
+                      label={`Change status for ${admin.name}`}
+                      onSelect={(next) =>
+                        setStatusChangeTarget({
+                          adminId: admin.id,
+                          adminName: admin.name,
+                          nextStatus: next,
+                        })
+                      }
+                    />
                   </td>
 
                   <td className="px-4 py-3.5">
                     <div className="flex items-center justify-end gap-1.5">
+                      <Button
+                        type="button"
+                        size="icon-xs"
+                        variant="outline"
+                        onClick={() => navigate(`/panel/admin-members/${admin.id}`)}
+                        title="View full details"
+                        aria-label="View full admin details"
+                        className="cursor-pointer rounded-full border-navy-200 text-navy-700 hover:bg-navy-50"
+                      >
+                        <Eye className="size-3.5 text-navy-700" aria-hidden />
+                      </Button>
+
                       <Button
                         type="button"
                         size="icon-xs"
@@ -363,19 +388,6 @@ export default function AdminMembersPage() {
                       >
                         <Smartphone className="size-3.5 text-amber-700" aria-hidden />
                       </Button>
-
-                      <RowStatusSelect
-                        value={admin.status}
-                        options={STATUS_OPTIONS}
-                        label={`Change status for ${admin.name}`}
-                        onSelect={(next) =>
-                          setStatusChangeTarget({
-                            adminId: admin.id,
-                            adminName: admin.name,
-                            nextStatus: next,
-                          })
-                        }
-                      />
                     </div>
                   </td>
                 </tr>

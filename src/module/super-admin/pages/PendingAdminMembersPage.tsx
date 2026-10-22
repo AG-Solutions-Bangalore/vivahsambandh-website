@@ -4,15 +4,16 @@
  */
 
 import { useState, useMemo } from 'react'
+import { useNavigate } from 'react-router-dom'
 import {
   UserCheck,
   RefreshCw,
+  Eye,
   Mail,
   MapPin,
   Phone,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { StatusBadge } from '../components/StatusBadge'
 import { ConfirmDialog } from '../components/ConfirmDialog'
 import { PanelCard } from '../components/PanelCard'
 import { PanelPageHeader } from '../components/PanelPageHeader'
@@ -46,6 +47,7 @@ const DECISION_STATUSES: readonly AdminMemberStatus[] = [
 ]
 
 export default function PendingAdminMembersPage() {
+  const navigate = useNavigate()
   const { searchInput, setSearchInput, searchTerm } = useServerSearch()
   const [page, setPage] = useState(1)
 
@@ -290,10 +292,6 @@ export default function PendingAdminMembersPage() {
                   </td>
 
                   <td className="px-4 py-3.5">
-                    <StatusBadge status="Pending" />
-                  </td>
-
-                  <td className="px-4 py-3.5">
                     <RowStatusSelect
                       value="Pending"
                       options={DECISION_STATUSES}
@@ -306,6 +304,24 @@ export default function PendingAdminMembersPage() {
                         })
                       }
                     />
+                  </td>
+
+                  <td className="px-4 py-3.5">
+                    <div className="flex items-center justify-end gap-1.5">
+                      <Button
+                        type="button"
+                        size="icon-xs"
+                        variant="outline"
+                        onClick={() =>
+                          navigate(`/panel/pending-admin-members/${admin.id}`)
+                        }
+                        title="View full details"
+                        aria-label="View full admin details"
+                        className="cursor-pointer rounded-full border-navy-200 text-navy-700 hover:bg-navy-50"
+                      >
+                        <Eye className="size-3.5 text-navy-700" aria-hidden />
+                      </Button>
+                    </div>
                   </td>
                 </tr>
               )

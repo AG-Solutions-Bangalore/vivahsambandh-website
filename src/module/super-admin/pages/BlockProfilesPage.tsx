@@ -198,17 +198,19 @@ export default function BlockProfilesPage() {
                   </td>
 
                   <td className="px-4 py-3.5">
-                    <Button
-                      type="button"
-                      size="icon-xs"
-                      variant="outline"
-                      onClick={() => setDeleteTargetId(rec.id)}
-                      title="Delete Block Record"
-                      aria-label="Delete block record"
-                      className="cursor-pointer rounded-full border-maroon-200 bg-maroon-50 text-maroon-800 hover:bg-maroon-100"
-                    >
-                      <Trash2 className="size-3.5" aria-hidden />
-                    </Button>
+                    <div className="flex items-center justify-end">
+                      <Button
+                        type="button"
+                        size="icon-xs"
+                        variant="outline"
+                        onClick={() => setDeleteTargetId(rec.id)}
+                        title="Delete Block Record"
+                        aria-label="Delete block record"
+                        className="cursor-pointer rounded-full border-maroon-200 bg-maroon-50 text-maroon-800 hover:bg-maroon-100"
+                      >
+                        <Trash2 className="size-3.5" aria-hidden />
+                      </Button>
+                    </div>
                   </td>
                 </tr>
               )
