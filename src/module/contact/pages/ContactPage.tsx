@@ -1,13 +1,11 @@
-import ContactHero from '../components/ContactHero'
-import InfoCards from '../components/InfoCards'
-import MessageForm from '../components/MessageForm'
-import OfficeVisit from '../components/OfficeVisit'
-import ContactCta from '../components/ContactCta'
-import PageParallax from '../../../components/motion/PageParallax'
-import Reveal from '../../../components/motion/Reveal'
-import { TestimonialSection } from '../../testimonial'
-import { FaqSection } from '../../faq'
-import { NewsletterSignup } from '../../newsletter'
+import PageParallax from "../../../components/motion/PageParallax";
+import { FaqSection } from "../../faq";
+import { TestimonialSection } from "../../testimonial";
+import ContactCta from "../components/ContactCta";
+import ContactHero from "../components/ContactHero";
+import InfoCards from "../components/InfoCards";
+import MessageForm from "../components/MessageForm";
+import OfficeVisit from "../components/OfficeVisit";
 
 /**
  * Contact Us page — hero → channel cards → form + office →
@@ -32,16 +30,10 @@ export default function ContactPage() {
           </div>
         </div>
       </section>
-      <section className="relative bg-cream-50 pb-14 sm:pb-16">
-        <div className="section-pad">
-          <Reveal variant="up">
-            <NewsletterSignup variant="card" />
-          </Reveal>
-        </div>
-      </section>
+
       <TestimonialSection page="contact" tone="paper" />
       <FaqSection page="contact" tone="cream" />
       <ContactCta />
     </div>
-  )
+  );
 }

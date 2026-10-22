@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next'
 import Reveal from '../../../components/motion/Reveal'
 import { useCompanyQuery } from '../../company'
+import { getCompanyAddress } from '../../../constants/company'
 
 /**
  * "Visit Our Office" card with a live map pinned to the company address
@@ -11,11 +12,21 @@ export default function OfficeVisit() {
 
   const { data: companyRes } = useCompanyQuery()
   const liveAddress = companyRes?.data?.company_address?.trim()
-  const rawAddress = liveAddress || t('contactPage.addressValue')
-  // `#` (house-number marker, e.g. "#8, ...") breaks Google geocoding and
-  // pins the map at the wrong place — strip it for map queries only.
-  // The displayed address text stays untouched.
-  const mapQuery = rawAddress.replace(/^#\s*/, '').trim() || rawAddress
+  // Always geocode the English address — the translated fallback (e.g. just
+  // "Bengaluru, Karnataka, India") is too vague to pin the office.
+  const rawAddress = liveAddress || getCompanyAddress('en')
+  // `#` (house-number marker, e.g. "#8, ...") and floor designators
+  // ("1st Floor") make Google treat the query as a category search and show
+  // nearby POIs instead of the building. Strip both for map queries only.
+  const mapQuery =
+    rawAddress
+      .replace(/^#\s*/, '')
+      .replace(
+        /,\s*(?:\d(?:st|nd|rd|th)|first|second|third|fourth|fifth|ground)\s+floor\s*,/gi,
+        ',',
+      )
+      .replace(/\s{2,}/g, ' ')
+      .trim() || rawAddress
   const mapSrc = `https://www.google.com/maps?q=${encodeURIComponent(mapQuery)}&z=16&output=embed`
   const directionsHref = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(mapQuery)}`
 
