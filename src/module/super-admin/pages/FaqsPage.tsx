@@ -8,55 +8,48 @@
  * this page only links to them.
  */
 
-import { useMemo, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import {
-  Plus,
-  RefreshCw,
-  Eye,
-  Pencil,
-  Trash2,
-  Layers,
-} from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { cn } from 'cn'
-import { ConfirmDialog } from '../components/ConfirmDialog'
-import { PanelCard } from '../components/PanelCard'
-import { PanelPageHeader } from '../components/PanelPageHeader'
-import { PanelModal } from '../components/PanelModal'
-import { PanelPagination } from '../components/PanelPagination'
-import { PanelSearch } from '../components/PanelSearch'
-import { PanelToolbar } from '../components/PanelToolbar'
-import { PanelEmpty, PanelError } from '../components/PanelState'
-import { PanelTableSkeleton } from '../components/PanelSkeleton'
+import { useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { Plus, RefreshCw, Eye, Pencil, Trash2, Layers } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { cn } from "cn";
+import { ConfirmDialog } from "../components/ConfirmDialog";
+import { PanelCard } from "../components/PanelCard";
+import { PanelPageHeader } from "../components/PanelPageHeader";
+import { PanelModal } from "../components/PanelModal";
+import { PanelPagination } from "../components/PanelPagination";
+import { PanelSearch } from "../components/PanelSearch";
+import { PanelToolbar } from "../components/PanelToolbar";
+import { PanelEmpty, PanelError } from "../components/PanelState";
+import { PanelTableSkeleton } from "../components/PanelSkeleton";
 import {
   PanelTable,
   PanelTableFooter,
   PanelTableHeadCell,
-} from '../components/PanelTable'
-import { PanelFilterSelect } from '../components/PanelFilterSelect'
-import { StatusBadge } from '../components/StatusBadge'
-import { StatusSwitch } from '../components/StatusSwitch'
-import { panelDescription } from '../navigation'
-import { errorMessage } from '../hook/errors'
-import { DEFAULT_PER_PAGE, useServerSearch } from '../hook/useServerList'
+} from "../components/PanelTable";
+import { PanelFilterSelect } from "../components/PanelFilterSelect";
+import { StatusBadge } from "../components/StatusBadge";
+import { StatusSwitch } from "../components/StatusSwitch";
+import { panelDescription } from "../navigation";
+import { errorMessage } from "../hook/errors";
+import { DEFAULT_PER_PAGE, useServerSearch } from "../hook/useServerList";
 import {
   useDeleteFaqMutation,
   useFaqQuery,
   useFaqsQuery,
   useUpdateFaqStatusMutation,
-} from '../hook/useFaqs'
-import type { FaqRecord, FaqStatus } from '../types'
+} from "../hook/useFaqs";
+import type { FaqRecord, FaqStatus } from "../types";
 
-const STATUS_FILTERS = ['All', 'Active', 'Inactive'] as const
+const STATUS_FILTERS = ["All", "Active", "Inactive"] as const;
 
-const LIST_PATH = '/panel/faqs'
+const LIST_PATH = "/panel/faqs";
 
 export default function FaqsPage() {
-  const navigate = useNavigate()
-  const { searchInput, setSearchInput, searchTerm } = useServerSearch()
-  const [statusFilter, setStatusFilter] = useState<string>('All')
-  const [page, setPage] = useState(1)
+  const navigate = useNavigate();
+  const { searchInput, setSearchInput, searchTerm } = useServerSearch();
+  const [statusFilter, setStatusFilter] = useState<string>("All");
+  const [page, setPage] = useState(1);
 
   const {
     records: faqs,
@@ -69,67 +62,71 @@ export default function FaqsPage() {
     search: searchTerm || undefined,
     page,
     per_page: DEFAULT_PER_PAGE,
-  })
+  });
 
-  const statusMutation = useUpdateFaqStatusMutation()
-  const deleteMutation = useDeleteFaqMutation()
+  const statusMutation = useUpdateFaqStatusMutation();
+  const deleteMutation = useDeleteFaqMutation();
 
   // Inspector state
-  const [inspectingId, setInspectingId] = useState<number | null>(null)
-  const {
-    data: inspectedRecord,
-    isLoading: isLoadingDetail,
-  } = useFaqQuery(inspectingId)
+  const [inspectingId, setInspectingId] = useState<number | null>(null);
+  const { data: inspectedRecord, isLoading: isLoadingDetail } =
+    useFaqQuery(inspectingId);
 
   // Delete FAQ group state
-  const [deleteTargetId, setDeleteTargetId] = useState<number | null>(null)
+  const [deleteTargetId, setDeleteTargetId] = useState<number | null>(null);
   const deleteTarget = useMemo(
     () => faqs.find((f) => f.id === deleteTargetId) ?? null,
     [faqs, deleteTargetId],
-  )
+  );
 
   // The API filters the search on the server; the status column is not
   // filterable there yet, so it is applied to the rows of the current page.
   const filtered = useMemo(
     () =>
-      statusFilter === 'All'
+      statusFilter === "All"
         ? faqs
-        : faqs.filter((item) => item.faq_status.toLowerCase() === statusFilter.toLowerCase()),
+        : faqs.filter(
+            (item) =>
+              item.faq_status.toLowerCase() === statusFilter.toLowerCase(),
+          ),
     [faqs, statusFilter],
-  )
+  );
 
   // Status toggle
-  const handleToggleStatus = async (record: FaqRecord, nextStatus: FaqStatus) => {
+  const handleToggleStatus = async (
+    record: FaqRecord,
+    nextStatus: FaqStatus,
+  ) => {
     await statusMutation.mutateAsync({
       id: record.id,
       status: nextStatus,
       successMessage: `FAQ group set to ${nextStatus}.`,
-    })
-  }
+    });
+  };
 
   // Confirm delete group
   const handleConfirmDelete = () => {
-    if (!deleteTarget) return
-    const id = deleteTarget.id
+    if (!deleteTarget) return;
+    const id = deleteTarget.id;
     deleteMutation.mutate(
       {
         id,
-        successMessage: 'FAQ group deleted successfully.',
+        successMessage: "FAQ group deleted successfully.",
       },
       {
         onSuccess: () => {
-          setDeleteTargetId(null)
-          if (inspectingId === id) setInspectingId(null)
+          setDeleteTargetId(null);
+          if (inspectingId === id) setInspectingId(null);
         },
       },
-    )
-  }
+    );
+  };
 
   return (
     <div className="space-y-6">
       <PanelPageHeader
         title="FAQ Management"
-        description={panelDescription('/panel/faqs')}
+        description={panelDescription("/panel/faqs")}
         actions={
           <>
             <Button
@@ -141,7 +138,7 @@ export default function FaqsPage() {
               className="cursor-pointer rounded-full border-cream-300 text-xs font-semibold"
             >
               <RefreshCw
-                className={cn('size-3.5', isFetching && 'animate-spin')}
+                className={cn("size-3.5", isFetching && "animate-spin")}
                 aria-hidden
               />
               <span>Refresh</span>
@@ -184,16 +181,16 @@ export default function FaqsPage() {
           <PanelTableSkeleton rows={5} columns={5} />
         ) : error ? (
           <PanelError
-            message={errorMessage(error, 'Could not load FAQs.')}
+            message={errorMessage(error, "Could not load FAQs.")}
             onRetry={() => void refetch()}
           />
         ) : filtered.length === 0 ? (
           <PanelEmpty
             title="No FAQ groups found"
             description={
-              searchInput || statusFilter !== 'All'
-                ? 'Try adjusting your search query or filter.'
-                : 'Get started by creating your first FAQ accordion group.'
+              searchInput || statusFilter !== "All"
+                ? "Try adjusting your search query or filter."
+                : "Get started by creating your first FAQ accordion group."
             }
             action={
               <Button
@@ -213,7 +210,7 @@ export default function FaqsPage() {
               <>
                 <PanelTableHeadCell>SI/NO</PanelTableHeadCell>
                 <PanelTableHeadCell>Page Placement</PanelTableHeadCell>
-                <PanelTableHeadCell>Accordion Structure</PanelTableHeadCell>
+
                 <PanelTableHeadCell>Status</PanelTableHeadCell>
                 <PanelTableHeadCell align="right">Actions</PanelTableHeadCell>
               </>
@@ -221,7 +218,10 @@ export default function FaqsPage() {
           >
             {filtered.map((item, index) => {
               return (
-                <tr key={item.id} className="transition-colors hover:bg-cream-100/40">
+                <tr
+                  key={item.id}
+                  className="transition-colors hover:bg-cream-100/40"
+                >
                   <td className="px-4 py-3 text-xs font-bold text-navy-800">
                     {index + 1}
                   </td>
@@ -229,12 +229,6 @@ export default function FaqsPage() {
                     <span className="inline-flex items-center gap-1.5 rounded-lg border border-gold-300 bg-gold-50/90 px-2.5 py-1 text-xs font-bold text-gold-900 shadow-2xs">
                       <Layers className="size-3 text-gold-600" aria-hidden />
                       {item.faq_for}
-                    </span>
-                  </td>
-                  <td className="px-4 py-3 text-xs text-ink-600">
-                    <span className="inline-flex items-center gap-1.5 rounded-full border border-cream-300 bg-cream-50 px-2.5 py-0.5 text-xs font-semibold text-navy-800">
-                      <Layers className="size-3 text-gold-600" />
-                      <span>Multi-Q&A Accordion</span>
                     </span>
                   </td>
                   <td className="px-4 py-3">
@@ -282,7 +276,7 @@ export default function FaqsPage() {
                     </div>
                   </td>
                 </tr>
-              )
+              );
             })}
           </PanelTable>
         )}
@@ -294,7 +288,7 @@ export default function FaqsPage() {
             isFetching={isFetching}
             summary={
               <span>
-                Showing <strong>{filtered.length}</strong> of{' '}
+                Showing <strong>{filtered.length}</strong> of{" "}
                 <strong>{meta.total}</strong> FAQ groups
               </span>
             }
@@ -309,7 +303,7 @@ export default function FaqsPage() {
         title={
           inspectedRecord
             ? `FAQ Group: ${inspectedRecord.faq_for}`
-            : 'FAQ Group Details'
+            : "FAQ Group Details"
         }
         size="lg"
         footer={
@@ -319,9 +313,9 @@ export default function FaqsPage() {
               variant="outline"
               size="sm"
               onClick={() => {
-                const target = inspectedRecord
-                setInspectingId(null)
-                if (target) setDeleteTargetId(target.id)
+                const target = inspectedRecord;
+                setInspectingId(null);
+                if (target) setDeleteTargetId(target.id);
               }}
               className="cursor-pointer gap-1.5 rounded-full border-maroon-200 bg-maroon-50 text-xs font-bold text-maroon-800 hover:bg-maroon-100"
             >
@@ -335,9 +329,9 @@ export default function FaqsPage() {
                 variant="outline"
                 size="sm"
                 onClick={() => {
-                  const target = inspectedRecord
-                  setInspectingId(null)
-                  if (target) navigate(`${LIST_PATH}/${target.id}/edit`)
+                  const target = inspectedRecord;
+                  setInspectingId(null);
+                  if (target) navigate(`${LIST_PATH}/${target.id}/edit`);
                 }}
                 className="cursor-pointer gap-1.5 rounded-full border-gold-300 bg-gold-50 text-xs font-bold text-gold-900 hover:bg-gold-100"
               >
@@ -365,8 +359,12 @@ export default function FaqsPage() {
           <div className="space-y-5">
             <div className="flex items-center justify-between border-b border-cream-200 pb-3">
               <div>
-                <span className="text-xs font-semibold text-ink-500">Target Area:</span>
-                <span className="ml-2 font-bold text-navy-900">{inspectedRecord.faq_for}</span>
+                <span className="text-xs font-semibold text-ink-500">
+                  Target Area:
+                </span>
+                <span className="ml-2 font-bold text-navy-900">
+                  {inspectedRecord.faq_for}
+                </span>
               </div>
               <StatusBadge status={inspectedRecord.faq_status} />
             </div>
@@ -376,7 +374,9 @@ export default function FaqsPage() {
                 Questions & Answers ({inspectedRecord.subs?.length ?? 0})
               </h4>
               {!inspectedRecord.subs || inspectedRecord.subs.length === 0 ? (
-                <p className="text-xs text-ink-500 italic">No questions in this group.</p>
+                <p className="text-xs text-ink-500 italic">
+                  No questions in this group.
+                </p>
               ) : (
                 inspectedRecord.subs.map((sub, idx) => (
                   <div
@@ -423,5 +423,5 @@ export default function FaqsPage() {
         />
       )}
     </div>
-  )
+  );
 }
