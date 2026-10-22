@@ -8,9 +8,6 @@ import {
   UserPlus,
   RefreshCw,
   Eye,
-  CircleCheck,
-  CircleX,
-  CirclePause,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { StatusBadge } from '../components/StatusBadge'
@@ -31,6 +28,7 @@ import {
 } from '../components/PanelTable'
 import { ProfileAvatar } from '../components/ProfileAvatar'
 import { ProfileDetails } from '../components/ProfileDetails'
+import { RowStatusSelect } from '../components/RowStatusSelect'
 import { StatusActionGroup } from '../components/StatusActionGroup'
 import { usePendingMembersQuery } from '../hook/useMembers'
 import { useUpdateMemberStatusMutation } from '../hook/useAdminMembers'
@@ -38,6 +36,13 @@ import { errorMessage } from '../hook/errors'
 import { DEFAULT_PER_PAGE, useServerSearch } from '../hook/useServerList'
 import { formatDate } from '../utils/format'
 import type { MemberStatus } from '../types'
+
+const DECISION_STATUSES: readonly MemberStatus[] = [
+  'Pending',
+  'Approved',
+  'Hold',
+  'Cancel',
+]
 
 export default function PendingMembersPage() {
   const { searchInput, setSearchInput, searchTerm } = useServerSearch()
@@ -224,36 +229,17 @@ export default function PendingMembersPage() {
                       <Eye className="size-3.5 text-navy-700" aria-hidden />
                     </Button>
 
-                    <StatusActionGroup
-                      compact
-                      currentStatus="Pending"
+                    <RowStatusSelect
+                      value="Pending"
+                      options={DECISION_STATUSES}
+                      label={`Review ${member.name}`}
                       onSelect={(next) =>
                         setDecisionTarget({
                           memberId: member.id,
                           memberName: member.name,
-                          nextStatus: next as MemberStatus,
+                          nextStatus: next,
                         })
                       }
-                      actions={[
-                        {
-                          status: 'Approved',
-                          label: 'Approve',
-                          icon: <CircleCheck className="size-3 text-emerald-600" aria-hidden />,
-                          tone: 'success',
-                        },
-                        {
-                          status: 'Hold',
-                          label: 'Hold',
-                          icon: <CirclePause className="size-3 text-navy-600" aria-hidden />,
-                          tone: 'warn',
-                        },
-                        {
-                          status: 'Cancel',
-                          label: 'Reject',
-                          icon: <CircleX className="size-3 text-maroon-600" aria-hidden />,
-                          tone: 'danger',
-                        },
-                      ]}
                     />
                   </div>
                 </td>

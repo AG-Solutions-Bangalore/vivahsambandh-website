@@ -8,9 +8,6 @@ import {
   ShieldCheck,
   RefreshCw,
   Edit2,
-  CircleCheck,
-  CircleX,
-  Clock,
   Mail,
   Phone,
   Smartphone,
@@ -33,7 +30,7 @@ import {
 } from '../components/PanelTable'
 import { PanelFilterSelect } from '../components/PanelFilterSelect'
 import { ProfileAvatar } from '../components/ProfileAvatar'
-import { StatusActionGroup } from '../components/StatusActionGroup'
+import { RowStatusSelect } from '../components/RowStatusSelect'
 import { CityAssignmentModal } from '../components/CityAssignmentModal'
 import {
   useAdminMembersQuery,
@@ -46,6 +43,10 @@ import { DEFAULT_PER_PAGE, useServerSearch } from '../hook/useServerList'
 import type { AdminMemberStatus } from '../types'
 
 const STATUS_FILTERS = ['All', 'Approved', 'Pending', 'Cancel'] as const
+
+const STATUS_OPTIONS = STATUS_FILTERS.filter(
+  (status): status is AdminMemberStatus => status !== 'All',
+)
 
 export default function AdminMembersPage() {
   const { searchInput, setSearchInput, searchTerm } = useServerSearch()
@@ -363,36 +364,17 @@ export default function AdminMembersPage() {
                         <Smartphone className="size-3.5 text-amber-700" aria-hidden />
                       </Button>
 
-                      <StatusActionGroup
-                        compact
-                        currentStatus={admin.status}
+                      <RowStatusSelect
+                        value={admin.status}
+                        options={STATUS_OPTIONS}
+                        label={`Change status for ${admin.name}`}
                         onSelect={(next) =>
                           setStatusChangeTarget({
                             adminId: admin.id,
                             adminName: admin.name,
-                            nextStatus: next as AdminMemberStatus,
+                            nextStatus: next,
                           })
                         }
-                        actions={[
-                          {
-                            status: 'Approved',
-                            label: 'Approve',
-                            icon: <CircleCheck className="size-3 text-emerald-600" aria-hidden />,
-                            tone: 'success',
-                          },
-                          {
-                            status: 'Pending',
-                            label: 'Pending',
-                            icon: <Clock className="size-3 text-amber-600" aria-hidden />,
-                            tone: 'warn',
-                          },
-                          {
-                            status: 'Cancel',
-                            label: 'Cancel',
-                            icon: <CircleX className="size-3 text-maroon-600" aria-hidden />,
-                            tone: 'danger',
-                          },
-                        ]}
                       />
                     </div>
                   </td>

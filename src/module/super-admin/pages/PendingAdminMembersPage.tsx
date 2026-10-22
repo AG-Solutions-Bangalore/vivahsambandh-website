@@ -7,8 +7,6 @@ import { useState, useMemo } from 'react'
 import {
   UserCheck,
   RefreshCw,
-  CircleCheck,
-  CircleX,
   Mail,
   MapPin,
   Phone,
@@ -30,7 +28,7 @@ import {
   PanelTableHeadCell,
 } from '../components/PanelTable'
 import { ProfileAvatar } from '../components/ProfileAvatar'
-import { StatusActionGroup } from '../components/StatusActionGroup'
+import { RowStatusSelect } from '../components/RowStatusSelect'
 import { CityAssignmentModal } from '../components/CityAssignmentModal'
 import {
   usePendingAdminMembersQuery,
@@ -40,6 +38,12 @@ import {
 import { errorMessage } from '../hook/errors'
 import { DEFAULT_PER_PAGE, useServerSearch } from '../hook/useServerList'
 import type { AdminMemberStatus } from '../types'
+
+const DECISION_STATUSES: readonly AdminMemberStatus[] = [
+  'Pending',
+  'Approved',
+  'Cancel',
+]
 
 export default function PendingAdminMembersPage() {
   const { searchInput, setSearchInput, searchTerm } = useServerSearch()
@@ -290,31 +294,17 @@ export default function PendingAdminMembersPage() {
                   </td>
 
                   <td className="px-4 py-3.5">
-                    <StatusActionGroup
-                      size="sm"
-                      compact
-                      currentStatus="Pending"
+                    <RowStatusSelect
+                      value="Pending"
+                      options={DECISION_STATUSES}
+                      label={`Review ${admin.name}`}
                       onSelect={(next) =>
                         setActionTarget({
                           adminId: admin.id,
                           adminName: admin.name,
-                          nextStatus: next as AdminMemberStatus,
+                          nextStatus: next,
                         })
                       }
-                      actions={[
-                        {
-                          status: 'Approved',
-                          label: 'Approve',
-                          icon: <CircleCheck className="size-3.5 text-emerald-600" aria-hidden />,
-                          tone: 'success',
-                        },
-                        {
-                          status: 'Cancel',
-                          label: 'Reject',
-                          icon: <CircleX className="size-3.5 text-maroon-600" aria-hidden />,
-                          tone: 'danger',
-                        },
-                      ]}
                     />
                   </td>
                 </tr>

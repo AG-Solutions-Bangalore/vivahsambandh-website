@@ -8,10 +8,6 @@ import {
   Users,
   RefreshCw,
   Eye,
-  CircleCheck,
-  CircleX,
-  CirclePause,
-  HeartHandshake,
   Smartphone,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -34,6 +30,7 @@ import {
 import { PanelFilterSelect } from '../components/PanelFilterSelect'
 import { ProfileAvatar } from '../components/ProfileAvatar'
 import { ProfileDetails } from '../components/ProfileDetails'
+import { RowStatusSelect } from '../components/RowStatusSelect'
 import { StatusActionGroup } from '../components/StatusActionGroup'
 import { useMembersQuery } from '../hook/useMembers'
 import {
@@ -47,6 +44,10 @@ import type { MemberStatus } from '../types'
 
 const STATUS_FILTERS = ['All', 'Approved', 'Pending', 'Hold', 'Married', 'Cancel'] as const
 const GENDER_FILTERS = ['All', 'Male', 'Female'] as const
+
+const STATUS_OPTIONS = STATUS_FILTERS.filter(
+  (status): status is MemberStatus => status !== 'All',
+)
 
 export default function MembersPage() {
   const { searchInput, setSearchInput, searchTerm } = useServerSearch()
@@ -299,42 +300,17 @@ export default function MembersPage() {
                       <Smartphone className="size-3.5 text-amber-700" aria-hidden />
                     </Button>
 
-                    <StatusActionGroup
-                      compact
-                      currentStatus={member.status}
+                    <RowStatusSelect
+                      value={member.status}
+                      options={STATUS_OPTIONS}
+                      label={`Change status for ${member.name}`}
                       onSelect={(next) =>
                         setStatusChangeTarget({
                           memberId: member.id,
                           memberName: member.name,
-                          nextStatus: next as MemberStatus,
+                          nextStatus: next,
                         })
                       }
-                      actions={[
-                        {
-                          status: 'Approved',
-                          label: 'Approve',
-                          icon: <CircleCheck className="size-3 text-emerald-600" aria-hidden />,
-                          tone: 'success',
-                        },
-                        {
-                          status: 'Hold',
-                          label: 'Hold',
-                          icon: <CirclePause className="size-3 text-navy-600" aria-hidden />,
-                          tone: 'warn',
-                        },
-                        {
-                          status: 'Married',
-                          label: 'Married',
-                          icon: <HeartHandshake className="size-3 text-gold-600" aria-hidden />,
-                          tone: 'info',
-                        },
-                        {
-                          status: 'Cancel',
-                          label: 'Cancel',
-                          icon: <CircleX className="size-3 text-maroon-600" aria-hidden />,
-                          tone: 'danger',
-                        },
-                      ]}
                     />
                   </div>
                 </td>
