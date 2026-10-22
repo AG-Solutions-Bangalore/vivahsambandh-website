@@ -15,7 +15,7 @@ export default function ContactCta() {
   const home = homePath(lang)
 
   return (
-    <section className="relative isolate overflow-hidden bg-cream-50 py-10 sm:py-12">
+    <section className="relative isolate sm:-mb-1 sm:pt-16 overflow-hidden bg-cream-50 py-10 sm:py-12">
       <div aria-hidden="true" className="bg-jaali pointer-events-none absolute inset-0 opacity-60" />
       <img
         src={img('/images/home/flower1_image-320.webp')}
