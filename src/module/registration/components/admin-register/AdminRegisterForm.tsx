@@ -7,7 +7,7 @@
  * validators and shadcn-style UI primitives from the main registration form.
  */
 
-import { useEffect, useId, useRef, useState, type ChangeEvent, type FormEvent } from 'react'
+import { useId, useState, type ChangeEvent, type FormEvent } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
@@ -16,7 +16,8 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { OptionPills } from '@/components/ui/option-pills'
 import { cn } from 'cn'
 import { createAdminRegister } from '../../api/registration.api'
-import ImageCropModal from '../ImageCropModal'
+import MobileNumberField from '../MobileNumberField'
+import PhotoCropField from '../PhotoCropField'
 import TermsModal from '../TermsModal'
 import OtpVerificationModal from '../OtpVerificationModal'
 import type { AdminRegisterFormData } from '../../types'
@@ -67,20 +68,6 @@ export default function AdminRegisterForm() {
 
   const isMobileVerifiedNow =
     isMobileVerified && form.mobile === verifiedMobileNumber
-
-  const facePhotoInputRef = useRef<HTMLInputElement>(null)
-
-  // Cropper state — the face photo is cropped to the 1:1 frame below, so the
-  // stored file and the preview are the same image.
-  const [isCropOpen, setIsCropOpen] = useState(false)
-  const [cropRawSrc, setCropRawSrc] = useState<string | null>(null)
-  const cropUrlRef = useRef<string | null>(null)
-
-  useEffect(() => {
-    return () => {
-      if (cropUrlRef.current) URL.revokeObjectURL(cropUrlRef.current)
-    }
-  }, [])
 
   const clearFieldError = (key: keyof AdminRegisterFormData) => {
     setFieldErrors((prev) => {
@@ -141,32 +128,6 @@ export default function AdminRegisterForm() {
     setForm((prev) => ({ ...prev, gender: value as AdminRegisterFormData['gender'] }))
   }
 
-  const handleFaceFileSelect = (e: ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (!file) return
-    if (!file.type.startsWith('image/')) {
-      setFieldErrors((prev) => ({
-        ...prev,
-        face_image: 'Please select a valid image file',
-      }))
-      return
-    }
-    clearFieldError('face_image')
-
-    // A blob URL keeps a 12 MP phone photo out of a base64 string in memory.
-    const url = URL.createObjectURL(file)
-    if (cropUrlRef.current) URL.revokeObjectURL(cropUrlRef.current)
-    cropUrlRef.current = url
-
-    setCropRawSrc(url)
-    setIsCropOpen(true)
-    e.target.value = ''
-  }
-
-  const closeCropper = () => {
-    setIsCropOpen(false)
-  }
-
   const handleCropComplete = (croppedFile: File, previewUrl: string) => {
     setForm((prev) => ({
       ...prev,
@@ -180,16 +141,10 @@ export default function AdminRegisterForm() {
     setForm(initialAdminFormState)
     setFieldErrors({})
     setTermsOpen(false)
-    setIsCropOpen(false)
-    setCropRawSrc(null)
     setIsOtpModalOpen(false)
     setOtpMode('submit')
     setIsMobileVerified(false)
     setVerifiedMobileNumber('')
-    if (cropUrlRef.current) {
-      URL.revokeObjectURL(cropUrlRef.current)
-      cropUrlRef.current = null
-    }
   }
 
   const validateForm = (): FieldErrors => {
@@ -431,61 +386,24 @@ export default function AdminRegisterForm() {
             )}
           </div>
 
-          {/* Mobile */}
-          <Field
+          {/* Mobile — same control as the user registration (OTP + verified badge) */}
+          <MobileNumberField
             id={`${inputId}-mobile`}
             label="Mobile Number"
-            required
-            hint={
-              isMobileVerifiedNow
-                ? 'Verified'
-                : form.mobile.length === 10
-                  ? '10 digits'
-                  : `${form.mobile.length}/10 digits`
-            }
+            value={form.mobile}
+            onChange={handleMobileChange}
+            onPaste={handlePasteCapture(
+              'mobile',
+              (val) => sanitizeDigits(val, 10),
+            )}
+            isVerified={isMobileVerifiedNow}
+            onVerify={() => {
+              setOtpMode('inline')
+              setIsOtpModalOpen(true)
+            }}
             error={fieldErrors.mobile}
-          >
-            <div className="relative">
-              <Input
-                id={`${inputId}-mobile`}
-                type="tel"
-                name="mobile"
-                inputMode="numeric"
-                autoComplete="tel"
-                maxLength={10}
-                value={form.mobile}
-                onChange={handleMobileChange}
-                onPaste={handlePasteCapture(
-                  'mobile',
-                  (val) => sanitizeDigits(val, 10),
-                )}
-                placeholder="10-digit mobile number"
-                className={cn(
-                  inputCls('mobile'),
-                  isMobileVerifiedNow &&
-                    'border-emerald-500 bg-emerald-50/20 pr-24 text-emerald-950 focus-visible:border-emerald-600 focus-visible:ring-emerald-500/20',
-                )}
-                aria-invalid={Boolean(fieldErrors.mobile)}
-                aria-describedby={fieldErrors.mobile ? `${inputId}-mobile-error` : undefined}
-              />
-              {isMobileVerifiedNow ? (
-                <span className="absolute right-2.5 top-1/2 inline-flex -translate-y-1/2 items-center gap-1 rounded-full border border-emerald-300 bg-emerald-100 px-2.5 py-0.5 text-[11px] font-bold text-emerald-800">
-                  Verified
-                </span>
-              ) : form.mobile.length === 10 ? (
-                <button
-                  type="button"
-                  onClick={() => {
-                    setOtpMode('inline')
-                    setIsOtpModalOpen(true)
-                  }}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 cursor-pointer rounded-full border border-gold-500/40 bg-gold-50 px-3 py-1 text-[11px] font-bold text-gold-800 transition hover:bg-gold-100"
-                >
-                  Verify
-                </button>
-              ) : null}
-            </div>
-          </Field>
+            inputClassName={inputCls('mobile')}
+          />
 
           {/* Email */}
           <Field
@@ -559,95 +477,22 @@ export default function AdminRegisterForm() {
             </Field>
           </div>
 
-          {/* Face Photograph */}
+          {/* Face Photograph — same cropper as the user registration */}
           <div className="sm:col-span-2">
-            <div
+            <PhotoCropField
               id={`${inputId}-face_image`}
-              className={cn(
-                'rounded-2xl border p-5 transition',
-                fieldErrors.face_image
-                  ? 'border-maroon-500 bg-maroon-50/20'
-                  : 'border-cream-200 bg-cream-50/50',
-              )}
-            >
-              <span className="block text-sm font-bold text-navy-900 mb-1">
-                Face Photograph <span className="text-maroon-600">*</span>
-              </span>
-              <p className="text-xs text-ink-500 mb-4">
-                Recent clear face photograph for the admin profile.
-              </p>
-
-              <div className="flex flex-col items-center gap-4">
-                <div className="h-40 w-40 overflow-hidden rounded-xl border-2 border-dashed border-gold-500/50 bg-white flex items-center justify-center shadow-inner">
-                  {form.face_image_preview ? (
-                    <img
-                      src={form.face_image_preview}
-                      alt="Face photograph preview"
-                      className="h-full w-full object-cover"
-                    />
-                  ) : (
-                    <div className="text-center p-4">
-                      <svg
-                        className="mx-auto h-10 w-10 text-gold-500/60"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth="1.5"
-                          d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
-                        />
-                      </svg>
-                      <span className="mt-2 block text-xs text-ink-500">
-                        No photo selected
-                      </span>
-                    </div>
-                  )}
-                </div>
-
-                <input
-                  ref={facePhotoInputRef}
-                  type="file"
-                  accept="image/*"
-                  onChange={handleFaceFileSelect}
-                  className="sr-only"
-                  aria-label="Select face photograph"
-                />
-                <div className="flex flex-wrap items-center justify-center gap-2">
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    onClick={() => facePhotoInputRef.current?.click()}
-                  >
-                    <span>
-                      {form.face_image ? 'Change Photo' : 'Upload & Crop Photo'}
-                    </span>
-                  </Button>
-                  {cropRawSrc && form.face_image && (
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => setIsCropOpen(true)}
-                      className="text-xs font-semibold text-ink-600 hover:text-navy-900"
-                    >
-                      Crop Again
-                    </Button>
-                  )}
-                </div>
-              </div>
-              {fieldErrors.face_image && (
-                <p
-                  role="alert"
-                  className="mt-3 flex items-center gap-1.5 text-xs font-semibold text-maroon-600"
-                >
-                  {fieldErrors.face_image}
-                </p>
-              )}
-            </div>
+              label="Face Photograph"
+              subtitle="Recent clear face photograph for the admin profile."
+              previewUrl={form.face_image_preview}
+              hasPhoto={Boolean(form.face_image)}
+              onCropComplete={handleCropComplete}
+              error={fieldErrors.face_image}
+              aspect={1}
+              outputSize={600}
+              shape="circle"
+              cropTitle="Crop Face Photograph"
+              frameClassName="flex h-40 w-40 items-center justify-center overflow-hidden rounded-full border-2 border-dashed border-gold-500/50 bg-white shadow-inner"
+            />
           </div>
 
           {/* Terms & Conditions */}
@@ -698,16 +543,6 @@ export default function AdminRegisterForm() {
             </div>
           </div>
         </div>
-
-        {/* Face Photo Cropper */}
-        <ImageCropModal
-          isOpen={isCropOpen}
-          title="Crop Face Photograph"
-          imageSrc={cropRawSrc}
-          aspect={1}
-          onClose={closeCropper}
-          onCropComplete={handleCropComplete}
-        />
 
         {/* Terms & Conditions Modal */}
         <TermsModal isOpen={termsOpen} onClose={() => setTermsOpen(false)} />

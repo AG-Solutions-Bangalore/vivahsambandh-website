@@ -18,6 +18,7 @@ import { cn } from 'cn'
 import { useRegistrationForm } from '../context'
 import FormSection from '../FormSection'
 import { REGISTRATION_STEP_IDS } from '../steps'
+import MobileNumberField from '../../MobileNumberField'
 
 export default function PersonalDetailsSection() {
   const { t } = useTranslation()
@@ -797,42 +798,17 @@ export default function PersonalDetailsSection() {
             />
           </Field>
 
-          <Field
+          <MobileNumberField
             id={`${baseId}-contact-mobile`}
             label={t('registrationPage.form.contactMobileLabel', 'Main Contact Mobile')}
-            required
-            hint={
-              isMobileVerifiedNow
-                ? t('registrationPage.form.mobileVerified', 'Mobile verified')
-                : isMobileComplete
-                ? `10 ${t('registrationPage.form.digits', 'digits')}`
-                : `${form.mobile.length}/10 ${t('registrationPage.form.digits', 'digits')}`
-            }
+            value={form.mobile}
+            onChange={handleNumericInput}
+            onPaste={handlePasteCapture('mobile')}
+            isVerified={isMobileVerifiedNow}
+            onVerify={openOtpModal}
             error={fieldErrors.mobile}
-          >
-            <div className="relative">
-              <Input
-                id={`${baseId}-contact-mobile`}
-                type="tel"
-                name="mobile"
-                maxLength={10}
-                value={form.mobile}
-                onChange={handleNumericInput}
-                onPaste={handlePasteCapture('mobile')}
-                placeholder={t('registrationPage.form.contactMobilePlaceholder', '10-digit mobile number')}
-                className={cn(
-                  inputCls('mobile'),
-                  isMobileVerifiedNow && 'border-emerald-500 bg-emerald-50/20 pr-28 text-emerald-950 focus-visible:border-emerald-600 focus-visible:ring-emerald-500/20',
-                )}
-                aria-invalid={Boolean(fieldErrors.mobile)}
-              />
-              {isMobileVerifiedNow && (
-                <span className="absolute right-2.5 top-1/2 -translate-y-1/2 inline-flex items-center gap-1 rounded-full bg-emerald-100 border border-emerald-300 px-2.5 py-0.5 text-[11px] font-bold text-emerald-800">
-                  {t('registrationPage.form.verified', 'Verified')}
-                </span>
-              )}
-            </div>
-          </Field>
+            inputClassName={inputCls('mobile')}
+          />
         </div>
 
         {/* Alternate Contact */}
