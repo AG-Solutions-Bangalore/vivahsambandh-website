@@ -1,50 +1,25 @@
-import { useTranslation } from 'react-i18next'
-import { img, imgSrcSet } from '../../../lib/image'
+import { useTranslation } from "react-i18next";
+import { img, imgSrcSet } from "../../../lib/image";
 
 /**
  * Contact hero — same banner + same `data-hero` motion contract as the home
  * hero (intro line-mask reveal, scrub banner parallax, drifting garlands).
  */
 export default function ContactHero() {
-  const { t } = useTranslation()
+  const { t } = useTranslation();
 
   return (
     <div className="relative isolate bg-cream-50">
-      {/* Side cascading garlands (same as home hero) */}
-      <img
-        src={img('/images/home/flower1_image.webp')}
-        srcSet={imgSrcSet('/images/home/flower1_image-320.webp 320w, /images/home/flower1_image-640.webp 640w, /images/home/flower1_image.webp 1024w')}
-        sizes="(max-width: 640px) 22vw, (max-width: 768px) 10rem, (max-width: 1024px) 12rem, (max-width: 1280px) 14rem, 16rem"
-        width={1024}
-        height={1536}
-        alt="Decorative flower garland"
-        title="Decorative flower garland"
-        data-hero="flower-l"
-        fetchPriority="low"
-        className="pointer-events-none absolute left-0 bottom-0 z-20 w-32 sm:w-40 md:w-48 lg:w-56 xl:w-64 max-w-[22vw] h-auto object-contain object-left-bottom select-none"
-        loading="eager"
-        aria-hidden="true"
-      />
-      <img
-        src={img('/images/home/flower2_image.webp')}
-        srcSet={imgSrcSet('/images/home/flower2_image-320.webp 320w, /images/home/flower2_image-640.webp 640w, /images/home/flower2_image.webp 1024w')}
-        sizes="(max-width: 640px) 26vw, (max-width: 768px) 11rem, (max-width: 1024px) 13rem, (max-width: 1280px) 15rem, 18rem"
-        width={1024}
-        height={1536}
-        alt="Decorative flower garland"
-        title="Decorative flower garland"
-        data-hero="flower-r"
-        fetchPriority="low"
-        className="pointer-events-none absolute right-0 bottom-0 z-20 w-32 sm:w-44 md:w-52 lg:w-60 xl:w-72 max-w-[26vw] h-auto object-contain object-right-top select-none"
-        loading="eager"
-        aria-hidden="true"
-      />
-
-      <section data-hero="banner-wrap" className="relative isolate z-10 w-full lg:h-[540px] xl:h-[580px]">
+      <section
+        data-hero="banner-wrap"
+        className="relative isolate z-10 w-full lg:h-[540px] xl:h-[580px]"
+      >
         {/* Top hanging garlands */}
         <img
-          src={img('/images/home/flower1_image-320.webp')}
-          srcSet={imgSrcSet('/images/home/flower1_image-192.webp 192w, /images/home/flower1_image-320.webp 320w, /images/home/flower1_image-640.webp 640w')}
+          src={img("/images/home/flower1_image-320.webp")}
+          srcSet={imgSrcSet(
+            "/images/home/flower1_image-192.webp 192w, /images/home/flower1_image-320.webp 320w, /images/home/flower1_image-640.webp 640w",
+          )}
           sizes="(max-width: 640px) 12vw, (max-width: 768px) 5rem, 8rem"
           width={320}
           height={480}
@@ -56,8 +31,10 @@ export default function ContactHero() {
           aria-hidden="true"
         />
         <img
-          src={img('/images/home/flower2_image-320.webp')}
-          srcSet={imgSrcSet('/images/home/flower2_image-192.webp 192w, /images/home/flower2_image-320.webp 320w, /images/home/flower2_image-640.webp 640w')}
+          src={img("/images/home/flower2_image-320.webp")}
+          srcSet={imgSrcSet(
+            "/images/home/flower2_image-192.webp 192w, /images/home/flower2_image-320.webp 320w, /images/home/flower2_image-640.webp 640w",
+          )}
           sizes="(max-width: 640px) 12vw, (max-width: 768px) 5rem, 8rem"
           width={320}
           height={480}
@@ -71,10 +48,15 @@ export default function ContactHero() {
 
         {/* Banner image: photo block on top for small screens, full-bleed
             backdrop from lg up — same image as the home hero. */}
-        <div className="pointer-events-none relative h-72 sm:h-96 overflow-hidden lg:absolute lg:inset-0 lg:h-auto" aria-hidden="true">
+        <div
+          className="pointer-events-none relative h-72 sm:h-96 overflow-hidden lg:absolute lg:inset-0 lg:h-auto"
+          aria-hidden="true"
+        >
           <img
-            src={img('/images/home/home_banner_image.webp')}
-            srcSet={imgSrcSet('/images/home/home_banner_image-640.webp 640w, /images/home/home_banner_image-1024.webp 1024w, /images/home/home_banner_image-1280.webp 1280w, /images/home/home_banner_image.webp 2172w')}
+            src={img("/images/home/home_banner_image.webp")}
+            srcSet={imgSrcSet(
+              "/images/home/home_banner_image-640.webp 640w, /images/home/home_banner_image-1024.webp 1024w, /images/home/home_banner_image-1280.webp 1280w, /images/home/home_banner_image.webp 2172w",
+            )}
             sizes="100vw"
             width={2172}
             height={724}
@@ -103,36 +85,62 @@ export default function ContactHero() {
           <div className="grid w-full items-center lg:grid-cols-12">
             <div className="lg:col-span-7 xl:col-span-6 py-4">
               {/* Eyebrow */}
-              <div data-hero="eyebrow" className="inline-flex items-center gap-2 text-[10px] sm:text-[11px] font-bold tracking-[0.22em] uppercase text-gold-700">
+              <div
+                data-hero="eyebrow"
+                className="inline-flex items-center gap-2 text-[10px] sm:text-[11px] font-bold tracking-[0.22em] uppercase text-gold-700"
+              >
                 <span className="text-gold-600 text-xs sm:text-sm font-black">
                   ✱
                 </span>
-                <span>{t('contactPage.eyebrow')}</span>
+                <span>{t("contactPage.eyebrow")}</span>
                 <span className="h-px w-12 sm:w-16 bg-gold-500/50" />
               </div>
 
               {/* Headline (line masks for the mask-reveal intro) */}
-              <h1 data-hero="title" className="font-display mt-3 text-3xl sm:text-4xl lg:text-[44px] xl:text-[50px] font-bold leading-[1.12]">
-                <span data-hero-mask className="block overflow-hidden pb-[0.12em] -mb-[0.12em]">
-                  <span data-hero-line className="block text-navy-900 will-change-transform">{t('contactPage.titleA')}</span>
+              <h1
+                data-hero="title"
+                className="font-display mt-3 text-3xl sm:text-4xl lg:text-[44px] xl:text-[50px] font-bold leading-[1.12]"
+              >
+                <span
+                  data-hero-mask
+                  className="block overflow-hidden pb-[0.12em] -mb-[0.12em]"
+                >
+                  <span
+                    data-hero-line
+                    className="block text-navy-900 will-change-transform"
+                  >
+                    {t("contactPage.titleA")}
+                  </span>
                 </span>
-                <span data-hero-mask className="block overflow-hidden pb-[0.12em] -mb-[0.12em]">
-                  <span data-hero-line className="block text-gold-600 mt-0.5 will-change-transform">
-                    {t('contactPage.titleB')}
+                <span
+                  data-hero-mask
+                  className="block overflow-hidden pb-[0.12em] -mb-[0.12em]"
+                >
+                  <span
+                    data-hero-line
+                    className="block text-gold-600 mt-0.5 will-change-transform"
+                  >
+                    {t("contactPage.titleB")}
                   </span>
                 </span>
               </h1>
 
               {/* Subtitle */}
-              <p data-hero="subtitle" className="mt-3.5 max-w-md text-xs sm:text-sm leading-relaxed text-ink-600 font-medium">
-                {t('contactPage.body')}
+              <p
+                data-hero="subtitle"
+                className="mt-3.5 max-w-md text-xs sm:text-sm leading-relaxed text-ink-600 font-medium"
+              >
+                {t("contactPage.body")}
               </p>
             </div>
             {/* Right side kept clear — the celebration lives in the banner photo */}
-            <div className="hidden lg:col-span-5 xl:col-span-6 lg:block h-full" aria-hidden="true" />
+            <div
+              className="hidden lg:col-span-5 xl:col-span-6 lg:block h-full"
+              aria-hidden="true"
+            />
           </div>
         </div>
       </section>
     </div>
-  )
+  );
 }

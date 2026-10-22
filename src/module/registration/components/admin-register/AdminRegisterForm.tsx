@@ -7,14 +7,19 @@
  * validators and shadcn-style UI primitives from the main registration form.
  */
 
-import { useId, useRef, useState, type ChangeEvent, type FormEvent } from 'react'
+import { useId, useState, type ChangeEvent, type FormEvent } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Field } from '@/components/ui/field'
+import { Checkbox } from '@/components/ui/checkbox'
 import { OptionPills } from '@/components/ui/option-pills'
 import { cn } from 'cn'
 import { createAdminRegister } from '../../api/registration.api'
+import MobileNumberField from '../MobileNumberField'
+import PhotoCropField from '../PhotoCropField'
+import TermsModal from '../TermsModal'
+import OtpVerificationModal from '../OtpVerificationModal'
 import type { AdminRegisterFormData } from '../../types'
 import {
   sanitizeName,
@@ -39,6 +44,7 @@ const initialAdminFormState: AdminRegisterFormData = {
   mobile: '',
   face_image: null,
   face_image_preview: '',
+  agree_terms: false,
 }
 
 type FieldErrors = Partial<Record<keyof AdminRegisterFormData, string>>
@@ -54,8 +60,14 @@ export default function AdminRegisterForm() {
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({})
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitResult, setSubmitResult] = useState<SubmitResult | null>(null)
+  const [termsOpen, setTermsOpen] = useState(false)
+  const [isOtpModalOpen, setIsOtpModalOpen] = useState(false)
+  const [otpMode, setOtpMode] = useState<'inline' | 'submit'>('submit')
+  const [isMobileVerified, setIsMobileVerified] = useState(false)
+  const [verifiedMobileNumber, setVerifiedMobileNumber] = useState('')
 
-  const facePhotoInputRef = useRef<HTMLInputElement>(null)
+  const isMobileVerifiedNow =
+    isMobileVerified && form.mobile === verifiedMobileNumber
 
   const clearFieldError = (key: keyof AdminRegisterFormData) => {
     setFieldErrors((prev) => {
@@ -85,6 +97,10 @@ export default function AdminRegisterForm() {
   const handleMobileChange = (e: ChangeEvent<HTMLInputElement>) => {
     const sanitized = sanitizeDigits(e.target.value, 10)
     clearFieldError('mobile')
+    if (isMobileVerified && sanitized !== verifiedMobileNumber) {
+      setIsMobileVerified(false)
+      setVerifiedMobileNumber('')
+    }
     setForm((prev) => ({ ...prev, mobile: sanitized }))
   }
 
@@ -95,6 +111,14 @@ export default function AdminRegisterForm() {
     (e: React.ClipboardEvent<HTMLInputElement | HTMLTextAreaElement>) => {
       handleSanitizedPaste(e, sanitizer, (cleaned) => {
         clearFieldError(fieldName)
+        if (
+          fieldName === 'mobile' &&
+          isMobileVerified &&
+          cleaned !== verifiedMobileNumber
+        ) {
+          setIsMobileVerified(false)
+          setVerifiedMobileNumber('')
+        }
         setForm((prev) => ({ ...prev, [fieldName]: cleaned }))
       })
     }
@@ -104,28 +128,23 @@ export default function AdminRegisterForm() {
     setForm((prev) => ({ ...prev, gender: value as AdminRegisterFormData['gender'] }))
   }
 
-  const handleFaceFileSelect = (e: ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (!file) return
-    if (!file.type.startsWith('image/')) {
-      setFieldErrors((prev) => ({
-        ...prev,
-        face_image: 'Please select a valid image file',
-      }))
-      return
-    }
+  const handleCropComplete = (croppedFile: File, previewUrl: string) => {
+    setForm((prev) => ({
+      ...prev,
+      face_image: croppedFile,
+      face_image_preview: previewUrl,
+    }))
     clearFieldError('face_image')
+  }
 
-    const reader = new FileReader()
-    reader.onload = () => {
-      setForm((prev) => ({
-        ...prev,
-        face_image: file,
-        face_image_preview: reader.result as string,
-      }))
-    }
-    reader.readAsDataURL(file)
-    e.target.value = ''
+  const resetAdminForm = () => {
+    setForm(initialAdminFormState)
+    setFieldErrors({})
+    setTermsOpen(false)
+    setIsOtpModalOpen(false)
+    setOtpMode('submit')
+    setIsMobileVerified(false)
+    setVerifiedMobileNumber('')
   }
 
   const validateForm = (): FieldErrors => {
@@ -150,22 +169,15 @@ export default function AdminRegisterForm() {
 
     if (!form.face_image) errors.face_image = 'Please upload a face photograph'
 
+    if (!form.agree_terms) {
+      errors.agree_terms =
+        'You must agree to the Terms & Conditions before submitting'
+    }
+
     return errors
   }
 
-  const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault()
-    setSubmitResult(null)
-
-    const errors = validateForm()
-    setFieldErrors(errors)
-    if (Object.keys(errors).length > 0) {
-      const firstKey = Object.keys(errors)[0]
-      const el = document.getElementById(`${inputId}-${firstKey}`)
-      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' })
-      return
-    }
-
+  const submitRegistration = async () => {
     setIsSubmitting(true)
 
     // FormData matching the create-admin-register API spec exactly:
@@ -188,8 +200,7 @@ export default function AdminRegisterForm() {
         message: res.message || 'Submission could not be completed.',
       })
       if (res.success) {
-        setForm(initialAdminFormState)
-        setFieldErrors({})
+        resetAdminForm()
       }
       window.scrollTo({ top: 0, behavior: 'smooth' })
     } catch (err) {
@@ -204,6 +215,38 @@ export default function AdminRegisterForm() {
     } finally {
       setIsSubmitting(false)
     }
+  }
+
+  const handleOtpVerified = () => {
+    setIsMobileVerified(true)
+    setVerifiedMobileNumber(form.mobile)
+    setIsOtpModalOpen(false)
+    clearFieldError('mobile')
+    if (otpMode === 'submit') {
+      void submitRegistration()
+    }
+  }
+
+  const handleSubmit = (e: FormEvent) => {
+    e.preventDefault()
+    setSubmitResult(null)
+
+    const errors = validateForm()
+    setFieldErrors(errors)
+    if (Object.keys(errors).length > 0) {
+      const firstKey = Object.keys(errors)[0]
+      const el = document.getElementById(`${inputId}-${firstKey}`)
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      return
+    }
+
+    if (!isMobileVerifiedNow) {
+      setOtpMode('submit')
+      setIsOtpModalOpen(true)
+      return
+    }
+
+    void submitRegistration()
   }
 
   const inputCls = (key: keyof AdminRegisterFormData) =>
@@ -238,8 +281,7 @@ export default function AdminRegisterForm() {
           type="button"
           onClick={() => {
             setSubmitResult(null)
-            setForm(initialAdminFormState)
-            setFieldErrors({})
+            resetAdminForm()
           }}
           className="mt-8 px-8 py-3 text-sm font-bold bg-navy-900 text-white hover:bg-navy-800 shadow-md"
         >
@@ -344,31 +386,24 @@ export default function AdminRegisterForm() {
             )}
           </div>
 
-          {/* Mobile */}
-          <Field
+          {/* Mobile — same control as the user registration (OTP + verified badge) */}
+          <MobileNumberField
             id={`${inputId}-mobile`}
             label="Mobile Number"
-            required
+            value={form.mobile}
+            onChange={handleMobileChange}
+            onPaste={handlePasteCapture(
+              'mobile',
+              (val) => sanitizeDigits(val, 10),
+            )}
+            isVerified={isMobileVerifiedNow}
+            onVerify={() => {
+              setOtpMode('inline')
+              setIsOtpModalOpen(true)
+            }}
             error={fieldErrors.mobile}
-          >
-            <Input
-              id={`${inputId}-mobile`}
-              type="tel"
-              name="mobile"
-              inputMode="numeric"
-              maxLength={10}
-              value={form.mobile}
-              onChange={handleMobileChange}
-              onPaste={handlePasteCapture(
-                'mobile',
-                (val) => sanitizeDigits(val, 10),
-              )}
-              placeholder="10-digit mobile number"
-              className={inputCls('mobile')}
-              aria-invalid={Boolean(fieldErrors.mobile)}
-              aria-describedby={fieldErrors.mobile ? `${inputId}-mobile-error` : undefined}
-            />
-          </Field>
+            inputClassName={inputCls('mobile')}
+          />
 
           {/* Email */}
           <Field
@@ -442,82 +477,88 @@ export default function AdminRegisterForm() {
             </Field>
           </div>
 
-          {/* Face Photograph */}
+          {/* Face Photograph — same cropper as the user registration */}
           <div className="sm:col-span-2">
-            <div
+            <PhotoCropField
               id={`${inputId}-face_image`}
+              label="Face Photograph"
+              subtitle="Recent clear face photograph for the admin profile."
+              previewUrl={form.face_image_preview}
+              hasPhoto={Boolean(form.face_image)}
+              onCropComplete={handleCropComplete}
+              error={fieldErrors.face_image}
+              aspect={1}
+              outputSize={600}
+              shape="circle"
+              cropTitle="Crop Face Photograph"
+              frameClassName="flex h-40 w-40 items-center justify-center overflow-hidden rounded-full border-2 border-dashed border-gold-500/50 bg-white shadow-inner"
+            />
+          </div>
+
+          {/* Terms & Conditions */}
+          <div id={`${inputId}-agree_terms`} className="sm:col-span-2">
+            <div
               className={cn(
-                'rounded-2xl border p-5 transition',
-                fieldErrors.face_image
+                'rounded-2xl border p-4 transition sm:p-5',
+                fieldErrors.agree_terms
                   ? 'border-maroon-500 bg-maroon-50/20'
-                  : 'border-cream-200 bg-cream-50/50',
+                  : 'border-cream-300 bg-cream-50/70 focus-within:border-gold-500/50',
               )}
             >
-              <span className="block text-sm font-bold text-navy-900 mb-1">
-                Face Photograph <span className="text-maroon-600">*</span>
-              </span>
-              <p className="text-xs text-ink-500 mb-4">
-                Recent clear face photograph for the admin profile.
-              </p>
-
-              <div className="flex flex-col items-center gap-4">
-                <div className="h-40 w-40 overflow-hidden rounded-xl border-2 border-dashed border-gold-500/50 bg-white flex items-center justify-center shadow-inner">
-                  {form.face_image_preview ? (
-                    <img
-                      src={form.face_image_preview}
-                      alt="Face photograph preview"
-                      className="h-full w-full object-cover"
-                    />
-                  ) : (
-                    <div className="text-center p-4">
-                      <svg
-                        className="mx-auto h-10 w-10 text-gold-500/60"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth="1.5"
-                          d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
-                        />
-                      </svg>
-                      <span className="mt-2 block text-xs text-ink-500">
-                        No photo selected
-                      </span>
-                    </div>
-                  )}
-                </div>
-
-                <input
-                  ref={facePhotoInputRef}
-                  type="file"
-                  accept="image/*"
-                  onChange={handleFaceFileSelect}
-                  className="sr-only"
-                  aria-label="Select face photograph"
+              <div className="flex items-start gap-3">
+                <Checkbox
+                  id={`${inputId}-agree-terms`}
+                  checked={form.agree_terms}
+                  onCheckedChange={(checked) => {
+                    setForm((prev) => ({ ...prev, agree_terms: checked === true }))
+                    clearFieldError('agree_terms')
+                  }}
+                  error={Boolean(fieldErrors.agree_terms)}
+                  className="mt-0.5 size-5"
+                  aria-label="Agree to Terms and Conditions"
                 />
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={() => facePhotoInputRef.current?.click()}
+                <label
+                  htmlFor={`${inputId}-agree-terms`}
+                  className="cursor-pointer text-[13px] leading-relaxed text-navy-900 sm:text-sm"
                 >
-                  <span>{form.face_image ? 'Change Photo' : 'Upload Photo'}</span>
-                </Button>
+                  I have read, understood and agree to the{' '}
+                  <button
+                    type="button"
+                    onClick={() => setTermsOpen(true)}
+                    className="font-bold text-gold-700 underline underline-offset-2 transition hover:text-gold-800"
+                  >
+                    Terms &amp; Conditions
+                  </button>{' '}
+                  governing community bio-data verification and honorary matchmaking support.
+                </label>
               </div>
-              {fieldErrors.face_image && (
+              {fieldErrors.agree_terms && (
                 <p
                   role="alert"
-                  className="mt-3 flex items-center gap-1.5 text-xs font-semibold text-maroon-600"
+                  className="mt-2 flex items-start gap-1.5 text-xs font-semibold text-maroon-600"
                 >
-                  {fieldErrors.face_image}
+                  {fieldErrors.agree_terms}
                 </p>
               )}
             </div>
           </div>
         </div>
+
+        {/* Terms & Conditions Modal */}
+        <TermsModal isOpen={termsOpen} onClose={() => setTermsOpen(false)} />
+
+        {/* Firebase Phone OTP Verification Modal */}
+        <OtpVerificationModal
+          isOpen={isOtpModalOpen}
+          mobile={form.mobile}
+          mode={otpMode}
+          onVerified={handleOtpVerified}
+          onClose={() => setIsOtpModalOpen(false)}
+          onChangeNumber={() => {
+            setIsOtpModalOpen(false)
+            document.getElementById(`${inputId}-mobile`)?.focus()
+          }}
+        />
 
         {/* Submit */}
         <div className="flex justify-center border-t border-cream-200 pt-6">

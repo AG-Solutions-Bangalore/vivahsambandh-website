@@ -8,7 +8,6 @@ export interface EnquiryPayload {
   enquiryEmail: string
   enquiryMobile: string
   enquiryService?: string
-  enquirySubject?: string
   enquiryMessage: string
   enquiryFrom?: string
   utm_medium?: string
@@ -20,13 +19,4 @@ export interface EnquiryResponse {
   status?: boolean | string
   message?: string
   data?: unknown
-}
-
-export interface NewsletterPayload {
-  newsletter_email: string
-}
-
-export interface NewsletterResponse {
-  status?: boolean | string
-  message?: string
 }

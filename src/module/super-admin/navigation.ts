@@ -16,9 +16,11 @@ import {
   Images,
   Inbox,
   LayoutDashboard,
+  Mail,
   MessageSquare,
   Quote,
   ShieldCheck,
+  Tags,
   UserCheck,
   UserPlus,
   Users,
@@ -68,6 +70,13 @@ export const PANEL_NAV_GROUPS: PanelNavGroup[] = [
           'Create, edit and publish articles, control placement, and manage metadata.',
       },
       {
+        label: 'Category',
+        to: '/panel/categories',
+        icon: Tags,
+        description:
+          'Manage the categories that group blog articles and drive the category filters.',
+      },
+      {
         label: 'Client',
         to: '/panel/clients',
         icon: Briefcase,
@@ -94,6 +103,13 @@ export const PANEL_NAV_GROUPS: PanelNavGroup[] = [
         icon: Inbox,
         description:
           'Review contact-form enquiries, track status, and export full reports.',
+      },
+      {
+        label: 'Newsletter',
+        to: '/panel/newsletter',
+        icon: Mail,
+        description:
+          'The mailing audience — every address that signed up for newsletter updates from the site and the app.',
       },
     ],
   },

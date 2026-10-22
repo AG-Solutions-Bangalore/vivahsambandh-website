@@ -1,8 +1,10 @@
 /**
  * @file src/module/super-admin/pages/BlogsPage.tsx
  * Blog management for the Super Admin Panel: list articles, search and filter
- * them, publish or unpublish, inspect a record, create a new article and edit
- * an existing one.
+ * them, publish or unpublish, and inspect a record.
+ *
+ * Creating and editing happen on their own screens — the article form is
+ * too long for a dialog — so this page only links to them.
  *
  * There is no delete: the CRM has no `BlogController::destroy()`, so
  * `DELETE /blog/{id}` always fails. Unpublishing is the way to take an
@@ -10,6 +12,7 @@
  */
 
 import { useMemo, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import {
   Eye,
   FileText,
@@ -19,7 +22,6 @@ import {
   RefreshCw,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { cn } from 'cn'
 import { PanelCard } from '../components/PanelCard'
 import { PanelPageHeader } from '../components/PanelPageHeader'
 import { PanelModal } from '../components/PanelModal'
@@ -34,34 +36,30 @@ import {
   PanelTableHeadCell,
 } from '../components/PanelTable'
 import { PanelFilterSelect } from '../components/PanelFilterSelect'
+import { CategorySelect } from '../components/CategorySelect'
 import { StatusBadge } from '../components/StatusBadge'
-import {
-  BlogEditorForm,
-  BlogPlacementChips,
-} from '../components/BlogEditorForm'
-import { blogToFormValues, emptyBlogForm, type BlogFormValues } from '../components/blogForm'
+import { StatusSwitch } from '../components/StatusSwitch'
+import { BlogPlacementChips } from '../components/BlogEditorForm'
 import { panelDescription } from '../navigation'
 import { errorMessage } from '../hook/errors'
 import { DEFAULT_PER_PAGE, useServerSearch } from '../hook/useServerList'
 import {
   useBlogQuery,
   useBlogsQuery,
-  useCreateBlogMutation,
-  useUpdateBlogMutation,
   useUpdateBlogStatusMutation,
 } from '../hook/useBlogs'
 import { formatDate } from '../utils/format'
-import type { BlogPayload, BlogRecord, BlogStatus } from '../types'
+import type { BlogRecord, BlogStatus } from '../types'
 
 const STATUS_FILTERS = ['All', 'Active', 'Inactive'] as const
 
-
-const CREATE_FORM_ID = 'blog-create-form'
-const EDIT_FORM_ID = 'blog-edit-form'
+const LIST_PATH = '/panel/blogs'
 
 export default function BlogsPage() {
+  const navigate = useNavigate()
   const { searchInput, setSearchInput, searchTerm } = useServerSearch()
   const [statusFilter, setStatusFilter] = useState<string>('All')
+  const [categoryFilter, setCategoryFilter] = useState<string>('')
   const [page, setPage] = useState(1)
 
   const {
@@ -75,16 +73,10 @@ export default function BlogsPage() {
     search: searchTerm || undefined,
     page,
     per_page: DEFAULT_PER_PAGE,
+    category_id: categoryFilter || undefined,
   })
 
-  const createMutation = useCreateBlogMutation()
-  const updateMutation = useUpdateBlogMutation()
   const statusMutation = useUpdateBlogStatusMutation()
-
-  // Editor state
-  const [isCreateOpen, setIsCreateOpen] = useState(false)
-  const [editingId, setEditingId] = useState<number | null>(null)
-  const [createValues, setCreateValues] = useState<BlogFormValues>(() => emptyBlogForm())
 
   // Inspector state
   const [inspectingId, setInspectingId] = useState<number | null>(null)
@@ -93,14 +85,6 @@ export default function BlogsPage() {
     isLoading: isLoadingDetail,
     error: inspectError,
   } = useBlogQuery(inspectingId)
-
-  // The list endpoint omits the slug, the body and the banner alt text, so
-  // the editor has to load the full record before it opens.
-  const {
-    data: editingRecord,
-    isLoading: isLoadingEdit,
-    error: editError,
-  } = useBlogQuery(editingId)
 
   // The API ignores the status parameter, so the publication state is
   // filtered here.
@@ -112,41 +96,16 @@ export default function BlogsPage() {
     [blogs, statusFilter],
   )
 
-  const hasFilters = searchInput.trim() !== '' || statusFilter !== 'All'
+  const hasFilters =
+    searchInput.trim() !== '' || statusFilter !== 'All' || categoryFilter !== ''
 
-  const handleCreateSubmit = (payload: BlogPayload) => {
-    createMutation.mutate(
-      { payload, successMessage: 'Article created successfully!' },
-      {
-        onSuccess: () => {
-          setIsCreateOpen(false)
-          setCreateValues(emptyBlogForm())
-        },
-      },
-    )
+  const handleCategoryFilterChange = (value: string) => {
+    setCategoryFilter(value)
+    setPage(1)
   }
 
-  const handleEditSubmit = (payload: BlogPayload) => {
-    if (editingId === null) return
-
-    updateMutation.mutate(
-      {
-        id: editingId,
-        payload,
-        successMessage: `Article "${payload.blog_title}" updated successfully.`,
-      },
-      {
-        onSuccess: () => {
-          setEditingId(null)
-        },
-      },
-    )
-  }
-
-  const handleToggleStatus = (blog: BlogRecord) => {
-    const nextStatus: BlogStatus = blog.status === 'Active' ? 'Inactive' : 'Active'
-
-    statusMutation.mutate(
+  const handleToggleStatus = async (blog: BlogRecord, nextStatus: BlogStatus) => {
+    await statusMutation.mutateAsync(
       {
         id: blog.id,
         status: nextStatus,
@@ -188,10 +147,7 @@ export default function BlogsPage() {
             <Button
               type="button"
               size="sm"
-              onClick={() => {
-                setCreateValues(emptyBlogForm())
-                setIsCreateOpen(true)
-              }}
+              onClick={() => navigate(`${LIST_PATH}/new`)}
               className="cursor-pointer rounded-full bg-gold-600 text-xs font-bold text-white shadow-gold hover:bg-gold-700"
             >
               <Plus className="size-4" aria-hidden />
@@ -218,6 +174,14 @@ export default function BlogsPage() {
             value={statusFilter}
             onChange={setStatusFilter}
             showStatusDots
+          />
+          <CategorySelect
+            id="filter-blog-category"
+            label="Category"
+            value={categoryFilter}
+            onChange={handleCategoryFilterChange}
+            includeAll
+            className="w-full sm:w-52"
           />
         </PanelToolbar>
 
@@ -247,6 +211,7 @@ export default function BlogsPage() {
                   onClick={() => {
                     setSearchInput('')
                     setStatusFilter('All')
+                    setCategoryFilter('')
                     setPage(1)
                   }}
                   className="mt-4 cursor-pointer rounded-full border-cream-300 text-xs font-semibold"
@@ -261,41 +226,20 @@ export default function BlogsPage() {
             caption="Blog articles with placement, status and banner"
             head={
               <>
+                <PanelTableHeadCell>SI/NO</PanelTableHeadCell>
+                <PanelTableHeadCell>Banner</PanelTableHeadCell>
                 <PanelTableHeadCell>Article</PanelTableHeadCell>
                 <PanelTableHeadCell>Placement</PanelTableHeadCell>
-                <PanelTableHeadCell>Status</PanelTableHeadCell>
-                <PanelTableHeadCell>Banner</PanelTableHeadCell>
                 <PanelTableHeadCell>Last Updated</PanelTableHeadCell>
+                <PanelTableHeadCell>Status</PanelTableHeadCell>
                 <PanelTableHeadCell align="right">Actions</PanelTableHeadCell>
               </>
             }
           >
-            {filtered.map((blog) => (
+            {filtered.map((blog, index) => (
               <tr key={blog.id} className="transition-colors hover:bg-cream-50/70">
-                <td className="max-w-md px-4 py-3.5">
-                  <p className="text-sm font-bold text-navy-900">
-                    {blog.title || 'Untitled'}
-                  </p>
-                  <p className="mt-0.5 text-[0.7rem] text-ink-500">
-                    ID: {blog.id}
-                    {blog.categories ? ` · ${blog.categories}` : ''}
-                  </p>
-                  {blog.short_description ? (
-                    <p className="mt-1 line-clamp-2 leading-relaxed text-ink-600">
-                      {blog.short_description}
-                    </p>
-                  ) : null}
-                </td>
-
-                <td className="px-4 py-3.5">
-                  <BlogPlacementChips
-                    isFront={blog.is_front}
-                    isFeatured={blog.is_featured}
-                  />
-                </td>
-
-                <td className="px-4 py-3.5">
-                  <StatusBadge status={blog.status} size="sm" />
+                <td className="px-4 py-3.5 text-xs font-bold text-navy-800">
+                  {index + 1}
                 </td>
 
                 <td className="px-4 py-3.5">
@@ -313,51 +257,66 @@ export default function BlogsPage() {
                   )}
                 </td>
 
+                <td className="max-w-md px-4 py-3.5">
+                  <p className="text-sm font-bold text-navy-900">
+                    {blog.title || 'Untitled'}
+                  </p>
+                  {blog.categories ? (
+                    <p className="mt-0.5 text-[0.7rem] text-ink-500">
+                      {blog.categories}
+                    </p>
+                  ) : null}
+                  {blog.short_description ? (
+                    <p className="mt-1 line-clamp-2 leading-relaxed text-ink-600">
+                      {blog.short_description}
+                    </p>
+                  ) : null}
+                </td>
+
+                <td className="px-4 py-3.5">
+                  <BlogPlacementChips
+                    isFront={blog.is_front}
+                    isFeatured={blog.is_featured}
+                  />
+                </td>
+
                 <td className="px-4 py-3.5 text-ink-500">
                   {formatDate(blog.updated_date ?? blog.created_date)}
+                </td>
+
+                <td className="px-4 py-3.5">
+                  <StatusSwitch
+                    status={blog.status}
+                    onStatusChange={(nextStatus) =>
+                      handleToggleStatus(blog, nextStatus)
+                    }
+                  />
                 </td>
 
                 <td className="px-4 py-3.5">
                   <div className="flex items-center justify-end gap-1.5">
                     <Button
                       type="button"
-                      size="xs"
+                      size="icon-xs"
                       variant="outline"
                       onClick={() => setInspectingId(blog.id)}
                       title="View article details"
-                      className="cursor-pointer rounded-full border-navy-200 text-[0.7rem] text-navy-900 hover:bg-navy-50"
+                      aria-label="View article details"
+                      className="cursor-pointer rounded-full border-navy-200 text-navy-700 hover:bg-navy-50"
                     >
-                      <Eye className="size-3 text-navy-700" aria-hidden />
-                      <span>View</span>
+                      <Eye className="size-3.5 text-navy-700" aria-hidden />
                     </Button>
 
                     <Button
                       type="button"
-                      size="xs"
+                      size="icon-xs"
                       variant="outline"
-                      onClick={() => setEditingId(blog.id)}
+                      onClick={() => navigate(`${LIST_PATH}/${blog.id}/edit`)}
                       title="Edit article"
-                      className="cursor-pointer rounded-full border-gold-300 bg-gold-50 text-[0.7rem] text-gold-800 hover:bg-gold-100"
+                      aria-label="Edit article"
+                      className="cursor-pointer rounded-full border-gold-300 bg-gold-50 text-gold-800 hover:bg-gold-100"
                     >
-                      <Pencil className="size-3" aria-hidden />
-                      <span>Edit</span>
-                    </Button>
-
-                    <Button
-                      type="button"
-                      size="xs"
-                      variant="outline"
-                      onClick={() => handleToggleStatus(blog)}
-                      disabled={statusMutation.isPending}
-                      title={blog.status === 'Active' ? 'Mark as inactive' : 'Mark as active'}
-                      className={cn(
-                        'cursor-pointer rounded-full text-[0.7rem]',
-                        blog.status === 'Active'
-                          ? 'border-maroon-200 bg-maroon-50 text-maroon-800 hover:bg-maroon-100'
-                          : 'border-emerald-200 bg-emerald-50 text-emerald-800 hover:bg-emerald-100',
-                      )}
-                    >
-                      {blog.status === 'Active' ? 'Unpublish' : 'Publish'}
+                      <Pencil className="size-3.5" aria-hidden />
                     </Button>
                   </div>
                 </td>
@@ -380,125 +339,6 @@ export default function BlogsPage() {
           />
         </PanelTableFooter>
       </PanelCard>
-
-      {/* Create Article Modal */}
-      <PanelModal
-        isOpen={isCreateOpen}
-        title="Create Blog Article"
-        description="Publish a new article to the blog, the home page rail or both."
-        icon={<FileText className="size-5" />}
-        size="lg"
-        onClose={() => {
-          if (!createMutation.isPending) {
-            setIsCreateOpen(false)
-            setCreateValues(emptyBlogForm())
-          }
-        }}
-        footer={
-          <>
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => {
-                setIsCreateOpen(false)
-                setCreateValues(emptyBlogForm())
-              }}
-              disabled={createMutation.isPending}
-              className="cursor-pointer rounded-full border-cream-300 text-xs font-semibold"
-            >
-              Cancel
-            </Button>
-            <Button
-              type="submit"
-              form={CREATE_FORM_ID}
-              disabled={createMutation.isPending}
-              className="cursor-pointer rounded-full bg-navy-900 px-5 text-xs font-bold text-white hover:bg-navy-700"
-            >
-              {createMutation.isPending ? (
-                <span className="flex items-center gap-2">
-                  <span className="size-3.5 animate-spin rounded-full border-2 border-white border-t-transparent" />
-                  Publishing…
-                </span>
-              ) : (
-                <span>Publish Article</span>
-              )}
-            </Button>
-          </>
-        }
-      >
-        <BlogEditorForm
-          key={`create-${isCreateOpen}`}
-          formId={CREATE_FORM_ID}
-          initialValues={createValues}
-          autoSlug
-          requireBanner
-          isSubmitting={createMutation.isPending}
-          onSubmit={handleCreateSubmit}
-        />
-      </PanelModal>
-
-      {/* Edit Article Modal */}
-      <PanelModal
-        isOpen={editingId !== null}
-        title={
-          editingRecord ? `Edit "${editingRecord.title}"` : 'Edit Blog Article'
-        }
-        description="Update the article content, placement and publication state."
-        icon={<Pencil className="size-5" />}
-        size="lg"
-        onClose={() => {
-          if (!updateMutation.isPending) setEditingId(null)
-        }}
-        footer={
-          <>
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => setEditingId(null)}
-              disabled={updateMutation.isPending}
-              className="cursor-pointer rounded-full border-cream-300 text-xs font-semibold"
-            >
-              Cancel
-            </Button>
-            <Button
-              type="submit"
-              form={EDIT_FORM_ID}
-              disabled={updateMutation.isPending || !editingRecord}
-              className="cursor-pointer rounded-full bg-navy-900 px-5 text-xs font-bold text-white hover:bg-navy-700"
-            >
-              {updateMutation.isPending ? (
-                <span className="flex items-center gap-2">
-                  <span className="size-3.5 animate-spin rounded-full border-2 border-white border-t-transparent" />
-                  Saving…
-                </span>
-              ) : (
-                <span>Save Changes</span>
-              )}
-            </Button>
-          </>
-        }
-      >
-        {isLoadingEdit ? (
-          <SkeletonText lines={6} className="py-6" />
-        ) : editError ? (
-          <p className="py-8 text-center text-xs text-maroon-600">
-            {errorMessage(editError, 'Could not load the article for editing.')}
-          </p>
-        ) : editingRecord ? (
-          <BlogEditorForm
-            key={`edit-${editingRecord.id}`}
-            formId={EDIT_FORM_ID}
-            initialValues={blogToFormValues(editingRecord)}
-            currentBannerUrl={editingRecord.banner_image ?? null}
-            isSubmitting={updateMutation.isPending}
-            onSubmit={handleEditSubmit}
-          />
-        ) : (
-          <p className="py-8 text-center text-xs text-ink-500">
-            Article record could not be found.
-          </p>
-        )}
-      </PanelModal>
 
       {/* Inspect Article Modal (GET /blog/{id}) */}
       <PanelModal
@@ -585,7 +425,6 @@ export default function BlogsPage() {
                 </span>
                 <p className="text-ink-700">
                   {inspectedRecord.categories ?? '—'}
-                  {inspectedRecord.categories_id ? ` (ID: ${inspectedRecord.categories_id})` : ''}
                 </p>
               </div>
               <div>

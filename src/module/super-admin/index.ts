@@ -13,11 +13,14 @@ export { default as FeedbackPage } from './pages/FeedbackPage'
 export { default as BlockProfilesPage } from './pages/BlockProfilesPage'
 export { default as NotificationsPage } from './pages/NotificationsPage'
 export { default as BlogsPage } from './pages/BlogsPage'
+export { default as BlogEditorPage } from './pages/BlogEditorPage'
+export { default as FaqEditorPage } from './pages/FaqEditorPage'
 export { default as BlogGalleryPage } from './pages/BlogGalleryPage'
 export { default as FaqsPage } from './pages/FaqsPage'
 export { default as TestimonialsPage } from './pages/TestimonialsPage'
 export { default as EnquiriesPage } from './pages/EnquiriesPage'
 export { default as ClientsPage } from './pages/ClientsPage'
+export { default as CategoriesPage } from './pages/CategoriesPage'
 export { PANEL_NAV_GROUPS, PANEL_NAV_ITEMS, findNavItem, panelDescription } from './navigation'
 
 export { SuperAdminLayout } from './components/SuperAdminLayout'
@@ -30,6 +33,7 @@ export { PanelModal } from './components/PanelModal'
 export { PanelSearch } from './components/PanelSearch'
 export { PanelPagination } from './components/PanelPagination'
 export { PanelFilterSelect } from './components/PanelFilterSelect'
+export { CategorySelect } from './components/CategorySelect'
 export { PanelEmpty, PanelError } from './components/PanelState'
 export {
   Skeleton,
@@ -51,6 +55,14 @@ export {
   slugify,
   type BlogFormValues,
 } from './components/blogForm'
+export { FaqEditorForm } from './components/FaqEditorForm'
+export {
+  emptyFaqForm,
+  faqFormToPayload,
+  faqToFormValues,
+  type FaqFormValues,
+  type FaqSubFormValues,
+} from './components/faqForm'
 
 export {
   SuperAdminAuthProvider,
@@ -78,5 +90,6 @@ export * from './hook/useFaqs'
 export * from './hook/useTestimonials'
 export * from './hook/useClients'
 export * from './hook/useGalleries'
+export * from './hook/useCategories'
 export * from './hook/useDashboardOverview'
 export * from './types'

@@ -87,7 +87,7 @@ function PointIcon({ index }: { index: number }) {
 }
 
 /**
- * "Built for Agarwal,Jain,Khandelwal,Maheshwari, by People Who Understand" —
+ * "Built for Our Families, by People Who Understand" —
  * mandap visual left, 4 icon points right (design's middle cream block).
  */
 export default function WhyBuilt() {
@@ -102,17 +102,7 @@ export default function WhyBuilt() {
         className="bg-jaali pointer-events-none absolute inset-0 opacity-60"
       />
       {/* Edge florals */}
-      <img
-        src={img("/images/home/flower3_image.webp")}
-        width={942}
-        height={1670}
-        alt="Decorative flower garland"
-        title="Decorative flower garland"
-        aria-hidden="true"
-        loading="lazy"
-        decoding="async"
-        className="pointer-events-none absolute left-0 bottom-0 z-0 w-20 sm:w-28 lg:w-36 h-auto max-w-[15vw] select-none opacity-95"
-      />
+     
       <img
         src={img("/images/home/flower4_image.webp")}
         width={942}

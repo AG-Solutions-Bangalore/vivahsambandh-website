@@ -36,6 +36,7 @@ import {
   PanelTableHeadCell,
 } from '../components/PanelTable'
 import { PanelFilterSelect } from '../components/PanelFilterSelect'
+import { RowStatusSelect } from '../components/RowStatusSelect'
 import { StatusActionGroup } from '../components/StatusActionGroup'
 import { StatusBadge } from '../components/StatusBadge'
 import { panelDescription } from '../navigation'
@@ -57,6 +58,10 @@ import {
 import type { EnquiryStatus } from '../types'
 
 const STATUS_FILTERS = ['All', 'Pending', 'Processing', 'Completed', 'Cancel'] as const
+
+const STATUS_OPTIONS = STATUS_FILTERS.filter(
+  (status): status is EnquiryStatus => status !== 'All',
+)
 
 
 interface StatusChangeTarget {
@@ -406,63 +411,40 @@ export default function EnquiriesPage() {
                   <div className="flex items-center justify-end gap-1.5">
                     <Button
                       type="button"
-                      size="xs"
+                      size="icon-xs"
                       variant="outline"
                       onClick={() => setInspectingId(enquiry.id)}
                       title="View enquiry details"
-                      className="cursor-pointer rounded-full border-navy-200 text-[0.7rem] text-navy-900 hover:bg-navy-50"
+                      aria-label="View enquiry details"
+                      className="cursor-pointer rounded-full border-navy-200 text-navy-700 hover:bg-navy-50"
                     >
-                      <Eye className="size-3 text-navy-700" aria-hidden />
-                      <span>View</span>
+                      <Eye className="size-3.5 text-navy-700" aria-hidden />
                     </Button>
 
-                    <StatusActionGroup
-                      compact
-                      currentStatus={enquiry.status}
-                      onSelect={(next) =>
+                    <RowStatusSelect
+                      value={enquiry.status as EnquiryStatus}
+                      options={STATUS_OPTIONS}
+                      label={`Change status for ${enquiry.full_name || enquiry.email || 'this enquiry'}`}
+                      onSelect={(nextStatus) =>
                         setStatusTarget({
                           id: enquiry.id,
-                          label: enquiry.full_name || enquiry.email || 'this enquiry',
-                          nextStatus: next as EnquiryStatus,
+                          label:
+                            enquiry.full_name || enquiry.email || 'this enquiry',
+                          nextStatus,
                         })
                       }
-                      actions={[
-                        {
-                          status: 'Pending',
-                          label: 'Pending',
-                          icon: <RotateCcw className="size-3 text-ink-500" aria-hidden />,
-                          tone: 'warn',
-                        },
-                        {
-                          status: 'Processing',
-                          label: 'Processing',
-                          icon: <Clock className="size-3 text-gold-600" aria-hidden />,
-                          tone: 'info',
-                        },
-                        {
-                          status: 'Completed',
-                          label: 'Completed',
-                          icon: <CircleCheck className="size-3 text-emerald-600" aria-hidden />,
-                          tone: 'success',
-                        },
-                        {
-                          status: 'Cancel',
-                          label: 'Cancel',
-                          icon: <CircleX className="size-3 text-maroon-600" aria-hidden />,
-                          tone: 'danger',
-                        },
-                      ]}
                     />
 
                     <Button
                       type="button"
-                      size="xs"
+                      size="icon-xs"
                       variant="outline"
                       onClick={() => setDeleteTargetId(enquiry.id)}
                       title="Delete enquiry"
-                      className="cursor-pointer rounded-full border-maroon-200 bg-maroon-50 text-[0.7rem] text-maroon-800 hover:bg-maroon-100"
+                      aria-label="Delete enquiry"
+                      className="cursor-pointer rounded-full border-maroon-200 bg-maroon-50 text-maroon-800 hover:bg-maroon-100"
                     >
-                      <Trash2 className="size-3" aria-hidden />
+                      <Trash2 className="size-3.5" aria-hidden />
                     </Button>
                   </div>
                 </td>

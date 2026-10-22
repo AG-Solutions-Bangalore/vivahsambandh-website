@@ -10,8 +10,8 @@ export const COMPANY = {
   name: 'VivahSambandh',
   legalName: 'VivahSambandh Matrimony Pvt. Ltd.',
   brandTagline: {
-    en: 'Agarwal Matrimony',
-    hi: 'अग्रवाल मैट्रिमोनी',
+    en: 'Community Matrimony',
+    hi: 'समुदाय मैट्रिमोनी',
   },
 
   supportPhoneDisplay: '+91 83107 82820',

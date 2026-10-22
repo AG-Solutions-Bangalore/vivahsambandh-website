@@ -3,14 +3,8 @@
  * Part 2 — Partner Preferences & Horoscope: astrological criteria.
  */
 
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from '@/components/ui/tooltip'
 import { Field } from '@/components/ui/field'
 import { YesNoPills } from '@/components/ui/option-pills'
-import { HelpCircle } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { useRegistrationForm } from '../context'
 import FormSection from '../FormSection'
@@ -24,9 +18,6 @@ export default function PartnerPreferencesSection() {
     fieldErrors,
     handlePillChange,
   } = useRegistrationForm()
-
-  const tooltipTrigger =
-    'inline-flex size-5 items-center justify-center rounded-full text-ink-400 transition hover:bg-gold-50 hover:text-gold-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold-500/40'
 
   return (
     <FormSection
@@ -42,24 +33,9 @@ export default function PartnerPreferencesSection() {
         >
           <Field
             id={`${baseId}-same-gotra-pills`}
-            label={t('registrationPage.form.sameGotraLabel', 'Marry in same Gotra?')}
+            label={t('registrationPage.form.sameGotraLabel', 'Marry in same Gotra')}
             required
             error={fieldErrors.will_marry_same_gotra}
-            tooltip={
-              <Tooltip>
-                <TooltipTrigger
-                  type="button"
-                  tabIndex={-1}
-                  aria-label={t('registrationPage.form.sameGotraTooltip', 'Indicate if your family permits alliances within the same paternal Gotra.')}
-                  className={tooltipTrigger}
-                >
-                  <HelpCircle className="size-3.5" aria-hidden />
-                </TooltipTrigger>
-                <TooltipContent>
-                  {t('registrationPage.form.sameGotraTooltip', 'Indicate if your family permits alliances within the same paternal Gotra.')}
-                </TooltipContent>
-              </Tooltip>
-            }
           >
             <YesNoPills
               id={`${baseId}-same-gotra-pills`}
@@ -79,24 +55,9 @@ export default function PartnerPreferencesSection() {
         >
           <Field
             id={`${baseId}-is-manglik-pills`}
-            label={t('registrationPage.form.isManglikLabel', 'Are you Manglik?')}
+            label={t('registrationPage.form.isManglikLabel', 'Are you Manglik')}
             required
             error={fieldErrors.is_manglik}
-            tooltip={
-              <Tooltip>
-                <TooltipTrigger
-                  type="button"
-                  tabIndex={-1}
-                  aria-label={t('registrationPage.form.isManglikTooltip', "Astrological Mangal Dosha positioning in the candidate's birth chart.")}
-                  className={tooltipTrigger}
-                >
-                  <HelpCircle className="size-3.5" aria-hidden />
-                </TooltipTrigger>
-                <TooltipContent>
-                  {t('registrationPage.form.isManglikTooltip', "Astrological Mangal Dosha positioning in the candidate's birth chart.")}
-                </TooltipContent>
-              </Tooltip>
-            }
           >
             <YesNoPills
               id={`${baseId}-is-manglik-pills`}
@@ -116,24 +77,9 @@ export default function PartnerPreferencesSection() {
         >
           <Field
             id={`${baseId}-will-marry-manglik-pills`}
-            label={t('registrationPage.form.willMarryManglikLabel', 'Will you marry Manglik?')}
+            label={t('registrationPage.form.willMarryManglikLabel', 'Will you marry Manglik')}
             required
             error={fieldErrors.will_marry_manglik}
-            tooltip={
-              <Tooltip>
-                <TooltipTrigger
-                  type="button"
-                  tabIndex={-1}
-                  aria-label={t('registrationPage.form.willMarryManglikTooltip', 'Indicate if willing to consider proposals from Manglik candidates.')}
-                  className={tooltipTrigger}
-                >
-                  <HelpCircle className="size-3.5" aria-hidden />
-                </TooltipTrigger>
-                <TooltipContent>
-                  {t('registrationPage.form.willMarryManglikTooltip', 'Indicate if willing to consider proposals from Manglik candidates.')}
-                </TooltipContent>
-              </Tooltip>
-            }
           >
             <YesNoPills
               id={`${baseId}-will-marry-manglik-pills`}

@@ -16,6 +16,7 @@ import { RichTextEditor } from '@/components/ui/ckeditor'
 import { cn } from 'cn'
 import type { BlogPayload, BlogStatus } from '../types'
 import { slugify, type BlogFormValues } from './blogForm'
+import { CategorySelect } from './CategorySelect'
 
 /** Field label used across the form. */
 const LABEL_CLASS =
@@ -38,6 +39,11 @@ interface BlogEditorFormProps {
    * image it already has, so the requirement is opt-in.
    */
   requireBanner?: boolean
+  /**
+   * Whether the form is in edit mode. When false (creation mode), status is
+   * not shown to the user and defaults to Active.
+   */
+  isEdit?: boolean
   isSubmitting?: boolean
   onSubmit: (payload: BlogPayload) => void
 }
@@ -48,6 +54,7 @@ export function BlogEditorForm({
   currentBannerUrl,
   autoSlug = false,
   requireBanner = false,
+  isEdit = false,
   isSubmitting = false,
   onSubmit,
 }: BlogEditorFormProps) {
@@ -55,7 +62,6 @@ export function BlogEditorForm({
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [preview, setPreview] = useState('')
   const [existingUrl, setExistingUrl] = useState<string | null>(currentBannerUrl ?? null)
-  const [slugTouched, setSlugTouched] = useState(!autoSlug)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   // Keep existingUrl in sync if prop changes
@@ -82,13 +88,8 @@ export function BlogEditorForm({
     setValues((prev) => ({
       ...prev,
       blog_title: title,
-      blog_slug: autoSlug && !slugTouched ? slugify(title) : prev.blog_slug,
+      blog_slug: autoSlug ? slugify(title) : prev.blog_slug,
     }))
-  }
-
-  const handleSlugChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setSlugTouched(true)
-    update('blog_slug', event.target.value)
   }
 
   const handleImageChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -140,7 +141,8 @@ export function BlogEditorForm({
     if (!values.blog_title.trim()) {
       next.blog_title = 'Article title is required.'
     }
-    if (!values.blog_slug.trim()) {
+    const resolvedSlug = values.blog_slug.trim() || slugify(values.blog_title)
+    if (!resolvedSlug) {
       next.blog_slug = 'Article slug is required.'
     }
     if (!values.blog_short_description.trim()) {
@@ -173,9 +175,11 @@ export function BlogEditorForm({
     if (isSubmitting) return
     if (!validate()) return
 
+    const resolvedSlug = values.blog_slug.trim() || slugify(values.blog_title)
+
     onSubmit({
       blog_title: values.blog_title.trim(),
-      blog_slug: values.blog_slug.trim(),
+      blog_slug: resolvedSlug,
       blog_short_description: values.blog_short_description.trim(),
       blog_description: values.blog_description,
       blog_categories_ids: values.blog_categories_ids.trim(),
@@ -217,11 +221,19 @@ export function BlogEditorForm({
           <Input
             id="blog-slug"
             type="text"
-            placeholder="choosing-the-right-life-partner"
+            placeholder="auto-generated-slug"
             value={values.blog_slug}
-            onChange={handleSlugChange}
-            className={INPUT_CLASS}
+            disabled
+            readOnly
+            tabIndex={-1}
+            className={cn(
+              INPUT_CLASS,
+              'cursor-not-allowed bg-cream-100/70 text-ink-600 select-none opacity-80',
+            )}
           />
+          <p className="mt-1 text-[11px] text-ink-500">
+            Auto-generated from title (disabled and non-editable).
+          </p>
           {errors.blog_slug ? (
             <p className={ERROR_CLASS}>{errors.blog_slug}</p>
           ) : null}
@@ -269,17 +281,16 @@ export function BlogEditorForm({
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
           <label htmlFor="blog-category" className={LABEL_CLASS}>
-            Category ID
+            Category
           </label>
-          <Input
+          <CategorySelect
             id="blog-category"
-            type="text"
-            placeholder="e.g. 4"
             value={values.blog_categories_ids}
-            onChange={(event) =>
-              update('blog_categories_ids', event.target.value)
-            }
-            className={INPUT_CLASS}
+            onChange={(value) => update('blog_categories_ids', value)}
+            showLabel={false}
+            placeholder="Select a category"
+            disabled={isSubmitting}
+            className="[&_button]:rounded-xl"
           />
         </div>
 
@@ -414,23 +425,30 @@ export function BlogEditorForm({
       </div>
 
       {/* Status + placement */}
-      <div className="grid gap-4 sm:grid-cols-3">
-        <div>
-          <label htmlFor="blog-status" className={LABEL_CLASS}>
-            Status
-          </label>
-          <select
-            id="blog-status"
-            value={values.blog_status}
-            onChange={(event) =>
-              update('blog_status', event.target.value as BlogStatus)
-            }
-            className="h-10 w-full cursor-pointer rounded-xl border border-cream-300 bg-cream-50/70 px-3 text-xs font-semibold text-navy-900 focus-visible:border-gold-500 focus-visible:ring-2 focus-visible:ring-gold-500/40 focus-visible:outline-none"
-          >
-            <option value="Active">Active</option>
-            <option value="Inactive">Inactive</option>
-          </select>
-        </div>
+      <div
+        className={cn(
+          'grid gap-4',
+          isEdit ? 'sm:grid-cols-3' : 'sm:grid-cols-2',
+        )}
+      >
+        {isEdit && (
+          <div>
+            <label htmlFor="blog-status" className={LABEL_CLASS}>
+              Status
+            </label>
+            <select
+              id="blog-status"
+              value={values.blog_status}
+              onChange={(event) =>
+                update('blog_status', event.target.value as BlogStatus)
+              }
+              className="h-10 w-full cursor-pointer rounded-xl border border-cream-300 bg-cream-50/70 px-3 text-xs font-semibold text-navy-900 focus-visible:border-gold-500 focus-visible:ring-2 focus-visible:ring-gold-500/40 focus-visible:outline-none"
+            >
+              <option value="Active">Active</option>
+              <option value="Inactive">Inactive</option>
+            </select>
+          </div>
+        )}
 
         <label
           htmlFor="blog-front"

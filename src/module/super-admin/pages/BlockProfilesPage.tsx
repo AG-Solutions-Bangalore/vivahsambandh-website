@@ -15,6 +15,7 @@ import { PanelSearch } from '../components/PanelSearch'
 import { PanelToolbar } from '../components/PanelToolbar'
 import { PanelEmpty, PanelError } from '../components/PanelState'
 import { PanelTableSkeleton } from '../components/PanelSkeleton'
+import { ProfileAvatar } from '../components/ProfileAvatar'
 import {
   PanelTable,
   PanelTableFooter,
@@ -153,20 +154,34 @@ export default function BlockProfilesPage() {
                 <tr key={rec.id} className="transition-colors hover:bg-cream-50/70">
                   <td className="px-4 py-3.5">
                     <div className="flex items-center gap-3">
-                      <span className="flex size-9 shrink-0 items-center justify-center rounded-full border border-maroon-200 bg-maroon-50 text-maroon-600">
-                        <ShieldAlert className="size-4" aria-hidden />
-                      </span>
+                      <ProfileAvatar
+                        src={rec.face_image}
+                        name={rec.member_name}
+                        size="md"
+                        tone="maroon"
+                      />
                       <div>
                         <p className="font-bold text-navy-900">{targetName}</p>
-                        <p className="text-[0.68rem] text-ink-400">Blocked account</p>
+                        <p className="flex items-center gap-1 text-[0.68rem] text-ink-400">
+                          <ShieldAlert className="size-3" aria-hidden />
+                          Blocked account
+                        </p>
                       </div>
                     </div>
                   </td>
 
                   <td className="px-4 py-3.5">
-                    <p className="font-semibold text-navy-900">
-                      {rec.blocked_by_name || 'System / Platform Admin'}
-                    </p>
+                    <div className="flex items-center gap-2.5">
+                      <ProfileAvatar
+                        src={rec.blocked_by_image}
+                        name={rec.blocked_by_name}
+                        size="sm"
+                        tone="navy"
+                      />
+                      <p className="font-semibold text-navy-900">
+                        {rec.blocked_by_name || 'System / Platform Admin'}
+                      </p>
+                    </div>
                   </td>
 
                   <td className="max-w-sm px-4 py-3.5">
@@ -183,17 +198,19 @@ export default function BlockProfilesPage() {
                   </td>
 
                   <td className="px-4 py-3.5">
-                    <Button
-                      type="button"
-                      size="xs"
-                      variant="outline"
-                      onClick={() => setDeleteTargetId(rec.id)}
-                      title="Delete Block Record"
-                      className="cursor-pointer rounded-full border-maroon-200 bg-maroon-50 text-[0.7rem] text-maroon-800 hover:bg-maroon-100"
-                    >
-                      <Trash2 className="size-3" aria-hidden />
-                      <span>Delete</span>
-                    </Button>
+                    <div className="flex items-center justify-end">
+                      <Button
+                        type="button"
+                        size="icon-xs"
+                        variant="outline"
+                        onClick={() => setDeleteTargetId(rec.id)}
+                        title="Delete Block Record"
+                        aria-label="Delete block record"
+                        className="cursor-pointer rounded-full border-maroon-200 bg-maroon-50 text-maroon-800 hover:bg-maroon-100"
+                      >
+                        <Trash2 className="size-3.5" aria-hidden />
+                      </Button>
+                    </div>
                   </td>
                 </tr>
               )

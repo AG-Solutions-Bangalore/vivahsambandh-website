@@ -15,8 +15,8 @@ export default function MembershipPage() {
       <MembershipPlans />
       <FeatureComparison />
       <MembershipBenefits />
-      <TestimonialSection slug="membership" tone="paper" />
-      <FaqSection slug="membership" tone="cream" showCta={false} />
+      <TestimonialSection page="membership" tone="paper" />
+      <FaqSection page="membership" tone="cream" showCta={false} />
       <MembershipCta />
     </div>
   )

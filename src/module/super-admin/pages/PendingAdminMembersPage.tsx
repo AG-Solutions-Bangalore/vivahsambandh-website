@@ -4,17 +4,16 @@
  */
 
 import { useState, useMemo } from 'react'
+import { useNavigate } from 'react-router-dom'
 import {
   UserCheck,
   RefreshCw,
-  CircleCheck,
-  CircleX,
+  Eye,
   Mail,
   MapPin,
   Phone,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { StatusBadge } from '../components/StatusBadge'
 import { ConfirmDialog } from '../components/ConfirmDialog'
 import { PanelCard } from '../components/PanelCard'
 import { PanelPageHeader } from '../components/PanelPageHeader'
@@ -29,7 +28,8 @@ import {
   PanelTableFooter,
   PanelTableHeadCell,
 } from '../components/PanelTable'
-import { StatusActionGroup } from '../components/StatusActionGroup'
+import { ProfileAvatar } from '../components/ProfileAvatar'
+import { RowStatusSelect } from '../components/RowStatusSelect'
 import { CityAssignmentModal } from '../components/CityAssignmentModal'
 import {
   usePendingAdminMembersQuery,
@@ -40,7 +40,14 @@ import { errorMessage } from '../hook/errors'
 import { DEFAULT_PER_PAGE, useServerSearch } from '../hook/useServerList'
 import type { AdminMemberStatus } from '../types'
 
+const DECISION_STATUSES: readonly AdminMemberStatus[] = [
+  'Pending',
+  'Approved',
+  'Cancel',
+]
+
 export default function PendingAdminMembersPage() {
+  const navigate = useNavigate()
   const { searchInput, setSearchInput, searchTerm } = useServerSearch()
   const [page, setPage] = useState(1)
 
@@ -220,9 +227,12 @@ export default function PendingAdminMembersPage() {
                 <tr key={admin.id} className="transition-colors hover:bg-cream-50/70">
                   <td className="px-4 py-3.5">
                     <div className="flex items-center gap-3">
-                      <span className="flex size-9 shrink-0 items-center justify-center rounded-full border border-gold-200 bg-gold-100 text-xs font-bold text-gold-900">
-                        {admin.name.charAt(0)}
-                      </span>
+                      <ProfileAvatar
+                        src={admin.face_image}
+                        name={admin.name}
+                        size="md"
+                        tone="gold"
+                      />
                       <div>
                         <p className="font-bold text-navy-900">{admin.name}</p>
                         <p className="text-[0.68rem] text-ink-400">
@@ -272,45 +282,46 @@ export default function PendingAdminMembersPage() {
                       <button
                         type="button"
                         onClick={() => handleOpenCityModal(admin.id)}
-                        className="ml-1 inline-flex cursor-pointer items-center gap-1 text-[0.68rem] font-bold text-gold-700 transition-colors hover:text-gold-600 focus-visible:ring-2 focus-visible:ring-gold-500 focus-visible:outline-none"
+                        title="Set cities"
+                        aria-label="Set cities"
+                        className="ml-1 inline-flex size-6 cursor-pointer items-center justify-center rounded-full border border-gold-200 bg-gold-50 text-gold-700 transition-colors hover:bg-gold-100 focus-visible:ring-2 focus-visible:ring-gold-500 focus-visible:outline-none"
                       >
-                        <MapPin className="size-3" aria-hidden />
-                        <span>Set Cities</span>
+                        <MapPin className="size-3.5" aria-hidden />
                       </button>
                     </div>
                   </td>
 
                   <td className="px-4 py-3.5">
-                    <StatusBadge status="Pending" />
-                  </td>
-
-                  <td className="px-4 py-3.5">
-                    <StatusActionGroup
-                      size="sm"
-                      compact
-                      currentStatus="Pending"
+                    <RowStatusSelect
+                      value="Pending"
+                      options={DECISION_STATUSES}
+                      label={`Review ${admin.name}`}
                       onSelect={(next) =>
                         setActionTarget({
                           adminId: admin.id,
                           adminName: admin.name,
-                          nextStatus: next as AdminMemberStatus,
+                          nextStatus: next,
                         })
                       }
-                      actions={[
-                        {
-                          status: 'Approved',
-                          label: 'Approve',
-                          icon: <CircleCheck className="size-3.5 text-emerald-600" aria-hidden />,
-                          tone: 'success',
-                        },
-                        {
-                          status: 'Cancel',
-                          label: 'Reject',
-                          icon: <CircleX className="size-3.5 text-maroon-600" aria-hidden />,
-                          tone: 'danger',
-                        },
-                      ]}
                     />
+                  </td>
+
+                  <td className="px-4 py-3.5">
+                    <div className="flex items-center justify-end gap-1.5">
+                      <Button
+                        type="button"
+                        size="icon-xs"
+                        variant="outline"
+                        onClick={() =>
+                          navigate(`/panel/pending-admin-members/${admin.id}`)
+                        }
+                        title="View full details"
+                        aria-label="View full admin details"
+                        className="cursor-pointer rounded-full border-navy-200 text-navy-700 hover:bg-navy-50"
+                      >
+                        <Eye className="size-3.5 text-navy-700" aria-hidden />
+                      </Button>
+                    </div>
                   </td>
                 </tr>
               )

@@ -82,6 +82,8 @@ export interface FeedbackRecord {
   message: string
   created_at?: string | null
   from_id?: number | null
+  /** Absolute URL of the submitter photograph, resolved from the API metadata. */
+  face_image?: string | null
 }
 
 /** A moderation block record. */
@@ -93,6 +95,10 @@ export interface BlockProfileRecord {
   created_at?: string | null
   member_id?: number | null
   blocked_user_id?: number | null
+  /** Absolute URL of the blocked account photograph. */
+  face_image?: string | null
+  /** Absolute URL of the reporter's photograph. */
+  blocked_by_image?: string | null
 }
 
 export interface NotificationRecord {

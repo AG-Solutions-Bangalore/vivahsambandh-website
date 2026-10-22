@@ -234,3 +234,30 @@ export async function deleteFaq(
 
   return { success: false, message: res.message || 'Failed to delete FAQ group.' }
 }
+
+export interface PageTwoOptionItem {
+  id?: number | string
+  page_two_url: string
+  page_two_name?: string | null
+  page_two_type?: string | null
+  page_two_status?: string | null
+}
+
+/**
+ * 8. Fetch dynamic page placement options (sitemap and dynamic pages)
+ */
+export async function fetchPageTwoOptions(): Promise<{
+  data: PageTwoOptionItem[]
+  error?: string
+}> {
+  const res = await request<{ data?: PageTwoOptionItem[]; blog?: PageTwoOptionItem[] }>('/getSitemap')
+  if (res.ok && res.data) {
+    const pages = Array.isArray(res.data.data) ? res.data.data : []
+    const blogs = Array.isArray(res.data.blog) ? res.data.blog : []
+    const combined = [...pages, ...blogs].filter(
+      (item) => item && typeof item.page_two_url === 'string' && item.page_two_url.trim().length > 0,
+    )
+    return { data: combined }
+  }
+  return { data: [], error: res.message }
+}

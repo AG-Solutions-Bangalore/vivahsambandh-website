@@ -7,6 +7,8 @@
  * and leaves the panel showing stale rows.
  */
 
+import { categoryKeys } from '@/module/category/hook/useCategories'
+
 export const superAdminKeys = {
   all: ['super-admin'] as const,
   adminMembers: ['super-admin', 'admin-members'] as const,
@@ -32,9 +34,17 @@ export const superAdminKeys = {
   clients: ['super-admin', 'clients'] as const,
   client: (id: number | string) =>
     ['super-admin', 'clients', 'detail', id] as const,
+  newsletter: ['super-admin', 'newsletter'] as const,
   galleries: ['super-admin', 'galleries'] as const,
   gallery: (id: number | string) =>
     ['super-admin', 'galleries', 'detail', id] as const,
+  pageTwoOptions: ['super-admin', 'page-two-options'] as const,
+  /**
+   * Categories are a shared module — the public site reads the same
+   * taxonomy — so their keys live with the module. This alias keeps the
+   * panel's invalidation idiom working.
+   */
+  categories: categoryKeys.all,
 }
 
 /**

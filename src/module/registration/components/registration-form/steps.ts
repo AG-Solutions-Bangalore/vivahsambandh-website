@@ -1,10 +1,13 @@
 /**
  * @file src/module/registration/components/registration-form/steps.ts
- * Registry of the five numbered parts of the registration form.
+ * Registry of the three numbered parts of the registration form.
  *
  * `fields` lists the form-state keys (the same keys validation.ts reports
  * under) that belong to each step, so the wizard can validate a single step
  * in isolation and can jump straight to the first incomplete step.
+ *
+ * Sections that share a step keep their own anchor ids (REGISTRATION_STEP_IDS)
+ * so deep links and scroll helpers still land on the right panel.
  */
 
 export const REGISTRATION_STEP_IDS = {
@@ -30,7 +33,7 @@ export interface RegistrationStep {
 
 export const REGISTRATION_STEPS: RegistrationStep[] = [
   {
-    id: REGISTRATION_STEP_IDS.personal,
+    id: 'registration-step-1',
     number: 1,
     shortLabelKey: 'registrationPage.form.stepPersonal',
     shortLabelFallback: 'Personal',
@@ -74,35 +77,17 @@ export const REGISTRATION_STEPS: RegistrationStep[] = [
     ],
   },
   {
-    id: REGISTRATION_STEP_IDS.preferences,
+    id: 'registration-step-2',
     number: 2,
-    shortLabelKey: 'registrationPage.form.stepPreferences',
-    shortLabelFallback: 'Preferences',
+    shortLabelKey: 'registrationPage.form.stepPreferencesPhotos',
+    shortLabelFallback: 'Preferences & Photos',
     titleKey: 'registrationPage.form.part2Title',
-    titleFallback: 'Partner Preferences & Horoscope',
-    fields: ['will_marry_same_gotra', 'is_manglik', 'will_marry_manglik'],
+    titleFallback: 'Preferences, Family & Photos',
+    fields: ['will_marry_same_gotra', 'is_manglik', 'will_marry_manglik', 'user_summary', 'full_image', 'face_image'],
   },
   {
-    id: REGISTRATION_STEP_IDS.family,
+    id: 'registration-step-3',
     number: 3,
-    shortLabelKey: 'registrationPage.form.stepFamily',
-    shortLabelFallback: 'Family',
-    titleKey: 'registrationPage.form.part3Title',
-    titleFallback: 'Family History & Summary',
-    fields: ['user_summary'],
-  },
-  {
-    id: REGISTRATION_STEP_IDS.photos,
-    number: 4,
-    shortLabelKey: 'registrationPage.form.stepPhotos',
-    shortLabelFallback: 'Photos',
-    titleKey: 'registrationPage.form.part4Title',
-    titleFallback: 'Profile Photographs',
-    fields: ['full_image', 'face_image'],
-  },
-  {
-    id: REGISTRATION_STEP_IDS.terms,
-    number: 5,
     shortLabelKey: 'registrationPage.form.stepSubmit',
     shortLabelFallback: 'Submit',
     titleKey: 'registrationPage.form.part5Title',

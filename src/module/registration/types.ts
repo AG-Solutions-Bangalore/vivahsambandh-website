@@ -38,6 +38,7 @@ export interface AdminRegisterFormData {
   mobile: string
   face_image: File | null
   face_image_preview: string
+  agree_terms: boolean
 }
 
 export interface RegistrationFormData {

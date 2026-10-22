@@ -3,17 +3,24 @@
  * Infinite auto-scroll Testimonial Marquee component without images.
  * Matches exact card design: 5 gold stars, quote mark, line-clamped review,
  * dark navy avatar circle with golden initials, name, and verified badge.
- * Conditionally renders ONLY if live API data (or fallbackItems) exist; otherwise hides completely.
+ * Renders ONLY when the API returns reviews for this page; otherwise hides completely.
  */
 
 import { useTranslation } from 'react-i18next'
 import Reveal from '../../../components/motion/Reveal'
+import { Bar, Text } from '../../../components/skeletons/skeletonShapes'
 import { parseRating, useTestimonialsQuery } from '../hook/useTestimonials'
 import { useAppLanguage } from '../../../i18n/useAppLanguage'
 import type { AppLang } from '../../../i18n'
 import type { TestimonialItem } from '../types'
 
 export interface TestimonialSectionProps {
+  /**
+   * Canonical route of the page ("about", "download", ...). The CRM slug
+   * chain is derived from it, so the rail only shows this page's own reviews.
+   */
+  page?: string
+  /** Explicit CRM slug — used when `page` is not given. */
   slug?: string
   titleA?: string
   titleB?: string
@@ -21,7 +28,6 @@ export interface TestimonialSectionProps {
   eyebrow?: string
   id?: string
   tone?: 'navy' | 'cream' | 'paper'
-  fallbackItems?: TestimonialItem[]
 }
 
 function StarIcon() {
@@ -123,7 +129,63 @@ function TestimonialCard({ item, lang }: { item: TestimonialItem; lang: AppLang 
   )
 }
 
+/**
+ * Placeholder for the review rail while the API call is in flight.
+ *
+ * Without it the section rendered nothing at all, so the page collapsed to
+ * zero height and jumped once the cards landed.
+ */
+function TestimonialSkeleton({ tone }: { tone: 'navy' | 'cream' | 'paper' }) {
+  const dark = tone === 'navy'
+  const bgCls =
+    tone === 'navy'
+      ? 'bg-[#0B1526]'
+      : tone === 'cream'
+        ? 'bg-[#FFFBF2]'
+        : 'bg-cream-50'
+  const tone_ = dark ? ('dark' as const) : ('light' as const)
+
+  return (
+    <section
+      aria-busy="true"
+      role="status"
+      aria-label="Loading reviews"
+      className={`relative overflow-hidden py-14 sm:py-16 md:py-20 ${bgCls}`}
+    >
+      <div className="section-pad relative z-10">
+        <div className="mx-auto max-w-2xl space-y-3 text-center">
+          <Bar tone={tone_} className="mx-auto h-3 w-28 rounded-full bg-gold-200/80" />
+          <Bar tone={tone_} className="mx-auto h-9 w-3/4 rounded-lg sm:h-11" />
+          <Bar tone={tone_} className="mx-auto h-3.5 w-3/4 rounded" />
+        </div>
+      </div>
+
+      <div className="relative mt-10 sm:mt-12 overflow-hidden py-4">
+        <div className="flex gap-6 px-4">
+          {[0, 1, 2].map((index) => (
+            <div
+              key={index}
+              className="w-[320px] shrink-0 space-y-4 rounded-2xl border border-slate-100 bg-white p-6 shadow-[0_8px_30px_rgb(0,0,0,0.12)] sm:w-[360px] sm:p-7 md:w-[390px]"
+            >
+              <Bar className="h-4 w-24" />
+              <Text lines={3} />
+              <div className="flex items-center gap-3 border-t border-slate-100 pt-4">
+                <Bar className="size-11 rounded-full" />
+                <div className="flex-1 space-y-1.5">
+                  <Bar className="h-3.5 w-28" />
+                  <Bar className="h-2.5 w-20" />
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
+
 export default function TestimonialSection({
+  page,
   slug = 'home',
   titleA,
   titleB,
@@ -131,22 +193,25 @@ export default function TestimonialSection({
   eyebrow,
   id = 'testimonials',
   tone = 'navy',
-  fallbackItems,
 }: TestimonialSectionProps) {
   const { t } = useTranslation()
   const { lang } = useAppLanguage()
-  const { data: apiResponse } = useTestimonialsQuery(slug)
+  const { data: apiResponse, isPending } = useTestimonialsQuery(slug, {
+    page,
+  })
 
-  // Strictly use items from API or passed fallbackItems
+  // Strictly the API rows for this page — no mock data, no other page's reviews.
   const apiItems = apiResponse?.data?.filter(
     (item) => item.testimonial_description || item.testimonial_client_name,
   )
 
-  const items = apiItems && apiItems.length > 0 ? apiItems : (fallbackItems ?? [])
+  const items = apiItems ?? []
 
   // If no data comes for this slug, hide the component completely (do not render default mock data)
   if (!items || items.length === 0) {
-    return null
+    // Still loading: hold the section's place with a placeholder instead of
+    // collapsing it — the page must not jump when the reviews arrive.
+    return isPending ? <TestimonialSkeleton tone={tone} /> : null
   }
 
   // Duplicate items for seamless 50% infinite translation loop

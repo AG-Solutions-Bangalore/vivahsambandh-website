@@ -2,6 +2,7 @@ import { useQuery, type UseQueryOptions } from '@tanstack/react-query'
 import { getCompany } from '../api/company.api'
 import type { CompanyResponse } from '../types'
 import { COMPANY, getCompanyAddress } from '../../../constants/company'
+import { resolveImageUrl } from '../../../lib/api/apiClient'
 
 export const COMPANY_QUERY_KEY = ['company'] as const
 
@@ -33,8 +34,9 @@ export function useCompanyDetails(lang?: string) {
   const address = live?.company_address?.trim() || fallbackAddress
   const name = live?.company_name?.trim() || COMPANY.name
 
-  const companyLogoBase = data?.image_url?.find((img) => img.image_for === 'Company')?.image_url
-  const logoUrl = live?.company_logo && companyLogoBase ? `${companyLogoBase}${live.company_logo}` : undefined
+  const logoUrl = live?.company_logo?.trim()
+    ? (resolveImageUrl(live.company_logo, data?.image_url, 'Company') ?? undefined)
+    : undefined
 
   return {
     phone,

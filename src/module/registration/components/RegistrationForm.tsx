@@ -2,15 +2,17 @@
  * @file src/module/registration/components/RegistrationForm.tsx
  * Complete VivahSambandh Registration Form — step-by-step wizard shell.
  *
- * The five numbered parts are shown one at a time so the form never reads as
+ * The three numbered parts are shown one at a time so the form never reads as
  * one endless wall of inputs:
  *   Step 1  PersonalDetailsSection      — personal & family details
  *   Step 2  PartnerPreferencesSection   — horoscope & partner preferences
- *   Step 3  FamilySummarySection        — family history summary
- *   Step 4  PhotosSection               — photographs with interactive cropper
- *   Step 5  TermsSubmitSection          — terms agreement
+ *           FamilySummarySection        — family history summary
+ *           PhotosSection               — photographs with interactive cropper
+ *   Step 3  TermsSubmitSection          — terms agreement
  *
- * State, handlers and validation live in registration-form/context.tsx.
+ * Steps unlock in order: you cannot open a later step until every step before
+ * it validates. State, handlers and validation live in
+ * registration-form/context.tsx.
  */
 
 import { TooltipProvider } from '@/components/ui/tooltip'
@@ -52,6 +54,7 @@ function RegistrationFormInner() {
     currentStep,
     goToStep,
     validateStep,
+    validateStepsBefore,
     validateAllSteps,
     isFormFullyFilled,
     isSubmitting,
@@ -83,7 +86,13 @@ function RegistrationFormInner() {
     scrollToStepTop()
   }
 
+  // Stepper jumps follow the same rule as Continue: a later step only opens
+  // once every earlier step validates. Otherwise reveal the first gap instead.
   const handleStepSelect = (step: number) => {
+    if (step > currentStep && !validateStepsBefore(step)) {
+      scrollToStepTop()
+      return
+    }
     goToStep(step)
     scrollToStepTop()
   }
@@ -131,10 +140,14 @@ function RegistrationFormInner() {
         <form noValidate onSubmit={handleWizardSubmit}>
           <div key={currentStep} className="animate-step-in">
             {currentStep === 0 && <PersonalDetailsSection />}
-            {currentStep === 1 && <PartnerPreferencesSection />}
-            {currentStep === 2 && <FamilySummarySection />}
-            {currentStep === 3 && <PhotosSection />}
-            {currentStep === 4 && <TermsSubmitSection />}
+            {currentStep === 1 && (
+              <div className="space-y-6">
+                <PartnerPreferencesSection />
+                <FamilySummarySection />
+                <PhotosSection />
+              </div>
+            )}
+            {currentStep === 2 && <TermsSubmitSection />}
           </div>
 
           <FormWizardNav

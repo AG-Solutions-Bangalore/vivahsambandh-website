@@ -1,25 +1,27 @@
-import { useEffect, useRef, lazy, Suspense } from 'react'
+import { lazy, Suspense, useEffect, useRef, type ReactNode } from 'react'
+import { Toaster } from 'react-hot-toast'
 import { useTranslation } from 'react-i18next'
-import { Route, Routes, useLocation, Navigate } from 'react-router-dom'
+import { Navigate, Route, Routes, useLocation } from 'react-router-dom'
+import DropdownScrollGuard from './components/common/DropdownScrollGuard'
 import Footer from './components/Footer'
 import Header from './components/Header'
 import SmoothScroll from './components/motion/SmoothScroll'
-import { getLenis, resolveHashId, scrollToAnchor } from './lib/scroll'
+import { RouteSkeleton } from './components/skeletons/routeSkeleton'
+import type { AppLang } from './i18n'
+import { QueryProvider } from './lib/api/queryClient'
 import { DEFERRED_SECTION_IDS, whenSectionReady } from './lib/deferredSections'
 import { refreshScrollTriggers } from './lib/gsap-setup'
+import { getLenis, resolveHashId, scrollToAnchor } from './lib/scroll'
 import HomePage from './module/home/pages/HomePage'
-import { QueryProvider } from './lib/api/queryClient'
 import {
   SuperAdminAuthProvider,
   SuperAdminGuard,
 } from './module/super-admin/context/SuperAdminAuthContext'
-import { Toaster } from 'react-hot-toast'
-import type { AppLang } from './i18n'
 
 // Code-split non-home routes so the initial homepage bundle is feather-light
 const AboutPage = lazy(() => import('./module/about/pages/AboutPage'))
 const StoriesPage = lazy(() => import('./module/stories/pages/StoriesPage'))
-const MembershipPage = lazy(() => import('./module/membership/pages/MembershipPage'))
+// const MembershipPage = lazy(() => import('./module/membership/pages/MembershipPage'))
 const BlogsPage = lazy(() => import('./module/blog/pages/BlogsPage'))
 const BlogDetailPage = lazy(() => import('./module/blog/pages/BlogDetailPage'))
 const ContactPage = lazy(() => import('./module/contact/pages/ContactPage'))
@@ -51,6 +53,12 @@ const MembersPage = lazy(() => import('./module/super-admin/pages/MembersPage'))
 const PendingMembersPage = lazy(
   () => import('./module/super-admin/pages/PendingMembersPage'),
 )
+const MemberDetailPage = lazy(
+  () => import('./module/super-admin/pages/MemberDetailPage'),
+)
+const AdminMemberDetailPage = lazy(
+  () => import('./module/super-admin/pages/AdminMemberDetailPage'),
+)
 const FeedbackPage = lazy(() => import('./module/super-admin/pages/FeedbackPage'))
 const BlockProfilesPage = lazy(
   () => import('./module/super-admin/pages/BlockProfilesPage'),
@@ -71,6 +79,18 @@ const PanelTestimonialsPage = lazy(
 )
 const PanelClientsPage = lazy(
   () => import('./module/super-admin/pages/ClientsPage'),
+)
+const PanelCategoriesPage = lazy(
+  () => import('./module/super-admin/pages/CategoriesPage'),
+)
+const PanelBlogEditorPage = lazy(
+  () => import('./module/super-admin/pages/BlogEditorPage'),
+)
+const PanelFaqEditorPage = lazy(
+  () => import('./module/super-admin/pages/FaqEditorPage'),
+)
+const PanelNewsletterPage = lazy(
+  () => import('./module/super-admin/newsletter/pages/NewsletterPage'),
 )
 
 /**
@@ -130,7 +150,20 @@ function ScrollManager() {
 export default function App() {
   const { i18n } = useTranslation()
   const { pathname } = useLocation()
-  const isPanelRoute = pathname.startsWith('/panel') || pathname === '/panel-login'
+  const isPanelRoute = pathname.startsWith('/panel') || pathname === '/crm-login'
+
+  /**
+   * Panel screens all sit inside the same guard + layout shell. The editor
+   * screens are long forms, so they get a screen of their own instead of a
+   * dialog — this wraps whichever one they render.
+   */
+  const panelScreen = (screen: ReactNode) => (
+    <SuperAdminGuard>
+      <Suspense fallback={null}>
+        <SuperAdminLayout>{screen}</SuperAdminLayout>
+      </Suspense>
+    </SuperAdminGuard>
+  )
 
   // Translated copy changes layout heights → re-measure ScrollTriggers.
   useEffect(() => {
@@ -145,17 +178,14 @@ export default function App() {
     <QueryProvider>
       <SuperAdminAuthProvider>
         <Toaster />
+        <DropdownScrollGuard />
         {isPanelRoute ? (
           <div className="min-h-screen bg-cream-50">
             <Routes>
               {/* Super Admin Login */}
               <Route
-                path="/panel-login"
-                element={
-                  <Suspense fallback={null}>
-                    <PanelLoginPage />
-                  </Suspense>
-                }
+                path="/crm-login"
+                element={<PanelLoginPage />}
               />
 
               {/* Protected Super Admin Panel Routes */}
@@ -188,12 +218,36 @@ export default function App() {
                 }
               />
               <Route
+                path="/panel/admin-members/:id"
+                element={
+                  <SuperAdminGuard>
+                    <Suspense fallback={null}>
+                      <SuperAdminLayout>
+                        <AdminMemberDetailPage />
+                      </SuperAdminLayout>
+                    </Suspense>
+                  </SuperAdminGuard>
+                }
+              />
+              <Route
                 path="/panel/pending-admin-members"
                 element={
                   <SuperAdminGuard>
                     <Suspense fallback={null}>
                       <SuperAdminLayout>
                         <PendingAdminMembersPage />
+                      </SuperAdminLayout>
+                    </Suspense>
+                  </SuperAdminGuard>
+                }
+              />
+              <Route
+                path="/panel/pending-admin-members/:id"
+                element={
+                  <SuperAdminGuard>
+                    <Suspense fallback={null}>
+                      <SuperAdminLayout>
+                        <AdminMemberDetailPage pending />
                       </SuperAdminLayout>
                     </Suspense>
                   </SuperAdminGuard>
@@ -212,12 +266,36 @@ export default function App() {
                 }
               />
               <Route
+                path="/panel/members/:id"
+                element={
+                  <SuperAdminGuard>
+                    <Suspense fallback={null}>
+                      <SuperAdminLayout>
+                        <MemberDetailPage />
+                      </SuperAdminLayout>
+                    </Suspense>
+                  </SuperAdminGuard>
+                }
+              />
+              <Route
                 path="/panel/pending-members"
                 element={
                   <SuperAdminGuard>
                     <Suspense fallback={null}>
                       <SuperAdminLayout>
                         <PendingMembersPage />
+                      </SuperAdminLayout>
+                    </Suspense>
+                  </SuperAdminGuard>
+                }
+              />
+              <Route
+                path="/panel/pending-members/:id"
+                element={
+                  <SuperAdminGuard>
+                    <Suspense fallback={null}>
+                      <SuperAdminLayout>
+                        <MemberDetailPage pending />
                       </SuperAdminLayout>
                     </Suspense>
                   </SuperAdminGuard>
@@ -289,6 +367,16 @@ export default function App() {
                 }
               />
 
+              {/* The article form is too long for a dialog — it gets its own screen. */}
+              <Route
+                path="/panel/blogs/new"
+                element={panelScreen(<PanelBlogEditorPage />)}
+              />
+              <Route
+                path="/panel/blogs/:id/edit"
+                element={panelScreen(<PanelBlogEditorPage />)}
+              />
+
               <Route
                 path="/panel/enquiries"
                 element={
@@ -313,6 +401,16 @@ export default function App() {
                     </Suspense>
                   </SuperAdminGuard>
                 }
+              />
+
+              {/* A FAQ group holds a stack of questions — it needs a full page. */}
+              <Route
+                path="/panel/faqs/new"
+                element={panelScreen(<PanelFaqEditorPage />)}
+              />
+              <Route
+                path="/panel/faqs/:id/edit"
+                element={panelScreen(<PanelFaqEditorPage />)}
               />
 
               <Route
@@ -341,6 +439,32 @@ export default function App() {
                 }
               />
 
+              <Route
+                path="/panel/categories"
+                element={
+                  <SuperAdminGuard>
+                    <Suspense fallback={null}>
+                      <SuperAdminLayout>
+                        <PanelCategoriesPage />
+                      </SuperAdminLayout>
+                    </Suspense>
+                  </SuperAdminGuard>
+                }
+              />
+
+              <Route
+                path="/panel/newsletter"
+                element={
+                  <SuperAdminGuard>
+                    <Suspense fallback={null}>
+                      <SuperAdminLayout>
+                        <PanelNewsletterPage />
+                      </SuperAdminLayout>
+                    </Suspense>
+                  </SuperAdminGuard>
+                }
+              />
+
               {/* Fallback for unmapped panel URLs */}
               <Route
                 path="/panel/*"
@@ -354,255 +478,148 @@ export default function App() {
               <LanguageSync />
               <ScrollManager />
               <Header />
+              {/* Offset for the fixed header (h-16 + 1px border) so page
+                  content starts exactly where it did with the sticky header. */}
+              <div className="h-[65px]" aria-hidden="true" />
               <main>
-                <Routes>
-                  {/* Critical Homepage routes stay static & instant */}
-                  <Route path="/" element={<HomePage />} />
-                  <Route path="/hi" element={<HomePage />} />
+                {/*
+                  One boundary for the whole public route tree: every page
+                  below is a lazy chunk, and the fallback is a placeholder
+                  shaped like the page that is loading. A per-route boundary
+                  with a null fallback left the content area empty while the
+                  chunk downloaded - the visitor saw the header and footer
+                  with a hole in between.
+                */}
+                <Suspense fallback={<RouteSkeleton />}>
+                  <Routes>
+                    {/* Critical Homepage routes stay static & instant */}
+                    <Route path="/" element={<HomePage />} />
+                    <Route path="/hi" element={<HomePage />} />
 
-                  {/* Other routes split into isolated on-demand chunks */}
-                  <Route
-                    path="/about"
-                    element={
-                      <Suspense fallback={null}>
-                        <AboutPage />
-                      </Suspense>
-                    }
-                  />
-                  <Route
-                    path="/hi/about"
-                    element={
-                      <Suspense fallback={null}>
-                        <AboutPage />
-                      </Suspense>
-                    }
-                  />
-                  <Route
-                    path="/stories"
-                    element={
-                      <Suspense fallback={null}>
-                        <StoriesPage />
-                      </Suspense>
-                    }
-                  />
-                  <Route
-                    path="/hi/stories"
-                    element={
-                      <Suspense fallback={null}>
-                        <StoriesPage />
-                      </Suspense>
-                    }
-                  />
-                  <Route
-                    path="/success-stories"
-                    element={
-                      <Suspense fallback={null}>
-                        <StoriesPage />
-                      </Suspense>
-                    }
-                  />
-                  <Route
-                    path="/hi/success-stories"
-                    element={
-                      <Suspense fallback={null}>
-                        <StoriesPage />
-                      </Suspense>
-                    }
-                  />
-                  <Route
-                    path="/membership"
-                    element={
-                      <Suspense fallback={null}>
-                        <MembershipPage />
-                      </Suspense>
-                    }
-                  />
-                  <Route
-                    path="/hi/membership"
-                    element={
-                      <Suspense fallback={null}>
-                        <MembershipPage />
-                      </Suspense>
-                    }
-                  />
-                  <Route
-                    path="/contact"
-                    element={
-                      <Suspense fallback={null}>
-                        <ContactPage />
-                      </Suspense>
-                    }
-                  />
-                  <Route
-                    path="/hi/contact"
-                    element={
-                      <Suspense fallback={null}>
-                        <ContactPage />
-                      </Suspense>
-                    }
-                  />
-                  <Route
-                    path="/download"
-                    element={
-                      <Suspense fallback={null}>
-                        <DownloadPage />
-                      </Suspense>
-                    }
-                  />
-                  <Route
-                    path="/hi/download"
-                    element={
-                      <Suspense fallback={null}>
-                        <DownloadPage />
-                      </Suspense>
-                    }
-                  />
-                  <Route
-                    path="/registration"
-                    element={
-                      <Suspense fallback={null}>
-                        <RegistrationPage />
-                      </Suspense>
-                    }
-                  />
-                  <Route
-                    path="/hi/registration"
-                    element={
-                      <Suspense fallback={null}>
-                        <RegistrationPage />
-                      </Suspense>
-                    }
-                  />
-                  <Route
-                    path="/register"
-                    element={
-                      <Suspense fallback={null}>
-                        <RegistrationPage />
-                      </Suspense>
-                    }
-                  />
-                  <Route
-                    path="/hi/register"
-                    element={
-                      <Suspense fallback={null}>
-                        <RegistrationPage />
-                      </Suspense>
-                    }
-                  />
-                  <Route
-                    path="/admin-register"
-                    element={
-                      <Suspense fallback={null}>
-                        <AdminRegisterPage />
-                      </Suspense>
-                    }
-                  />
-                  <Route
-                    path="/hi/admin-register"
-                    element={
-                      <Suspense fallback={null}>
-                        <AdminRegisterPage />
-                      </Suspense>
-                    }
-                  />
-                  <Route
-                    path="/blogs"
-                    element={
-                      <Suspense fallback={null}>
-                        <BlogsPage />
-                      </Suspense>
-                    }
-                  />
-                  <Route
-                    path="/hi/blogs"
-                    element={
-                      <Suspense fallback={null}>
-                        <BlogsPage />
-                      </Suspense>
-                    }
-                  />
-                  <Route
-                    path="/blogs/:slug"
-                    element={
-                      <Suspense fallback={null}>
-                        <BlogDetailPage />
-                      </Suspense>
-                    }
-                  />
-                  <Route
-                    path="/hi/blogs/:slug"
-                    element={
-                      <Suspense fallback={null}>
-                        <BlogDetailPage />
-                      </Suspense>
-                    }
-                  />
-                  <Route
-                    path="/privacy"
-                    element={
-                      <Suspense fallback={null}>
-                        <PrivacyPage />
-                      </Suspense>
-                    }
-                  />
-                  <Route
-                    path="/hi/privacy"
-                    element={
-                      <Suspense fallback={null}>
-                        <PrivacyPage />
-                      </Suspense>
-                    }
-                  />
-                  <Route
-                    path="/terms"
-                    element={
-                      <Suspense fallback={null}>
-                        <TermsPage />
-                      </Suspense>
-                    }
-                  />
-                  <Route
-                    path="/hi/terms"
-                    element={
-                      <Suspense fallback={null}>
-                        <TermsPage />
-                      </Suspense>
-                    }
-                  />
-                  <Route
-                    path="/guidelines"
-                    element={
-                      <Suspense fallback={null}>
-                        <GuidelinesPage />
-                      </Suspense>
-                    }
-                  />
-                  <Route
-                    path="/hi/guidelines"
-                    element={
-                      <Suspense fallback={null}>
-                        <GuidelinesPage />
-                      </Suspense>
-                    }
-                  />
-                  <Route
-                    path="/help-center"
-                    element={
-                      <Suspense fallback={null}>
-                        <HelpCenterPage />
-                      </Suspense>
-                    }
-                  />
-                  <Route
-                    path="/hi/help-center"
-                    element={
-                      <Suspense fallback={null}>
-                        <HelpCenterPage />
-                      </Suspense>
-                    }
-                  />
-                  <Route path="*" element={<HomePage />} />
-                </Routes>
+                    {/* Other routes split into isolated on-demand chunks */}
+                    <Route
+                      path="/about"
+                      element={<AboutPage />}
+                    />
+                    <Route
+                      path="/hi/about"
+                      element={<AboutPage />}
+                    />
+                    <Route
+                      path="/stories"
+                      element={<StoriesPage />}
+                    />
+                    <Route
+                      path="/hi/stories"
+                      element={<StoriesPage />}
+                    />
+                    <Route
+                      path="/success-stories"
+                      element={<StoriesPage />}
+                    />
+                    <Route
+                      path="/hi/success-stories"
+                      element={<StoriesPage />}
+                    />
+                    {/* <Route
+                      path="/membership"
+                      element={<MembershipPage />}
+                    />
+                    <Route
+                      path="/hi/membership"
+                      element={<MembershipPage />}
+                    /> */}
+                    <Route
+                      path="/contact"
+                      element={<ContactPage />}
+                    />
+                    <Route
+                      path="/hi/contact"
+                      element={<ContactPage />}
+                    />
+                    <Route
+                      path="/download"
+                      element={<DownloadPage />}
+                    />
+                    <Route
+                      path="/hi/download"
+                      element={<DownloadPage />}
+                    />
+                    <Route
+                      path="/registration"
+                      element={<RegistrationPage />}
+                    />
+                    <Route
+                      path="/hi/registration"
+                      element={<RegistrationPage />}
+                    />
+                    <Route
+                      path="/register"
+                      element={<RegistrationPage />}
+                    />
+                    <Route
+                      path="/hi/register"
+                      element={<RegistrationPage />}
+                    />
+                    <Route
+                      path="/admin-register"
+                      element={<AdminRegisterPage />}
+                    />
+                    <Route
+                      path="/hi/admin-register"
+                      element={<AdminRegisterPage />}
+                    />
+                    <Route
+                      path="/blogs"
+                      element={<BlogsPage />}
+                    />
+                    <Route
+                      path="/hi/blogs"
+                      element={<BlogsPage />}
+                    />
+                    <Route
+                      path="/blogs/:slug"
+                      element={<BlogDetailPage />}
+                    />
+                    <Route
+                      path="/hi/blogs/:slug"
+                      element={<BlogDetailPage />}
+                    />
+                    <Route
+                      path="/privacy"
+                      element={<PrivacyPage />}
+                    />
+                    <Route
+                      path="/hi/privacy"
+                      element={<PrivacyPage />}
+                    />
+                    <Route
+                      path="/terms"
+                      element={<TermsPage />}
+                    />
+                    <Route
+                      path="/hi/terms"
+                      element={<TermsPage />}
+                    />
+                    <Route
+                      path="/guidelines"
+                      element={<GuidelinesPage />}
+                    />
+                    <Route
+                      path="/hi/guidelines"
+                      element={<GuidelinesPage />}
+                    />
+                    <Route
+                      path="/help-center"
+                      element={<HelpCenterPage />}
+                    />
+                    <Route
+                      path="/hi/help-center"
+                      element={<HelpCenterPage />}
+                    />
+                    <Route path="*" element={<HomePage />} />
+                  </Routes>
+                </Suspense>
               </main>
               <Footer />
             </div>

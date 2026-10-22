@@ -15,8 +15,8 @@ export default function StoriesPage() {
       <StoryStats />
       <FeaturedStory />
       <StoriesGrid />
-      <TestimonialSection slug="stories" tone="paper" />
-      <FaqSection slug="stories" tone="cream" />
+      <TestimonialSection page="stories" tone="paper" />
+      <FaqSection page="stories" tone="cream" />
       <ShareStoryCta />
     </div>
   )

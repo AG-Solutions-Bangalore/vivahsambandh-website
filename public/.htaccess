@@ -66,6 +66,9 @@ Options -Indexes
 <FilesMatch "\.json(\.gz|\.br)?$">
   ForceType application/json
 </FilesMatch>
+<FilesMatch "\.xml(\.gz|\.br)?$">
+  ForceType application/xml
+</FilesMatch>
 
 # Correct MIME types and encodings
 <IfModule mod_mime.c>
@@ -83,6 +86,7 @@ Options -Indexes
   AddType font/woff2 .woff2
   AddType font/woff .woff
   AddType text/plain .txt
+  AddType application/xml .xml
 </IfModule>
 
 # ——— On-the-fly compression fallback (assets without precompressed twins) ———

@@ -20,6 +20,14 @@ export interface StatusTone {
 }
 
 export const STATUS_TONES: Record<string, StatusTone> = {
+  active: {
+    chip: 'border-emerald-200 bg-emerald-50 text-emerald-800',
+    dot: 'bg-emerald-500 ring-2 ring-emerald-200', dotPlain: 'bg-emerald-500',
+  },
+  inactive: {
+    chip: 'border-cream-300 bg-cream-100 text-ink-500',
+    dot: 'bg-ink-400 ring-2 ring-cream-300', dotPlain: 'bg-ink-400',
+  },
   approved: {
     chip: 'border-emerald-200 bg-emerald-50 text-emerald-800',
     dot: 'bg-emerald-500 ring-2 ring-emerald-200', dotPlain: 'bg-emerald-500',

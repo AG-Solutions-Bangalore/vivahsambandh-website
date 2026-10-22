@@ -4,6 +4,7 @@
  */
 
 export * from '@/lib/api'
+export * from '@/module/category'
 export * from '@/module/company'
 export * from '@/module/blog'
 export * from '@/module/faq'

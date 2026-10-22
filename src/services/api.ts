@@ -84,6 +84,11 @@ async function executeRequest<T = unknown>(
 
   if (session?.token) {
     headers['Authorization'] = `Bearer ${session.token}`
+  } else if (API_SECRET_KEY) {
+    // No panel session means this is a public read. The CRM accepts the
+    // secret key in the `Authorization` header too — the same convention
+    // `apiFetch` uses — so public routes work without signing in.
+    headers['Authorization'] = API_SECRET_KEY
   }
 
   let finalBody: BodyInit | undefined = undefined

@@ -6,5 +6,5 @@
 import { FaqSection as CommonFaq } from '../../faq'
 
 export default function FaqSection() {
-  return <CommonFaq slug="home" id="faq" tone="cream" />
+  return <CommonFaq page="home" id="faq" tone="cream" />
 }

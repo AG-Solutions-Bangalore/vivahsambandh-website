@@ -2,7 +2,6 @@ import { useState, type FormEvent, type ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import Reveal from '../../../components/motion/Reveal'
 import { useEnquiryMutation } from '../hook/useEnquiry'
-import { getEnquiryFrom, getUtmParams } from '../../../lib/api/utm'
 import { img } from '../../../lib/image'
 import {
   sanitizeName,
@@ -65,7 +64,6 @@ function Field({
  */
 export default function MessageForm() {
   const { t } = useTranslation()
-  const subjectOptions = (t('contactPage.subjectOptions', { returnObjects: true }) as string[]) || []
   const [sent, setSent] = useState(false)
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({})
@@ -73,7 +71,6 @@ export default function MessageForm() {
     name: '',
     email: '',
     phone: '',
-    subject: '',
     message: '',
   })
   const enquiryMutation = useEnquiryMutation()
@@ -88,7 +85,7 @@ export default function MessageForm() {
   }
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>,
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     const { name, value } = e.target
     clearFieldError(name)
@@ -131,16 +128,12 @@ export default function MessageForm() {
     const phoneRes = formData.phone
       ? validateIndianMobile(formData.phone, false, t('contactPage.phone') || 'Mobile Number')
       : { valid: true }
-    const subjectRes = formData.subject.trim()
-      ? { valid: true }
-      : { valid: false, error: 'Please select a subject' }
     const messageRes = validateSafeText(formData.message, t('contactPage.message') || 'Message', true, 10, 1000)
 
     const newErrors: Record<string, string> = {}
     if (!nameRes.valid && nameRes.error) newErrors.name = nameRes.error
     if (!emailRes.valid && emailRes.error) newErrors.email = emailRes.error
     if (!phoneRes.valid && phoneRes.error) newErrors.phone = phoneRes.error
-    if (!subjectRes.valid && subjectRes.error) newErrors.subject = subjectRes.error
     if (!messageRes.valid && messageRes.error) newErrors.message = messageRes.error
 
     if (Object.keys(newErrors).length > 0) {
@@ -153,10 +146,8 @@ export default function MessageForm() {
         enquiryFullName: formData.name.trim(),
         enquiryEmail: formData.email.trim(),
         enquiryMobile: formData.phone.trim(),
-        enquirySubject: formData.subject.trim(),
         enquiryMessage: formData.message.trim(),
-        enquiryFrom: getEnquiryFrom('Contact Page'),
-        ...getUtmParams(),
+        enquiryFrom: 'contact',
       })
       setSent(true)
       setFieldErrors({})
@@ -164,7 +155,6 @@ export default function MessageForm() {
         name: '',
         email: '',
         phone: '',
-        subject: '',
         message: '',
       })
     } catch (err) {
@@ -261,48 +251,25 @@ export default function MessageForm() {
                   aria-invalid={Boolean(fieldErrors.email)}
                 />
               </Field>
-              <Field label={t('contactPage.phone')} error={fieldErrors.phone}>
-                <span aria-hidden="true" className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2">
-                  <FieldIcon d="M5 4h4l2 5-2.5 1.5a12 12 0 005 5L15 13l5 2v4a2 2 0 01-2 2A16 16 0 013 6a2 2 0 012-2z" />
-                </span>
-                <input
-                  type="tel"
-                  name="phone"
-                  maxLength={10}
-                  value={formData.phone}
-                  onChange={handleChange}
-                  onPaste={handlePasteCapture('phone')}
-                  autoComplete="tel"
-                  placeholder={t('contactPage.phone')}
-                  className={inputCls(Boolean(fieldErrors.phone))}
-                  aria-invalid={Boolean(fieldErrors.phone)}
-                />
-              </Field>
-              <Field label={t('contactPage.subject')} required error={fieldErrors.subject}>
-                <span aria-hidden="true" className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2">
-                  <FieldIcon d="M21 12a8 8 0 01-8 8H5l-2 2V12a8 8 0 018-8h2a8 8 0 018 8z" />
-                </span>
-                <select
-                  required
-                  name="subject"
-                  value={formData.subject}
-                  onChange={handleChange}
-                  className={`${inputCls(Boolean(fieldErrors.subject))} appearance-none pr-10 ${!formData.subject ? '!text-ink-400' : ''}`}
-                  aria-invalid={Boolean(fieldErrors.subject)}
-                >
-                  <option value="" disabled>
-                    {t('contactPage.subjectPlaceholder')}
-                  </option>
-                  {subjectOptions.map((opt) => (
-                    <option key={opt} value={opt}>
-                      {opt}
-                    </option>
-                  ))}
-                </select>
-                <span aria-hidden="true" className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-gold-600">
-                  ⌄
-                </span>
-              </Field>
+              <div className="sm:col-span-2">
+                <Field label={t('contactPage.phone')} error={fieldErrors.phone}>
+                  <span aria-hidden="true" className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2">
+                    <FieldIcon d="M5 4h4l2 5-2.5 1.5a12 12 0 005 5L15 13l5 2v4a2 2 0 01-2 2A16 16 0 013 6a2 2 0 012-2z" />
+                  </span>
+                  <input
+                    type="tel"
+                    name="phone"
+                    maxLength={10}
+                    value={formData.phone}
+                    onChange={handleChange}
+                    onPaste={handlePasteCapture('phone')}
+                    autoComplete="tel"
+                    placeholder={t('contactPage.phone')}
+                    className={inputCls(Boolean(fieldErrors.phone))}
+                    aria-invalid={Boolean(fieldErrors.phone)}
+                  />
+                </Field>
+              </div>
               <div className="sm:col-span-2">
                 <Field label={t('contactPage.message')} required error={fieldErrors.message}>
                   <span aria-hidden="true" className="pointer-events-none absolute left-4 top-4">

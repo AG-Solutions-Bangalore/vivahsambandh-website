@@ -1,15 +1,15 @@
-import ContactHero from '../components/ContactHero'
-import InfoCards from '../components/InfoCards'
-import MessageForm from '../components/MessageForm'
-import OfficeVisit from '../components/OfficeVisit'
-import ContactCta from '../components/ContactCta'
-import PageParallax from '../../../components/motion/PageParallax'
-import { TestimonialSection } from '../../testimonial'
-import { FaqSection } from '../../faq'
+import PageParallax from "../../../components/motion/PageParallax";
+import { FaqSection } from "../../faq";
+import { TestimonialSection } from "../../testimonial";
+import ContactCta from "../components/ContactCta";
+import ContactHero from "../components/ContactHero";
+import InfoCards from "../components/InfoCards";
+import MessageForm from "../components/MessageForm";
+import OfficeVisit from "../components/OfficeVisit";
 
 /**
  * Contact Us page — hero → channel cards → form + office →
- * testimonials → FAQs → closing CTA.
+ * newsletter → testimonials → FAQs → closing CTA.
  */
 export default function ContactPage() {
   return (
@@ -30,9 +30,10 @@ export default function ContactPage() {
           </div>
         </div>
       </section>
-      <TestimonialSection slug="contact" tone="paper" />
-      <FaqSection slug="contact" tone="cream" />
+
+      <TestimonialSection page="contact" tone="paper" />
+      <FaqSection page="contact" tone="cream" />
       <ContactCta />
     </div>
-  )
+  );
 }

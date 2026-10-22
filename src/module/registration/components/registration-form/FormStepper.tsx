@@ -1,6 +1,6 @@
 /**
  * @file src/module/registration/components/registration-form/FormStepper.tsx
- * Classic progress indicator for the five-step registration form.
+ * Classic progress indicator for the registration form steps.
  *
  * Presentational only: it shows where the visitor is and asks the wizard to
  * move. All validation lives in the form context. Deliberately NOT sticky —
@@ -29,8 +29,10 @@ export default function FormStepper({ current, onSelect }: FormStepperProps) {
 
   const count = REGISTRATION_STEPS.length
   // The rail spans from the centre of the first node to the centre of the
-  // last one — a 10% inset on each side of a 5-column grid.
-  const fillPercent = count > 1 ? (current / (count - 1)) * 80 : 0
+  // last one — half a column inset on each side, whatever the step count.
+  const railInset = 100 / (count * 2)
+  const railSpan = 100 - railInset * 2
+  const fillPercent = count > 1 ? (current / (count - 1)) * railSpan : 0
 
   return (
     <div className="mb-6 overflow-hidden rounded-[1.5rem] border border-cream-300 bg-cream-100">
@@ -66,16 +68,20 @@ export default function FormStepper({ current, onSelect }: FormStepperProps) {
 
       {/* ——— Classic desktop stepper ——— */}
       <div className="hidden px-6 py-7 sm:block lg:px-12">
-        <ol className="relative grid grid-cols-5">
+        <ol
+          className="relative grid"
+          style={{ gridTemplateColumns: `repeat(${count}, minmax(0, 1fr))` }}
+        >
           {/* rail */}
           <span
             aria-hidden="true"
-            className="absolute left-[10%] right-[10%] top-[21px] h-[2px] rounded-full bg-cream-300"
+            className="absolute top-[21px] h-[2px] rounded-full bg-cream-300"
+            style={{ left: `${railInset}%`, right: `${railInset}%` }}
           />
           <span
             aria-hidden="true"
-            className="absolute left-[10%] top-[21px] h-[2px] rounded-full bg-gold-400 transition-[width] duration-500 ease-out"
-            style={{ width: `${fillPercent}%` }}
+            className="absolute top-[21px] h-[2px] rounded-full bg-gold-400 transition-[width] duration-500 ease-out"
+            style={{ left: `${railInset}%`, width: `${fillPercent}%` }}
           />
 
           {REGISTRATION_STEPS.map((step, index) => {

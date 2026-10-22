@@ -15,8 +15,6 @@ import {
   Eye,
   Pencil,
   Trash2,
-  CheckCircle2,
-  XCircle,
   Upload,
   Image as ImageIcon,
 } from "lucide-react";
@@ -34,6 +32,7 @@ import { PanelEmpty, PanelError } from "../components/PanelState";
 import { SkeletonText } from "../components/PanelSkeleton";
 import { PanelFilterSelect } from "../components/PanelFilterSelect";
 import { StatusBadge } from "../components/StatusBadge";
+import { StatusSwitch } from "../components/StatusSwitch";
 import { panelDescription } from "../navigation";
 import { errorMessage } from "../hook/errors";
 import { DEFAULT_PER_PAGE, useServerSearch } from "../hook/useServerList";
@@ -256,10 +255,11 @@ export default function BlogGalleryPage() {
   };
 
   // Toggle quick status
-  const handleToggleStatus = (item: GalleryRecord) => {
-    const nextStatus: GalleryStatus =
-      item.gallery_status === "Active" ? "Inactive" : "Active";
-    statusMutation.mutate({
+  const handleToggleStatus = async (
+    item: GalleryRecord,
+    nextStatus: GalleryStatus,
+  ) => {
+    await statusMutation.mutateAsync({
       id: item.id,
       gallery_status: nextStatus,
       successMessage: `Gallery photo marked as ${nextStatus}.`,
@@ -392,7 +392,7 @@ export default function BlogGalleryPage() {
         ) : (
           <div className="p-6">
             <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-              {galleryItems.map((item) => {
+              {galleryItems.map((item, index) => {
                 const imageUrl = item.gallery_image;
                 const isCopied = imageUrl ? copiedUrl === imageUrl : false;
 
@@ -478,27 +478,16 @@ export default function BlogGalleryPage() {
                           <Pencil className="size-3.5" />
                         </button>
 
-                        <button
-                          type="button"
-                          onClick={() => handleToggleStatus(item)}
-                          className={cn(
-                            "flex size-8 cursor-pointer items-center justify-center rounded-full bg-white shadow-lift transition-transform hover:scale-110",
-                            item.gallery_status === "Active"
-                              ? "text-emerald-700 hover:bg-emerald-50"
-                              : "text-slate-600 hover:bg-slate-50",
-                          )}
-                          title={
-                            item.gallery_status === "Active"
-                              ? "Deactivate"
-                              : "Activate"
-                          }
-                        >
-                          {item.gallery_status === "Active" ? (
-                            <CheckCircle2 className="size-3.5 text-emerald-600" />
-                          ) : (
-                            <XCircle className="size-3.5 text-slate-500" />
-                          )}
-                        </button>
+                        <span className="flex h-8 items-center rounded-full bg-white px-2 shadow-lift">
+                          <StatusSwitch
+                            status={item.gallery_status}
+                            onStatusChange={(nextStatus) =>
+                              handleToggleStatus(item, nextStatus)
+                            }
+                            showLabel={false}
+                            label={`Publication status for photo ${index + 1}`}
+                          />
+                        </span>
 
                         <button
                           type="button"
@@ -509,16 +498,6 @@ export default function BlogGalleryPage() {
                           <Trash2 className="size-3.5" />
                         </button>
                       </div>
-                    </div>
-
-                    {/* Metadata card footer */}
-                    <div className="flex items-center justify-between border-t border-cream-200/80 px-3.5 py-2.5 text-[0.7rem] text-ink-500">
-                      <span className="font-semibold text-navy-950">
-                        {item.title || `${item.id}`}
-                      </span>
-                      <span className="font-mono text-[0.66rem] text-ink-400">
-                        ID: {item.id}
-                      </span>
                     </div>
                   </div>
                 );

@@ -57,7 +57,7 @@ export function extractImageEntries(payload: unknown): ImageUrlEntry[] {
 function resolveImage(
   filename: string | null | undefined,
   entries: ImageUrlEntry[],
-  imageFor: string,
+  imageFor: string | string[],
 ): string | null {
   if (!filename || !filename.trim()) return null
   if (entries.length === 0) return null
@@ -65,6 +65,15 @@ function resolveImage(
   const resolved = resolveImageUrl(filename.trim(), entries, imageFor)
   return resolved && resolved.trim() ? resolved.trim() : null
 }
+
+/**
+ * Labels the CRM accepts for a user photograph.
+ *
+ * The API files member and administrator pictures under the single label
+ * "User", while the panel distinguishes the two roles — so both labels are
+ * offered and the first one the endpoint knows wins.
+ */
+const USER_IMAGE_KEYS = ['User', 'Member', 'Admin']
 
 /** Reads a display name from a nested reference object. */
 function referenceName(value: unknown): string | null {
@@ -139,7 +148,7 @@ export function toMember(raw: Raw, entries: ImageUrlEntry[] = []): Member {
     marry_in_community: text(raw.marry_in_community),
     marry_multi_community: text(raw.marry_multi_community),
     register_date: text(raw.register_date),
-    face_image: resolveImage(faceImageName, entries, 'Member'),
+    face_image: resolveImage(faceImageName, entries, USER_IMAGE_KEYS),
     face_image_name: faceImageName,
     user_type: raw.user_type ?? null,
     community_name: referenceName(raw.community),
@@ -164,25 +173,27 @@ export function toAdminMember(raw: Raw, entries: ImageUrlEntry[] = []): AdminMem
     user_current_city: text(raw.user_current_city),
     multiple_city: raw.multiple_city ?? null,
     register_date: text(raw.register_date),
-    face_image: resolveImage(faceImageName, entries, 'Admin'),
+    face_image: resolveImage(faceImageName, entries, USER_IMAGE_KEYS),
     face_image_name: faceImageName,
     user_type: raw.user_type ?? null,
   }
 }
 
 /** Normalises a `/feedback` row. */
-export function toFeedback(raw: Raw): FeedbackRecord {
+export function toFeedback(raw: Raw, entries: ImageUrlEntry[] = []): FeedbackRecord {
   return {
     id: Number(raw.id ?? 0),
     name: text(raw.from_user?.name) ?? 'Anonymous User',
     message: text(raw.feedback_description) ?? text(raw.message) ?? '',
     created_at: text(raw.feedback_date) ?? text(raw.created_at),
     from_id: raw.from_id ?? null,
+    /** Absolute URL of the submitter photograph, resolved from the API metadata. */
+    face_image: resolveImage(text(raw.from_user?.face_image), entries, USER_IMAGE_KEYS),
   }
 }
 
 /** Normalises a `/blockProfile` row. */
-export function toBlockProfile(raw: Raw): BlockProfileRecord {
+export function toBlockProfile(raw: Raw, entries: ImageUrlEntry[] = []): BlockProfileRecord {
   return {
     id: Number(raw.id ?? 0),
     member_name: text(raw.to_user?.name) ?? text(raw.member_name),
@@ -192,6 +203,10 @@ export function toBlockProfile(raw: Raw): BlockProfileRecord {
     created_at: text(raw.blockprofile_date) ?? text(raw.created_at),
     member_id: raw.to_id ?? raw.member_id ?? null,
     blocked_user_id: raw.to_id ?? null,
+    /** Absolute URL of the blocked account photograph. */
+    face_image: resolveImage(text(raw.to_user?.face_image), entries, USER_IMAGE_KEYS),
+    /** Absolute URL of the reporter's photograph. */
+    blocked_by_image: resolveImage(text(raw.from_user?.face_image), entries, USER_IMAGE_KEYS),
   }
 }
 

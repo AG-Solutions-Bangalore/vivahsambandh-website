@@ -20,16 +20,21 @@ export const faqQueryKey = (slug: string, fallbackSlugs?: Array<string | null | 
 
 export interface UseFaqQueryOptions extends Omit<UseQueryOptions<FaqResponse>, 'queryKey' | 'queryFn'> {
   /**
-   * Fallback slugs tried in order when the primary slug returns no rows.
+   * Additional slugs tried, in order, when the primary slug returns no rows.
+   *
+   * These must be naming aliases of the **same** page (the CRM stores a page
+   * under `about-us` while the route is `/about`, `gallery` vs `stories`,
+   * `services` vs `membership`). Another page's slug is never allowed —
+   * a page that has no FAQs of its own renders no FAQ section at all.
+   *
    * Default (omitted / `null` / `[]`): query the primary slug only.
-   * Pass e.g. `['home']` to explicitly opt into a fallback chain.
    */
   fallbackSlugs?: Array<string | null | undefined> | null
 }
 
 export function useFaqQuery(slug: string = FAQ_DEFAULT_SLUG, options?: UseFaqQueryOptions) {
   const { lang } = useAppLanguage()
-  const { fallbackSlugs = slug !== 'home' ? ['home'] : undefined, enabled, ...rest } = options ?? {}
+  const { fallbackSlugs = null, enabled, ...rest } = options ?? {}
   const chain = buildFaqSlugChain(slug, fallbackSlugs ?? [])
   const [primary, ...fallbacks] = chain
 
@@ -154,30 +159,21 @@ export function groupFaqsByHeading<T extends FaqItem | FaqFallbackItem>(items: T
   return result as GroupedFaqs[]
 }
 
-/** Converts `fallbackItems` (either shape) into `FaqItem[]` for grouping. */
-export function toFaqItems(items: FaqFallbackItem[] | undefined): FaqItem[] {
-  if (!items || items.length === 0) return []
-  return items.map((f) => {
-    if (f && typeof f === 'object' && 'q' in f) {
-      const qa = f as { q: string; a: string }
-      return { question: qa.q, answer: qa.a } as FaqItem
-    }
-    return f as FaqItem
-  })
-}
-
 export interface UseGroupedFaqsOptions {
+  /** Naming aliases of the same page (never another page's slug). */
   fallbackSlugs?: Array<string | null | undefined> | null
-  fallbackItems?: FaqFallbackItem[]
   enabled?: boolean
 }
 
 /**
- * Convenience hook: fetches (with slug fallbacks), validates, sorts and
- * groups FAQs in one memoized step for `FaqSection`.
+ * Convenience hook: fetches (with same-page slug aliases), validates, sorts
+ * and groups FAQs in one memoized step for `FaqSection`.
+ *
+ * The API is the single source of truth: when the requested page has no FAQ
+ * rows the hook returns an empty group list and the section renders nothing.
  */
 export function useGroupedFaqs(slug: string = FAQ_DEFAULT_SLUG, options?: UseGroupedFaqsOptions) {
-  const { fallbackSlugs, fallbackItems, enabled } = options ?? {}
+  const { fallbackSlugs, enabled } = options ?? {}
   const query = useFaqQuery(slug, {
     fallbackSlugs,
     enabled,
@@ -186,10 +182,8 @@ export function useGroupedFaqs(slug: string = FAQ_DEFAULT_SLUG, options?: UseGro
   const groups = useMemo(() => {
     const apiItems = (query.data?.data ?? []).filter(isValidFaqItem)
     if (apiItems.length > 0) return groupFaqsByHeading(apiItems)
-    const fb = toFaqItems(fallbackItems).filter(isValidFaqItem)
-    if (fb.length > 0) return groupFaqsByHeading(fb)
     return [] as GroupedFaqs[]
-  }, [query.data, fallbackItems])
+  }, [query.data])
 
   return {
     ...query,

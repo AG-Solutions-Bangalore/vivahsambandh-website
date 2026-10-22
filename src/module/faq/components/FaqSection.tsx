@@ -8,28 +8,40 @@ import {
   UserPlus,
   Users,
 } from "lucide-react";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import { pagePath } from "../../../constants/navigation";
 import { useAppLanguage } from "../../../i18n/useAppLanguage";
 import { img, imgSrcSet } from "../../../lib/image";
+import { getPageSlugAliases } from "../../../lib/page-slug";
 import { getFaqAnswer, getFaqQuestion, useGroupedFaqs } from "../hook/useFaq";
-import type { FaqFallbackItem } from "../types";
 
 export interface FaqSectionProps {
+  /**
+   * Canonical route of the page ("about", "stories", ...). The CRM slug
+   * chain is derived from it, so a section can only ever show the FAQs
+   * assigned to its own page.
+   */
+  page?: string;
+  /** Explicit CRM slug — used when `page` is not given. */
   slug?: string;
+  /**
+   * Naming aliases of the **same** page (e.g. `about` -> `about-us`).
+   * Never another page's slug: a page with no FAQ rows renders no section.
+   */
   fallbackSlugs?: Array<string | null | undefined> | null;
   title?: string;
   subtitle?: string;
-  eyebrow?: string;
   ctaText?: string;
   ctaHref?: string;
-  fallbackItems?: FaqFallbackItem[];
   tone?: "cream" | "paper" | "navy";
   id?: string;
   showCta?: boolean;
 }
+
+/** Number of questions the arc dial shows at once. */
+const DIAL_SIZE = 5;
 
 const NODE_ICONS = [Users, FileText, UserPlus, ShieldCheck, BadgeCheck];
 
@@ -103,14 +115,13 @@ function FaqSkeleton() {
 }
 
 export default function FaqSection({
-  slug = "home",
+  page,
+  slug,
   fallbackSlugs,
   title,
   subtitle,
-  eyebrow,
   ctaText,
   ctaHref,
-  fallbackItems,
   id = "faq",
   showCta = true,
 }: FaqSectionProps) {
@@ -125,45 +136,95 @@ export default function FaqSection({
       : pagePath("/contact", lang));
 
   const ctaLabel =
-    ctaText ||
-    t("faq.contactUs", t("header.contact", "Contact Us"));
+    ctaText || t("faq.contactUs", t("header.contact", "Contact Us"));
 
-  const { groups, isPending, isEmpty } = useGroupedFaqs(slug, {
-    fallbackSlugs,
-    fallbackItems,
+  /**
+   * CRM slugs this section may query. Derived from the page route so the
+   * chain can only ever contain naming aliases of the SAME page — a page
+   * with no FAQs of its own gets an empty result, not another page's.
+   */
+  const pageAliases = page ? getPageSlugAliases(page) : null;
+  const primarySlug = pageAliases ? pageAliases[0] : (slug ?? "home");
+  const aliasSlugs = pageAliases
+    ? pageAliases.slice(1)
+    : (fallbackSlugs ?? null);
+
+  const { groups, isPending, isEmpty } = useGroupedFaqs(primarySlug, {
+    fallbackSlugs: aliasSlugs,
   });
 
+  /**
+   * Every heading group of this page, flattened. The old implementation read
+   * `groups[0]` only, so the 20 FAQs outside the first category were
+   * unreachable no matter how many rows the API returned.
+   */
+  const flatItems = useMemo(
+    () =>
+      groups.flatMap((group) =>
+        group.items.map((item) => ({ item, heading: group.heading })),
+      ),
+    [groups],
+  );
+
+  // The API is the only source of truth — a page with no FAQ rows of its own
+  // renders no FAQ section rather than borrowing another page's answers.
   if (!isPending && isEmpty) {
     return null;
   }
 
-  const currentItems =
-    groups.length > 0 ? groups[0]?.items ?? [] : [];
-
-  // 5 questions mapped to the 5 arc nodes
-  const displayItems = currentItems.length > 0 ? currentItems.slice(0, 5) : [];
+  const total = flatItems.length;
   const safeActiveIdx =
-    displayItems.length > 0 && activeQuestionIdx >= displayItems.length
-      ? 0
-      : activeQuestionIdx;
+    total === 0 ? 0 : Math.min(activeQuestionIdx, total - 1);
 
-  const activeItem = displayItems[safeActiveIdx];
+  /**
+   * Fixed sets of `DIAL_SIZE` questions. The set never slides, so questions
+   * from two sets are never shown on the dial at the same time — each set is
+   * a self-contained page (the last set may hold fewer than `DIAL_SIZE`).
+   */
+  const activeSetIndex = Math.floor(safeActiveIdx / DIAL_SIZE);
+  const setStart = activeSetIndex * DIAL_SIZE;
+  const visibleItems = flatItems.slice(setStart, setStart + DIAL_SIZE);
+
+  /** Slot (0–4) of the active question inside the current set. */
+  const activeSlot = safeActiveIdx - setStart;
+
+  const activeEntry = flatItems[safeActiveIdx];
+  const activeItem = activeEntry?.item;
   const activeQuestion = activeItem ? getFaqQuestion(activeItem) : "";
   const activeAnswer = activeItem ? getFaqAnswer(activeItem) : "";
+  const activeHeading = activeEntry?.heading ?? null;
   const ActiveIcon = NODE_ICONS[safeActiveIdx % NODE_ICONS.length];
 
+  /**
+   * Two-level navigation.
+   * 1. Inside a set the arrows move one question at a time.
+   * 2. At a set boundary they page to the adjacent set:
+   *    Next on the last question → first question of the next set.
+   *    Prev on the first question → last question of the previous set.
+   * Both directions wrap around the whole list, staying circular.
+   */
   const handlePrev = () => {
-    if (displayItems.length === 0) return;
-    setActiveQuestionIdx((prev) =>
-      prev <= 0 ? displayItems.length - 1 : prev - 1
-    );
+    if (total === 0) return;
+    setActiveQuestionIdx((prev) => {
+      const prevSetStart = Math.floor(prev / DIAL_SIZE) * DIAL_SIZE;
+      if (prev > prevSetStart) return prev - 1;
+      const lastIdx = total - 1;
+      const lastSetStart = Math.floor(lastIdx / DIAL_SIZE) * DIAL_SIZE;
+      const targetSetStart =
+        prevSetStart === 0 ? lastSetStart : prevSetStart - DIAL_SIZE;
+      return Math.min(targetSetStart + DIAL_SIZE - 1, lastIdx);
+    });
   };
 
   const handleNext = () => {
-    if (displayItems.length === 0) return;
-    setActiveQuestionIdx((prev) =>
-      prev >= displayItems.length - 1 ? 0 : prev + 1
-    );
+    if (total === 0) return;
+    setActiveQuestionIdx((prev) => {
+      const setStart = Math.floor(prev / DIAL_SIZE) * DIAL_SIZE;
+      const setEnd = Math.min(setStart + DIAL_SIZE - 1, total - 1);
+      if (prev < setEnd) return prev + 1;
+      const nextSetStart = setStart + DIAL_SIZE;
+      return nextSetStart >= total ? 0 : nextSetStart;
+    });
   };
 
   return (
@@ -175,7 +236,7 @@ export default function FaqSection({
       <img
         src={img("/images/home/flower1_image-320.webp")}
         srcSet={imgSrcSet(
-          "/images/home/flower1_image-192.webp 192w, /images/home/flower1_image-320.webp 320w, /images/home/flower1_image-640.webp 640w"
+          "/images/home/flower1_image-192.webp 192w, /images/home/flower1_image-320.webp 320w, /images/home/flower1_image-640.webp 640w",
         )}
         sizes="(max-width: 640px) 120px, (max-width: 1024px) 200px, 280px"
         width={320}
@@ -192,14 +253,6 @@ export default function FaqSection({
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-4 items-center">
           {/* Left Column: Eyebrow, Motif Icon, Title, Divider, Subtitle, and Optional Category Tabs */}
           <div className="lg:col-span-4 flex flex-col items-start text-left relative z-20">
-            {/* Pill Badge */}
-            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-maroon-50 border border-maroon-200 text-maroon-700 text-[11px] font-bold tracking-[0.2em] uppercase shadow-2xs mb-3">
-              <span className="text-gold-500 text-xs">❖</span>
-              <span>{eyebrow || t("faq.eyebrow", "FAQ")}</span>
-              <span className="text-gold-500 text-xs">❖</span>
-            </div>
-
-
             {/* Section Heading */}
             <h2 className="text-2xl sm:text-3xl lg:text-[34px] font-serif font-bold text-navy-900 leading-[1.18] mb-2.5">
               {title ? (
@@ -224,7 +277,7 @@ export default function FaqSection({
               {subtitle ||
                 t(
                   "faq.subtitle",
-                  "Find answers to common questions about VivahSambandh."
+                  "Find answers to common questions about VivahSambandh.",
                 )}
             </p>
           </div>
@@ -252,7 +305,7 @@ export default function FaqSection({
                         opacity="0.8"
                       />
                       {DIAL_NODES.map((node, i) => {
-                        const isActive = safeActiveIdx === i;
+                        const isActive = activeSlot === i;
                         return isActive ? (
                           <g key={i}>
                             <circle
@@ -283,19 +336,20 @@ export default function FaqSection({
                     </svg>
 
                     {/* 5 Interactive Nodes (Tooltip Bubble + Button) */}
-                    {displayItems.map((item, idx) => {
-                      const node = DIAL_NODES[idx];
+                    {visibleItems.map((entry, slot) => {
+                      const node = DIAL_NODES[slot];
                       if (!node) return null;
-                      const isActive = safeActiveIdx === idx;
-                      const Icon = NODE_ICONS[idx % NODE_ICONS.length];
-                      const q = getFaqQuestion(item);
+                      const globalIdx = setStart + slot;
+                      const isActive = safeActiveIdx === globalIdx;
+                      const Icon = NODE_ICONS[slot % NODE_ICONS.length];
+                      const q = getFaqQuestion(entry.item);
 
                       return (
-                        <div key={idx} className="relative z-40">
+                        <div key={globalIdx} className="relative z-40">
                           {/* Tooltip Bubble */}
                           <div
                             style={node.bubbleStyle}
-                            onClick={() => setActiveQuestionIdx(idx)}
+                            onClick={() => setActiveQuestionIdx(globalIdx)}
                             className="cursor-pointer"
                           >
                             <div
@@ -323,7 +377,7 @@ export default function FaqSection({
                           <button
                             type="button"
                             aria-label={q}
-                            onClick={() => setActiveQuestionIdx(idx)}
+                            onClick={() => setActiveQuestionIdx(globalIdx)}
                             style={node.buttonStyle}
                             className={`w-9 h-9 rounded-full flex items-center justify-center transition-all duration-300 cursor-pointer -translate-x-1/2 -translate-y-1/2 z-30 ${
                               isActive
@@ -370,6 +424,12 @@ export default function FaqSection({
                             <ActiveIcon className="w-5 h-5 stroke-[1.8]" />
                           </div>
 
+                          {activeHeading && (
+                            <p className="mb-1.5 text-[9.5px] font-bold uppercase tracking-[0.16em] text-gold-700">
+                              {activeHeading}
+                            </p>
+                          )}
+
                           <h3 className="font-serif font-bold text-sm lg:text-[16px] text-navy-900 leading-tight line-clamp-2 max-w-[230px] mb-1.5">
                             {activeQuestion}
                           </h3>
@@ -398,23 +458,6 @@ export default function FaqSection({
                           )}
                         </div>
                       </div>
-
-                      {/* Pagination Indicator Dots */}
-                      <div className="flex justify-center items-center gap-1.5 mt-3 pointer-events-auto">
-                        {displayItems.map((_, dotIdx) => (
-                          <button
-                            key={dotIdx}
-                            type="button"
-                            aria-label={`Go to question ${dotIdx + 1}`}
-                            onClick={() => setActiveQuestionIdx(dotIdx)}
-                            className={`transition-all duration-300 rounded-full cursor-pointer ${
-                              safeActiveIdx === dotIdx
-                                ? "w-2.5 h-2 bg-maroon-600"
-                                : "w-2 h-2 bg-maroon-200 hover:bg-maroon-300"
-                            }`}
-                          />
-                        ))}
-                      </div>
                     </div>
                   </div>
                 </div>
@@ -423,15 +466,16 @@ export default function FaqSection({
                 <div className="w-full flex flex-col items-center md:hidden mt-2">
                   {/* Scrollable Question Pills */}
                   <div className="w-full flex gap-2 overflow-x-auto pb-2.5 mb-4 scrollbar-none justify-start px-2">
-                    {displayItems.map((item, idx) => {
-                      const isActive = safeActiveIdx === idx;
-                      const Icon = NODE_ICONS[idx % NODE_ICONS.length];
-                      const q = getFaqQuestion(item);
+                    {visibleItems.map((entry, slot) => {
+                      const globalIdx = setStart + slot;
+                      const isActive = safeActiveIdx === globalIdx;
+                      const Icon = NODE_ICONS[slot % NODE_ICONS.length];
+                      const q = getFaqQuestion(entry.item);
                       return (
                         <button
-                          key={idx}
+                          key={globalIdx}
                           type="button"
-                          onClick={() => setActiveQuestionIdx(idx)}
+                          onClick={() => setActiveQuestionIdx(globalIdx)}
                           className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] whitespace-nowrap cursor-pointer transition-all shrink-0 ${
                             isActive
                               ? "bg-maroon-600 text-white font-semibold shadow-xs"
@@ -469,6 +513,12 @@ export default function FaqSection({
                         <ActiveIcon className="w-4 h-4 stroke-[1.8]" />
                       </div>
 
+                      {activeHeading && (
+                        <p className="mb-1 text-[9px] font-bold uppercase tracking-[0.14em] text-gold-700">
+                          {activeHeading}
+                        </p>
+                      )}
+
                       <h3 className="font-serif font-bold text-sm sm:text-base text-navy-900 leading-tight line-clamp-2 max-w-[210px] mb-1">
                         {activeQuestion}
                       </h3>
@@ -498,22 +548,6 @@ export default function FaqSection({
                     </div>
                   </div>
 
-                  {/* Pagination Dots for Mobile */}
-                  <div className="flex justify-center items-center gap-1.5 mt-3">
-                    {displayItems.map((_, dotIdx) => (
-                      <button
-                        key={dotIdx}
-                        type="button"
-                        aria-label={`Go to question ${dotIdx + 1}`}
-                        onClick={() => setActiveQuestionIdx(dotIdx)}
-                        className={`transition-all rounded-full cursor-pointer ${
-                          safeActiveIdx === dotIdx
-                            ? "w-2.5 h-2 bg-maroon-600"
-                            : "w-2 h-2 bg-maroon-200"
-                        }`}
-                      />
-                    ))}
-                  </div>
                 </div>
               </>
             )}
@@ -523,4 +557,3 @@ export default function FaqSection({
     </section>
   );
 }
-

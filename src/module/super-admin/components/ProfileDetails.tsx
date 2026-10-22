@@ -76,7 +76,8 @@ export function ProfileDetails({ member, variant = 'basic' }: ProfileDetailsProp
       { label: 'Physical Disability', value: member.physical_disablity || '—' },
       {
         label: 'Marry In Community',
-        value: member.marry_multi_community || '—',
+        value:
+          member.marry_in_community || member.marry_multi_community || '—',
       },
       { label: 'Registered On', value: formatDate(member.register_date) },
     ],

@@ -99,6 +99,8 @@ export interface RegistrationFormContextValue {
   communityOptions: SelectOption[]
   gotraOptions: SelectOption[]
   loadingGotras: boolean
+  /** True while the education / profession / community lists are still loading. */
+  loadingOptions: boolean
 
   // Dynamic conditions
   conditions: RegistrationConditions
@@ -140,6 +142,12 @@ export interface RegistrationFormContextValue {
    */
   validateStep: (step: number) => boolean
   /**
+   * Validate every step BEFORE `step`, in order. On the first gap it switches
+   * to that step and reveals its errors. Returns true when the visitor may
+   * enter `step`.
+   */
+  validateStepsBefore: (step: number) => boolean
+  /**
    * Validate every step in order. On the first incomplete step it switches
    * to it, reveals its errors and focuses the first invalid control.
    * Returns true only when the whole form is complete.
@@ -169,6 +177,9 @@ export function RegistrationFormProvider({ children }: PropsWithChildren) {
   const [professions, setProfessions] = useState<ProfessionItem[]>([])
   const [gotras, setGotras] = useState<GotraItem[]>([])
   const [loadingGotras, setLoadingGotras] = useState(false)
+  // The three API-backed dropdowns resolve after mount — without a flag the
+  // selects render "No options available" until the lists arrive.
+  const [loadingOptions, setLoadingOptions] = useState(true)
 
   // Modals state
   const [termsOpen, setTermsOpen] = useState(false)
@@ -203,6 +214,10 @@ export function RegistrationFormProvider({ children }: PropsWithChildren) {
       })
       .catch((err) => {
         console.error('Failed to load form options:', err)
+      })
+      .finally(() => {
+        if (!active) return
+        setLoadingOptions(false)
       })
     return () => {
       active = false
@@ -451,33 +466,30 @@ export function RegistrationFormProvider({ children }: PropsWithChildren) {
   }, [communities])
 
   // Photo fields written by PhotosSection after a crop completes
+  const photoPreviews = useRef<{ full?: string; face?: string }>({})
+
   const setPhotoFields = useCallback(
     (target: 'full' | 'face', file: File, previewUrl: string) => {
-      if (target === 'full') {
-        setFieldErrors((prev) => {
-          if (!prev.full_image) return prev
-          const next = { ...prev }
-          delete next.full_image
-          return next
-        })
-        setForm((prev) => ({
-          ...prev,
-          full_image: file,
-          full_image_preview: previewUrl,
-        }))
-      } else {
-        setFieldErrors((prev) => {
-          if (!prev.face_image) return prev
-          const next = { ...prev }
-          delete next.face_image
-          return next
-        })
-        setForm((prev) => ({
-          ...prev,
-          face_image: file,
-          face_image_preview: previewUrl,
-        }))
-      }
+      // The previous preview is a blob URL — release it, or every re-crop
+      // leaks the whole image.
+      const key = target === 'full' ? 'full' : 'face'
+      const previous = photoPreviews.current[key]
+      if (previous && previous !== previewUrl) URL.revokeObjectURL(previous)
+      photoPreviews.current[key] = previewUrl
+
+      setForm((prev) =>
+        target === 'full'
+          ? { ...prev, full_image: file, full_image_preview: previewUrl }
+          : { ...prev, face_image: file, face_image_preview: previewUrl },
+      )
+
+      setFieldErrors((prev) => {
+        const field = target === 'full' ? 'full_image' : 'face_image'
+        if (!prev[field]) return prev
+        const next = { ...prev }
+        delete next[field]
+        return next
+      })
     },
     [],
   )
@@ -545,6 +557,35 @@ export function RegistrationFormProvider({ children }: PropsWithChildren) {
       if (!firstField) return true
       focusAndScrollToField(firstField.id)
       return false
+    },
+    [form, conditions, baseId, focusAndScrollToField],
+  )
+
+  /**
+   * Validate every step before `step`, in order. The first gap wins: the
+   * wizard switches to it, reveals its errors and focuses the first invalid
+   * control. Returns true when entering `step` is allowed.
+   */
+  const validateStepsBefore = useCallback(
+    (step: number): boolean => {
+      const { errorList } = validateRegistrationForm(form, conditions, baseId)
+
+      for (let index = 0; index < step; index += 1) {
+        const definition = REGISTRATION_STEPS[index]
+        const items = errorList.filter((item) => definition.fields.includes(item.key))
+        if (items.length === 0) continue
+
+        const stepErrors: FieldErrors = {}
+        for (const item of items) stepErrors[item.key] = item.error
+
+        setFieldErrors(stepErrors)
+        setCurrentStep(index)
+        // The step has to render before its controls exist in the DOM.
+        setTimeout(() => focusAndScrollToField(items[0].id), 160)
+        return false
+      }
+
+      return true
     },
     [form, conditions, baseId, focusAndScrollToField],
   )
@@ -820,6 +861,7 @@ function convertTo24HourTime(timeStr: string): string {
     communityOptions,
     gotraOptions,
     loadingGotras,
+    loadingOptions,
     conditions,
     childrenCount,
     isMobileVerifiedNow,
@@ -841,6 +883,7 @@ function convertTo24HourTime(timeStr: string): string {
     currentStep,
     goToStep,
     validateStep,
+    validateStepsBefore,
     validateAllSteps,
   }
 

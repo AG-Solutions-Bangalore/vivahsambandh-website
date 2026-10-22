@@ -34,10 +34,9 @@ export default function DownloadPage() {
       <DownloadFeatures />
       <DownloadSteps />
       <CityMatchesSection />
-      <TestimonialSection slug="download" tone="paper" />
+      <TestimonialSection page="download" tone="paper" />
       <FaqSection
-        slug="download"
-        fallbackSlugs={['home']}
+        page="download"
         tone="cream"
         title={lang === 'hi' ? 'अक्सर पूछे जाने वाले प्रश्न' : undefined}
       />

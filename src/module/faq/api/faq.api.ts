@@ -29,7 +29,7 @@ export function normalizeFaqResponse(raw: unknown, resolvedSlug?: string): FaqRe
 
 /**
  * Builds the ordered slug chain tried by the query: primary first, then
- * unique normalized fallbacks (e.g. `['membership', 'home']`).
+ * unique normalized fallbacks (e.g. `['membership', 'services']`).
  */
 export function buildFaqSlugChain(slug: string, fallbackSlugs?: Array<string | null | undefined>): string[] {
   const primary = normalizeFaqSlug(slug)
@@ -50,8 +50,11 @@ export async function getFaqBySlug(slug: string = 'home'): Promise<FaqResponse> 
 
 /**
  * Tries each slug in order and returns the first non-empty FAQ list.
- * By default only the primary slug is queried — no implicit `home`
- * fallback. Pass explicit `fallbackSlugs` (e.g. `['home']`) to opt in.
+ *
+ * The chain must only contain naming aliases of the SAME page — a page with
+ * no FAQs of its own never inherits another page's questions. By default only
+ * the primary slug is queried; pass explicit `fallbackSlugs` (same-page
+ * aliases such as `['about']` for `about-us`) to opt in.
  * Never throws for empty data — returns `{ data: [], resolvedSlug: null }`
  * so the section can hide gracefully. Network errors still reject so
  * React Query can retry / surface `isError`.

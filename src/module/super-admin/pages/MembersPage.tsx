@@ -3,24 +3,19 @@
  * Matrimonial Members directory: search, filter, view complete biodata profile, and update status.
  */
 
-import { useState, useMemo } from 'react'
+import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import {
   Users,
   RefreshCw,
   Eye,
-  CircleCheck,
-  CircleX,
-  CirclePause,
-  HeartHandshake,
   Smartphone,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { StatusBadge } from '../components/StatusBadge'
 import { ConfirmDialog } from '../components/ConfirmDialog'
 import { PanelCard } from '../components/PanelCard'
 import { PanelPageHeader } from '../components/PanelPageHeader'
 import { panelDescription } from '../navigation'
-import { PanelModal } from '../components/PanelModal'
 import { PanelPagination } from '../components/PanelPagination'
 import { PanelSearch } from '../components/PanelSearch'
 import { PanelToolbar } from '../components/PanelToolbar'
@@ -32,8 +27,8 @@ import {
   PanelTableHeadCell,
 } from '../components/PanelTable'
 import { PanelFilterSelect } from '../components/PanelFilterSelect'
-import { ProfileDetails } from '../components/ProfileDetails'
-import { StatusActionGroup } from '../components/StatusActionGroup'
+import { ProfileAvatar } from '../components/ProfileAvatar'
+import { RowStatusSelect } from '../components/RowStatusSelect'
 import { useMembersQuery } from '../hook/useMembers'
 import {
   useRemoveDeviceIdMutation,
@@ -47,14 +42,18 @@ import type { MemberStatus } from '../types'
 const STATUS_FILTERS = ['All', 'Approved', 'Pending', 'Hold', 'Married', 'Cancel'] as const
 const GENDER_FILTERS = ['All', 'Male', 'Female'] as const
 
+const STATUS_OPTIONS = STATUS_FILTERS.filter(
+  (status): status is MemberStatus => status !== 'All',
+)
+
 export default function MembersPage() {
+  const navigate = useNavigate()
   const { searchInput, setSearchInput, searchTerm } = useServerSearch()
   const [statusFilter, setStatusFilter] = useState<string>('All')
   const [genderFilter, setGenderFilter] = useState<string>('All')
   const [page, setPage] = useState(1)
 
   const {
-    data: allMembers = [],
     records: members,
     meta,
     isLoading,
@@ -71,9 +70,8 @@ export default function MembersPage() {
   const statusMutation = useUpdateMemberStatusMutation()
   const removeDeviceMutation = useRemoveDeviceIdMutation()
 
-  // Profile Detail Modal State — only the id is stored so the modal always
-  // renders the freshest record from the query cache.
-  const [activeProfileId, setActiveProfileId] = useState<number | null>(null)
+  // Profile Detail Page — the row keeps only the id; the detail page loads
+  // the full record with every field and the photograph.
 
   // Status Change State
   const [statusChangeTarget, setStatusChangeTarget] = useState<{
@@ -87,11 +85,6 @@ export default function MembersPage() {
     id: number | string
     name: string
   } | null>(null)
-
-  const activeProfile = useMemo(
-    () => allMembers.find((m) => m.id === activeProfileId) ?? null,
-    [allMembers, activeProfileId],
-  )
 
   const handleConfirmStatusChange = () => {
     if (!statusChangeTarget) return
@@ -219,9 +212,12 @@ export default function MembersPage() {
               <tr key={member.id} className="transition-colors hover:bg-cream-50/70">
                 <td className="px-4 py-3.5">
                   <div className="flex items-center gap-3">
-                    <span className="flex size-10 shrink-0 items-center justify-center rounded-full border border-gold-200 bg-gold-100 text-xs font-bold text-gold-900">
-                      {member.name.charAt(0)}
-                    </span>
+                    <ProfileAvatar
+                      src={member.face_image}
+                      name={member.name}
+                      size="lg"
+                      tone="gold"
+                    />
                     <div className="min-w-0">
                       <p className="flex items-center gap-1.5 font-bold text-navy-900">
                         {member.name}
@@ -261,26 +257,37 @@ export default function MembersPage() {
                 </td>
 
                 <td className="px-4 py-3.5">
-                  <StatusBadge status={member.status} />
+                  <RowStatusSelect
+                    value={member.status}
+                    options={STATUS_OPTIONS}
+                    label={`Change status for ${member.name}`}
+                    onSelect={(next) =>
+                      setStatusChangeTarget({
+                        memberId: member.id,
+                        memberName: member.name,
+                        nextStatus: next,
+                      })
+                    }
+                  />
                 </td>
 
                 <td className="px-4 py-3.5">
                   <div className="flex items-center justify-end gap-1.5">
                     <Button
                       type="button"
-                      size="xs"
+                      size="icon-xs"
                       variant="outline"
-                      onClick={() => setActiveProfileId(member.id)}
+                      onClick={() => navigate(`/panel/members/${member.id}`)}
                       title="View Full Profile Details"
-                      className="cursor-pointer rounded-full border-navy-200 text-[0.7rem] text-navy-900 hover:bg-navy-50"
+                      aria-label="View full profile details"
+                      className="cursor-pointer rounded-full border-navy-200 text-navy-700 hover:bg-navy-50"
                     >
-                      <Eye className="size-3 text-navy-700" aria-hidden />
-                      <span>View</span>
+                      <Eye className="size-3.5 text-navy-700" aria-hidden />
                     </Button>
 
                     <Button
                       type="button"
-                      size="xs"
+                      size="icon-xs"
                       variant="outline"
                       onClick={() =>
                         setRemoveDeviceTarget({
@@ -289,49 +296,11 @@ export default function MembersPage() {
                         })
                       }
                       title="Remove Registered Device ID"
-                      className="cursor-pointer gap-1 rounded-full border-amber-300 bg-amber-50/70 text-[0.7rem] font-medium text-amber-900 hover:bg-amber-100"
+                      aria-label="Remove registered device ID"
+                      className="cursor-pointer rounded-full border-amber-300 bg-amber-50/70 text-amber-900 hover:bg-amber-100"
                     >
-                      <Smartphone className="size-3 text-amber-700" aria-hidden />
-                      <span>Reset Device</span>
+                      <Smartphone className="size-3.5 text-amber-700" aria-hidden />
                     </Button>
-
-                    <StatusActionGroup
-                      compact
-                      currentStatus={member.status}
-                      onSelect={(next) =>
-                        setStatusChangeTarget({
-                          memberId: member.id,
-                          memberName: member.name,
-                          nextStatus: next as MemberStatus,
-                        })
-                      }
-                      actions={[
-                        {
-                          status: 'Approved',
-                          label: 'Approve',
-                          icon: <CircleCheck className="size-3 text-emerald-600" aria-hidden />,
-                          tone: 'success',
-                        },
-                        {
-                          status: 'Hold',
-                          label: 'Hold',
-                          icon: <CirclePause className="size-3 text-navy-600" aria-hidden />,
-                          tone: 'warn',
-                        },
-                        {
-                          status: 'Married',
-                          label: 'Married',
-                          icon: <HeartHandshake className="size-3 text-gold-600" aria-hidden />,
-                          tone: 'info',
-                        },
-                        {
-                          status: 'Cancel',
-                          label: 'Cancel',
-                          icon: <CircleX className="size-3 text-maroon-600" aria-hidden />,
-                          tone: 'danger',
-                        },
-                      ]}
-                    />
                   </div>
                 </td>
               </tr>
@@ -353,83 +322,6 @@ export default function MembersPage() {
           />
         </PanelTableFooter>
       </PanelCard>
-
-      {/* Member Full Biodata Profile Modal */}
-      <PanelModal
-        isOpen={Boolean(activeProfile)}
-        title={activeProfile?.name ?? ''}
-        description={
-          activeProfile
-            ? `${activeProfile.gender} • ${
-                activeProfile.married_before && activeProfile.married_before !== 'No'
-                  ? activeProfile.married_before
-                  : 'Never Married'
-              }`
-            : undefined
-        }
-        icon={
-          <span className="font-display text-lg font-bold text-navy-950">
-            {activeProfile?.name.charAt(0)}
-          </span>
-        }
-        size="lg"
-        onClose={() => setActiveProfileId(null)}
-        footer={
-          activeProfile ? (
-            <div className="flex w-full flex-wrap items-center justify-between gap-3">
-              <Button
-                type="button"
-                size="sm"
-                variant="outline"
-                onClick={() =>
-                  setRemoveDeviceTarget({
-                    id: activeProfile.id,
-                    name: activeProfile.name,
-                  })
-                }
-                className="cursor-pointer gap-1.5 rounded-full border-amber-300 bg-amber-50/70 text-xs font-semibold text-amber-900 hover:bg-amber-100"
-              >
-                <Smartphone className="size-3.5 text-amber-700" aria-hidden />
-                <span>Remove Device ID</span>
-              </Button>
-
-              <div className="flex items-center gap-2">
-                <span className="text-[0.7rem] font-bold text-ink-500">
-                  Change status:
-                </span>
-                <StatusActionGroup
-                  size="sm"
-                  currentStatus={activeProfile.status}
-                  onSelect={(next) =>
-                    setStatusChangeTarget({
-                      memberId: activeProfile.id,
-                      memberName: activeProfile.name,
-                      nextStatus: next as MemberStatus,
-                    })
-                  }
-                  actions={[
-                    { status: 'Approved', label: 'Approved', tone: 'success' },
-                    { status: 'Pending', label: 'Pending', tone: 'warn' },
-                    { status: 'Hold', label: 'Hold', tone: 'info' },
-                    { status: 'Married', label: 'Married', tone: 'info' },
-                    { status: 'Cancel', label: 'Cancel', tone: 'danger' },
-                  ]}
-                  className="justify-start"
-                />
-              </div>
-            </div>
-          ) : null
-        }
-      >
-        {activeProfile ? (
-          <>
-            <div className="mb-4">
-              <StatusBadge status={activeProfile.status} />
-            </div>
-            <ProfileDetails member={activeProfile} variant="full" />
-          </>
-        ) : null}
-      </PanelModal>
 
       {/* Status Confirmation Modal */}
       {statusChangeTarget && (

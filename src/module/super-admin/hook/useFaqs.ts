@@ -12,6 +12,8 @@ import {
   deleteFaqSub,
   fetchFaqById,
   fetchFaqs,
+  fetchPageTwoOptions,
+  type PageTwoOptionItem,
   updateFaq,
   updateFaqStatus,
 } from '../services/faqApi'
@@ -179,3 +181,30 @@ export function useDeleteFaqMutation() {
     },
   })
 }
+
+/**
+ * Page options for FAQ page placement from getSitemap / page_two table.
+ */
+export function usePageTwoOptions() {
+  return useQuery({
+    queryKey: superAdminKeys.pageTwoOptions,
+    queryFn: async (): Promise<PageTwoOptionItem[]> => {
+      const res = await fetchPageTwoOptions()
+      if (res.error) throw new Error(res.error)
+      return res.data
+    },
+    staleTime: 5 * 60_000,
+  })
+}
+
+// Convenient aliases for developers who use shorter names
+export {
+  useFaqQuery as useFaq,
+  useFaqsQuery as useFaqs,
+  useCreateFaqMutation as useCreateFaq,
+  useUpdateFaqMutation as useUpdateFaq,
+  useUpdateFaqStatusMutation as useUpdateFaqStatus,
+  useDeleteFaqSubMutation as useDeleteFaqSub,
+  useDeleteFaqMutation as useDeleteFaq,
+}
+

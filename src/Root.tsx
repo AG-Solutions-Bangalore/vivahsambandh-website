@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { HelmetProvider } from 'react-helmet-async'
 import App from './App.tsx'
 import { SeoHost } from './seo/seo.tsx'
@@ -10,6 +11,12 @@ import { SeoHost } from './seo/seo.tsx'
  * exact same tree or hydration mismatches will force a client re-render.
  */
 export default function Root() {
+  // The static boot placeholder (index.html) covers routes the build did not
+  // prerender. The app shell is on screen by now, so the placeholder can go.
+  useEffect(() => {
+    document.getElementById('app-boot')?.remove()
+  }, [])
+
   return (
     <HelmetProvider>
       <App />

@@ -42,7 +42,7 @@ export const PAGE_ROUTES: readonly string[] = [
   '/about',
   '/stories',
   '/success-stories',
-  '/membership',
+  // '/membership',
   '/blogs',
   '/contact',
   '/download',

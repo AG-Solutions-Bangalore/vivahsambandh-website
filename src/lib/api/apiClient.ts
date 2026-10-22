@@ -106,12 +106,31 @@ export function withImageVersion(
 }
 
 /**
+ * Folder the CRM keeps each kind of upload in. Used when an endpoint omits
+ * its `image_url` metadata, so a stored file name still becomes a loadable URL.
+ */
+const IMAGE_FOLDERS: Record<string, string> = {
+  blog: 'blog_images',
+  client: 'client_images',
+  gallery: 'gallerys_images',
+  galleries: 'gallerys_images',
+  user: 'users_images',
+  member: 'users_images',
+  admin: 'users_images',
+}
+
+/**
  * Resolves a remote image filename to a full HTTPS URL using the backend `image_url` metadata.
+ *
+ * `imageFor` may list several accepted `image_for` labels, tried in order.
+ * The CRM labels member and administrator photographs "User", while the
+ * panel calls them "Member" and "Admin" — passing both keeps a row pointing
+ * at the right folder whichever label the endpoint chose.
  */
 export function resolveImageUrl(
   filename: string | null | undefined,
   entries?: ImageUrlEntry[],
-  imageFor?: string,
+  imageFor?: string | string[],
 ): string | null {
   if (!filename || !filename.trim()) {
     const noImgEntry = entries?.find(
@@ -125,11 +144,13 @@ export function resolveImageUrl(
     return clean
   }
 
+  const keys = (Array.isArray(imageFor) ? imageFor : imageFor ? [imageFor] : []).map(
+    (key) => key.toLowerCase(),
+  )
+
   if (entries && entries.length > 0) {
-    if (imageFor) {
-      const match = entries.find(
-        (e) => e.image_for.toLowerCase() === imageFor.toLowerCase(),
-      )
+    for (const key of keys) {
+      const match = entries.find((e) => e.image_for.toLowerCase() === key)
       if (match?.image_url) {
         const base = match.image_url.endsWith('/')
           ? match.image_url
@@ -148,14 +169,11 @@ export function resolveImageUrl(
   }
 
   // Fallback defaults for known entity types if entries metadata was omitted
-  if (imageFor?.toLowerCase() === 'blog') {
-    return `https://vivahsambandh.com/crmapi/public/assets/images/blog_images/${clean.replace(/^\/+/, '')}`
-  }
-  if (imageFor?.toLowerCase() === 'client') {
-    return `https://vivahsambandh.com/crmapi/public/assets/images/client_images/${clean.replace(/^\/+/, '')}`
-  }
-  if (imageFor?.toLowerCase() === 'gallery' || imageFor?.toLowerCase() === 'galleries') {
-    return `https://vivahsambandh.com/crmapi/public/assets/images/gallerys_images/${clean.replace(/^\/+/, '')}`
+  for (const key of keys) {
+    const folder = IMAGE_FOLDERS[key]
+    if (folder) {
+      return `https://vivahsambandh.com/crmapi/public/assets/images/${folder}/${clean.replace(/^\/+/, '')}`
+    }
   }
 
   return clean
