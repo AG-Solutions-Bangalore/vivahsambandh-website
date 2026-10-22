@@ -31,7 +31,7 @@ export const COMPANY_CONFIG = {
 
   siteOrigin: "https://vivahsambandh.com",
   canonicalUrl: "https://vivahsambandh.com/",
-  logo: "https://vivahsambandh.com/crmapi/public/assets/images/web_images/common/Temple_Skyline_Divider_footer_image.webp",
+  logo: "https://vivahsambandh.com/crmapi/public/assets/images/company_images/logo.webp",
   ogImage: "https://vivahsambandh.com/images/home/home_banner_image.webp",
 
   author: COMPANY.name,
