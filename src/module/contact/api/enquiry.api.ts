@@ -2,8 +2,6 @@ import { apiPostForm } from '@/lib/api/apiClient'
 import type {
   EnquiryPayload,
   EnquiryResponse,
-  NewsletterPayload,
-  NewsletterResponse,
 } from '../types'
 
 /**
@@ -39,15 +37,4 @@ export async function createEnquiry(
   }
 
   return apiPostForm<EnquiryResponse>('/createEnquiry', fields)
-}
-
-/**
- * Submits newsletter subscription via multipart/form-data.
- */
-export async function createNewsletter(
-  payload: NewsletterPayload,
-): Promise<NewsletterResponse> {
-  return apiPostForm<NewsletterResponse>('/createNewsletter', {
-    newsletter_email: payload.newsletter_email.trim(),
-  })
 }

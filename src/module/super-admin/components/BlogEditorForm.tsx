@@ -56,7 +56,6 @@ export function BlogEditorForm({
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [preview, setPreview] = useState('')
   const [existingUrl, setExistingUrl] = useState<string | null>(currentBannerUrl ?? null)
-  const [slugTouched, setSlugTouched] = useState(!autoSlug)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   // Keep existingUrl in sync if prop changes
@@ -83,13 +82,8 @@ export function BlogEditorForm({
     setValues((prev) => ({
       ...prev,
       blog_title: title,
-      blog_slug: autoSlug && !slugTouched ? slugify(title) : prev.blog_slug,
+      blog_slug: autoSlug ? slugify(title) : prev.blog_slug,
     }))
-  }
-
-  const handleSlugChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setSlugTouched(true)
-    update('blog_slug', event.target.value)
   }
 
   const handleImageChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -141,7 +135,8 @@ export function BlogEditorForm({
     if (!values.blog_title.trim()) {
       next.blog_title = 'Article title is required.'
     }
-    if (!values.blog_slug.trim()) {
+    const resolvedSlug = values.blog_slug.trim() || slugify(values.blog_title)
+    if (!resolvedSlug) {
       next.blog_slug = 'Article slug is required.'
     }
     if (!values.blog_short_description.trim()) {
@@ -174,9 +169,11 @@ export function BlogEditorForm({
     if (isSubmitting) return
     if (!validate()) return
 
+    const resolvedSlug = values.blog_slug.trim() || slugify(values.blog_title)
+
     onSubmit({
       blog_title: values.blog_title.trim(),
-      blog_slug: values.blog_slug.trim(),
+      blog_slug: resolvedSlug,
       blog_short_description: values.blog_short_description.trim(),
       blog_description: values.blog_description,
       blog_categories_ids: values.blog_categories_ids.trim(),
@@ -218,11 +215,19 @@ export function BlogEditorForm({
           <Input
             id="blog-slug"
             type="text"
-            placeholder="choosing-the-right-life-partner"
+            placeholder="auto-generated-slug"
             value={values.blog_slug}
-            onChange={handleSlugChange}
-            className={INPUT_CLASS}
+            disabled
+            readOnly
+            tabIndex={-1}
+            className={cn(
+              INPUT_CLASS,
+              'cursor-not-allowed bg-cream-100/70 text-ink-600 select-none opacity-80',
+            )}
           />
+          <p className="mt-1 text-[11px] text-ink-500">
+            Auto-generated from title (disabled and non-editable).
+          </p>
           {errors.blog_slug ? (
             <p className={ERROR_CLASS}>{errors.blog_slug}</p>
           ) : null}

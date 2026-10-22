@@ -21,12 +21,3 @@ export interface EnquiryResponse {
   message?: string
   data?: unknown
 }
-
-export interface NewsletterPayload {
-  newsletter_email: string
-}
-
-export interface NewsletterResponse {
-  status?: boolean | string
-  message?: string
-}

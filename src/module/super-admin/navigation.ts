@@ -16,6 +16,7 @@ import {
   Images,
   Inbox,
   LayoutDashboard,
+  Mail,
   MessageSquare,
   Quote,
   ShieldCheck,
@@ -102,6 +103,13 @@ export const PANEL_NAV_GROUPS: PanelNavGroup[] = [
         icon: Inbox,
         description:
           'Review contact-form enquiries, track status, and export full reports.',
+      },
+      {
+        label: 'Newsletter',
+        to: '/panel/newsletter',
+        icon: Mail,
+        description:
+          'The mailing audience — every address that signed up for newsletter updates from the site and the app.',
       },
     ],
   },

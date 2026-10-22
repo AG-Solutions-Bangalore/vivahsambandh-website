@@ -49,7 +49,12 @@ export async function superAdminLogin(
         'Content-Type': 'application/json',
         Accept: 'application/json',
       },
-      body: JSON.stringify({ username, password }),
+      body: JSON.stringify({
+        username: username.trim(),
+        mobile: username.trim(),
+        mobile_no: username.trim(),
+        password,
+      }),
     })
 
     const data = (await res.json().catch(() => null)) as PanelLoginResponse | null
@@ -94,6 +99,56 @@ export async function superAdminLogin(
     return {
       success: false,
       message: err instanceof Error ? err.message : 'Network error during login.',
+    }
+  }
+}
+
+/**
+ * Request password recovery via POST /panel-send-password.
+ */
+export async function sendPanelPassword(
+  payload: string | { mobile: string; email?: string },
+): Promise<{ success: boolean; message: string }> {
+  const url = `${API_BASE_URL}/panel-send-password`
+  const mobile = typeof payload === 'string' ? payload.trim() : (payload.mobile || '').trim()
+  const email = typeof payload === 'string' ? payload.trim() : (payload.email || '').trim()
+
+  try {
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+      },
+      body: JSON.stringify({
+        email,
+        mobile,
+        mobile_no: mobile,
+        username: mobile,
+      }),
+    })
+
+    const data = (await res.json().catch(() => null)) as {
+      code?: number
+      message?: string
+      status?: boolean | number
+    } | null
+
+    if (res.ok && (!data?.code || data.code < 400)) {
+      return {
+        success: true,
+        message: data?.message || 'Password has been sent to your registered contact.',
+      }
+    }
+
+    return {
+      success: false,
+      message: data?.message || 'Failed to send password. Please check your credentials.',
+    }
+  } catch (err) {
+    return {
+      success: false,
+      message: err instanceof Error ? err.message : 'Network error during request.',
     }
   }
 }

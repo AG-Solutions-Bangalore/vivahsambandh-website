@@ -81,6 +81,9 @@ const PanelBlogEditorPage = lazy(
 const PanelFaqEditorPage = lazy(
   () => import('./module/super-admin/pages/FaqEditorPage'),
 )
+const PanelNewsletterPage = lazy(
+  () => import('./module/super-admin/newsletter/pages/NewsletterPage'),
+)
 
 /**
  * URL is the source of truth for language: `/hi*` → Hindi, else English.
@@ -390,6 +393,19 @@ export default function App() {
                     <Suspense fallback={null}>
                       <SuperAdminLayout>
                         <PanelCategoriesPage />
+                      </SuperAdminLayout>
+                    </Suspense>
+                  </SuperAdminGuard>
+                }
+              />
+
+              <Route
+                path="/panel/newsletter"
+                element={
+                  <SuperAdminGuard>
+                    <Suspense fallback={null}>
+                      <SuperAdminLayout>
+                        <PanelNewsletterPage />
                       </SuperAdminLayout>
                     </Suspense>
                   </SuperAdminGuard>

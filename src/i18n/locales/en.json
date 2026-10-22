@@ -535,6 +535,19 @@
     "rights": "© 2026 VivahSambandh. All rights reserved.",
     "madeWith": "Traditions Connect Hearts"
   },
+  "newsletter": {
+    "eyebrow": "Newsletter",
+    "title": "Matrimonial advice, straight to your inbox",
+    "body": "Monthly success stories, marriage tips and community updates. No spam — unsubscribe any time.",
+    "placeholder": "Enter your email address",
+    "emailLabel": "Email address",
+    "cta": "Subscribe",
+    "subscribing": "Subscribing…",
+    "successTitle": "You're on the list!",
+    "successBody": "Watch your inbox for our next newsletter.",
+    "errorBody": "Could not subscribe right now. Please try again.",
+    "privacyNote": "We only use your address for this mailing. We never share it."
+  },
   "adminRegisterPage": {
     "eyebrow": "Admin Register",
     "title": "Admin Registration",

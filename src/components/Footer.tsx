@@ -7,6 +7,7 @@ import type { AppLang } from "../i18n";
 import { useAppLanguage } from "../i18n/useAppLanguage";
 import Reveal from "./motion/Reveal";
 import { useCompanyDetails } from "../module/company";
+import { NewsletterSignup } from "../module/newsletter";
 import { img, imgSrcSet } from "../lib/image";
 
 function LotusMark() {
@@ -47,8 +48,6 @@ export default function Footer() {
     { label: t("footer.privacy"), href: pagePath("/privacy", appLang) },
     { label: t("footer.terms"), href: pagePath("/terms", appLang) },
     { label: t("footer.guidelines"), href: pagePath("/guidelines", appLang) },
-    { label: t("footer.adminRegister"), href: pagePath("/admin-register", appLang) },
-    { label: t("footer.adminLogin"), href: "/panel-login" },
     { label: t("footer.sitemap"), href: "/sitemap.xml" },
   ];
 
@@ -74,6 +73,13 @@ export default function Footer() {
           className="absolute opacity-35 sm:opacity-25 inset-x-0 -bottom-4 sm:bottom-6 h-auto w-full"
           loading="lazy"
         />
+      </div>
+
+      {/* Newsletter Signup — one form on every page */}
+      <div className="section-pad relative z-10 pt-14 sm:pt-16">
+        <Reveal variant="up">
+          <NewsletterSignup variant="band" />
+        </Reveal>
       </div>
 
       <div className="section-pad overflow-hidden relative z-10 grid grid-cols-2 gap-x-6 gap-y-8 pt-16 pb-10 sm:gap-10 sm:pt-24 md:grid-cols-[1.4fr_1fr_1fr_1.2fr]">

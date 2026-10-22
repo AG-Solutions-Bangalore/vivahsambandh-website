@@ -188,7 +188,7 @@ export function useDeleteFaqMutation() {
 export function usePageTwoOptions() {
   return useQuery({
     queryKey: superAdminKeys.pageTwoOptions,
-    queryFn: async () => {
+    queryFn: async (): Promise<PageTwoOptionItem[]> => {
       const res = await fetchPageTwoOptions()
       if (res.error) throw new Error(res.error)
       return res.data

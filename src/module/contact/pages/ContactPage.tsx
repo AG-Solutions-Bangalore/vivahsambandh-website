@@ -4,12 +4,14 @@ import MessageForm from '../components/MessageForm'
 import OfficeVisit from '../components/OfficeVisit'
 import ContactCta from '../components/ContactCta'
 import PageParallax from '../../../components/motion/PageParallax'
+import Reveal from '../../../components/motion/Reveal'
 import { TestimonialSection } from '../../testimonial'
 import { FaqSection } from '../../faq'
+import { NewsletterSignup } from '../../newsletter'
 
 /**
  * Contact Us page — hero → channel cards → form + office →
- * testimonials → FAQs → closing CTA.
+ * newsletter → testimonials → FAQs → closing CTA.
  */
 export default function ContactPage() {
   return (
@@ -28,6 +30,13 @@ export default function ContactPage() {
               <OfficeVisit />
             </div>
           </div>
+        </div>
+      </section>
+      <section className="relative bg-cream-50 pb-14 sm:pb-16">
+        <div className="section-pad">
+          <Reveal variant="up">
+            <NewsletterSignup variant="card" />
+          </Reveal>
         </div>
       </section>
       <TestimonialSection slug="contact" tone="paper" />
