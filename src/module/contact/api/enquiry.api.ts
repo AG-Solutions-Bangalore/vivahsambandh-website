@@ -20,9 +20,6 @@ export async function createEnquiry(
   if (payload.enquiryService?.trim()) {
     fields.enquiryService = payload.enquiryService.trim()
   }
-  if (payload.enquirySubject?.trim()) {
-    fields.enquirySubject = payload.enquirySubject.trim()
-  }
   if (payload.enquiryFrom?.trim()) {
     fields.enquiryFrom = payload.enquiryFrom.trim()
   }

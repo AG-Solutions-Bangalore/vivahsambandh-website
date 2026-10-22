@@ -652,14 +652,6 @@
     "name": "Your Name",
     "email": "Your Email",
     "phone": "Phone Number",
-    "subject": "Subject",
-    "subjectPlaceholder": "Select a subject",
-    "subjectOptions": [
-      "General Question",
-      "Membership & Pricing",
-      "Profile Help",
-      "Feedback & Suggestions"
-    ],
     "message": "Your Message",
     "send": "Send Message",
     "successTitle": "Message Sent!",

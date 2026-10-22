@@ -8,7 +8,6 @@ export interface EnquiryPayload {
   enquiryEmail: string
   enquiryMobile: string
   enquiryService?: string
-  enquirySubject?: string
   enquiryMessage: string
   enquiryFrom?: string
   utm_medium?: string
