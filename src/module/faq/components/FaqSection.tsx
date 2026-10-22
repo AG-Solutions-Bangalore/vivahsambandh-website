@@ -33,7 +33,6 @@ export interface FaqSectionProps {
   fallbackSlugs?: Array<string | null | undefined> | null;
   title?: string;
   subtitle?: string;
-  eyebrow?: string;
   ctaText?: string;
   ctaHref?: string;
   tone?: "cream" | "paper" | "navy";
@@ -121,7 +120,6 @@ export default function FaqSection({
   fallbackSlugs,
   title,
   subtitle,
-  eyebrow,
   ctaText,
   ctaHref,
   id = "faq",
@@ -255,13 +253,6 @@ export default function FaqSection({
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-4 items-center">
           {/* Left Column: Eyebrow, Motif Icon, Title, Divider, Subtitle, and Optional Category Tabs */}
           <div className="lg:col-span-4 flex flex-col items-start text-left relative z-20">
-            {/* Pill Badge */}
-            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-maroon-50 border border-maroon-200 text-maroon-700 text-[11px] font-bold tracking-[0.2em] uppercase shadow-2xs mb-3">
-              <span className="text-gold-500 text-xs">❖</span>
-              <span>{eyebrow || t("faq.eyebrow", "FAQ")}</span>
-              <span className="text-gold-500 text-xs">❖</span>
-            </div>
-
             {/* Section Heading */}
             <h2 className="text-2xl sm:text-3xl lg:text-[34px] font-serif font-bold text-navy-900 leading-[1.18] mb-2.5">
               {title ? (
@@ -557,30 +548,6 @@ export default function FaqSection({
                     </div>
                   </div>
 
-                  {/* Pagination Dots for Mobile */}
-                  <div className="flex justify-center items-center gap-1.5 mt-3">
-                    {visibleItems.map((_entry, dotIdx) => {
-                      const globalIdx = setStart + dotIdx;
-                      return (
-                        <button
-                          key={globalIdx}
-                          type="button"
-                          aria-label={`Go to question ${globalIdx + 1}`}
-                          onClick={() => setActiveQuestionIdx(globalIdx)}
-                          className={`transition-all rounded-full cursor-pointer ${
-                            safeActiveIdx === globalIdx
-                              ? "w-2.5 h-2 bg-maroon-600"
-                              : "w-2 h-2 bg-maroon-200"
-                          }`}
-                        />
-                      );
-                    })}
-                    {total > DIAL_SIZE && (
-                      <span className="ml-1.5 text-[10px] font-semibold tabular-nums text-ink-600">
-                        {safeActiveIdx + 1} / {total}
-                      </span>
-                    )}
-                  </div>
                 </div>
               </>
             )}
