@@ -14,7 +14,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { SearchableSelect } from "@/components/common/SearchableSelect";
-import { normalizePageSlug } from "@/lib/page-slug";
+import { normalizePageSlug, PAGE_SLUG_ALIASES } from "@/lib/page-slug";
 import type { FaqPayload, FaqStatus } from "../types";
 import { useDeleteFaqSubMutation, usePageTwoOptions } from "../hook/useFaqs";
 import {
@@ -24,12 +24,17 @@ import {
   type FaqSubFormValues,
 } from "./faqForm";
 
-const FALLBACK_PAGE_OPTIONS = [
-  { value: "home", label: "Home (home)" },
-  { value: "about-us", label: "About Us (about-us)" },
-  { value: "blogs", label: "Blogs (blogs)" },
-  { value: "contacts", label: "Contact (contacts)" },
-];
+/** Human labels for the canonical routes the site renders. */
+const ROUTE_LABELS: Record<string, string> = {
+  home: "Home",
+  about: "About Us",
+  blogs: "Blogs",
+  contact: "Contact",
+  download: "Download",
+  stories: "Success Stories",
+  membership: "Membership",
+  registration: "Registration",
+};
 
 /** Field label used across the form. */
 const LABEL_CLASS =
@@ -75,11 +80,17 @@ export function FaqEditorForm({
   );
 
   const placementOptions = useMemo(() => {
-    const list =
-      pageSlugs.length > 0 ? [...pageSlugs] : [...FALLBACK_PAGE_OPTIONS];
+    // Every page the site renders must be selectable, otherwise an FAQ group
+    // can never be placed on Stories / Membership. The CRM sitemap only
+    // exposes a subset, so the canonical route list fills the gaps.
+    const canonical = Object.entries(PAGE_SLUG_ALIASES).map(([route, aliases]) => ({
+      value: aliases[0],
+      label: `${ROUTE_LABELS[route] ?? route} (${aliases[0]})`,
+    }));
 
-    if (!list.some((o) => o.value === "home")) {
-      list.unshift({ value: "home", label: "Home (home)" });
+    const list = [...canonical];
+    for (const option of pageSlugs) {
+      if (!list.some((o) => o.value === option.value)) list.push(option);
     }
 
     const currentFaqFor = normalizePageSlug(values.faq_for);

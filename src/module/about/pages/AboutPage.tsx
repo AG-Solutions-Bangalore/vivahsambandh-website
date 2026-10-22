@@ -21,8 +21,8 @@ export default function AboutPage() {
       <ValuesBand />
       <WhyBuilt />
       <StatsStrip />
-      <TestimonialSection slug="about" tone="paper" />
-      <FaqSection slug="about" tone="cream" />
+      <TestimonialSection page="about" tone="paper" />
+      <FaqSection page="about" tone="cream" />
       <CtaBand />
     </div>
   )

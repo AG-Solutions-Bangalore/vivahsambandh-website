@@ -39,8 +39,8 @@ export default function ContactPage() {
           </Reveal>
         </div>
       </section>
-      <TestimonialSection slug="contact" tone="paper" />
-      <FaqSection slug="contact" tone="cream" />
+      <TestimonialSection page="contact" tone="paper" />
+      <FaqSection page="contact" tone="cream" />
       <ContactCta />
     </div>
   )

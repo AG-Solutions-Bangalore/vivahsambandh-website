@@ -3,7 +3,7 @@
  * Infinite auto-scroll Testimonial Marquee component without images.
  * Matches exact card design: 5 gold stars, quote mark, line-clamped review,
  * dark navy avatar circle with golden initials, name, and verified badge.
- * Conditionally renders ONLY if live API data (or fallbackItems) exist; otherwise hides completely.
+ * Renders ONLY when the API returns reviews for this page; otherwise hides completely.
  */
 
 import { useTranslation } from 'react-i18next'
@@ -15,6 +15,12 @@ import type { AppLang } from '../../../i18n'
 import type { TestimonialItem } from '../types'
 
 export interface TestimonialSectionProps {
+  /**
+   * Canonical route of the page ("about", "download", ...). The CRM slug
+   * chain is derived from it, so the rail only shows this page's own reviews.
+   */
+  page?: string
+  /** Explicit CRM slug — used when `page` is not given. */
   slug?: string
   titleA?: string
   titleB?: string
@@ -22,7 +28,6 @@ export interface TestimonialSectionProps {
   eyebrow?: string
   id?: string
   tone?: 'navy' | 'cream' | 'paper'
-  fallbackItems?: TestimonialItem[]
 }
 
 function StarIcon() {
@@ -180,6 +185,7 @@ function TestimonialSkeleton({ tone }: { tone: 'navy' | 'cream' | 'paper' }) {
 }
 
 export default function TestimonialSection({
+  page,
   slug = 'home',
   titleA,
   titleB,
@@ -187,18 +193,19 @@ export default function TestimonialSection({
   eyebrow,
   id = 'testimonials',
   tone = 'navy',
-  fallbackItems,
 }: TestimonialSectionProps) {
   const { t } = useTranslation()
   const { lang } = useAppLanguage()
-  const { data: apiResponse, isPending } = useTestimonialsQuery(slug)
+  const { data: apiResponse, isPending } = useTestimonialsQuery(slug, {
+    page,
+  })
 
-  // Strictly use items from API or passed fallbackItems
+  // Strictly the API rows for this page — no mock data, no other page's reviews.
   const apiItems = apiResponse?.data?.filter(
     (item) => item.testimonial_description || item.testimonial_client_name,
   )
 
-  const items = apiItems && apiItems.length > 0 ? apiItems : (fallbackItems ?? [])
+  const items = apiItems ?? []
 
   // If no data comes for this slug, hide the component completely (do not render default mock data)
   if (!items || items.length === 0) {

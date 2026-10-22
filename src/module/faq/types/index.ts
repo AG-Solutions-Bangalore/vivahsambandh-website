@@ -25,8 +25,5 @@ export interface GroupedFaqs {
   items: FaqItem[]
 }
 
-/** Item shape accepted via the `fallbackItems` prop (supports both schemas). */
+/** Item shape accepted by the FAQ helpers (supports both wire schemas). */
 export type FaqFallbackItem = { q: string; a: string } | FaqItem
-
-/** Default slug used when the requested page/category has no FAQs. */
-export const DEFAULT_FAQ_FALLBACK_SLUG = 'home'

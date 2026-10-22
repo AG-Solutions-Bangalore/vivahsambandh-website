@@ -6,5 +6,5 @@
 import { TestimonialSection as CommonTestimonial } from '../../testimonial'
 
 export default function SuccessStoriesSection() {
-  return <CommonTestimonial slug="home" id="stories" tone="paper" />
+  return <CommonTestimonial page="home" id="stories" tone="paper" />
 }

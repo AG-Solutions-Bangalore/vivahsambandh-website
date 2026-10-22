@@ -1,5 +1,5 @@
 import { useQuery, type UseQueryOptions } from '@tanstack/react-query'
-import { getTestimonialsBySlug } from '../api/testimonial.api'
+import { getTestimonialsForPage, getTestimonialSlugChain } from '../api/testimonial.api'
 import type { TestimonialItem, TestimonialResponse } from '../types'
 
 import { useAppLanguage } from '../../../i18n/useAppLanguage'
@@ -7,18 +7,35 @@ import { translateText } from '../../../lib/dynamicTranslate'
 
 export const testimonialKey = (slug: string, lang: string = 'en') => ['testimonials', slug.toLowerCase(), lang] as const
 
+export interface UseTestimonialsOptions
+  extends Omit<UseQueryOptions<TestimonialResponse>, 'queryKey' | 'queryFn'> {
+  /**
+   * Canonical route of the page ("about", "download", ...). The CRM slug
+   * chain is derived from it, so the rail only ever shows this page's own
+   * reviews.
+   */
+  page?: string
+  /**
+   * Naming aliases of the **same** page (e.g. `about` -> `about-us`).
+   * Never another page's slug.
+   */
+  slugAliases?: Array<string | null | undefined>
+}
+
 export function useTestimonialsQuery(
   slug: string = 'home',
-  options?: Omit<UseQueryOptions<TestimonialResponse>, 'queryKey' | 'queryFn'>,
+  options?: UseTestimonialsOptions,
 ) {
   const { lang } = useAppLanguage()
+  const { page, slugAliases, ...rest } = options ?? {}
+  const chain = page ? getTestimonialSlugChain(page) : [slug.trim().toLowerCase() || 'home']
+  const aliases = slugAliases ?? chain.slice(1)
+  const primary = chain[0]
+
   return useQuery({
-    queryKey: testimonialKey(slug, lang),
+    queryKey: [...testimonialKey(primary, lang), ...aliases],
     queryFn: async () => {
-      let res = await getTestimonialsBySlug(slug)
-      if ((!res.data || res.data.length === 0) && slug.toLowerCase() !== 'home') {
-        res = await getTestimonialsBySlug('home')
-      }
+      const res = await getTestimonialsForPage(primary, aliases)
       if (lang === 'hi' && res.data && res.data.length > 0) {
         const translatedData = await Promise.all(
           res.data.map(async (item) => ({
@@ -35,7 +52,7 @@ export function useTestimonialsQuery(
       }
       return res
     },
-    ...options,
+    ...rest,
   })
 }
 
