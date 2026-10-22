@@ -4,67 +4,72 @@
  * inspection using GET /notification/{id}, and deletion.
  */
 
-import { useState, useMemo, useRef, type ChangeEvent, type FormEvent } from 'react'
+import {
+  useState,
+  useMemo,
+  useRef,
+  type ChangeEvent,
+  type FormEvent,
+} from "react";
 import {
   Bell,
   RefreshCw,
   Plus,
   Trash2,
   Calendar,
-  Eye,
   Upload,
   Image as ImageIcon,
   Users,
   Shield,
   FileText,
-} from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Textarea } from '@/components/ui/textarea'
-import { ConfirmDialog } from '../components/ConfirmDialog'
-import { PanelCard } from '../components/PanelCard'
-import { PanelPageHeader } from '../components/PanelPageHeader'
-import { panelDescription } from '../navigation'
-import { PanelModal } from '../components/PanelModal'
-import { PanelPagination } from '../components/PanelPagination'
-import { PanelSearch } from '../components/PanelSearch'
-import { PanelToolbar } from '../components/PanelToolbar'
-import { PanelEmpty, PanelError } from '../components/PanelState'
-import { PanelTableSkeleton, SkeletonText } from '../components/PanelSkeleton'
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { ConfirmDialog } from "../components/ConfirmDialog";
+import { PanelCard } from "../components/PanelCard";
+import { PanelPageHeader } from "../components/PanelPageHeader";
+import { panelDescription } from "../navigation";
+import { PanelModal } from "../components/PanelModal";
+import { PanelPagination } from "../components/PanelPagination";
+import { PanelSearch } from "../components/PanelSearch";
+import { PanelToolbar } from "../components/PanelToolbar";
+import { PanelEmpty, PanelError } from "../components/PanelState";
+import { PanelTableSkeleton, SkeletonText } from "../components/PanelSkeleton";
 import {
   PanelTable,
   PanelTableFooter,
   PanelTableHeadCell,
-} from '../components/PanelTable'
-import { PanelFilterSelect } from '../components/PanelFilterSelect'
-import { RemoteImage } from '../components/RemoteImage'
-import { cn } from 'cn'
+} from "../components/PanelTable";
+import { PanelFilterSelect } from "../components/PanelFilterSelect";
+import { RemoteImage } from "../components/RemoteImage";
+import { cn } from "cn";
 import {
   useCreateNotificationMutation,
   useDeleteNotificationMutation,
   useNotificationsQuery,
   useNotificationQuery,
-} from '../hook/useNotifications'
-import { errorMessage } from '../hook/errors'
-import { DEFAULT_PER_PAGE, useServerSearch } from '../hook/useServerList'
-import type { NotificationTarget } from '../types'
+} from "../hook/useNotifications";
+import { errorMessage } from "../hook/errors";
+import { DEFAULT_PER_PAGE, useServerSearch } from "../hook/useServerList";
+import type { NotificationTarget } from "../types";
 
-const AUDIENCE_FILTERS = ['All', 'User', 'Admin'] as const
+const AUDIENCE_FILTERS = ["All", "User", "Admin"] as const;
 
 /** Fresh composer state — the date is recomputed on every reset. */
 const emptyCreateForm = () => ({
-  notification_date: new Date().toISOString().split('T')[0],
-  notification_for: 'User' as NotificationTarget,
-  notification_heading: '',
-  notification_message: '',
+  notification_date: new Date().toISOString().split("T")[0],
+  notification_for: "User" as NotificationTarget,
+  notification_heading: "",
+  notification_message: "",
   notification_image: null as File | null,
-  imagePreview: '',
-})
+  imagePreview: "",
+});
 
 export default function NotificationsPage() {
-  const { searchInput, setSearchInput, searchTerm } = useServerSearch()
-  const [targetFilter, setTargetFilter] = useState<string>('All')
-  const [page, setPage] = useState(1)
+  const { searchInput, setSearchInput, searchTerm } = useServerSearch();
+  const [targetFilter, setTargetFilter] = useState<string>("All");
+  const [page, setPage] = useState(1);
 
   const {
     records: notifications,
@@ -75,111 +80,116 @@ export default function NotificationsPage() {
     refetch,
   } = useNotificationsQuery({
     search: searchTerm || undefined,
-    target: targetFilter === 'All' ? undefined : targetFilter,
+    target: targetFilter === "All" ? undefined : targetFilter,
     page,
     per_page: DEFAULT_PER_PAGE,
-  })
-  const createMutation = useCreateNotificationMutation()
-  const deleteMutation = useDeleteNotificationMutation()
+  });
+  const createMutation = useCreateNotificationMutation();
+  const deleteMutation = useDeleteNotificationMutation();
 
   // Create Modal State
-  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
-  const [createForm, setCreateForm] = useState(emptyCreateForm)
-  const [formErrors, setFormErrors] = useState<Record<string, string>>({})
-  const fileInputRef = useRef<HTMLInputElement>(null)
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [createForm, setCreateForm] = useState(emptyCreateForm);
+  const [formErrors, setFormErrors] = useState<Record<string, string>>({});
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Details Modal State (using GET /notification/{id})
-  const [inspectingId, setInspectingId] = useState<number | null>(null)
+  const [inspectingId, setInspectingId] = useState<number | null>(null);
   const {
     data: inspectedRecord,
     isLoading: isLoadingDetail,
     error: inspectError,
-  } = useNotificationQuery(inspectingId)
+  } = useNotificationQuery(inspectingId);
 
   // Delete State
-  const [deleteTargetId, setDeleteTargetId] = useState<number | null>(null)
+  const [deleteTargetId, setDeleteTargetId] = useState<number | null>(null);
 
   const deleteTarget = useMemo(
     () => notifications.find((n) => n.id === deleteTargetId) ?? null,
     [notifications, deleteTargetId],
-  )
-
+  );
 
   // Handle Image Selection
   const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (!file) return
+    const file = e.target.files?.[0];
+    if (!file) return;
 
-    if (!file.type.startsWith('image/')) {
-      setFormErrors((prev) => ({ ...prev, notification_image: 'Please select a valid image file.' }))
-      return
+    if (!file.type.startsWith("image/")) {
+      setFormErrors((prev) => ({
+        ...prev,
+        notification_image: "Please select a valid image file.",
+      }));
+      return;
     }
 
     if (file.size > 5 * 1024 * 1024) {
-      setFormErrors((prev) => ({ ...prev, notification_image: 'Image size must be less than 5MB.' }))
-      return
+      setFormErrors((prev) => ({
+        ...prev,
+        notification_image: "Image size must be less than 5MB.",
+      }));
+      return;
     }
 
     setFormErrors((prev) => {
-      const next = { ...prev }
-      delete next.notification_image
-      return next
-    })
+      const next = { ...prev };
+      delete next.notification_image;
+      return next;
+    });
 
-    const previewUrl = URL.createObjectURL(file)
+    const previewUrl = URL.createObjectURL(file);
     setCreateForm((prev) => ({
       ...prev,
       notification_image: file,
       imagePreview: previewUrl,
-    }))
-  }
+    }));
+  };
 
   const handleClearImage = () => {
     if (createForm.imagePreview) {
-      URL.revokeObjectURL(createForm.imagePreview)
+      URL.revokeObjectURL(createForm.imagePreview);
     }
     setCreateForm((prev) => ({
       ...prev,
       notification_image: null,
-      imagePreview: '',
-    }))
+      imagePreview: "",
+    }));
     if (fileInputRef.current) {
-      fileInputRef.current.value = ''
+      fileInputRef.current.value = "";
     }
-  }
+  };
 
   const resetCreateForm = () => {
     if (createForm.imagePreview) {
-      URL.revokeObjectURL(createForm.imagePreview)
+      URL.revokeObjectURL(createForm.imagePreview);
     }
-    setCreateForm(emptyCreateForm())
-    setFormErrors({})
+    setCreateForm(emptyCreateForm());
+    setFormErrors({});
     if (fileInputRef.current) {
-      fileInputRef.current.value = ''
+      fileInputRef.current.value = "";
     }
-  }
+  };
 
   // Handle Create Submit
   const handleCreateSubmit = (e: FormEvent) => {
-    e.preventDefault()
-    const errors: Record<string, string> = {}
+    e.preventDefault();
+    const errors: Record<string, string> = {};
 
     if (!createForm.notification_heading.trim()) {
-      errors.notification_heading = 'Notification heading is required.'
+      errors.notification_heading = "Notification heading is required.";
     }
     if (!createForm.notification_message.trim()) {
-      errors.notification_message = 'Notification message is required.'
+      errors.notification_message = "Notification message is required.";
     }
     if (!createForm.notification_date) {
-      errors.notification_date = 'Notification date is required.'
+      errors.notification_date = "Notification date is required.";
     }
 
     if (Object.keys(errors).length > 0) {
-      setFormErrors(errors)
-      return
+      setFormErrors(errors);
+      return;
     }
 
-    setFormErrors({})
+    setFormErrors({});
 
     createMutation.mutate(
       {
@@ -190,41 +200,41 @@ export default function NotificationsPage() {
           notification_message: createForm.notification_message.trim(),
           notification_image: createForm.notification_image,
         },
-        successMessage: 'Notification broadcast created successfully!',
+        successMessage: "Notification broadcast created successfully!",
       },
       {
         onSuccess: () => {
-          setIsCreateModalOpen(false)
-          resetCreateForm()
+          setIsCreateModalOpen(false);
+          resetCreateForm();
         },
       },
-    )
-  }
+    );
+  };
 
   // Handle Delete
   const handleDelete = () => {
-    if (!deleteTarget) return
-    const targetId = deleteTarget.id
+    if (!deleteTarget) return;
+    const targetId = deleteTarget.id;
 
     deleteMutation.mutate(
       {
         id: targetId,
-        successMessage: 'Notification deleted successfully.',
+        successMessage: "Notification deleted successfully.",
       },
       {
         onSuccess: () => {
-          setDeleteTargetId(null)
-          setInspectingId(null)
+          setDeleteTargetId(null);
+          setInspectingId(null);
         },
       },
-    )
-  }
+    );
+  };
 
   return (
     <div className="space-y-6">
       <PanelPageHeader
         title="Notification Broadcasts"
-        description={panelDescription('/panel/notifications')}
+        description={panelDescription("/panel/notifications")}
         actions={
           <>
             <Button
@@ -235,7 +245,10 @@ export default function NotificationsPage() {
               disabled={isFetching}
               className="cursor-pointer rounded-full border-cream-300 text-xs font-semibold"
             >
-              <RefreshCw className={isFetching ? 'size-3.5 animate-spin' : 'size-3.5'} aria-hidden />
+              <RefreshCw
+                className={isFetching ? "size-3.5 animate-spin" : "size-3.5"}
+                aria-hidden
+              />
               <span>Refresh</span>
             </Button>
 
@@ -277,7 +290,10 @@ export default function NotificationsPage() {
         ) : error ? (
           <PanelError
             title="Could not load notifications"
-            message={errorMessage(error, 'Failed to load broadcast notifications.')}
+            message={errorMessage(
+              error,
+              "Failed to load broadcast notifications.",
+            )}
             onRetry={() => void refetch()}
           />
         ) : notifications.length === 0 ? (
@@ -285,19 +301,19 @@ export default function NotificationsPage() {
             icon={<Bell className="size-6" />}
             title="No Notifications Found"
             description={
-              searchInput || targetFilter !== 'All'
-                ? 'No notifications match your current filter criteria.'
-                : 'No announcements have been dispatched yet. Create one to notify your audience.'
+              searchInput || targetFilter !== "All"
+                ? "No notifications match your current filter criteria."
+                : "No announcements have been dispatched yet. Create one to notify your audience."
             }
             action={
-              searchInput || targetFilter !== 'All' ? (
+              searchInput || targetFilter !== "All" ? (
                 <Button
                   type="button"
                   variant="outline"
                   size="xs"
                   onClick={() => {
-                    setSearchInput('')
-                    setTargetFilter('All')
+                    setSearchInput("");
+                    setTargetFilter("All");
                   }}
                   className="mt-4 cursor-pointer rounded-full border-cream-300 text-xs font-semibold"
                 >
@@ -320,7 +336,10 @@ export default function NotificationsPage() {
             }
           >
             {notifications.map((item) => (
-              <tr key={item.id} className="transition-colors hover:bg-cream-50/70">
+              <tr
+                key={item.id}
+                className="transition-colors hover:bg-cream-50/70"
+              >
                 <td className="max-w-md px-4 py-3.5">
                   <p className="text-sm font-bold text-navy-900">
                     {item.notification_heading}
@@ -333,13 +352,13 @@ export default function NotificationsPage() {
                 <td className="px-4 py-3.5">
                   <span
                     className={cn(
-                      'inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-xs font-bold',
-                      item.notification_for === 'Admin'
-                        ? 'border-navy-200 bg-navy-50 text-navy-800'
-                        : 'border-gold-300 bg-gold-50 text-gold-800',
+                      "inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-xs font-bold",
+                      item.notification_for === "Admin"
+                        ? "border-navy-200 bg-navy-50 text-navy-800"
+                        : "border-gold-300 bg-gold-50 text-gold-800",
                     )}
                   >
-                    {item.notification_for === 'Admin' ? (
+                    {item.notification_for === "Admin" ? (
                       <Shield className="size-3" aria-hidden />
                     ) : (
                       <Users className="size-3" aria-hidden />
@@ -351,7 +370,7 @@ export default function NotificationsPage() {
                 <td className="px-4 py-3.5">
                   <span className="flex items-center gap-1.5 font-medium text-ink-500">
                     <Calendar className="size-3.5 text-ink-400" aria-hidden />
-                    {item.notification_date || '—'}
+                    {item.notification_date || "—"}
                   </span>
                 </td>
 
@@ -368,7 +387,8 @@ export default function NotificationsPage() {
                         <RemoteImage
                           src={item.notification_image}
                           alt={
-                            item.notification_image_name ?? 'Notification attachment'
+                            item.notification_image_name ??
+                            "Notification attachment"
                           }
                           className="h-12 w-16 rounded-lg border border-cream-300 object-cover"
                           fallback={
@@ -386,24 +406,14 @@ export default function NotificationsPage() {
                       ) : null}
                     </div>
                   ) : (
-                    <span className="text-[0.7rem] text-ink-400 italic">None</span>
+                    <span className="text-[0.7rem] text-ink-400 italic">
+                      None
+                    </span>
                   )}
                 </td>
 
                 <td className="px-4 py-3.5">
                   <div className="flex items-center justify-end gap-1.5">
-                    <Button
-                      type="button"
-                      size="icon-xs"
-                      variant="outline"
-                      onClick={() => setInspectingId(item.id)}
-                      title="View notification details"
-                      aria-label="View notification details"
-                      className="cursor-pointer rounded-full border-navy-200 text-navy-700 hover:bg-navy-50"
-                    >
-                      <Eye className="size-3.5 text-navy-700" aria-hidden />
-                    </Button>
-
                     <Button
                       type="button"
                       size="icon-xs"
@@ -444,8 +454,8 @@ export default function NotificationsPage() {
         icon={<Bell className="size-5" />}
         onClose={() => {
           if (!createMutation.isPending) {
-            setIsCreateModalOpen(false)
-            resetCreateForm()
+            setIsCreateModalOpen(false);
+            resetCreateForm();
           }
         }}
         footer={
@@ -454,8 +464,8 @@ export default function NotificationsPage() {
               type="button"
               variant="outline"
               onClick={() => {
-                setIsCreateModalOpen(false)
-                resetCreateForm()
+                setIsCreateModalOpen(false);
+                resetCreateForm();
               }}
               disabled={createMutation.isPending}
               className="cursor-pointer rounded-full border-cream-300 text-xs font-semibold"
@@ -465,8 +475,8 @@ export default function NotificationsPage() {
             <Button
               type="button"
               onClick={(event) => {
-                event.preventDefault()
-                void handleCreateSubmit(event as unknown as FormEvent)
+                event.preventDefault();
+                void handleCreateSubmit(event as unknown as FormEvent);
               }}
               disabled={createMutation.isPending}
               className="cursor-pointer rounded-full bg-navy-900 px-5 text-xs font-bold text-white hover:bg-navy-700"
@@ -494,7 +504,7 @@ export default function NotificationsPage() {
               htmlFor="notification-for"
               className="mb-1.5 block text-[0.68rem] font-bold tracking-[0.14em] text-navy-900 uppercase"
             >
-              Notification For <span className="text-maroon-600">*</span>
+              Notification For
             </label>
             <select
               id="notification-for"
@@ -518,7 +528,7 @@ export default function NotificationsPage() {
               htmlFor="notification-date"
               className="mb-1.5 block text-[0.68rem] font-bold tracking-[0.14em] text-navy-900 uppercase"
             >
-              Notification Date <span className="text-maroon-600">*</span>
+              Notification Date
             </label>
             <Input
               id="notification-date"
@@ -575,7 +585,8 @@ export default function NotificationsPage() {
               htmlFor="notification-message"
               className="mb-1.5 block text-[0.68rem] font-bold tracking-[0.14em] text-navy-900 uppercase"
             >
-              Notification Message Body <span className="text-maroon-600">*</span>
+              Notification Message Body{" "}
+              <span className="text-maroon-600">*</span>
             </label>
             <Textarea
               id="notification-message"
@@ -667,7 +678,7 @@ export default function NotificationsPage() {
                 variant="destructive"
                 size="sm"
                 onClick={() => {
-                  setDeleteTargetId(inspectedRecord.id)
+                  setDeleteTargetId(inspectedRecord.id);
                 }}
                 className="mr-auto cursor-pointer rounded-full text-xs font-semibold"
               >
@@ -691,17 +702,20 @@ export default function NotificationsPage() {
           <SkeletonText lines={5} className="py-6" />
         ) : inspectError ? (
           <p className="py-8 text-center text-xs text-maroon-600">
-            {errorMessage(inspectError, 'Could not retrieve the notification record.')}
+            {errorMessage(
+              inspectError,
+              "Could not retrieve the notification record.",
+            )}
           </p>
         ) : inspectedRecord ? (
           <div className="space-y-4 text-xs">
             <div className="flex items-center gap-2">
               <span
                 className={cn(
-                  'inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[0.68rem] font-bold',
-                  inspectedRecord.notification_for === 'Admin'
-                    ? 'border-navy-200 bg-navy-50 text-navy-800'
-                    : 'border-gold-300 bg-gold-50 text-gold-800',
+                  "inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[0.68rem] font-bold",
+                  inspectedRecord.notification_for === "Admin"
+                    ? "border-navy-200 bg-navy-50 text-navy-800"
+                    : "border-gold-300 bg-gold-50 text-gold-800",
                 )}
               >
                 Target: {inspectedRecord.notification_for}
@@ -738,7 +752,8 @@ export default function NotificationsPage() {
                   <RemoteImage
                     src={inspectedRecord.notification_image}
                     alt={
-                      inspectedRecord.notification_image_name ?? 'Notification attachment'
+                      inspectedRecord.notification_image_name ??
+                      "Notification attachment"
                     }
                     className="h-44 w-full object-contain"
                   />
@@ -773,5 +788,5 @@ export default function NotificationsPage() {
         />
       )}
     </div>
-  )
+  );
 }

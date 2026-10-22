@@ -352,7 +352,7 @@ export default function PanelLoginPage() {
                 </Button>
 
                 {/* Forgot Password link below button */}
-                <div className="pt-2 text-center">
+                {/* <div className="pt-2 text-center">
                   <button
                     type="button"
                     onClick={handleOpenForgot}
@@ -360,7 +360,7 @@ export default function PanelLoginPage() {
                   >
                     Forgot password?
                   </button>
-                </div>
+                </div> */}
               </form>
             ) : (
               /* ================= FORGOT PASSWORD FORM ================= */
