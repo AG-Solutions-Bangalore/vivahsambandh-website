@@ -175,40 +175,40 @@ export function SkeletonSection({ spec }: { spec: SectionSpec }) {
       return (
         <Band
           spec={spec}
-          className="relative overflow-hidden bg-gradient-to-b from-[#07111F] via-[#0C1B33] to-[#081220] text-white pt-12 pb-16 lg:pt-20 lg:pb-24"
+          className="relative overflow-hidden bg-cream-50 pt-12 pb-16 lg:pt-20 lg:pb-24"
         >
           <div className="section-pad relative z-10">
             <div className="grid items-center gap-12 lg:grid-cols-12 lg:gap-8">
               {/* Left Column */}
               <div className="space-y-5 lg:col-span-7">
-                <Bar tone="dark" className="h-6 w-36 rounded-full border border-gold-500/40 bg-gold-500/10" />
+                <Bar className="h-6 w-36 rounded-full border border-gold-500/40 bg-gold-500/10" />
                 <div className="space-y-2">
-                  <Bar tone="dark" className="h-10 sm:h-14 w-4/5 rounded-xl bg-white/20" />
-                  <Bar tone="dark" className="h-10 sm:h-14 w-3/5 rounded-xl bg-gold-400/30" />
+                  <Bar className="h-10 sm:h-14 w-4/5 rounded-xl bg-cream-200/80" />
+                  <Bar className="h-10 sm:h-14 w-3/5 rounded-xl bg-gold-200/60" />
                 </div>
                 <div className="space-y-2 max-w-xl">
-                  <Bar tone="dark" className="h-4 w-full" />
-                  <Bar tone="dark" className="h-4 w-4/5" />
+                  <Bar className="h-4 w-full" />
+                  <Bar className="h-4 w-4/5" />
                 </div>
                 <div className="flex flex-wrap items-center gap-3 pt-3">
-                  <Bar tone="dark" className="h-12 w-40 rounded-full border border-white/20" />
-                  <Bar tone="dark" className="h-12 w-40 rounded-full border border-white/20" />
+                  <Bar className="h-12 w-40 rounded-full border border-navy-900/15 bg-navy-900/10" />
+                  <Bar className="h-12 w-40 rounded-full border border-navy-900/15 bg-navy-900/10" />
                 </div>
-                <div className="flex items-center gap-6 pt-5 border-t border-white/10">
-                  <Bar tone="dark" className="h-4 w-36" />
-                  <Bar tone="dark" className="h-4 w-28" />
+                <div className="flex items-center gap-6 pt-5 border-t border-gold-500/20">
+                  <Bar className="h-4 w-36" />
+                  <Bar className="h-4 w-28" />
                 </div>
               </div>
               {/* Right Column: Phone Mockup Frame */}
               <div className="flex justify-center lg:col-span-5">
-                <div className="relative w-full max-w-[340px] aspect-[9/16] max-h-[480px] rounded-[36px] border border-gold-500/25 bg-white/[0.04] p-4 flex flex-col justify-between shadow-2xl">
-                  <Bar tone="dark" className="mx-auto h-4 w-24 rounded-full bg-white/10" />
+                <div className="relative w-full max-w-[340px] aspect-[9/16] max-h-[480px] rounded-[36px] border border-gold-500/25 bg-white p-4 flex flex-col justify-between shadow-xl">
+                  <Bar className="mx-auto h-4 w-24 rounded-full bg-cream-200/80" />
                   <div className="space-y-3">
-                    <Bar tone="dark" className="h-32 w-full rounded-2xl bg-white/10" />
-                    <Bar tone="dark" className="h-4 w-3/4 rounded" />
-                    <Bar tone="dark" className="h-3 w-1/2 rounded" />
+                    <Bar className="h-32 w-full rounded-2xl bg-cream-200/70" />
+                    <Bar className="h-4 w-3/4 rounded" />
+                    <Bar className="h-3 w-1/2 rounded" />
                   </div>
-                  <Bar tone="dark" className="h-10 w-full rounded-full bg-gold-400/20" />
+                  <Bar className="h-10 w-full rounded-full bg-gold-200/60" />
                 </div>
               </div>
             </div>

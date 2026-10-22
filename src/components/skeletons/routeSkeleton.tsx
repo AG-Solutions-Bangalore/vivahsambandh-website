@@ -93,7 +93,7 @@ const ROUTE_SPECS: Record<string, RouteSkeletonSpec> = {
     ],
   },
 
-  // Download — dark split hero, features, steps, city matches marquee, reviews, FAQ, CTA.
+  // Download — light split hero, features, steps, city matches marquee, reviews, FAQ, CTA.
   '/download': {
     sections: [
       { kind: 'downloadHero' },
@@ -102,7 +102,7 @@ const ROUTE_SPECS: Record<string, RouteSkeletonSpec> = {
       { kind: 'marquee', count: 4, aspect: 'aspect-[4/3]', header: 'split' },
       { kind: 'marquee', count: 3, header: 'center' },
       { kind: 'dial' },
-      { kind: 'cta', tone: 'dark', bg: 'bg-[#07111F]' },
+      { kind: 'cta' },
     ],
   },
 
