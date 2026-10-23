@@ -181,8 +181,6 @@ export default function PersonalDetailsSection() {
             error={Boolean(fieldErrors.education_id)}
             loading={loadingOptions}
             loadingText={t('registrationPage.form.optionsLoading', 'Loading...')}
-            searchable
-            searchPlaceholder={t('registrationPage.form.educationSearchPlaceholder', 'Search qualification...')}
             aria-invalid={Boolean(fieldErrors.education_id)}
           />
         </Field>
@@ -198,8 +196,6 @@ export default function PersonalDetailsSection() {
             error={Boolean(fieldErrors.profession_id)}
             loading={loadingOptions}
             loadingText={t('registrationPage.form.optionsLoading', 'Loading...')}
-            searchable
-            searchPlaceholder={t('registrationPage.form.professionSearchPlaceholder', 'Search profession...')}
             aria-invalid={Boolean(fieldErrors.profession_id)}
           />
         </Field>
@@ -332,8 +328,6 @@ export default function PersonalDetailsSection() {
             error={Boolean(fieldErrors.community_id)}
             loading={loadingOptions}
             loadingText={t('registrationPage.form.optionsLoading', 'Loading...')}
-            searchable
-            searchPlaceholder={t('registrationPage.form.communitySearchPlaceholder', 'Search community...')}
             aria-invalid={Boolean(fieldErrors.community_id)}
           />
         </Field>
@@ -351,8 +345,6 @@ export default function PersonalDetailsSection() {
             loading={loadingGotras}
             loadingText={t('registrationPage.form.gotraLoading', 'Loading Gotras...')}
             disabledText={t('registrationPage.form.gotraDisabled', 'First select Community')}
-            searchable
-            searchPlaceholder={t('registrationPage.form.gotraSearchPlaceholder', 'Search gotra...')}
             aria-invalid={Boolean(fieldErrors.gotra_id)}
           />
         </Field>

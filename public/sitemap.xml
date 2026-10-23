@@ -288,4 +288,22 @@
     <changefreq>weekly</changefreq>
     <priority>0.80</priority>
   </url>
+  <url>
+    <loc>https://vivahsambandh.com/blogs/traditional-values-and-modern-indian-marriages</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://vivahsambandh.com/blogs/traditional-values-and-modern-indian-marriages"/>
+    <xhtml:link rel="alternate" hreflang="hi" href="https://vivahsambandh.com/hi/blogs/traditional-values-and-modern-indian-marriages"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://vivahsambandh.com/blogs/traditional-values-and-modern-indian-marriages"/>
+    <lastmod>2026-10-23</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://vivahsambandh.com/hi/blogs/traditional-values-and-modern-indian-marriages</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://vivahsambandh.com/blogs/traditional-values-and-modern-indian-marriages"/>
+    <xhtml:link rel="alternate" hreflang="hi" href="https://vivahsambandh.com/hi/blogs/traditional-values-and-modern-indian-marriages"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://vivahsambandh.com/blogs/traditional-values-and-modern-indian-marriages"/>
+    <lastmod>2026-10-23</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.80</priority>
+  </url>
 </urlset>
