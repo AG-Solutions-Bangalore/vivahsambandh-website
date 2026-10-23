@@ -19,7 +19,7 @@ export function SuperAdminLayout({ children }: SuperAdminLayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false)
 
   return (
-    <div className="super-admin-panel bg-cream-50 font-sans text-ink-700 antialiased lg:flex lg:h-screen lg:overflow-hidden">
+    <div className="super-admin-panel bg-cream-50 font-sans text-ink-700 antialiased print:block print:h-auto print:overflow-visible lg:flex lg:h-screen lg:overflow-hidden">
       {/* Sidebar Navigation */}
       <SuperAdminSidebar
         isOpen={sidebarOpen}
@@ -27,11 +27,11 @@ export function SuperAdminLayout({ children }: SuperAdminLayoutProps) {
       />
 
       {/* Main Content Area */}
-      <div className="flex min-h-screen min-w-0 flex-col lg:min-h-0 lg:flex-1">
+      <div className="flex min-h-screen min-w-0 flex-col print:block print:min-h-0 lg:min-h-0 lg:flex-1">
         <SuperAdminHeader onOpenSidebar={() => setSidebarOpen(true)} />
 
-        <main className="panel-scroll flex-1 overflow-y-auto">
-          <div className="mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
+        <main className="panel-scroll flex-1 overflow-y-auto print:overflow-visible">
+          <div className="mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 lg:px-8 lg:py-8 print:max-w-none print:p-0">
             {children}
           </div>
         </main>

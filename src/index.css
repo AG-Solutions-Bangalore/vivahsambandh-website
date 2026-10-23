@@ -765,3 +765,23 @@ html:has(.super-admin-panel)::-webkit-scrollbar {
 
 
 
+
+/* ————— Print —————————————————————————————————————————————— */
+/* The member biodata sheet is the only printable content in the panel; its
+   off-screen positioning is reset by the sheet's own print: utilities. */
+@media print {
+  @page {
+    size: A4;
+    margin: 12mm;
+  }
+
+  html,
+  body {
+    background: #fff !important;
+  }
+
+  body {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}

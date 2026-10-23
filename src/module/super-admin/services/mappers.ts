@@ -128,6 +128,36 @@ function flag(value: unknown): boolean {
   return raw === '1' || raw === 'yes' || raw === 'true' || raw === 'active'
 }
 
+/** Renders a boolean-ish API value as `Yes` / `No`, preserving free text. */
+function yesNo(value: unknown): string | null {
+  const raw = text(value)
+  if (!raw) return null
+  const tokens = raw
+    .split(',')
+    .map((token) => token.trim().toLowerCase())
+    .filter(Boolean)
+  if (tokens.length === 0) return null
+  if (tokens.every((token) => /^\d+$/.test(token))) {
+    return tokens.some((token) => token !== '0') ? 'Yes' : 'No'
+  }
+  if (tokens.every((token) => token === '1' || token === 'yes' || token === 'true')) {
+    return 'Yes'
+  }
+  if (tokens.every((token) => token === '0' || token === 'no' || token === 'false')) {
+    return 'No'
+  }
+  return raw
+}
+
+/** Joins a city list (array or comma-separated string) for display. */
+function cityList(value: unknown): string | null {
+  if (Array.isArray(value)) {
+    const cities = value.map((city) => String(city).trim()).filter(Boolean)
+    return cities.length > 0 ? cities.join(', ') : null
+  }
+  return text(value)
+}
+
 /** Normalises a `/member` or `/getPendingMember` row. */
 export function toMember(raw: Raw, entries: ImageUrlEntry[] = []): Member {
   const faceImageName = text(raw.face_image)
@@ -145,16 +175,47 @@ export function toMember(raw: Raw, entries: ImageUrlEntry[] = []): Member {
     married_before: text(raw.married_before),
     contact_name: text(raw.contact_name),
     physical_disablity: text(raw.physical_disablity),
-    marry_in_community: text(raw.marry_in_community),
+    marry_in_community: yesNo(raw.marry_in_community),
     marry_multi_community: text(raw.marry_multi_community),
     register_date: text(raw.register_date),
     face_image: resolveImage(faceImageName, entries, USER_IMAGE_KEYS),
     face_image_name: faceImageName,
+    full_image: resolveImage(text(raw.full_image), entries, USER_IMAGE_KEYS),
+    full_image_name: text(raw.full_image),
     user_type: raw.user_type ?? null,
     community_name: referenceName(raw.community),
     gotra_name: referenceName(raw.gotra),
     education_name: referenceName(raw.education),
     profession_name: referenceName(raw.profession),
+    time_of_birth: text(raw.time_of_birth),
+    place_of_birth: text(raw.place_of_birth),
+    email: text(raw.email),
+    company_name: text(raw.company_name),
+    company_type: text(raw.company_type),
+    annual_income: text(raw.annual_income),
+    father_name: text(raw.father_name),
+    mother_name: text(raw.mother_name),
+    brother_married: text(raw.brother_married),
+    brother_un_married: text(raw.brother_un_married),
+    sister_married: text(raw.sister_married),
+    sister_un_married: text(raw.sister_un_married),
+    user_address: text(raw.user_address),
+    house_type: text(raw.house_type),
+    multiple_city: cityList(raw.multiple_city),
+    alternate_contact_name: text(raw.alternate_contact_name),
+    alternate_mobile_no: text(raw.alternate_mobile_no),
+    divorce_status: text(raw.divorce_status),
+    children_from_prior_marriage: text(raw.children_from_prior_marriage),
+    children_with: text(raw.children_with),
+    will_marry_same_gotra: yesNo(raw.will_marry_same_gotra),
+    is_manglik: yesNo(raw.is_manglik),
+    will_marry_manglik: yesNo(raw.will_marry_manglik),
+    user_summary: text(raw.user_summary),
+    remarks: text(raw.remarks),
+    created_at: text(raw.created_at),
+    updated_at: text(raw.updated_at),
+    updated_by: text(raw.updated_by),
+    created_by: text(raw.created_by),
   }
 }
 
@@ -560,6 +621,24 @@ export function toList<T>(
         : []
   const entries = extractImageEntries(payload)
   return rows.map((row: Raw) => mapper(row, entries))
+}
+
+/**
+ * Unwraps a single-record envelope (`{ data: {...} }`) and maps it.
+ * Returns `null` for empty payloads so callers can surface "not found".
+ */
+export function toItem<T>(
+  payload: unknown,
+  mapper: (row: Raw, entries: ImageUrlEntry[]) => T,
+): T | null {
+  const rawData = (payload as Raw)?.data
+  const row = Array.isArray(payload)
+    ? payload[0]
+    : Array.isArray(rawData)
+      ? rawData[0]
+      : rawData
+  if (!row || typeof row !== 'object' || Array.isArray(row)) return null
+  return mapper(row as Raw, extractImageEntries(payload))
 }
 
 const DEFAULT_GALLERY_IMAGE_URL =

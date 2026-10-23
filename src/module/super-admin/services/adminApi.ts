@@ -24,6 +24,7 @@ import {
   toAdminMember,
   toBlockProfile,
   toFeedback,
+  toItem,
   toList,
   toMember,
   toNotification,
@@ -278,6 +279,25 @@ export async function fetchPendingMembers(
     return { data: toList(res.data, toMember) }
   }
   return { data: [], error: res.message }
+}
+
+/**
+ * Fetches one member profile in full.
+ *
+ * The list endpoints return a trimmed row (no email, family, address or
+ * acquaintance details), so the detail page must call `GET /member/{id}`.
+ * The same endpoint serves pending records — `/getPendingMember/{id}` does
+ * not exist on the CRM.
+ */
+export async function fetchMemberById(
+  id: number | string,
+): Promise<{ data: Member | null; error?: string }> {
+  const res = await request<unknown>(`/member/${id}`)
+  if (res.ok && res.data) {
+    const member = toItem(res.data, toMember)
+    return member ? { data: member } : { data: null }
+  }
+  return { data: null, error: res.message }
 }
 
 // -------------------------------------------------------------

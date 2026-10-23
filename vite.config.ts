@@ -482,6 +482,25 @@ export default defineConfig({
     // (firebase-js-sdk#8387). Serve dev on 127.0.0.1 and keep `127.0.0.1`
     // in Firebase Auth → Settings → Authorized domains.
     host: '127.0.0.1',
+    // Member photos are served without CORS headers. Proxying them through the
+    // dev origin lets the PDF exporter read the pixels instead of rasterising
+    // an empty image box.
+    proxy: {
+      '/crmapi': {
+        target: 'https://vivahsambandh.com',
+        changeOrigin: true,
+        secure: true,
+      },
+    },
+  },
+  preview: {
+    proxy: {
+      '/crmapi': {
+        target: 'https://vivahsambandh.com',
+        changeOrigin: true,
+        secure: true,
+      },
+    },
   },
   build: {
     minify: true,

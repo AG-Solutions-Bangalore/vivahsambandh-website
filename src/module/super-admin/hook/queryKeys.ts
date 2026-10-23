@@ -14,6 +14,8 @@ export const superAdminKeys = {
   adminMembers: ['super-admin', 'admin-members'] as const,
   pendingAdminMembers: ['super-admin', 'pending-admin-members'] as const,
   members: ['super-admin', 'members'] as const,
+  member: (id: number | string) =>
+    ['super-admin', 'members', 'detail', id] as const,
   pendingMembers: ['super-admin', 'pending-members'] as const,
   feedbacks: ['super-admin', 'feedbacks'] as const,
   blockProfiles: ['super-admin', 'block-profiles'] as const,

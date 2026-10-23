@@ -49,11 +49,43 @@ export interface Member {
   face_image?: string | null
   /** Stored file name of the member photograph, as returned by the API. */
   face_image_name?: string | null
+  /** Absolute URL of the full-size photograph, only sent by the detail endpoint. */
+  full_image?: string | null
+  full_image_name?: string | null
   user_type?: number | null
   community_name?: string | null
   gotra_name?: string | null
   education_name?: string | null
   profession_name?: string | null
+  time_of_birth?: string | null
+  place_of_birth?: string | null
+  email?: string | null
+  company_name?: string | null
+  company_type?: string | null
+  annual_income?: string | null
+  father_name?: string | null
+  mother_name?: string | null
+  brother_married?: string | null
+  brother_un_married?: string | null
+  sister_married?: string | null
+  sister_un_married?: string | null
+  user_address?: string | null
+  house_type?: string | null
+  multiple_city?: string | null
+  alternate_contact_name?: string | null
+  alternate_mobile_no?: string | null
+  divorce_status?: string | null
+  children_from_prior_marriage?: string | null
+  children_with?: string | null
+  will_marry_same_gotra?: string | null
+  is_manglik?: string | null
+  will_marry_manglik?: string | null
+  user_summary?: string | null
+  remarks?: string | null
+  created_at?: string | null
+  updated_at?: string | null
+  updated_by?: string | null
+  created_by?: string | null
 }
 
 /** Regional administrator profile. */

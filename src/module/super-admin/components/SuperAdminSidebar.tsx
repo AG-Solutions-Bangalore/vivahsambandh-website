@@ -43,7 +43,7 @@ export function SuperAdminSidebar({ isOpen, onClose }: SuperAdminSidebarProps) {
 
       <aside
         className={cn(
-          'panel-scroll fixed inset-y-0 left-0 z-50 flex w-72 flex-col overflow-y-auto bg-navy-900 text-white shadow-lift transition-transform duration-300 ease-in-out lg:static lg:translate-x-0',
+          'panel-scroll fixed inset-y-0 left-0 z-50 flex w-72 flex-col overflow-y-auto bg-navy-900 text-white shadow-lift transition-transform duration-300 ease-in-out print:hidden lg:static lg:translate-x-0',
           isOpen ? 'translate-x-0' : '-translate-x-full',
         )}
       >
