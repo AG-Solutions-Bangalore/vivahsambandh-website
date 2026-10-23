@@ -47,7 +47,7 @@ export default function Footer() {
           alt="Temple skyline divider"
           title="Temple skyline divider"
           decoding="async"
-          className="absolute opacity-35 sm:opacity-25 inset-x-0 -bottom-4 sm:bottom-6 h-auto w-full"
+          className="absolute opacity-5 inset-x-0 -bottom-4 sm:bottom-6 h-auto w-full"
           loading="lazy"
         />
       </div>
@@ -249,7 +249,7 @@ export default function Footer() {
       </div>
 
       {/* Bottom Copyright Bar */}
-      <div className="relative z-10 border-t py-6 border-gold-500/30">
+      <div className="relative z-10 py-6">
         <div className="section-pad flex flex-col items-center justify-between gap-2 py-3 text-xs text-white/60 sm:flex-row">
           <p>
             © {COMPANY.copyrightYear} {company.name}.{" "}
