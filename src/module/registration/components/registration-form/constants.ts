@@ -21,7 +21,7 @@ export const initialFormState: RegistrationFormData = {
 
   height_feet: '',
   height_inch: '',
-  physical_disablity: '',
+  physical_disablity: 'No',
 
   father_name: '',
   mother_name: '',
