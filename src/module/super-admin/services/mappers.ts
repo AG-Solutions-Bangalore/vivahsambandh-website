@@ -40,6 +40,16 @@ import type {
 
 type Raw = Record<string, any>
 
+/** Placeholder served by the CRM whenever a record has no uploaded image. */
+const DEFAULT_NO_IMAGE_URL =
+  'https://vivahsambandh.com/crmapi/public/assets/images/no_image.jpg'
+
+/** Reads the API's "No Image" URL, falling back to the CRM default. */
+function noImageUrl(entries: ImageUrlEntry[]): string {
+  const entry = entries.find((item) => item.image_for.toLowerCase() === 'no image')
+  return entry?.image_url?.trim() || DEFAULT_NO_IMAGE_URL
+}
+
 /** Pulls the `image_url` metadata block out of an API envelope. */
 export function extractImageEntries(payload: unknown): ImageUrlEntry[] {
   if (!payload || typeof payload !== 'object') return []
@@ -59,10 +69,10 @@ function resolveImage(
   entries: ImageUrlEntry[],
   imageFor: string | string[],
 ): string | null {
-  if (!filename || !filename.trim()) return null
-  if (entries.length === 0) return null
+  const clean = filename?.trim()
+  if (!clean) return noImageUrl(entries)
 
-  const resolved = resolveImageUrl(filename.trim(), entries, imageFor)
+  const resolved = resolveImageUrl(clean, entries, imageFor)
   return resolved && resolved.trim() ? resolved.trim() : null
 }
 
@@ -299,7 +309,7 @@ let cachedBlogImageEntries: ImageUrlEntry[] = [
   },
   {
     image_for: 'No Image',
-    image_url: 'https://vivahsambandh.com/crmapi/public/assets/images/no_image.jpg',
+    image_url: DEFAULT_NO_IMAGE_URL,
   },
 ]
 
@@ -317,12 +327,12 @@ export function resolveBlogImageUrl(
   filename: string | null | undefined,
   entries?: ImageUrlEntry[],
 ): string | null {
-  if (!filename || !filename.trim()) return null
+  const effectiveEntries = entries && entries.length > 0 ? entries : cachedBlogImageEntries
+  if (!filename || !filename.trim()) return noImageUrl(effectiveEntries)
   const clean = filename.trim()
   if (clean.startsWith('http://') || clean.startsWith('https://')) {
     return clean
   }
-  const effectiveEntries = entries && entries.length > 0 ? entries : cachedBlogImageEntries
   const resolved =
     resolveImage(clean, effectiveEntries, 'Blog') ??
     resolveImage(clean, effectiveEntries, 'blog') ??
@@ -463,7 +473,7 @@ let cachedClientImageEntries: ImageUrlEntry[] = [
   },
   {
     image_for: 'No Image',
-    image_url: 'https://vivahsambandh.com/crmapi/public/assets/images/no_image.jpg',
+    image_url: DEFAULT_NO_IMAGE_URL,
   },
 ]
 
@@ -485,12 +495,12 @@ export function resolveClientImageUrl(
   filename: string | null | undefined,
   entries?: ImageUrlEntry[],
 ): string | null {
-  if (!filename || !filename.trim()) return null
+  const effectiveEntries = entries && entries.length > 0 ? entries : cachedClientImageEntries
+  if (!filename || !filename.trim()) return noImageUrl(effectiveEntries)
   const clean = filename.trim()
   if (clean.startsWith('http://') || clean.startsWith('https://')) {
     return clean
   }
-  const effectiveEntries = entries && entries.length > 0 ? entries : cachedClientImageEntries
   const resolved =
     resolveImage(clean, effectiveEntries, 'Client') ??
     resolveImage(clean, effectiveEntries, 'client') ??
@@ -653,7 +663,7 @@ let cachedGalleryImageEntries: ImageUrlEntry[] = [
   },
   {
     image_for: 'No Image',
-    image_url: 'https://vivahsambandh.com/crmapi/public/assets/images/no_image.jpg',
+    image_url: DEFAULT_NO_IMAGE_URL,
   },
 ]
 
@@ -689,7 +699,8 @@ export function resolveGalleryImageUrl(
   entries?: ImageUrlEntry[],
   baseUrl?: string | null,
 ): string | null {
-  if (!filename || !filename.trim()) return null
+  const effectiveEntries = entries && entries.length > 0 ? entries : cachedGalleryImageEntries
+  if (!filename || !filename.trim()) return noImageUrl(effectiveEntries)
   const clean = filename.trim()
   if (clean.startsWith('http://') || clean.startsWith('https://')) {
     return clean
@@ -703,7 +714,6 @@ export function resolveGalleryImageUrl(
   }
 
   // 2. Resolve against ImageUrlEntry metadata if available
-  const effectiveEntries = entries && entries.length > 0 ? entries : cachedGalleryImageEntries
   const resolved =
     resolveImage(clean, effectiveEntries, 'Gallery') ??
     resolveImage(clean, effectiveEntries, 'gallery') ??
