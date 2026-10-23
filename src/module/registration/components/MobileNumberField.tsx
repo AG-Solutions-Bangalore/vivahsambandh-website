@@ -53,11 +53,7 @@ export default function MobileNumberField({
   const isComplete = value.length === MOBILE_LENGTH
   const canVerify = isComplete && !isVerified && Boolean(onVerify)
 
-  const hint = isVerified
-    ? t('registrationPage.form.mobileVerified', 'Mobile verified')
-    : isComplete
-      ? `10 ${t('registrationPage.form.digits', 'digits')}`
-      : `${value.length}/${MOBILE_LENGTH} ${t('registrationPage.form.digits', 'digits')}`
+  const hint = isVerified ? t('registrationPage.form.mobileVerified', 'Mobile verified') : undefined
 
   return (
     <Field id={id} label={label} required={required} hint={hint} error={error}>
@@ -72,7 +68,7 @@ export default function MobileNumberField({
           value={value}
           onChange={onChange}
           onPaste={onPaste}
-          placeholder={placeholder ?? t('registrationPage.form.contactMobilePlaceholder', '10-digit mobile number')}
+          placeholder={placeholder ?? t('registrationPage.form.contactMobilePlaceholder', 'Enter mobile number')}
           className={cn(
             inputClassName,
             isVerified &&

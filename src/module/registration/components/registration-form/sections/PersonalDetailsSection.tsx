@@ -829,11 +829,6 @@ export default function PersonalDetailsSection() {
             id={`${baseId}-alt-mobile`}
             label={t('registrationPage.form.altContactMobileLabel', 'Alternate Contact Mobile')}
             required
-            hint={
-              form.alternate_mobile_no.length === 10
-                ? `10 ${t('registrationPage.form.digits', 'digits')}`
-                : `${form.alternate_mobile_no.length}/10 ${t('registrationPage.form.digits', 'digits')}`
-            }
             error={fieldErrors.alternate_mobile_no}
           >
             <Input
