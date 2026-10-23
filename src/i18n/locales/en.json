@@ -60,10 +60,11 @@
   "communities": {
     "eyebrow": "Browse by community",
     "title": "Find Matches by Community",
-    "subtitle": "Explore verified matrimonial profiles across Agarwal, Jain, Khandelwal, and Maheshwari families.",
+    "subtitle": "Explore verified matrimonial profiles across our communities.",
     "register": "Register Free Bio-Data",
     "explore": "Explore Matches",
     "clearFilter": "Show All",
+    "empty": "Communities are unavailable right now. Please try again shortly.",
     "gotrasLabel": "Key Gotras / Traditions",
     "findMatches": "Find {{name}} Matches",
     "list": [
