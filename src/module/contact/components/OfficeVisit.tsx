@@ -28,7 +28,6 @@ export default function OfficeVisit() {
       .replace(/\s{2,}/g, ' ')
       .trim() || rawAddress
   const mapSrc = `https://www.google.com/maps?q=${encodeURIComponent(mapQuery)}&z=16&output=embed`
-  const directionsHref = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(mapQuery)}`
 
   return (
     <Reveal variant="up" delay={0.08} className="h-full">
@@ -51,17 +50,6 @@ export default function OfficeVisit() {
             className="absolute inset-0 h-full w-full border-0"
           />
         </div>
-
-        <a
-          href={directionsHref}
-          target="_blank"
-          rel="noopener noreferrer"
-          title={t('contactPage.directions')}
-          className="btn-gold mt-4 w-full !py-2.5 text-xs sm:text-sm"
-        >
-          <span>{t('contactPage.directions')}</span>
-          <span aria-hidden="true" className="text-gold-600">↗</span>
-        </a>
       </article>
     </Reveal>
   )

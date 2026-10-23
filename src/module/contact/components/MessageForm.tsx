@@ -215,7 +215,7 @@ export default function MessageForm() {
               </button>
             </div>
           ) : (
-            <form noValidate onSubmit={onSubmit} className="mt-6 grid content-start gap-4 sm:grid-cols-2">
+            <form noValidate onSubmit={onSubmit} className="mt-6 grid content-start gap-4 sm:grid-cols-3">
               <Field label={`${t('contactPage.name')}`} required error={fieldErrors.name}>
                 <span aria-hidden="true" className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2">
                   <FieldIcon d="M12 12a3.5 3.5 0 100-7 3.5 3.5 0 000 7zM5 20c0-3 3-5 7-5s7 2 7 5" />
@@ -251,7 +251,7 @@ export default function MessageForm() {
                   aria-invalid={Boolean(fieldErrors.email)}
                 />
               </Field>
-              <div className="sm:col-span-2">
+              <div>
                 <Field label={t('contactPage.phone')} error={fieldErrors.phone}>
                   <span aria-hidden="true" className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2">
                     <FieldIcon d="M5 4h4l2 5-2.5 1.5a12 12 0 005 5L15 13l5 2v4a2 2 0 01-2 2A16 16 0 013 6a2 2 0 012-2z" />
@@ -270,7 +270,7 @@ export default function MessageForm() {
                   />
                 </Field>
               </div>
-              <div className="sm:col-span-2">
+              <div className="sm:col-span-3">
                 <Field label={t('contactPage.message')} required error={fieldErrors.message}>
                   <span aria-hidden="true" className="pointer-events-none absolute left-4 top-4">
                     <FieldIcon d="M4 5h16v11H8l-4 4zM8 9h8M8 12.5h5" />
@@ -292,11 +292,11 @@ export default function MessageForm() {
                 </Field>
               </div>
               {errorMsg && (
-                <div role="alert" className="rounded-xl border border-rose-500/40 bg-rose-500/10 p-3.5 text-xs text-rose-200 sm:col-span-2">
+                <div role="alert" className="rounded-xl border border-rose-500/40 bg-rose-500/10 p-3.5 text-xs text-rose-200 sm:col-span-3">
                   <p className="font-semibold">{errorMsg}</p>
                 </div>
               )}
-              <div className="pt-1 sm:col-span-2">
+              <div className="pt-1 sm:col-span-3">
                 <button
                   type="submit"
                   disabled={enquiryMutation.isPending}
