@@ -16,9 +16,7 @@
  */
 
 import { TooltipProvider } from '@/components/ui/tooltip'
-import { Button } from '@/components/ui/button'
-import { useTranslation } from 'react-i18next'
-import type { FormEvent } from 'react'
+import { useEffect, type FormEvent } from 'react'
 import { getLenis } from '@/lib/scroll'
 import TermsModal from './TermsModal'
 import OtpVerificationModal from './OtpVerificationModal'
@@ -35,9 +33,9 @@ import PartnerPreferencesSection from './registration-form/sections/PartnerPrefe
 import FamilySummarySection from './registration-form/sections/FamilySummarySection'
 import PhotosSection from './registration-form/sections/PhotosSection'
 import TermsSubmitSection from './registration-form/sections/TermsSubmitSection'
+import ThankYouSection from './registration-form/sections/ThankYouSection'
 
 function RegistrationFormInner() {
-  const { t } = useTranslation()
   const {
     form,
     handleOtpVerified,
@@ -49,7 +47,6 @@ function RegistrationFormInner() {
     termsOpen,
     setTermsOpen,
     submitResult,
-    resetRegistration,
     otpTriggerSource,
     currentStep,
     goToStep,
@@ -63,7 +60,9 @@ function RegistrationFormInner() {
   } = useRegistrationForm()
 
   const lastStepIndex = REGISTRATION_STEPS.length - 1
-  const isLastStep = currentStep === lastStepIndex
+  // The declaration lives on step 2; submitting there moves the visitor to
+  // the final thank-you step.
+  const isSubmitStep = currentStep === lastStepIndex - 1
 
   // Keep the active step in view when it changes.
   const scrollToStepTop = () => {
@@ -74,6 +73,15 @@ function RegistrationFormInner() {
       window.scrollTo({ top: 0, behavior: 'smooth' })
     }
   }
+
+  // On a successful submit, land on the thank-you step.
+  useEffect(() => {
+    if (submitResult?.type === 'success' && currentStep !== lastStepIndex) {
+      goToStep(lastStepIndex)
+      scrollToStepTop()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [submitResult, currentStep, lastStepIndex, goToStep])
 
   const handleNext = () => {
     if (!validateStep(currentStep)) return
@@ -88,7 +96,9 @@ function RegistrationFormInner() {
 
   // Stepper jumps follow the same rule as Continue: a later step only opens
   // once every earlier step validates. Otherwise reveal the first gap instead.
+  // The final thank-you step is only reachable by submitting.
   const handleStepSelect = (step: number) => {
+    if (submitResult?.type === 'success' || step === lastStepIndex) return
     if (step > currentStep && !validateStepsBefore(step)) {
       scrollToStepTop()
       return
@@ -108,31 +118,11 @@ function RegistrationFormInner() {
     void handleSubmit(e)
   }
 
-  // Once submitted successfully, show only the centered success message
-  // with a "Submit other response" button instead of the form.
-  if (submitResult?.type === 'success') {
-    return (
-      <TooltipProvider delay={150}>
-        <div className="mx-auto flex min-h-[70vh] max-w-5xl flex-col items-center justify-center py-20 text-center">
-          <SubmitResultBanner />
-
-          <Button
-            type="button"
-            onClick={resetRegistration}
-            className="mt-8 rounded-full bg-navy-900 px-8 py-3 text-sm font-bold text-white shadow-md hover:bg-navy-800"
-          >
-            {t('registrationPage.form.submitOtherResponse', 'Submit other response')}
-          </Button>
-        </div>
-      </TooltipProvider>
-    )
-  }
-
   return (
     <TooltipProvider delay={150}>
       <div className="mx-auto max-w-5xl">
-        {/* Success / Error notification */}
-        <SubmitResultBanner />
+        {/* Submission errors stay visible above the form */}
+        {submitResult?.type !== 'success' && <SubmitResultBanner />}
 
         {/* Progress indicator — travels with the form, never fixed */}
         <FormStepper current={currentStep} onSelect={handleStepSelect} />
@@ -145,22 +135,25 @@ function RegistrationFormInner() {
                 <PartnerPreferencesSection />
                 <FamilySummarySection />
                 <PhotosSection />
+                <TermsSubmitSection />
               </div>
             )}
-            {currentStep === 2 && <TermsSubmitSection />}
+            {currentStep === 2 && <ThankYouSection />}
           </div>
 
-          <FormWizardNav
-            step={currentStep}
-            isLastStep={isLastStep}
-            onBack={handleBack}
-            onNext={handleNext}
-            isSubmitting={isSubmitting}
-            isFormFullyFilled={isFormFullyFilled}
-            isMobileVerifiedNow={isMobileVerifiedNow}
-            isMobileComplete={isMobileComplete}
-            mobile={form.mobile}
-          />
+          {currentStep !== lastStepIndex && (
+            <FormWizardNav
+              step={currentStep}
+              isLastStep={isSubmitStep}
+              onBack={handleBack}
+              onNext={handleNext}
+              isSubmitting={isSubmitting}
+              isFormFullyFilled={isFormFullyFilled}
+              isMobileVerifiedNow={isMobileVerifiedNow}
+              isMobileComplete={isMobileComplete}
+              mobile={form.mobile}
+            />
+          )}
         </form>
 
         {/* Terms Modal */}

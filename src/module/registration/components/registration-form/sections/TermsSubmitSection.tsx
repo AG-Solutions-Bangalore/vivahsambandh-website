@@ -1,7 +1,7 @@
 /**
  * @file src/module/registration/components/registration-form/sections/TermsSubmitSection.tsx
- * Part 5 — Terms agreement panel. The submit action lives in the wizard
- * footer (FormWizardNav) so it stays visible on every step.
+ * Declaration panel rendered at the end of step 2. The submit action lives in
+ * the wizard footer (FormWizardNav) so it stays visible below the declaration.
  */
 
 import { Checkbox } from '@/components/ui/checkbox'

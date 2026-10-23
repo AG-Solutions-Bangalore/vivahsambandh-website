@@ -1290,7 +1290,10 @@
       "continue": "Continue",
       "stepHint": "Complete the required details on this step to unlock the next one.",
       "stepsIncompleteHint": "Finish every step to submit. We will take you to whatever is still missing.",
-      "stepPreferencesPhotos": "Preferences & Photos"
+      "stepPreferencesPhotos": "Preferences & Photos",
+      "stepThankYou": "Thank You",
+      "thankYouTitle": "Thank You!",
+      "thankYouBody": "Your bio-data registration has been submitted successfully. Our committee will review your profile within 24 to 48 hours."
     }
   },
   "notFound": {
