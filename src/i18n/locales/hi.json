@@ -1196,6 +1196,7 @@
       "motherLabel": "माताजी का नाम",
       "motherPlaceholder": "माताजी का पूरा नाम",
       "broMarriedLabel": "भाई (विवाहित)",
+      "siblingPlaceholder": "चुनें",
       "broUnmarriedLabel": "भाई (अविवाहित)",
       "sisMarriedLabel": "बहनें (विवाहित)",
       "sisUnmarriedLabel": "बहनें (अविवाहित)",

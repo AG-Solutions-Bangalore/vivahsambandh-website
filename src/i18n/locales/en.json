@@ -1200,6 +1200,7 @@
       "motherLabel": "Mother's Name",
       "motherPlaceholder": "Mother's Full Name",
       "broMarriedLabel": "Brothers (Married)",
+      "siblingPlaceholder": "Select",
       "broUnmarriedLabel": "Brothers (Unmarried)",
       "sisMarriedLabel": "Sisters (Married)",
       "sisUnmarriedLabel": "Sisters (Unmarried)",

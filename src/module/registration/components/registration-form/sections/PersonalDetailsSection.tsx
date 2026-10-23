@@ -639,7 +639,7 @@ export default function PersonalDetailsSection() {
               value={form.brother_married}
               onValueChange={handleSelectChange('brother_married')}
               options={[0, 1, 2, 3, 4, 5].map((n) => ({ value: String(n), label: String(n) }))}
-              placeholder="0"
+              placeholder={t('registrationPage.form.siblingPlaceholder', 'Select')}
             />
           </Field>
 
@@ -649,7 +649,7 @@ export default function PersonalDetailsSection() {
               value={form.brother_un_married}
               onValueChange={handleSelectChange('brother_un_married')}
               options={[0, 1, 2, 3, 4, 5].map((n) => ({ value: String(n), label: String(n) }))}
-              placeholder="0"
+              placeholder={t('registrationPage.form.siblingPlaceholder', 'Select')}
             />
           </Field>
 
@@ -659,7 +659,7 @@ export default function PersonalDetailsSection() {
               value={form.sister_married}
               onValueChange={handleSelectChange('sister_married')}
               options={[0, 1, 2, 3, 4, 5].map((n) => ({ value: String(n), label: String(n) }))}
-              placeholder="0"
+              placeholder={t('registrationPage.form.siblingPlaceholder', 'Select')}
             />
           </Field>
 
@@ -669,7 +669,7 @@ export default function PersonalDetailsSection() {
               value={form.sister_un_married}
               onValueChange={handleSelectChange('sister_un_married')}
               options={[0, 1, 2, 3, 4, 5].map((n) => ({ value: String(n), label: String(n) }))}
-              placeholder="0"
+              placeholder={t('registrationPage.form.siblingPlaceholder', 'Select')}
             />
           </Field>
         </div>
