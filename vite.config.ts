@@ -216,6 +216,14 @@ function ckeditorAssets(): Plugin {
   ];
 
   /**
+   * Default plugins whose code is bundled into `ckeditor.js` but whose
+   * dialogs, icons and styles still live in `plugins/<name>/`. Without these
+   * directories the editor's toolbar renders, but opening Link, Image or
+   * Table fails with "failed when loading definition" on a static host.
+   */
+  const bundledPluginDirs = ['dialog', 'widget', 'image', 'link', 'table', 'tabletools'];
+
+  /**
    * Collects the plugins a set of plugins depends on. CKEditor stores the
    * dependency list in the plugin file itself (`requires:"a,b"`); anything
    * that also ships as a directory has to be staged next to its dependant.
@@ -225,9 +233,14 @@ function ckeditorAssets(): Plugin {
 
     const visit = (name: string): void => {
       if (collected.has(name)) return;
-      const entry = join(sourceDir, 'plugins', name, 'plugin.js');
-      if (!existsSync(entry)) return;
+      const pluginDir = join(sourceDir, 'plugins', name);
+      if (!existsSync(pluginDir)) return;
       collected.add(name);
+
+      // Default plugins are bundled into ckeditor.js and have no plugin.js,
+      // but their dialogs/icons still need to be staged.
+      const entry = join(pluginDir, 'plugin.js');
+      if (!existsSync(entry)) return;
 
       const source = readFileSync(entry, 'utf8');
       const requires = source.match(/requires\s*:\s*"([^"]*)"/);
@@ -349,7 +362,7 @@ function ckeditorAssets(): Plugin {
           if (existsSync(source)) copyTree(source, join(targetDir, 'skins', skin));
         }
 
-        for (const plugin of resolvePluginClosure(pluginDirs)) {
+        for (const plugin of resolvePluginClosure([...pluginDirs, ...bundledPluginDirs])) {
           const source = join(sourceDir, 'plugins', plugin);
           if (!existsSync(source)) continue;
           const destination = join(targetDir, 'plugins', plugin);
