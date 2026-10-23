@@ -239,7 +239,7 @@ export default function WhyChooseSection() {
                   <div
                     key={f.title}
                     data-reveal-item
-                    className="group relative overflow-hidden flex items-center gap-3 sm:gap-3.5 rounded-xl sm:rounded-2xl border border-gold-500/30 bg-white p-3.5 sm:p-4 min-h-[86px] sm:min-h-[92px] lg:min-h-[96px] shadow-sm transition-all duration-300 hover:-translate-y-1.5 hover:border-gold-500 hover:shadow-xl hover:shadow-gold-500/10 cursor-pointer"
+                    className="group relative overflow-hidden flex items-center gap-3 sm:gap-3.5 rounded-xl sm:rounded-2xl border border-gold-500/30 bg-white p-3.5 sm:p-4 min-h-[86px] sm:min-h-[82px] lg:min-h-[76px] shadow-sm transition-all duration-300 hover:-translate-y-1.5 hover:border-gold-500 hover:shadow-xl hover:shadow-gold-500/10 cursor-pointer"
                   >
                     {/* Bespoke Arched Icon */}
                     <FeatureArchedIcon index={i} />
