@@ -690,6 +690,7 @@ export default function PersonalDetailsSection() {
               required
               hint={`${500 - form.user_address.length} ${t('registrationPage.form.charsLeft', 'chars left')}`}
               error={fieldErrors.user_address}
+              className="lg:flex lg:h-full lg:flex-col"
             >
               <Textarea
                 id={`${baseId}-address`}
@@ -700,7 +701,7 @@ export default function PersonalDetailsSection() {
                 onChange={handleInputChange}
                 onPaste={handlePasteCapture('user_address')}
                 placeholder={t('registrationPage.form.addressPlaceholder', 'Enter full address with postal pincode')}
-                className={cn(inputCls('user_address'), 'rounded-2xl')}
+                className={cn(inputCls('user_address'), 'rounded-2xl lg:flex-1 lg:resize-none')}
                 aria-invalid={Boolean(fieldErrors.user_address)}
               />
             </Field>
@@ -708,7 +709,7 @@ export default function PersonalDetailsSection() {
 
           <div className="space-y-4">
             <div id={`${baseId}-house-type-group`}>
-              <span className="mb-2 block text-[13px] font-semibold leading-tight tracking-tight text-navy-900">
+            <span className="mb-2 block text-[13px] font-semibold leading-tight tracking-tight text-navy-900">
                 {t('registrationPage.form.houseTypeLabel', 'House Type')} <span className="text-maroon-600" aria-hidden="true">*</span>
               </span>
               <OptionPills
@@ -739,6 +740,26 @@ export default function PersonalDetailsSection() {
                 </p>
               )}
             </div>
+
+            <Field
+              id={`${baseId}-current-city`}
+              label={t('registrationPage.form.cityLabel', 'Present City / Parents Location')}
+              required
+              error={fieldErrors.user_current_city}
+            >
+              <Input
+                id={`${baseId}-current-city`}
+                type="text"
+                name="user_current_city"
+                maxLength={45}
+                value={form.user_current_city}
+                onChange={handleInputChange}
+                onPaste={handlePasteCapture('user_current_city')}
+                placeholder={t('registrationPage.form.cityPlaceholder', 'e.g. Bengaluru, Delhi, Mumbai')}
+                className={inputCls('user_current_city')}
+                aria-invalid={Boolean(fieldErrors.user_current_city)}
+              />
+            </Field>
           </div>
         </div>
       </div>
@@ -750,28 +771,8 @@ export default function PersonalDetailsSection() {
           {t('registrationPage.form.locationHeading', 'Location & Contact Details')}
         </h3>
 
-        {/* Primary Location & Main Contact */}
-        <div className="grid grid-cols-1 gap-x-5 gap-y-6 sm:grid-cols-2 lg:grid-cols-3">
-          <Field
-            id={`${baseId}-current-city`}
-            label={t('registrationPage.form.cityLabel', 'Present City / Parents Location')}
-            required
-            error={fieldErrors.user_current_city}
-          >
-            <Input
-              id={`${baseId}-current-city`}
-              type="text"
-              name="user_current_city"
-              maxLength={45}
-              value={form.user_current_city}
-              onChange={handleInputChange}
-              onPaste={handlePasteCapture('user_current_city')}
-              placeholder={t('registrationPage.form.cityPlaceholder', 'e.g. Bengaluru, Delhi, Mumbai')}
-              className={inputCls('user_current_city')}
-              aria-invalid={Boolean(fieldErrors.user_current_city)}
-            />
-          </Field>
-
+        {/* Main Contact */}
+        <div className="grid grid-cols-1 gap-x-5 gap-y-6 sm:grid-cols-2">
           <Field
             id={`${baseId}-contact-name`}
             label={t('registrationPage.form.contactNameLabel', 'Main Contact Person')}
