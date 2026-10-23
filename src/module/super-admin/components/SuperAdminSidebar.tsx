@@ -7,7 +7,8 @@ import { useState } from 'react'
 import { NavLink, useNavigate } from 'react-router-dom'
 import { LogOut, X } from 'lucide-react'
 import { cn } from 'cn'
-import LotusMark from '@/components/LotusMark'
+import CompanyLogo from '@/components/CompanyLogo'
+import { useCompanyDetails } from '@/module/company'
 import { useSuperAdminAuth } from '../context/SuperAdminAuthContext'
 import { PANEL_NAV_GROUPS } from '../navigation'
 import { ConfirmDialog } from './ConfirmDialog'
@@ -19,6 +20,7 @@ interface SuperAdminSidebarProps {
 
 export function SuperAdminSidebar({ isOpen, onClose }: SuperAdminSidebarProps) {
   const { session, logout } = useSuperAdminAuth()
+  const { logoUrl, name } = useCompanyDetails()
   const navigate = useNavigate()
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false)
 
@@ -47,15 +49,21 @@ export function SuperAdminSidebar({ isOpen, onClose }: SuperAdminSidebarProps) {
       >
         {/* Brand Header */}
         <div className="flex h-18 shrink-0 items-center justify-between border-b border-navy-800/80 px-6">
-          <div className="flex items-center gap-3">
-            <span className="flex size-10 items-center justify-center rounded-xl bg-gold-600 p-1 text-white shadow-gold">
-              <LotusMark className="size-7" />
-            </span>
-            <div>
-              <span className="block font-display text-base font-bold tracking-wide text-white">
-                VivahSambandh
+          <div className="flex min-w-0 items-center gap-3">
+            {logoUrl ? (
+              <span className="flex h-11 max-w-40 shrink-0 items-center justify-center rounded-lg bg-white px-1.5 py-1 shadow-sm">
+                <CompanyLogo className="h-full w-auto max-w-full" />
               </span>
-              <span className="block text-[0.66rem] font-semibold tracking-[0.18em] text-gold-400 uppercase">
+            ) : (
+              <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-gold-600 font-display text-sm font-bold text-white shadow-gold">
+                {name.charAt(0).toUpperCase()}
+              </span>
+            )}
+            <div className="min-w-0">
+              <span className="block truncate font-display text-base font-bold tracking-wide text-white">
+                {name}
+              </span>
+              <span className="block truncate text-[0.66rem] font-semibold tracking-[0.18em] text-gold-400 uppercase">
                 Super Admin Panel
               </span>
             </div>
