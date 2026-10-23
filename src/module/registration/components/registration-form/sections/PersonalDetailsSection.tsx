@@ -60,6 +60,84 @@ export default function PersonalDetailsSection() {
         : 'border-cream-300 bg-cream-50/70 hover:bg-white hover:border-gold-500/60 focus-visible:border-gold-500 focus-visible:bg-white focus-visible:ring-gold-500/20',
     )
 
+  // Follow-up questions tied to prior marriage; on divorce these render below Community Preferences
+  const priorMarriageFields = (
+    <>
+      {/* Condition: Divorce Status */}
+      {isDivorced && (
+        <div className="animate-fade-in">
+          <Field
+            id={`${baseId}-divorce-status`}
+            label={t('registrationPage.form.divorceStatusLabel', 'Divorce Status')}
+            required
+            error={fieldErrors.divorce_status}
+          >
+            <FormSelect
+              id={`${baseId}-divorce-status`}
+              value={form.divorce_status ?? ''}
+              onValueChange={handleSelectChange('divorce_status')}
+              options={[
+                { value: 'Decree in process', label: t('registrationPage.form.decreeInProcess', 'Decree in process') },
+                { value: 'Decree granted less than 6 months back', label: t('registrationPage.form.decreeUnder6m', 'Decree granted less than 6 months back') },
+                { value: 'Decree granted less than 2 years back', label: t('registrationPage.form.decreeUnder2y', 'Decree granted less than 2 years back') },
+                { value: 'Decree granted less than 5 years back', label: t('registrationPage.form.decreeUnder5y', 'Decree granted less than 5 years back') },
+                { value: 'Decree granted more than 5 years back', label: t('registrationPage.form.decreeOver5y', 'Decree granted more than 5 years back') },
+              ]}
+              placeholder={t('registrationPage.form.divorceStatusPlaceholder', 'Select Divorce Status')}
+              error={Boolean(fieldErrors.divorce_status)}
+              aria-invalid={Boolean(fieldErrors.divorce_status)}
+            />
+          </Field>
+        </div>
+      )}
+
+      {/* Condition: Children from prior marriage */}
+      {hasPriorMarriage && (
+        <div className="animate-fade-in">
+          <Field id={`${baseId}-children`} label={t('registrationPage.form.childrenLabel', 'Children from Prior Marriage')}>
+            <Input
+              id={`${baseId}-children`}
+              type="text"
+              name="children_from_prior_marriage"
+              maxLength={2}
+              value={form.children_from_prior_marriage}
+              onChange={handleNumericInput}
+              onPaste={handlePasteCapture('children_from_prior_marriage')}
+              placeholder={t('registrationPage.form.childrenPlaceholder', 'Number of children (e.g. 0, 1, 2)')}
+              className={inputCls('children_from_prior_marriage')}
+            />
+          </Field>
+        </div>
+      )}
+
+      {/* Sub-condition: Children with */}
+      {showChildrenWith && (
+        <div className="animate-fade-in">
+          <Field
+            id={`${baseId}-children-with`}
+            label={t('registrationPage.form.childrenWithLabel', 'Children Residing With')}
+            required
+            error={fieldErrors.children_with}
+          >
+            <FormSelect
+              id={`${baseId}-children-with`}
+              value={form.children_with ?? ''}
+              onValueChange={handleSelectChange('children_with')}
+              options={[
+                { value: 'All with me', label: t('registrationPage.form.childrenWithMe', 'All with me') },
+                { value: 'All with ex-spouse', label: t('registrationPage.form.childrenWithEx', 'All with ex-spouse') },
+                { value: 'Shared between us', label: t('registrationPage.form.childrenShared', 'Shared between us') },
+              ]}
+              placeholder={t('registrationPage.form.childrenWithPlaceholder', 'Select living arrangement')}
+              error={Boolean(fieldErrors.children_with)}
+              aria-invalid={Boolean(fieldErrors.children_with)}
+            />
+          </Field>
+        </div>
+      )}
+    </>
+  )
+
   return (
     <FormSection
       id={REGISTRATION_STEP_IDS.personal}
@@ -489,7 +567,7 @@ export default function PersonalDetailsSection() {
         )}
         </div>
 
-        {/* Marital History — sits beside Community Preferences; related fields reveal on selection */}
+        {/* Marital History — sits beside Community Preferences */}
         <div className="space-y-4">
           <Field
             id={`${baseId}-prior-marriage`}
@@ -512,80 +590,17 @@ export default function PersonalDetailsSection() {
             />
           </Field>
 
-          {/* Condition: Divorce Status */}
-          {isDivorced && (
-            <div className="animate-fade-in">
-              <Field
-                id={`${baseId}-divorce-status`}
-                label={t('registrationPage.form.divorceStatusLabel', 'Divorce Status')}
-                required
-                error={fieldErrors.divorce_status}
-              >
-                <FormSelect
-                  id={`${baseId}-divorce-status`}
-                  value={form.divorce_status ?? ''}
-                  onValueChange={handleSelectChange('divorce_status')}
-                  options={[
-                    { value: 'Decree in process', label: t('registrationPage.form.decreeInProcess', 'Decree in process') },
-                    { value: 'Decree granted less than 6 months back', label: t('registrationPage.form.decreeUnder6m', 'Decree granted less than 6 months back') },
-                    { value: 'Decree granted less than 2 years back', label: t('registrationPage.form.decreeUnder2y', 'Decree granted less than 2 years back') },
-                    { value: 'Decree granted less than 5 years back', label: t('registrationPage.form.decreeUnder5y', 'Decree granted less than 5 years back') },
-                    { value: 'Decree granted more than 5 years back', label: t('registrationPage.form.decreeOver5y', 'Decree granted more than 5 years back') },
-                  ]}
-                  placeholder={t('registrationPage.form.divorceStatusPlaceholder', 'Select Divorce Status')}
-                  error={Boolean(fieldErrors.divorce_status)}
-                  aria-invalid={Boolean(fieldErrors.divorce_status)}
-                />
-              </Field>
-            </div>
-          )}
-
-          {/* Condition: Children from prior marriage */}
-          {hasPriorMarriage && (
-            <div className="animate-fade-in">
-              <Field id={`${baseId}-children`} label={t('registrationPage.form.childrenLabel', 'Children from Prior Marriage')}>
-                <Input
-                  id={`${baseId}-children`}
-                  type="text"
-                  name="children_from_prior_marriage"
-                  maxLength={2}
-                  value={form.children_from_prior_marriage}
-                  onChange={handleNumericInput}
-                  onPaste={handlePasteCapture('children_from_prior_marriage')}
-                  placeholder={t('registrationPage.form.childrenPlaceholder', 'Number of children (e.g. 0, 1, 2)')}
-                  className={inputCls('children_from_prior_marriage')}
-                />
-              </Field>
-            </div>
-          )}
-
-          {/* Sub-condition: Children with */}
-          {showChildrenWith && (
-            <div className="animate-fade-in">
-              <Field
-                id={`${baseId}-children-with`}
-                label={t('registrationPage.form.childrenWithLabel', 'Children Residing With')}
-                required
-                error={fieldErrors.children_with}
-              >
-                <FormSelect
-                  id={`${baseId}-children-with`}
-                  value={form.children_with ?? ''}
-                  onValueChange={handleSelectChange('children_with')}
-                  options={[
-                    { value: 'All with me', label: t('registrationPage.form.childrenWithMe', 'All with me') },
-                    { value: 'All with ex-spouse', label: t('registrationPage.form.childrenWithEx', 'All with ex-spouse') },
-                    { value: 'Shared between us', label: t('registrationPage.form.childrenShared', 'Shared between us') },
-                  ]}
-                  placeholder={t('registrationPage.form.childrenWithPlaceholder', 'Select living arrangement')}
-                  error={Boolean(fieldErrors.children_with)}
-                  aria-invalid={Boolean(fieldErrors.children_with)}
-                />
-              </Field>
-            </div>
-          )}
+          {/* Widowhood follow-ups stay beside the marital select; divorce follow-ups move below */}
+          {!isDivorced && priorMarriageFields}
         </div>
       </div>
+
+      {/* Divorce follow-ups — appear below Community Preferences */}
+      {isDivorced && (
+        <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {priorMarriageFields}
+        </div>
+      )}
 
       {/* Parents and Siblings row */}
       <div className="mt-6 border-t border-cream-200 pt-6">
