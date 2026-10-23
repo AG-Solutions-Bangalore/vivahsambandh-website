@@ -151,7 +151,7 @@ export default function PendingAdminMembersPage() {
     <div className="space-y-6">
       <PanelPageHeader
         title="Pending Admin Member Approvals"
-        description={panelDescription('/panel/pending-admin-members')}
+        description={panelDescription('/crm/pending-admin-members')}
         chip={
           <span className="rounded-full border border-gold-300 bg-gold-50 px-2.5 py-0.5 text-xs font-bold text-gold-800">
             {pendingAdmins.length} Awaiting Review
@@ -313,7 +313,7 @@ export default function PendingAdminMembersPage() {
                         size="icon-xs"
                         variant="outline"
                         onClick={() =>
-                          navigate(`/panel/pending-admin-members/${admin.id}`)
+                          navigate(`/crm/pending-admin-members/${admin.id}`)
                         }
                         title="View full details"
                         aria-label="View full admin details"

@@ -42,7 +42,6 @@ export default function MobileNumberField({
   onChange,
   onPaste,
   isVerified = false,
-  onVerify,
   error,
   required = true,
   placeholder,
@@ -50,14 +49,8 @@ export default function MobileNumberField({
   autoComplete = 'tel',
 }: MobileNumberFieldProps) {
   const { t } = useTranslation()
-  const isComplete = value.length === MOBILE_LENGTH
-  const canVerify = isComplete && !isVerified && Boolean(onVerify)
 
-  const hint = isVerified
-    ? t('registrationPage.form.mobileVerified', 'Mobile verified')
-    : isComplete
-      ? `10 ${t('registrationPage.form.digits', 'digits')}`
-      : `${value.length}/${MOBILE_LENGTH} ${t('registrationPage.form.digits', 'digits')}`
+  const hint = isVerified ? t('registrationPage.form.mobileVerified', 'Mobile verified') : undefined
 
   return (
     <Field id={id} label={label} required={required} hint={hint} error={error}>
@@ -72,7 +65,7 @@ export default function MobileNumberField({
           value={value}
           onChange={onChange}
           onPaste={onPaste}
-          placeholder={placeholder ?? t('registrationPage.form.contactMobilePlaceholder', '10-digit mobile number')}
+          placeholder={placeholder ?? t('registrationPage.form.contactMobilePlaceholder', 'Enter mobile number')}
           className={cn(
             inputClassName,
             isVerified &&
@@ -86,14 +79,6 @@ export default function MobileNumberField({
           <span className="absolute right-2.5 top-1/2 inline-flex -translate-y-1/2 items-center gap-1 rounded-full border border-emerald-300 bg-emerald-100 px-2.5 py-0.5 text-[11px] font-bold text-emerald-800">
             {t('registrationPage.form.verified', 'Verified')}
           </span>
-        ) : canVerify ? (
-          <button
-            type="button"
-            onClick={onVerify}
-            className="absolute right-2 top-1/2 -translate-y-1/2 cursor-pointer rounded-full border border-gold-500/40 bg-gold-50 px-3 py-1 text-[11px] font-bold text-gold-800 transition hover:bg-gold-100"
-          >
-            {t('registrationPage.form.verify', 'Verify')}
-          </button>
         ) : null}
       </div>
     </Field>

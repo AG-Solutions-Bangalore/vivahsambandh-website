@@ -289,7 +289,7 @@ export default function ClientsPage() {
     <div className="space-y-6">
       <PanelPageHeader
         title="Clients"
-        description={panelDescription("/panel/clients")}
+        description={panelDescription("/crm/clients")}
         actions={
           <div className="flex items-center gap-2">
             <Button

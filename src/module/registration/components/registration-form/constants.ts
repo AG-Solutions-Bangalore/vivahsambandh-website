@@ -21,14 +21,14 @@ export const initialFormState: RegistrationFormData = {
 
   height_feet: '',
   height_inch: '',
-  physical_disablity: '',
+  physical_disablity: 'No',
 
   father_name: '',
   mother_name: '',
-  brother_married: '0',
-  brother_un_married: '0',
-  sister_married: '0',
-  sister_un_married: '0',
+  brother_married: '',
+  brother_un_married: '',
+  sister_married: '',
+  sister_un_married: '',
 
   user_address: '',
   house_type: '',

@@ -248,7 +248,7 @@ export default function EnquiriesPage() {
     <div className="space-y-6">
       <PanelPageHeader
         title="Enquiries"
-        description={panelDescription('/panel/enquiries')}
+        description={panelDescription('/crm/enquiries')}
         actions={
           <>
             <Button

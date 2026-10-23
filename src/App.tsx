@@ -35,6 +35,10 @@ const DownloadPage = lazy(() => import('./module/download/pages/DownloadPage'))
 
 // Code-split Super Admin Panel module routes
 const PanelLoginPage = lazy(() => import('./module/super-admin/pages/PanelLoginPage'))
+const PanelNotFoundPage = lazy(
+  () => import('./module/super-admin/pages/PanelNotFoundPage'),
+)
+const NotFoundPage = lazy(() => import('./module/not-found/pages/NotFoundPage'))
 const SuperAdminLayout = lazy(() =>
   import('./module/super-admin/components/SuperAdminLayout').then((m) => ({
     default: m.SuperAdminLayout,
@@ -150,7 +154,9 @@ function ScrollManager() {
 export default function App() {
   const { i18n } = useTranslation()
   const { pathname } = useLocation()
-  const isPanelRoute = pathname.startsWith('/panel') || pathname === '/crm-login'
+  const normalizedPath = pathname.replace(/\/+$/, '') || '/'
+  const isPanelRoute =
+    normalizedPath === '/crm' || normalizedPath.startsWith('/crm/')
 
   /**
    * Panel screens all sit inside the same guard + layout shell. The editor
@@ -183,18 +189,11 @@ export default function App() {
           <div className="min-h-screen bg-cream-50">
             <Routes>
               {/* Super Admin Login */}
-              <Route
-                path="/crm-login"
-                element={<PanelLoginPage />}
-              />
+              <Route path="/crm" element={<PanelLoginPage />} />
 
               {/* Protected Super Admin Panel Routes */}
               <Route
-                path="/panel"
-                element={<Navigate to="/panel/dashboard" replace />}
-              />
-              <Route
-                path="/panel/dashboard"
+                path="/crm/dashboard"
                 element={
                   <SuperAdminGuard>
                     <Suspense fallback={null}>
@@ -206,7 +205,7 @@ export default function App() {
                 }
               />
               <Route
-                path="/panel/admin-members"
+                path="/crm/admin-members"
                 element={
                   <SuperAdminGuard>
                     <Suspense fallback={null}>
@@ -218,7 +217,7 @@ export default function App() {
                 }
               />
               <Route
-                path="/panel/admin-members/:id"
+                path="/crm/admin-members/:id"
                 element={
                   <SuperAdminGuard>
                     <Suspense fallback={null}>
@@ -230,7 +229,7 @@ export default function App() {
                 }
               />
               <Route
-                path="/panel/pending-admin-members"
+                path="/crm/pending-admin-members"
                 element={
                   <SuperAdminGuard>
                     <Suspense fallback={null}>
@@ -242,7 +241,7 @@ export default function App() {
                 }
               />
               <Route
-                path="/panel/pending-admin-members/:id"
+                path="/crm/pending-admin-members/:id"
                 element={
                   <SuperAdminGuard>
                     <Suspense fallback={null}>
@@ -254,7 +253,7 @@ export default function App() {
                 }
               />
               <Route
-                path="/panel/members"
+                path="/crm/members"
                 element={
                   <SuperAdminGuard>
                     <Suspense fallback={null}>
@@ -266,7 +265,7 @@ export default function App() {
                 }
               />
               <Route
-                path="/panel/members/:id"
+                path="/crm/members/:id"
                 element={
                   <SuperAdminGuard>
                     <Suspense fallback={null}>
@@ -278,7 +277,7 @@ export default function App() {
                 }
               />
               <Route
-                path="/panel/pending-members"
+                path="/crm/pending-members"
                 element={
                   <SuperAdminGuard>
                     <Suspense fallback={null}>
@@ -290,7 +289,7 @@ export default function App() {
                 }
               />
               <Route
-                path="/panel/pending-members/:id"
+                path="/crm/pending-members/:id"
                 element={
                   <SuperAdminGuard>
                     <Suspense fallback={null}>
@@ -302,7 +301,7 @@ export default function App() {
                 }
               />
               <Route
-                path="/panel/feedback"
+                path="/crm/feedback"
                 element={
                   <SuperAdminGuard>
                     <Suspense fallback={null}>
@@ -314,7 +313,7 @@ export default function App() {
                 }
               />
               <Route
-                path="/panel/block-profiles"
+                path="/crm/block-profiles"
                 element={
                   <SuperAdminGuard>
                     <Suspense fallback={null}>
@@ -326,7 +325,7 @@ export default function App() {
                 }
               />
               <Route
-                path="/panel/notifications"
+                path="/crm/notifications"
                 element={
                   <SuperAdminGuard>
                     <Suspense fallback={null}>
@@ -339,7 +338,7 @@ export default function App() {
               />
 
               <Route
-                path="/panel/blog-gallery"
+                path="/crm/blog-gallery"
                 element={
                   <SuperAdminGuard>
                     <Suspense fallback={null}>
@@ -351,11 +350,11 @@ export default function App() {
                 }
               />
               <Route
-                path="/panel/gallery"
-                element={<Navigate to="/panel/blog-gallery" replace />}
+                path="/crm/gallery"
+                element={<Navigate to="/crm/blog-gallery" replace />}
               />
               <Route
-                path="/panel/blogs"
+                path="/crm/blogs"
                 element={
                   <SuperAdminGuard>
                     <Suspense fallback={null}>
@@ -369,16 +368,16 @@ export default function App() {
 
               {/* The article form is too long for a dialog — it gets its own screen. */}
               <Route
-                path="/panel/blogs/new"
+                path="/crm/blogs/new"
                 element={panelScreen(<PanelBlogEditorPage />)}
               />
               <Route
-                path="/panel/blogs/:id/edit"
+                path="/crm/blogs/:id/edit"
                 element={panelScreen(<PanelBlogEditorPage />)}
               />
 
               <Route
-                path="/panel/enquiries"
+                path="/crm/enquiries"
                 element={
                   <SuperAdminGuard>
                     <Suspense fallback={null}>
@@ -391,7 +390,7 @@ export default function App() {
               />
 
               <Route
-                path="/panel/faqs"
+                path="/crm/faqs"
                 element={
                   <SuperAdminGuard>
                     <Suspense fallback={null}>
@@ -405,16 +404,16 @@ export default function App() {
 
               {/* A FAQ group holds a stack of questions — it needs a full page. */}
               <Route
-                path="/panel/faqs/new"
+                path="/crm/faqs/new"
                 element={panelScreen(<PanelFaqEditorPage />)}
               />
               <Route
-                path="/panel/faqs/:id/edit"
+                path="/crm/faqs/:id/edit"
                 element={panelScreen(<PanelFaqEditorPage />)}
               />
 
               <Route
-                path="/panel/testimonials"
+                path="/crm/testimonials"
                 element={
                   <SuperAdminGuard>
                     <Suspense fallback={null}>
@@ -427,7 +426,7 @@ export default function App() {
               />
 
               <Route
-                path="/panel/clients"
+                path="/crm/clients"
                 element={
                   <SuperAdminGuard>
                     <Suspense fallback={null}>
@@ -440,7 +439,7 @@ export default function App() {
               />
 
               <Route
-                path="/panel/categories"
+                path="/crm/categories"
                 element={
                   <SuperAdminGuard>
                     <Suspense fallback={null}>
@@ -453,7 +452,7 @@ export default function App() {
               />
 
               <Route
-                path="/panel/newsletter"
+                path="/crm/newsletter"
                 element={
                   <SuperAdminGuard>
                     <Suspense fallback={null}>
@@ -466,10 +465,7 @@ export default function App() {
               />
 
               {/* Fallback for unmapped panel URLs */}
-              <Route
-                path="/panel/*"
-                element={<Navigate to="/panel/dashboard" replace />}
-              />
+              <Route path="/crm/*" element={panelScreen(<PanelNotFoundPage />)} />
             </Routes>
           </div>
         ) : (
@@ -617,7 +613,7 @@ export default function App() {
                       path="/hi/help-center"
                       element={<HelpCenterPage />}
                     />
-                    <Route path="*" element={<HomePage />} />
+                    <Route path="*" element={<NotFoundPage />} />
                   </Routes>
                 </Suspense>
               </main>

@@ -16,6 +16,7 @@ export const REGISTRATION_STEP_IDS = {
   family: 'registration-part-3',
   photos: 'registration-part-4',
   terms: 'registration-part-5',
+  thankYou: 'registration-thank-you',
 } as const
 
 export interface RegistrationStep {
@@ -83,16 +84,16 @@ export const REGISTRATION_STEPS: RegistrationStep[] = [
     shortLabelFallback: 'Preferences & Photos',
     titleKey: 'registrationPage.form.part2Title',
     titleFallback: 'Preferences, Family & Photos',
-    fields: ['will_marry_same_gotra', 'is_manglik', 'will_marry_manglik', 'user_summary', 'full_image', 'face_image'],
+    fields: ['will_marry_same_gotra', 'is_manglik', 'will_marry_manglik', 'user_summary', 'full_image', 'face_image', 'agree_terms'],
   },
   {
     id: 'registration-step-3',
     number: 3,
-    shortLabelKey: 'registrationPage.form.stepSubmit',
-    shortLabelFallback: 'Submit',
-    titleKey: 'registrationPage.form.part5Title',
-    titleFallback: 'Declaration & Submit',
-    fields: ['agree_terms'],
+    shortLabelKey: 'registrationPage.form.stepThankYou',
+    shortLabelFallback: 'Thank You',
+    titleKey: 'registrationPage.form.thankYouTitle',
+    titleFallback: 'Thank You!',
+    fields: [],
   },
 ]
 

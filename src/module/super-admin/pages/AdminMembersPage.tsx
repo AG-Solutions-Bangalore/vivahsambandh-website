@@ -183,7 +183,7 @@ export default function AdminMembersPage() {
     <div className="space-y-6">
       <PanelPageHeader
         title="Admin Members Management"
-        description={panelDescription('/panel/admin-members')}
+        description={panelDescription('/crm/admin-members')}
         actions={
           <Button
             type="button"
@@ -364,7 +364,7 @@ export default function AdminMembersPage() {
                         type="button"
                         size="icon-xs"
                         variant="outline"
-                        onClick={() => navigate(`/panel/admin-members/${admin.id}`)}
+                        onClick={() => navigate(`/crm/admin-members/${admin.id}`)}
                         title="View full details"
                         aria-label="View full admin details"
                         className="cursor-pointer rounded-full border-navy-200 text-navy-700 hover:bg-navy-50"

@@ -286,7 +286,7 @@ export default function BlogGalleryPage() {
     <div className="space-y-6">
       <PanelPageHeader
         title="Blog Gallery"
-        description={panelDescription("/panel/blog-gallery")}
+        description={panelDescription("/crm/blog-gallery")}
         actions={
           <div className="flex items-center gap-2">
             <Button

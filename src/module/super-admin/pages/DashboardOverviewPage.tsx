@@ -69,27 +69,27 @@ export default function DashboardOverviewPage() {
       label: 'Pending Admin Applications',
       count: pendingAdminCount,
       icon: UserCheck,
-      to: '/panel/pending-admin-members',
+      to: '/crm/pending-admin-members',
       attention: true,
     },
     {
       label: 'Pending Member Profiles',
       count: pendingMemberCount,
       icon: UserPlus,
-      to: '/panel/pending-members',
+      to: '/crm/pending-members',
       attention: true,
     },
     {
       label: 'Total Members',
       count: memberCount,
       icon: Users,
-      to: '/panel/members',
+      to: '/crm/members',
     },
     {
       label: 'Admin Members',
       count: adminCount,
       icon: ShieldCheck,
-      to: '/panel/admin-members',
+      to: '/crm/admin-members',
     },
   ]
 
@@ -99,20 +99,20 @@ export default function DashboardOverviewPage() {
       label: 'Blocked Profiles',
       count: blockCount,
       icon: Ban,
-      to: '/panel/block-profiles',
+      to: '/crm/block-profiles',
       critical: blockCount > 0,
     },
     {
       label: 'Feedback',
       count: feedbackCount,
       icon: MessageSquare,
-      to: '/panel/feedback',
+      to: '/crm/feedback',
     },
     {
       label: 'Broadcasts',
       count: notificationCount,
       icon: Bell,
-      to: '/panel/notifications',
+      to: '/crm/notifications',
     },
   ]
 
@@ -157,7 +157,7 @@ export default function DashboardOverviewPage() {
               <span>Refresh</span>
             </Button>
 
-            <Link to="/panel/notifications">
+            <Link to="/crm/notifications">
               <Button
                 type="button"
                 size="sm"
@@ -283,7 +283,7 @@ export default function DashboardOverviewPage() {
             icon={<ShieldCheck className="size-4" />}
             action={
               <Link
-                to="/panel/admin-members"
+                to="/crm/admin-members"
                 className="flex items-center gap-1 text-xs font-semibold text-gold-700 transition-colors hover:text-gold-600"
               >
                 <span>View All</span>
@@ -335,7 +335,7 @@ export default function DashboardOverviewPage() {
             icon={<Users className="size-4" />}
             action={
               <Link
-                to="/panel/members"
+                to="/crm/members"
                 className="flex items-center gap-1 text-xs font-semibold text-gold-700 transition-colors hover:text-gold-600"
               >
                 <span>View All</span>
@@ -389,7 +389,7 @@ export default function DashboardOverviewPage() {
           icon={<Bell className="size-4" />}
           action={
             <Link
-              to="/panel/notifications"
+              to="/crm/notifications"
               className="flex items-center gap-1 text-xs font-semibold text-gold-700 transition-colors hover:text-gold-600"
             >
               <span>Manage</span>

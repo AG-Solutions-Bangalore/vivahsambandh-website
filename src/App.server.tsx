@@ -23,6 +23,7 @@ import ContactPage from "./module/contact/pages/ContactPage";
 import RegistrationPage from "./module/registration/pages/RegistrationPage";
 import AdminRegisterPage from "./module/registration/pages/AdminRegisterPage";
 import DownloadPage from "./module/download/pages/DownloadPage";
+import NotFoundPage from "./module/not-found/pages/NotFoundPage";
 import { QueryProvider } from "./lib/api/queryClient";
 import type { AppLang } from "./i18n";
 
@@ -145,7 +146,7 @@ export default function AppServer() {
                 <Route path="/hi/guidelines" element={<GuidelinesPage />} />
                 <Route path="/help-center" element={<HelpCenterPage />} />
                 <Route path="/hi/help-center" element={<HelpCenterPage />} />
-                <Route path="*" element={<HomePage />} />
+                <Route path="*" element={<NotFoundPage />} />
               </Routes>
             </Suspense>
           </main>

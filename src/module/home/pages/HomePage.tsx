@@ -76,6 +76,7 @@ export default function HomePage() {
           { prefetchFaqQuery },
           { getClients },
           { homeQueryKeys },
+          { getCommunity },
           { getFeaturedBlogs, getFrontBlogs },
           { blogKeys },
         ] = await Promise.all([
@@ -84,6 +85,7 @@ export default function HomePage() {
           import("../../faq/hook/useFaq"),
           import("../api/home.api"),
           import("../hook/useHomeData"),
+          import("../../registration/api/registration.api"),
           import("../../blog/api/blog.api"),
           import("../../blog/hook/useBlogs"),
         ]);
@@ -95,6 +97,10 @@ export default function HomePage() {
         void queryClient.prefetchQuery({
           queryKey: homeQueryKeys.clients,
           queryFn: getClients,
+        });
+        void queryClient.prefetchQuery({
+          queryKey: homeQueryKeys.communities,
+          queryFn: getCommunity,
         });
         void queryClient.prefetchQuery({
           queryKey: blogKeys.featured(),

@@ -21,7 +21,7 @@ export function SuperAdminHeader({ onOpenSidebar }: SuperAdminHeaderProps) {
   const current = findNavItem(pathname)
 
   return (
-    <header className="sticky top-0 z-30 flex h-18 shrink-0 items-center justify-between gap-4 border-b border-gold-500/25 bg-white/90 px-4 backdrop-blur-md sm:px-8">
+    <header className="sticky top-0 z-30 flex h-18 shrink-0 items-center justify-between gap-4 border-b border-gold-500/25 bg-white/90 px-4 backdrop-blur-md sm:px-8 print:hidden">
       <div className="flex min-w-0 items-center gap-3 sm:gap-4">
         <button
           type="button"

@@ -40,7 +40,7 @@ import type { FaqRecord, FaqStatus } from "../types";
 
 const STATUS_FILTERS = ["All", "Active", "Inactive"] as const;
 
-const LIST_PATH = "/panel/faqs";
+const LIST_PATH = "/crm/faqs";
 
 export default function FaqsPage() {
   const navigate = useNavigate();
@@ -117,7 +117,7 @@ export default function FaqsPage() {
     <div className="space-y-6">
       <PanelPageHeader
         title="FAQ Management"
-        description={panelDescription("/panel/faqs")}
+        description={panelDescription("/crm/faqs")}
         actions={
           <>
             <Button

@@ -69,7 +69,7 @@ export default function PersonalDetailsSection() {
         'Basic identification, educational qualifications, background, and family records.',
       )}
     >
-      <div className="grid grid-cols-1 gap-x-5 gap-y-6 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid grid-cols-1 gap-x-4 gap-y-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
         {/* Full Name */}
         <Field id={`${baseId}-name`} label={t('registrationPage.form.nameLabel', 'Full Name')} required error={fieldErrors.name}>
           <Input
@@ -303,7 +303,6 @@ export default function PersonalDetailsSection() {
             <Field
               id={`${baseId}-income`}
               label={t('registrationPage.form.incomeLabel', 'Annual Income (in Lakhs)')}
-              hint={t('registrationPage.form.incomeHint', 'Max 300')}
               error={fieldErrors.annual_income}
             >
               <Input
@@ -338,101 +337,6 @@ export default function PersonalDetailsSection() {
             aria-invalid={Boolean(fieldErrors.community_id)}
           />
         </Field>
-
-        {/* Marital History — sits beside Community; related fields reveal on selection */}
-        <Field
-          id={`${baseId}-prior-marriage`}
-          label={t('registrationPage.form.marriedBeforeLabel', 'Have you been married before?')}
-          required
-          error={fieldErrors.married_before}
-        >
-          <FormSelect
-            id={`${baseId}-prior-marriage`}
-            value={form.married_before}
-            onValueChange={handleSelectChange('married_before')}
-            options={[
-              { value: 'No', label: t('registrationPage.form.marriedNever', 'No (Never Married)') },
-              { value: 'Yes and Divorced', label: t('registrationPage.form.marriedDivorced', 'Yes and Divorced') },
-              { value: 'Yes and Spouse died', label: t('registrationPage.form.marriedWidowed', 'Yes and Spouse died') },
-            ]}
-            placeholder={t('registrationPage.form.marriedBeforePlaceholder', 'Please Select')}
-            error={Boolean(fieldErrors.married_before)}
-            aria-invalid={Boolean(fieldErrors.married_before)}
-          />
-        </Field>
-
-        {/* Condition: Divorce Status */}
-        {isDivorced && (
-          <div className="animate-fade-in">
-            <Field
-              id={`${baseId}-divorce-status`}
-              label={t('registrationPage.form.divorceStatusLabel', 'Divorce Status')}
-              required
-              error={fieldErrors.divorce_status}
-            >
-              <FormSelect
-                id={`${baseId}-divorce-status`}
-                value={form.divorce_status ?? ''}
-                onValueChange={handleSelectChange('divorce_status')}
-                options={[
-                  { value: 'Decree in process', label: t('registrationPage.form.decreeInProcess', 'Decree in process') },
-                  { value: 'Decree granted less than 6 months back', label: t('registrationPage.form.decreeUnder6m', 'Decree granted less than 6 months back') },
-                  { value: 'Decree granted less than 2 years back', label: t('registrationPage.form.decreeUnder2y', 'Decree granted less than 2 years back') },
-                  { value: 'Decree granted less than 5 years back', label: t('registrationPage.form.decreeUnder5y', 'Decree granted less than 5 years back') },
-                  { value: 'Decree granted more than 5 years back', label: t('registrationPage.form.decreeOver5y', 'Decree granted more than 5 years back') },
-                ]}
-                placeholder={t('registrationPage.form.divorceStatusPlaceholder', 'Select Divorce Status')}
-                error={Boolean(fieldErrors.divorce_status)}
-                aria-invalid={Boolean(fieldErrors.divorce_status)}
-              />
-            </Field>
-          </div>
-        )}
-
-        {/* Condition: Children from prior marriage */}
-        {hasPriorMarriage && (
-          <div className="animate-fade-in">
-            <Field id={`${baseId}-children`} label={t('registrationPage.form.childrenLabel', 'Children from Prior Marriage')}>
-              <Input
-                id={`${baseId}-children`}
-                type="text"
-                name="children_from_prior_marriage"
-                maxLength={2}
-                value={form.children_from_prior_marriage}
-                onChange={handleNumericInput}
-                onPaste={handlePasteCapture('children_from_prior_marriage')}
-                placeholder={t('registrationPage.form.childrenPlaceholder', 'Number of children (e.g. 0, 1, 2)')}
-                className={inputCls('children_from_prior_marriage')}
-              />
-            </Field>
-          </div>
-        )}
-
-        {/* Sub-condition: Children with */}
-        {showChildrenWith && (
-          <div className="animate-fade-in">
-            <Field
-              id={`${baseId}-children-with`}
-              label={t('registrationPage.form.childrenWithLabel', 'Children Residing With')}
-              required
-              error={fieldErrors.children_with}
-            >
-              <FormSelect
-                id={`${baseId}-children-with`}
-                value={form.children_with ?? ''}
-                onValueChange={handleSelectChange('children_with')}
-                options={[
-                  { value: 'All with me', label: t('registrationPage.form.childrenWithMe', 'All with me') },
-                  { value: 'All with ex-spouse', label: t('registrationPage.form.childrenWithEx', 'All with ex-spouse') },
-                  { value: 'Shared between us', label: t('registrationPage.form.childrenShared', 'Shared between us') },
-                ]}
-                placeholder={t('registrationPage.form.childrenWithPlaceholder', 'Select living arrangement')}
-                error={Boolean(fieldErrors.children_with)}
-                aria-invalid={Boolean(fieldErrors.children_with)}
-              />
-            </Field>
-          </div>
-        )}
 
         {/* Gotra (Cascade loaded from Community) */}
         <Field id={`${baseId}-gotra`} label={t('registrationPage.form.gotraLabel', 'Gotra')} required error={fieldErrors.gotra_id}>
@@ -530,11 +434,13 @@ export default function PersonalDetailsSection() {
         </Field>
       </div>
 
-      {/* Community Preferences multi-select chips */}
-      <div
-        id={`${baseId}-comm-prefs`}
-        className="mt-6 rounded-2xl border border-cream-300 bg-cream-50/70 p-4 sm:p-5"
-      >
+      {/* Community Preferences + marital history */}
+      <div className="mt-6 grid grid-cols-1 gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(0,18rem)] lg:items-start">
+        {/* Community Preferences multi-select chips */}
+        <div
+          id={`${baseId}-comm-prefs`}
+          className="rounded-2xl border border-cream-300 bg-cream-50/70 p-4 sm:p-5"
+        >
         <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
           <span className="flex items-center gap-2 text-[13px] font-semibold leading-tight tracking-tight text-navy-900">
             <Users className="size-4 shrink-0 text-ink-400" aria-hidden="true" />
@@ -589,6 +495,104 @@ export default function PersonalDetailsSection() {
             {fieldErrors.marry_in_community}
           </p>
         )}
+        </div>
+
+        {/* Marital History — sits beside Community Preferences; related fields reveal on selection */}
+        <div className="space-y-4">
+          <Field
+            id={`${baseId}-prior-marriage`}
+            label={t('registrationPage.form.marriedBeforeLabel', 'Married Before?')}
+            required
+            error={fieldErrors.married_before}
+          >
+            <FormSelect
+              id={`${baseId}-prior-marriage`}
+              value={form.married_before}
+              onValueChange={handleSelectChange('married_before')}
+              options={[
+                { value: 'No', label: t('registrationPage.form.marriedNever', 'No (Never Married)') },
+                { value: 'Yes and Divorced', label: t('registrationPage.form.marriedDivorced', 'Yes and Divorced') },
+                { value: 'Yes and Spouse died', label: t('registrationPage.form.marriedWidowed', 'Yes and Spouse died') },
+              ]}
+              placeholder={t('registrationPage.form.marriedBeforePlaceholder', 'Please Select')}
+              error={Boolean(fieldErrors.married_before)}
+              aria-invalid={Boolean(fieldErrors.married_before)}
+            />
+          </Field>
+
+          {/* Condition: Divorce Status */}
+          {isDivorced && (
+            <div className="animate-fade-in">
+              <Field
+                id={`${baseId}-divorce-status`}
+                label={t('registrationPage.form.divorceStatusLabel', 'Divorce Status')}
+                required
+                error={fieldErrors.divorce_status}
+              >
+                <FormSelect
+                  id={`${baseId}-divorce-status`}
+                  value={form.divorce_status ?? ''}
+                  onValueChange={handleSelectChange('divorce_status')}
+                  options={[
+                    { value: 'Decree in process', label: t('registrationPage.form.decreeInProcess', 'Decree in process') },
+                    { value: 'Decree granted less than 6 months back', label: t('registrationPage.form.decreeUnder6m', 'Decree granted less than 6 months back') },
+                    { value: 'Decree granted less than 2 years back', label: t('registrationPage.form.decreeUnder2y', 'Decree granted less than 2 years back') },
+                    { value: 'Decree granted less than 5 years back', label: t('registrationPage.form.decreeUnder5y', 'Decree granted less than 5 years back') },
+                    { value: 'Decree granted more than 5 years back', label: t('registrationPage.form.decreeOver5y', 'Decree granted more than 5 years back') },
+                  ]}
+                  placeholder={t('registrationPage.form.divorceStatusPlaceholder', 'Select Divorce Status')}
+                  error={Boolean(fieldErrors.divorce_status)}
+                  aria-invalid={Boolean(fieldErrors.divorce_status)}
+                />
+              </Field>
+            </div>
+          )}
+
+          {/* Condition: Children from prior marriage */}
+          {hasPriorMarriage && (
+            <div className="animate-fade-in">
+              <Field id={`${baseId}-children`} label={t('registrationPage.form.childrenLabel', 'Children from Prior Marriage')}>
+                <Input
+                  id={`${baseId}-children`}
+                  type="text"
+                  name="children_from_prior_marriage"
+                  maxLength={2}
+                  value={form.children_from_prior_marriage}
+                  onChange={handleNumericInput}
+                  onPaste={handlePasteCapture('children_from_prior_marriage')}
+                  placeholder={t('registrationPage.form.childrenPlaceholder', 'Number of children (e.g. 0, 1, 2)')}
+                  className={inputCls('children_from_prior_marriage')}
+                />
+              </Field>
+            </div>
+          )}
+
+          {/* Sub-condition: Children with */}
+          {showChildrenWith && (
+            <div className="animate-fade-in">
+              <Field
+                id={`${baseId}-children-with`}
+                label={t('registrationPage.form.childrenWithLabel', 'Children Residing With')}
+                required
+                error={fieldErrors.children_with}
+              >
+                <FormSelect
+                  id={`${baseId}-children-with`}
+                  value={form.children_with ?? ''}
+                  onValueChange={handleSelectChange('children_with')}
+                  options={[
+                    { value: 'All with me', label: t('registrationPage.form.childrenWithMe', 'All with me') },
+                    { value: 'All with ex-spouse', label: t('registrationPage.form.childrenWithEx', 'All with ex-spouse') },
+                    { value: 'Shared between us', label: t('registrationPage.form.childrenShared', 'Shared between us') },
+                  ]}
+                  placeholder={t('registrationPage.form.childrenWithPlaceholder', 'Select living arrangement')}
+                  error={Boolean(fieldErrors.children_with)}
+                  aria-invalid={Boolean(fieldErrors.children_with)}
+                />
+              </Field>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Parents and Siblings row */}
@@ -597,8 +601,8 @@ export default function PersonalDetailsSection() {
           <Users className="size-4 shrink-0" aria-hidden="true" />
           {t('registrationPage.form.parentsSiblingsHeading', 'Family Details')}
         </h3>
-        {/* Parents Row */}
-        <div className="grid grid-cols-1 gap-x-5 gap-y-6 sm:grid-cols-2">
+        {/* Parents & siblings — one row on desktop */}
+        <div className="grid grid-cols-2 gap-x-4 gap-y-6 sm:grid-cols-3 lg:grid-cols-6">
           <Field id={`${baseId}-father`} label={t('registrationPage.form.fatherLabel', "Father's Name")} required error={fieldErrors.father_name}>
             <Input
               id={`${baseId}-father`}
@@ -628,17 +632,14 @@ export default function PersonalDetailsSection() {
               aria-invalid={Boolean(fieldErrors.mother_name)}
             />
           </Field>
-        </div>
 
-        {/* Siblings Row */}
-        <div className="mt-6 grid grid-cols-2 gap-x-4 gap-y-6 sm:grid-cols-4">
           <Field id={`${baseId}-bro-married`} label={t('registrationPage.form.broMarriedLabel', 'Brothers (Married)')} required error={fieldErrors.brother_married}>
             <FormSelect
               id={`${baseId}-bro-married`}
               value={form.brother_married}
               onValueChange={handleSelectChange('brother_married')}
               options={[0, 1, 2, 3, 4, 5].map((n) => ({ value: String(n), label: String(n) }))}
-              placeholder="0"
+              placeholder={t('registrationPage.form.siblingPlaceholder', 'Select')}
             />
           </Field>
 
@@ -648,7 +649,7 @@ export default function PersonalDetailsSection() {
               value={form.brother_un_married}
               onValueChange={handleSelectChange('brother_un_married')}
               options={[0, 1, 2, 3, 4, 5].map((n) => ({ value: String(n), label: String(n) }))}
-              placeholder="0"
+              placeholder={t('registrationPage.form.siblingPlaceholder', 'Select')}
             />
           </Field>
 
@@ -658,7 +659,7 @@ export default function PersonalDetailsSection() {
               value={form.sister_married}
               onValueChange={handleSelectChange('sister_married')}
               options={[0, 1, 2, 3, 4, 5].map((n) => ({ value: String(n), label: String(n) }))}
-              placeholder="0"
+              placeholder={t('registrationPage.form.siblingPlaceholder', 'Select')}
             />
           </Field>
 
@@ -668,7 +669,7 @@ export default function PersonalDetailsSection() {
               value={form.sister_un_married}
               onValueChange={handleSelectChange('sister_un_married')}
               options={[0, 1, 2, 3, 4, 5].map((n) => ({ value: String(n), label: String(n) }))}
-              placeholder="0"
+              placeholder={t('registrationPage.form.siblingPlaceholder', 'Select')}
             />
           </Field>
         </div>
@@ -688,6 +689,7 @@ export default function PersonalDetailsSection() {
               required
               hint={`${500 - form.user_address.length} ${t('registrationPage.form.charsLeft', 'chars left')}`}
               error={fieldErrors.user_address}
+              className="lg:flex lg:h-full lg:flex-col"
             >
               <Textarea
                 id={`${baseId}-address`}
@@ -698,7 +700,7 @@ export default function PersonalDetailsSection() {
                 onChange={handleInputChange}
                 onPaste={handlePasteCapture('user_address')}
                 placeholder={t('registrationPage.form.addressPlaceholder', 'Enter full address with postal pincode')}
-                className={cn(inputCls('user_address'), 'rounded-2xl')}
+                className={cn(inputCls('user_address'), 'rounded-2xl lg:flex-1 lg:resize-none')}
                 aria-invalid={Boolean(fieldErrors.user_address)}
               />
             </Field>
@@ -706,7 +708,7 @@ export default function PersonalDetailsSection() {
 
           <div className="space-y-4">
             <div id={`${baseId}-house-type-group`}>
-              <span className="mb-2 block text-[13px] font-semibold leading-tight tracking-tight text-navy-900">
+            <span className="mb-2 block text-[13px] font-semibold leading-tight tracking-tight text-navy-900">
                 {t('registrationPage.form.houseTypeLabel', 'House Type')} <span className="text-maroon-600" aria-hidden="true">*</span>
               </span>
               <OptionPills
@@ -737,6 +739,26 @@ export default function PersonalDetailsSection() {
                 </p>
               )}
             </div>
+
+            <Field
+              id={`${baseId}-current-city`}
+              label={t('registrationPage.form.cityLabel', 'Present City / Parents Location')}
+              required
+              error={fieldErrors.user_current_city}
+            >
+              <Input
+                id={`${baseId}-current-city`}
+                type="text"
+                name="user_current_city"
+                maxLength={45}
+                value={form.user_current_city}
+                onChange={handleInputChange}
+                onPaste={handlePasteCapture('user_current_city')}
+                placeholder={t('registrationPage.form.cityPlaceholder', 'e.g. Bengaluru, Delhi, Mumbai')}
+                className={inputCls('user_current_city')}
+                aria-invalid={Boolean(fieldErrors.user_current_city)}
+              />
+            </Field>
           </div>
         </div>
       </div>
@@ -748,28 +770,8 @@ export default function PersonalDetailsSection() {
           {t('registrationPage.form.locationHeading', 'Location & Contact Details')}
         </h3>
 
-        {/* Primary Location & Main Contact */}
-        <div className="grid grid-cols-1 gap-x-5 gap-y-6 sm:grid-cols-2 lg:grid-cols-3">
-          <Field
-            id={`${baseId}-current-city`}
-            label={t('registrationPage.form.cityLabel', 'Present City / Parents Location')}
-            required
-            error={fieldErrors.user_current_city}
-          >
-            <Input
-              id={`${baseId}-current-city`}
-              type="text"
-              name="user_current_city"
-              maxLength={45}
-              value={form.user_current_city}
-              onChange={handleInputChange}
-              onPaste={handlePasteCapture('user_current_city')}
-              placeholder={t('registrationPage.form.cityPlaceholder', 'e.g. Bengaluru, Delhi, Mumbai')}
-              className={inputCls('user_current_city')}
-              aria-invalid={Boolean(fieldErrors.user_current_city)}
-            />
-          </Field>
-
+        {/* Main & Alternate Contacts — one row on desktop */}
+        <div className="grid grid-cols-1 gap-x-4 gap-y-6 sm:grid-cols-2 lg:grid-cols-4">
           <Field
             id={`${baseId}-contact-name`}
             label={t('registrationPage.form.contactNameLabel', 'Main Contact Person')}
@@ -801,10 +803,7 @@ export default function PersonalDetailsSection() {
             error={fieldErrors.mobile}
             inputClassName={inputCls('mobile')}
           />
-        </div>
 
-        {/* Alternate Contact */}
-        <div className="mt-6 grid grid-cols-1 gap-x-5 gap-y-6 sm:grid-cols-2">
           <Field
             id={`${baseId}-alt-name`}
             label={t('registrationPage.form.altContactNameLabel', 'Alternate Contact Person')}
@@ -829,11 +828,6 @@ export default function PersonalDetailsSection() {
             id={`${baseId}-alt-mobile`}
             label={t('registrationPage.form.altContactMobileLabel', 'Alternate Contact Mobile')}
             required
-            hint={
-              form.alternate_mobile_no.length === 10
-                ? `10 ${t('registrationPage.form.digits', 'digits')}`
-                : `${form.alternate_mobile_no.length}/10 ${t('registrationPage.form.digits', 'digits')}`
-            }
             error={fieldErrors.alternate_mobile_no}
           >
             <Input

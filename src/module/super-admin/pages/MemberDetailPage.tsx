@@ -2,16 +2,20 @@
  * @file src/module/super-admin/pages/MemberDetailPage.tsx
  * Full-page biodata view for a matrimonial member or a pending applicant.
  *
- * The list rows keep only the record id and route here, so the whole profile —
- * photograph, personal details, education, profession and contact — can be
- * read without opening a modal. The record is resolved from the same list
- * endpoint the directory uses, which keeps caching and invalidation shared.
+ * The directory and moderation queues send only a record id here, so the page
+ * calls `GET /member/{id}` for the complete profile instead of filtering the
+ * list response. That endpoint also serves pending records, which keeps both
+ * queues on one code path. Print and PDF actions export the same A4 sheet.
  */
 
 import { useQuery } from '@tanstack/react-query'
-import { ArrowLeft, UserRoundX } from 'lucide-react'
+import { ArrowLeft, Download, Loader2, Printer, UserRoundX } from 'lucide-react'
+import { useRef, useState } from 'react'
+import toast from 'react-hot-toast'
 import { useNavigate, useParams } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
+import { useCompanyDetails } from '@/module/company'
+import { MemberExportSheet } from '../components/MemberExportSheet'
 import { PanelCard } from '../components/PanelCard'
 import { PanelPageHeader } from '../components/PanelPageHeader'
 import { PanelEmpty, PanelError } from '../components/PanelState'
@@ -19,13 +23,14 @@ import { Skeleton } from '../components/PanelSkeleton'
 import { ProfileDetails } from '../components/ProfileDetails'
 import { RemoteImage } from '../components/RemoteImage'
 import { StatusBadge } from '../components/StatusBadge'
-import { errorMessage, unwrapList } from '../hook/errors'
+import { errorMessage, unwrapItem } from '../hook/errors'
 import { PANEL_STALE_TIME, superAdminKeys } from '../hook/queryKeys'
-import { fetchMembers, fetchPendingMembers } from '../services/adminApi'
+import { fetchMemberById } from '../services/adminApi'
+import { downloadMemberPdf, printMemberSheet } from '../utils/memberExport'
 import { formatDate, initials } from '../utils/format'
 
 interface MemberDetailPageProps {
-  /** Resolves the record from the pending queue instead of the directory. */
+  /** Keeps the back link on the pending queue instead of the directory. */
   pending?: boolean
 }
 
@@ -33,22 +38,48 @@ export default function MemberDetailPage({ pending = false }: MemberDetailPagePr
   const navigate = useNavigate()
   const { id } = useParams()
   const memberId = Number(id)
-  const listPath = pending ? '/panel/pending-members' : '/panel/members'
+  const isValidId = Number.isInteger(memberId) && memberId > 0
+  const listPath = pending ? '/crm/pending-members' : '/crm/members'
+  const { name: companyName } = useCompanyDetails()
+  const exportRef = useRef<HTMLDivElement>(null)
+  const [exporting, setExporting] = useState(false)
 
   const { data: member, isLoading, error, refetch } = useQuery({
-    queryKey: [
-      ...(pending ? superAdminKeys.pendingMembers : superAdminKeys.members),
-      'detail',
-      memberId,
-    ],
-    queryFn: async () => {
-      const records = unwrapList(
-        await (pending ? fetchPendingMembers() : fetchMembers()),
-      )
-      return records.find((record) => record.id === memberId) ?? null
-    },
+    queryKey: superAdminKeys.member(memberId),
+    queryFn: async () => unwrapItem(await fetchMemberById(memberId)),
+    enabled: isValidId,
     staleTime: PANEL_STALE_TIME,
   })
+
+  const handlePrint = async () => {
+    if (!exportRef.current) {
+      window.print()
+      return
+    }
+    try {
+      await printMemberSheet(exportRef.current)
+    } catch {
+      window.print()
+    }
+  }
+
+  const handleDownloadPdf = async () => {
+    if (!member || !exportRef.current || exporting) return
+    setExporting(true)
+    try {
+      const result = await downloadMemberPdf(exportRef.current, member)
+      if (result === 'print-fallback') {
+        toast('The photo cannot be embedded on this domain. Choose "Save as PDF" in the print dialog.')
+      } else {
+        toast.success('Biodata PDF downloaded.')
+      }
+    } catch (err) {
+      console.error('[super-admin] member PDF export failed:', err)
+      toast.error('Could not generate the PDF. Use Print and choose "Save as PDF".')
+    } finally {
+      setExporting(false)
+    }
+  }
 
   const backButton = (
     <Button
@@ -122,37 +153,74 @@ export default function MemberDetailPage({ pending = false }: MemberDetailPagePr
 
   return (
     <div className="space-y-6">
-      {backButton}
+      <div className="space-y-6 print:hidden">
+        {backButton}
 
-      <PanelPageHeader
-        title={member.name}
-        description={summary}
-        chip={<StatusBadge status={member.status} />}
-      />
+        <PanelPageHeader
+          title={member.name}
+          description={summary}
+          chip={<StatusBadge status={member.status} />}
+          actions={
+            <>
+              <Button
+                type="button"
+                size="sm"
+                variant="outline"
+                onClick={() => void handlePrint()}
+                className="cursor-pointer rounded-full border-cream-300 text-xs font-semibold"
+              >
+                <Printer className="size-3.5" aria-hidden />
+                <span>Print</span>
+              </Button>
 
-      <PanelCard>
-        <div className="grid gap-6 lg:grid-cols-[minmax(0,15rem)_1fr]">
-          <figure className="space-y-2">
-            <RemoteImage
-              src={member.face_image}
-              alt={`${member.name} photograph`}
-              className="aspect-[3/4] w-full rounded-2xl border border-cream-300 bg-cream-100 object-cover"
-              fallback={
-                <span className="flex aspect-[3/4] w-full items-center justify-center rounded-2xl border border-cream-300 bg-cream-100 font-display text-5xl font-bold text-gold-700">
-                  {initials(member.name)}
-                </span>
-              }
-            />
-            <figcaption className="truncate text-center text-[0.68rem] text-ink-400">
-              {member.face_image_name || 'No photograph on file'}
-            </figcaption>
-          </figure>
+              <Button
+                type="button"
+                size="sm"
+                onClick={() => void handleDownloadPdf()}
+                disabled={exporting}
+                className="cursor-pointer rounded-full text-xs font-semibold"
+              >
+                {exporting ? (
+                  <Loader2 className="size-3.5 animate-spin" aria-hidden />
+                ) : (
+                  <Download className="size-3.5" aria-hidden />
+                )}
+                <span>{exporting ? 'Preparing…' : 'Download PDF'}</span>
+              </Button>
+            </>
+          }
+        />
 
-          <div className="min-w-0">
-            <ProfileDetails member={member} variant="full" />
+        <PanelCard>
+          <div className="grid gap-6 lg:grid-cols-[minmax(0,15rem)_1fr]">
+            <figure className="space-y-2">
+              <RemoteImage
+                src={member.full_image || member.face_image}
+                alt={`${member.name} photograph`}
+                className="aspect-[3/4] w-full rounded-2xl border border-cream-300 bg-cream-100 object-cover"
+                fallback={
+                  <span className="flex aspect-[3/4] w-full items-center justify-center rounded-2xl border border-cream-300 bg-cream-100 font-display text-5xl font-bold text-gold-700">
+                    {initials(member.name)}
+                  </span>
+                }
+              />
+              <figcaption className="truncate text-center text-[0.68rem] text-ink-400">
+                {member.face_image_name || member.full_image_name || 'No photograph on file'}
+              </figcaption>
+            </figure>
+
+            <div className="min-w-0">
+              <ProfileDetails member={member} variant="full" />
+            </div>
           </div>
-        </div>
-      </PanelCard>
+        </PanelCard>
+      </div>
+
+      <MemberExportSheet
+        member={member}
+        companyName={companyName || undefined}
+        sheetRef={exportRef}
+      />
     </div>
   )
 }

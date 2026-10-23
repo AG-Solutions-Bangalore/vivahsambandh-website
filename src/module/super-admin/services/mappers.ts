@@ -40,6 +40,16 @@ import type {
 
 type Raw = Record<string, any>
 
+/** Placeholder served by the CRM whenever a record has no uploaded image. */
+const DEFAULT_NO_IMAGE_URL =
+  'https://vivahsambandh.com/crmapi/public/assets/images/no_image.jpg'
+
+/** Reads the API's "No Image" URL, falling back to the CRM default. */
+function noImageUrl(entries: ImageUrlEntry[]): string {
+  const entry = entries.find((item) => item.image_for.toLowerCase() === 'no image')
+  return entry?.image_url?.trim() || DEFAULT_NO_IMAGE_URL
+}
+
 /** Pulls the `image_url` metadata block out of an API envelope. */
 export function extractImageEntries(payload: unknown): ImageUrlEntry[] {
   if (!payload || typeof payload !== 'object') return []
@@ -59,10 +69,10 @@ function resolveImage(
   entries: ImageUrlEntry[],
   imageFor: string | string[],
 ): string | null {
-  if (!filename || !filename.trim()) return null
-  if (entries.length === 0) return null
+  const clean = filename?.trim()
+  if (!clean) return noImageUrl(entries)
 
-  const resolved = resolveImageUrl(filename.trim(), entries, imageFor)
+  const resolved = resolveImageUrl(clean, entries, imageFor)
   return resolved && resolved.trim() ? resolved.trim() : null
 }
 
@@ -128,6 +138,36 @@ function flag(value: unknown): boolean {
   return raw === '1' || raw === 'yes' || raw === 'true' || raw === 'active'
 }
 
+/** Renders a boolean-ish API value as `Yes` / `No`, preserving free text. */
+function yesNo(value: unknown): string | null {
+  const raw = text(value)
+  if (!raw) return null
+  const tokens = raw
+    .split(',')
+    .map((token) => token.trim().toLowerCase())
+    .filter(Boolean)
+  if (tokens.length === 0) return null
+  if (tokens.every((token) => /^\d+$/.test(token))) {
+    return tokens.some((token) => token !== '0') ? 'Yes' : 'No'
+  }
+  if (tokens.every((token) => token === '1' || token === 'yes' || token === 'true')) {
+    return 'Yes'
+  }
+  if (tokens.every((token) => token === '0' || token === 'no' || token === 'false')) {
+    return 'No'
+  }
+  return raw
+}
+
+/** Joins a city list (array or comma-separated string) for display. */
+function cityList(value: unknown): string | null {
+  if (Array.isArray(value)) {
+    const cities = value.map((city) => String(city).trim()).filter(Boolean)
+    return cities.length > 0 ? cities.join(', ') : null
+  }
+  return text(value)
+}
+
 /** Normalises a `/member` or `/getPendingMember` row. */
 export function toMember(raw: Raw, entries: ImageUrlEntry[] = []): Member {
   const faceImageName = text(raw.face_image)
@@ -145,16 +185,47 @@ export function toMember(raw: Raw, entries: ImageUrlEntry[] = []): Member {
     married_before: text(raw.married_before),
     contact_name: text(raw.contact_name),
     physical_disablity: text(raw.physical_disablity),
-    marry_in_community: text(raw.marry_in_community),
+    marry_in_community: yesNo(raw.marry_in_community),
     marry_multi_community: text(raw.marry_multi_community),
     register_date: text(raw.register_date),
     face_image: resolveImage(faceImageName, entries, USER_IMAGE_KEYS),
     face_image_name: faceImageName,
+    full_image: resolveImage(text(raw.full_image), entries, USER_IMAGE_KEYS),
+    full_image_name: text(raw.full_image),
     user_type: raw.user_type ?? null,
     community_name: referenceName(raw.community),
     gotra_name: referenceName(raw.gotra),
     education_name: referenceName(raw.education),
     profession_name: referenceName(raw.profession),
+    time_of_birth: text(raw.time_of_birth),
+    place_of_birth: text(raw.place_of_birth),
+    email: text(raw.email),
+    company_name: text(raw.company_name),
+    company_type: text(raw.company_type),
+    annual_income: text(raw.annual_income),
+    father_name: text(raw.father_name),
+    mother_name: text(raw.mother_name),
+    brother_married: text(raw.brother_married),
+    brother_un_married: text(raw.brother_un_married),
+    sister_married: text(raw.sister_married),
+    sister_un_married: text(raw.sister_un_married),
+    user_address: text(raw.user_address),
+    house_type: text(raw.house_type),
+    multiple_city: cityList(raw.multiple_city),
+    alternate_contact_name: text(raw.alternate_contact_name),
+    alternate_mobile_no: text(raw.alternate_mobile_no),
+    divorce_status: text(raw.divorce_status),
+    children_from_prior_marriage: text(raw.children_from_prior_marriage),
+    children_with: text(raw.children_with),
+    will_marry_same_gotra: yesNo(raw.will_marry_same_gotra),
+    is_manglik: yesNo(raw.is_manglik),
+    will_marry_manglik: yesNo(raw.will_marry_manglik),
+    user_summary: text(raw.user_summary),
+    remarks: text(raw.remarks),
+    created_at: text(raw.created_at),
+    updated_at: text(raw.updated_at),
+    updated_by: text(raw.updated_by),
+    created_by: text(raw.created_by),
   }
 }
 
@@ -238,7 +309,7 @@ let cachedBlogImageEntries: ImageUrlEntry[] = [
   },
   {
     image_for: 'No Image',
-    image_url: 'https://vivahsambandh.com/crmapi/public/assets/images/no_image.jpg',
+    image_url: DEFAULT_NO_IMAGE_URL,
   },
 ]
 
@@ -256,12 +327,12 @@ export function resolveBlogImageUrl(
   filename: string | null | undefined,
   entries?: ImageUrlEntry[],
 ): string | null {
-  if (!filename || !filename.trim()) return null
+  const effectiveEntries = entries && entries.length > 0 ? entries : cachedBlogImageEntries
+  if (!filename || !filename.trim()) return noImageUrl(effectiveEntries)
   const clean = filename.trim()
   if (clean.startsWith('http://') || clean.startsWith('https://')) {
     return clean
   }
-  const effectiveEntries = entries && entries.length > 0 ? entries : cachedBlogImageEntries
   const resolved =
     resolveImage(clean, effectiveEntries, 'Blog') ??
     resolveImage(clean, effectiveEntries, 'blog') ??
@@ -402,7 +473,7 @@ let cachedClientImageEntries: ImageUrlEntry[] = [
   },
   {
     image_for: 'No Image',
-    image_url: 'https://vivahsambandh.com/crmapi/public/assets/images/no_image.jpg',
+    image_url: DEFAULT_NO_IMAGE_URL,
   },
 ]
 
@@ -424,12 +495,12 @@ export function resolveClientImageUrl(
   filename: string | null | undefined,
   entries?: ImageUrlEntry[],
 ): string | null {
-  if (!filename || !filename.trim()) return null
+  const effectiveEntries = entries && entries.length > 0 ? entries : cachedClientImageEntries
+  if (!filename || !filename.trim()) return noImageUrl(effectiveEntries)
   const clean = filename.trim()
   if (clean.startsWith('http://') || clean.startsWith('https://')) {
     return clean
   }
-  const effectiveEntries = entries && entries.length > 0 ? entries : cachedClientImageEntries
   const resolved =
     resolveImage(clean, effectiveEntries, 'Client') ??
     resolveImage(clean, effectiveEntries, 'client') ??
@@ -562,6 +633,24 @@ export function toList<T>(
   return rows.map((row: Raw) => mapper(row, entries))
 }
 
+/**
+ * Unwraps a single-record envelope (`{ data: {...} }`) and maps it.
+ * Returns `null` for empty payloads so callers can surface "not found".
+ */
+export function toItem<T>(
+  payload: unknown,
+  mapper: (row: Raw, entries: ImageUrlEntry[]) => T,
+): T | null {
+  const rawData = (payload as Raw)?.data
+  const row = Array.isArray(payload)
+    ? payload[0]
+    : Array.isArray(rawData)
+      ? rawData[0]
+      : rawData
+  if (!row || typeof row !== 'object' || Array.isArray(row)) return null
+  return mapper(row as Raw, extractImageEntries(payload))
+}
+
 const DEFAULT_GALLERY_IMAGE_URL =
   'https://vivahsambandh.com/crmapi/public/assets/images/gallerys_images/'
 
@@ -574,7 +663,7 @@ let cachedGalleryImageEntries: ImageUrlEntry[] = [
   },
   {
     image_for: 'No Image',
-    image_url: 'https://vivahsambandh.com/crmapi/public/assets/images/no_image.jpg',
+    image_url: DEFAULT_NO_IMAGE_URL,
   },
 ]
 
@@ -610,7 +699,8 @@ export function resolveGalleryImageUrl(
   entries?: ImageUrlEntry[],
   baseUrl?: string | null,
 ): string | null {
-  if (!filename || !filename.trim()) return null
+  const effectiveEntries = entries && entries.length > 0 ? entries : cachedGalleryImageEntries
+  if (!filename || !filename.trim()) return noImageUrl(effectiveEntries)
   const clean = filename.trim()
   if (clean.startsWith('http://') || clean.startsWith('https://')) {
     return clean
@@ -624,7 +714,6 @@ export function resolveGalleryImageUrl(
   }
 
   // 2. Resolve against ImageUrlEntry metadata if available
-  const effectiveEntries = entries && entries.length > 0 ? entries : cachedGalleryImageEntries
   const resolved =
     resolveImage(clean, effectiveEntries, 'Gallery') ??
     resolveImage(clean, effectiveEntries, 'gallery') ??

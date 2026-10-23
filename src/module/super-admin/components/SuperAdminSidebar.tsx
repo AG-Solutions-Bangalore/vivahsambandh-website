@@ -7,7 +7,8 @@ import { useState } from 'react'
 import { NavLink, useNavigate } from 'react-router-dom'
 import { LogOut, X } from 'lucide-react'
 import { cn } from 'cn'
-import LotusMark from '@/components/LotusMark'
+import CompanyLogo from '@/components/CompanyLogo'
+import { useCompanyDetails } from '@/module/company'
 import { useSuperAdminAuth } from '../context/SuperAdminAuthContext'
 import { PANEL_NAV_GROUPS } from '../navigation'
 import { ConfirmDialog } from './ConfirmDialog'
@@ -19,13 +20,14 @@ interface SuperAdminSidebarProps {
 
 export function SuperAdminSidebar({ isOpen, onClose }: SuperAdminSidebarProps) {
   const { session, logout } = useSuperAdminAuth()
+  const { logoUrl, name } = useCompanyDetails()
   const navigate = useNavigate()
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false)
 
   const handleLogout = () => {
     logout()
     setShowLogoutConfirm(false)
-    navigate('/crm-login', { replace: true })
+    navigate('/crm', { replace: true })
   }
 
   return (
@@ -41,21 +43,27 @@ export function SuperAdminSidebar({ isOpen, onClose }: SuperAdminSidebarProps) {
 
       <aside
         className={cn(
-          'panel-scroll fixed inset-y-0 left-0 z-50 flex w-72 flex-col overflow-y-auto bg-navy-900 text-white shadow-lift transition-transform duration-300 ease-in-out lg:static lg:translate-x-0',
+          'panel-scroll fixed inset-y-0 left-0 z-50 flex w-72 flex-col overflow-y-auto bg-navy-900 text-white shadow-lift transition-transform duration-300 ease-in-out print:hidden lg:static lg:translate-x-0',
           isOpen ? 'translate-x-0' : '-translate-x-full',
         )}
       >
         {/* Brand Header */}
         <div className="flex h-18 shrink-0 items-center justify-between border-b border-navy-800/80 px-6">
-          <div className="flex items-center gap-3">
-            <span className="flex size-10 items-center justify-center rounded-xl bg-gold-600 p-1 text-white shadow-gold">
-              <LotusMark className="size-7" />
-            </span>
-            <div>
-              <span className="block font-display text-base font-bold tracking-wide text-white">
-                VivahSambandh
+          <div className="flex min-w-0 items-center gap-3">
+            {logoUrl ? (
+              <span className="flex h-11 max-w-40 shrink-0 items-center bg-transparent justify-center rounded-lg p-1">
+                <CompanyLogo className="h-full w-auto max-w-full" />
               </span>
-              <span className="block text-[0.66rem] font-semibold tracking-[0.18em] text-gold-400 uppercase">
+            ) : (
+              <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-gold-600 font-display text-sm font-bold text-white shadow-gold">
+                {name.charAt(0).toUpperCase()}
+              </span>
+            )}
+            <div className="min-w-0">
+              <span className="block truncate font-display text-base font-bold tracking-wide text-white">
+                {name}
+              </span>
+              <span className="block truncate text-[0.66rem] font-semibold tracking-[0.18em] text-gold-400 uppercase">
                 Super Admin Panel
               </span>
             </div>
@@ -151,7 +159,7 @@ export function SuperAdminSidebar({ isOpen, onClose }: SuperAdminSidebarProps) {
       <ConfirmDialog
         isOpen={showLogoutConfirm}
         title="Sign Out from Super Admin"
-        description="Are you sure you want to end your Super Admin session? You will need to login again at /crm-login."
+        description="Are you sure you want to end your Super Admin session? You will need to login again at /crm."
         confirmText="Yes, Sign Out"
         cancelText="Stay Signed In"
         variant="danger"

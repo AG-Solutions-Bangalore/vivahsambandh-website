@@ -53,7 +53,7 @@ import type { BlogRecord, BlogStatus } from '../types'
 
 const STATUS_FILTERS = ['All', 'Active', 'Inactive'] as const
 
-const LIST_PATH = '/panel/blogs'
+const LIST_PATH = '/crm/blogs'
 
 export default function BlogsPage() {
   const navigate = useNavigate()
@@ -126,7 +126,7 @@ export default function BlogsPage() {
     <div className="space-y-6">
       <PanelPageHeader
         title="Blog Management"
-        description={panelDescription('/panel/blogs')}
+        description={panelDescription('/crm/blogs')}
         actions={
           <>
             <Button

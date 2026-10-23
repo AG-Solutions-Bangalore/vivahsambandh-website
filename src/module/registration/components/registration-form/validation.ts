@@ -172,6 +172,42 @@ export function validateRegistrationForm(
     addError('mother_name', `${baseId}-mother`, "Mother's Name", motherCheck.error)
   }
 
+  if (!form.brother_married) {
+    addError(
+      'brother_married',
+      `${baseId}-bro-married`,
+      'Brothers (Married)',
+      'Please select the number of married brothers',
+    )
+  }
+
+  if (!form.brother_un_married) {
+    addError(
+      'brother_un_married',
+      `${baseId}-bro-unmarried`,
+      'Brothers (Unmarried)',
+      'Please select the number of unmarried brothers',
+    )
+  }
+
+  if (!form.sister_married) {
+    addError(
+      'sister_married',
+      `${baseId}-sis-married`,
+      'Sisters (Married)',
+      'Please select the number of married sisters',
+    )
+  }
+
+  if (!form.sister_un_married) {
+    addError(
+      'sister_un_married',
+      `${baseId}-sis-unmarried`,
+      'Sisters (Unmarried)',
+      'Please select the number of unmarried sisters',
+    )
+  }
+
   const addrCheck = validateAddress(form.user_address, 'Residential Address', true)
   if (!addrCheck.valid && addrCheck.error) {
     addError('user_address', `${baseId}-address`, 'Residential Address', addrCheck.error)
@@ -241,7 +277,7 @@ export function validateRegistrationForm(
   }
 
   // --- PART 3: Family Summary ---
-  const summaryCheck = validateSafeText(form.user_summary, 'Family Summary', true, 10, 500)
+  const summaryCheck = validateSafeText(form.user_summary, 'Family Summary', false, 10, 500)
   if (!summaryCheck.valid && summaryCheck.error) {
     addError('user_summary', `${baseId}-summary`, 'Family Summary', summaryCheck.error)
   }
@@ -310,6 +346,8 @@ export function isRegistrationFormComplete(
 
   // Family & Address
   if (!validateName(form.father_name, "Father's Name", true, 2, 50).valid) return false
+  if (!form.brother_married || !form.brother_un_married) return false
+  if (!form.sister_married || !form.sister_un_married) return false
   if (!validateAddress(form.user_address, 'Residential Address', true).valid) return false
   if (!form.house_type) return false
   if (!validateCity(form.user_current_city, 'Present City', true).valid) return false
@@ -326,7 +364,7 @@ export function isRegistrationFormComplete(
   if (!form.will_marry_manglik) return false
 
   // Summary, Photos & Terms
-  if (!validateSafeText(form.user_summary, 'Family Summary', true, 10, 500).valid) return false
+  if (!validateSafeText(form.user_summary, 'Family Summary', false, 10, 500).valid) return false
   if (!form.full_image || !form.face_image) return false
   if (!form.agree_terms) return false
 

@@ -60,10 +60,11 @@
   "communities": {
     "eyebrow": "Browse by community",
     "title": "Find Matches by Community",
-    "subtitle": "Explore verified matrimonial profiles across Agarwal, Jain, Khandelwal, and Maheshwari families.",
+    "subtitle": "Explore verified matrimonial profiles across our communities.",
     "register": "Register Free Bio-Data",
     "explore": "Explore Matches",
     "clearFilter": "Show All",
+    "empty": "Communities are unavailable right now. Please try again shortly.",
     "gotrasLabel": "Key Gotras / Traditions",
     "findMatches": "Find {{name}} Matches",
     "list": [
@@ -139,7 +140,7 @@
   },
   "why": {
     "eyebrow": "Why choose VivahSambandh",
-    "title": "Designed for Agarwal, Jain, Khandelwal & Maheshwari Families",
+    "title": "Designed for the Above Families",
     "subtitle": "A perfect blend of tradition, trust and technology to help you find a compatible life partner.",
     "cta": "Explore Features",
     "features": [
@@ -1199,6 +1200,7 @@
       "motherLabel": "Mother's Name",
       "motherPlaceholder": "Mother's Full Name",
       "broMarriedLabel": "Brothers (Married)",
+      "siblingPlaceholder": "Select",
       "broUnmarriedLabel": "Brothers (Unmarried)",
       "sisMarriedLabel": "Sisters (Married)",
       "sisUnmarriedLabel": "Sisters (Unmarried)",
@@ -1214,7 +1216,7 @@
       "contactNameLabel": "Main Contact Person",
       "contactNamePlaceholder": "Name of contact person",
       "contactMobileLabel": "Main Contact Mobile",
-      "contactMobilePlaceholder": "10-digit mobile number",
+      "contactMobilePlaceholder": "Enter mobile number",
       "verifyOtp": "Verify OTP",
       "verified": "Verified",
       "mobileVerified": "Mobile verified",
@@ -1222,7 +1224,7 @@
       "altContactNameLabel": "Alternate Contact Person",
       "altContactNamePlaceholder": "Relative / Parent contact",
       "altContactMobileLabel": "Alternate Contact Mobile",
-      "altContactMobilePlaceholder": "10-digit mobile number",
+      "altContactMobilePlaceholder": "Enter mobile number",
       "part2Badge": "Part 2",
       "part2Title": "Partner Preferences & Horoscope",
       "part2Subtitle": "Astrological criteria for the alliance.",
@@ -1238,7 +1240,7 @@
       "part3Title": "Family History & Summary",
       "part3Subtitle": "Briefly describe parents' occupation, values, family background, and any aspirations.",
       "summaryLabel": "Brief Summary of Parent's Occupation / Family History",
-      "summaryPlaceholder": "Provide a brief paragraph describing your family, parents' professions, and lifestyle values (min. 10 characters).",
+      "summaryPlaceholder": "Provide a brief paragraph describing your family, parents' professions, and lifestyle values.",
       "part4Badge": "Part 4",
       "part4Title": "Profile Photographs",
       "part4Subtitle": "High-resolution recent photographs. Selecting a photo will open the interactive cropper.",
@@ -1289,7 +1291,17 @@
       "continue": "Continue",
       "stepHint": "Complete the required details on this step to unlock the next one.",
       "stepsIncompleteHint": "Finish every step to submit. We will take you to whatever is still missing.",
-      "stepPreferencesPhotos": "Preferences & Photos"
+      "stepPreferencesPhotos": "Preferences & Photos",
+      "stepThankYou": "Thank You",
+      "thankYouTitle": "Thank You!",
+      "thankYouBody": "Your bio-data registration has been submitted successfully. Our committee will review your profile within 24 to 48 hours."
     }
+  },
+  "notFound": {
+    "eyebrow": "Page not found",
+    "title": "This page doesn't exist.",
+    "description": "The link may be broken, or the page may have been moved or removed.",
+    "home": "Back to home",
+    "contact": "Contact support"
   }
 }

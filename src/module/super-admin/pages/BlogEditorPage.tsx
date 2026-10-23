@@ -26,7 +26,7 @@ import type { BlogPayload } from '../types'
 
 const FORM_ID = 'blog-editor-form'
 
-const LIST_PATH = '/panel/blogs'
+const LIST_PATH = '/crm/blogs'
 
 export default function BlogEditorPage() {
   const { id } = useParams<{ id: string }>()

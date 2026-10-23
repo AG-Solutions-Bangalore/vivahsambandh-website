@@ -45,7 +45,7 @@ export const PANEL_NAV_GROUPS: PanelNavGroup[] = [
     items: [
       {
         label: 'Dashboard',
-        to: '/panel/dashboard',
+        to: '/crm/dashboard',
         icon: LayoutDashboard,
         description:
           'Real-time platform overview, moderation queues, and operational metrics.',
@@ -57,56 +57,56 @@ export const PANEL_NAV_GROUPS: PanelNavGroup[] = [
     items: [
       {
         label: 'Blog Gallery',
-        to: '/panel/blog-gallery',
+        to: '/crm/blog-gallery',
         icon: Images,
         description:
           'Browse blog banner images, media assets, and visual attachments.',
       },
       {
         label: 'Blog',
-        to: '/panel/blogs',
+        to: '/crm/blogs',
         icon: FileText,
         description:
           'Create, edit and publish articles, control placement, and manage metadata.',
       },
       {
         label: 'Category',
-        to: '/panel/categories',
+        to: '/crm/categories',
         icon: Tags,
         description:
           'Manage the categories that group blog articles and drive the category filters.',
       },
       {
         label: 'Client',
-        to: '/panel/clients',
+        to: '/crm/clients',
         icon: Briefcase,
         description:
           'Manage client partners, brand logos, and collaborator visibility on the platform.',
       },
       {
         label: 'Testimonial',
-        to: '/panel/testimonials',
+        to: '/crm/testimonials',
         icon: Quote,
         description:
           'Manage matrimonial success reviews, member feedback quotes, and client ratings.',
       },
       {
         label: 'Faq',
-        to: '/panel/faqs',
+        to: '/crm/faqs',
         icon: HelpCircle,
         description:
           'Manage FAQ groups, target audiences, and structured question-and-answer accordions.',
       },
       {
         label: 'Enquiry',
-        to: '/panel/enquiries',
+        to: '/crm/enquiries',
         icon: Inbox,
         description:
           'Review contact-form enquiries, track status, and export full reports.',
       },
       {
         label: 'Newsletter',
-        to: '/panel/newsletter',
+        to: '/crm/newsletter',
         icon: Mail,
         description:
           'The mailing audience — every address that signed up for newsletter updates from the site and the app.',
@@ -118,49 +118,49 @@ export const PANEL_NAV_GROUPS: PanelNavGroup[] = [
     items: [
       {
         label: 'Members',
-        to: '/panel/members',
+        to: '/crm/members',
         icon: Users,
         description:
           'Browse registered candidates, examine verification biodatas, and update marital and approval statuses.',
       },
       {
         label: 'Pending Members',
-        to: '/panel/pending-members',
+        to: '/crm/pending-members',
         icon: UserPlus,
         description:
           'Verify newly submitted matrimonials, validate background claims, and approve profile activation.',
       },
       {
         label: 'Admin Members',
-        to: '/panel/admin-members',
+        to: '/crm/admin-members',
         icon: ShieldCheck,
         description:
           'View regional administrators, assign multiple coverage cities, and approve or cancel accounts.',
       },
       {
         label: 'Pending Admin',
-        to: '/panel/pending-admin-members',
+        to: '/crm/pending-admin-members',
         icon: UserCheck,
         description:
           'Admin applications submitted via registration that require Super Admin vetting and city allocation.',
       },
       {
         label: 'Block Profile',
-        to: '/panel/block-profiles',
+        to: '/crm/block-profiles',
         icon: Ban,
         description:
           'Audit member reports, harassment blocks, and moderation dispute entries.',
       },
       {
         label: 'Feedback',
-        to: '/panel/feedback',
+        to: '/crm/feedback',
         icon: MessageSquare,
         description:
           'Member responses, user experience reviews, and platform feedback submitted by users.',
       },
       {
         label: 'Notification',
-        to: '/panel/notifications',
+        to: '/crm/notifications',
         icon: Bell,
         description:
           'Create and broadcast push alerts, announcements, and policy updates to Users or Admins.',
@@ -184,7 +184,7 @@ export function findNavItem(pathname: string): PanelNavItem | undefined {
   const match = PANEL_NAV_ITEMS.find((item) =>
     pathname.startsWith(`${item.to}/`),
   )
-  return match ?? NAV_BY_PATH.get('/panel/dashboard')
+  return match ?? NAV_BY_PATH.get('/crm/dashboard')
 }
 
 /** Description for a panel route, used by every page header. */

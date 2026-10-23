@@ -353,7 +353,7 @@ export default function TestimonialsPage() {
     <div className="space-y-6">
       <PanelPageHeader
         title="Testimonials & Client Reviews"
-        description={panelDescription("/panel/testimonials")}
+        description={panelDescription("/crm/testimonials")}
         actions={
           <div className="flex items-center gap-2">
             <Button
