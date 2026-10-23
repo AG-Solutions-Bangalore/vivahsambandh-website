@@ -13,7 +13,7 @@ function renderFeatureIcon(index: number) {
       return (
         <svg
           viewBox="0 0 24 24"
-          className="h-9 w-9 text-gold-700 fill-none stroke-current"
+          className="h-7 w-7 text-gold-700 fill-none stroke-current"
           strokeWidth="1.8"
           aria-hidden="true"
         >
@@ -38,7 +38,7 @@ function renderFeatureIcon(index: number) {
       return (
         <svg
           viewBox="0 0 24 24"
-          className="h-9 w-9 text-gold-700 fill-none stroke-current"
+          className="h-7 w-7 text-gold-700 fill-none stroke-current"
           strokeWidth="1.8"
           aria-hidden="true"
         >
@@ -51,7 +51,7 @@ function renderFeatureIcon(index: number) {
       return (
         <svg
           viewBox="0 0 24 24"
-          className="h-9 w-9 text-gold-700 fill-none stroke-current"
+          className="h-7 w-7 text-gold-700 fill-none stroke-current"
           strokeWidth="1.8"
           aria-hidden="true"
         >
@@ -64,7 +64,7 @@ function renderFeatureIcon(index: number) {
       return (
         <svg
           viewBox="0 0 24 24"
-          className="h-9 w-9 text-gold-700 fill-none stroke-current"
+          className="h-7 w-7 text-gold-700 fill-none stroke-current"
           strokeWidth="1.8"
           aria-hidden="true"
         >
@@ -81,7 +81,7 @@ function renderFeatureIcon(index: number) {
       return (
         <svg
           viewBox="0 0 24 24"
-          className="h-9 w-9 text-gold-700 fill-none stroke-current"
+          className="h-7 w-7 text-gold-700 fill-none stroke-current"
           strokeWidth="1.8"
           aria-hidden="true"
         >
@@ -99,7 +99,7 @@ function renderFeatureIcon(index: number) {
       return (
         <svg
           viewBox="0 0 24 24"
-          className="h-9 w-9 text-gold-700 fill-none stroke-current"
+          className="h-7 w-7 text-gold-700 fill-none stroke-current"
           strokeWidth="1.8"
           aria-hidden="true"
         >
@@ -114,7 +114,7 @@ function renderFeatureIcon(index: number) {
 // Bespoke golden Mughal/Indian arched icons matching the design screenshot
 function FeatureArchedIcon({ index }: { index: number }) {
   return (
-    <div className="relative -mb-5 sm:-mb-5.5 lg:-mb-6 flex w-[68px] sm:w-[74px] lg:w-[78px] shrink-0 items-center justify-center self-stretch rounded-t-[28px] sm:rounded-t-[32px] rounded-b-none border border-b-0 border-gold-500/40 bg-gradient-to-b from-[#FFF7E8] to-[#FCEECC] text-gold-700 shadow-2xs transition-all duration-300 group-hover:border-gold-600 group-hover:from-[#FFF2D6] group-hover:to-[#FBE2A4] group-hover:shadow-xs">
+    <div className="relative -mb-4 sm:-mb-4.5 lg:-mb-5 flex w-[52px] sm:w-[56px] lg:w-[58px] shrink-0 items-center justify-center self-stretch rounded-t-[20px] sm:rounded-t-[24px] rounded-b-none border border-b-0 border-gold-500/40 bg-gradient-to-b from-[#FFF7E8] to-[#FCEECC] text-gold-700 shadow-2xs transition-all duration-300 group-hover:border-gold-600 group-hover:from-[#FFF2D6] group-hover:to-[#FBE2A4] group-hover:shadow-xs">
       <div className="transition-transform duration-300 group-hover:scale-105">
         {renderFeatureIcon(index)}
       </div>
@@ -229,7 +229,7 @@ export default function WhyChooseSection() {
           {/* Right Column: 3-column x 2-row Grid of Feature Cards       */}
           {/* ========================================================== */}
           <div className="lg:col-span-8 xl:col-span-8 min-w-0 z-10">
-            <RevealGroup className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-4.5 lg:gap-5">
+            <RevealGroup className="mx-auto grid w-full max-w-[560px] grid-cols-1 gap-3 sm:max-w-[620px] sm:grid-cols-2 sm:gap-3.5 lg:max-w-[680px] lg:grid-cols-3 lg:gap-4">
               {rawFeatures.map((f, i) => {
                 const words = f.title.split(" ");
                 const allExceptLast = words.slice(0, -1).join(" ");
@@ -239,14 +239,14 @@ export default function WhyChooseSection() {
                   <div
                     key={f.title}
                     data-reveal-item
-                    className="group relative overflow-hidden flex items-center gap-3.5 sm:gap-4 rounded-2xl sm:rounded-3xl border border-gold-500/30 bg-white p-5 sm:p-5.5 lg:p-6 min-h-[108px] sm:min-h-[116px] lg:min-h-[120px] shadow-sm transition-all duration-300 hover:-translate-y-1.5 hover:border-gold-500 hover:shadow-xl hover:shadow-gold-500/10 cursor-pointer"
+                    className="group relative overflow-hidden flex items-center gap-3 sm:gap-3.5 rounded-xl sm:rounded-2xl border border-gold-500/30 bg-white p-3.5 sm:p-4 min-h-[86px] sm:min-h-[92px] lg:min-h-[96px] shadow-sm transition-all duration-300 hover:-translate-y-1.5 hover:border-gold-500 hover:shadow-xl hover:shadow-gold-500/10 cursor-pointer"
                   >
                     {/* Bespoke Arched Icon */}
                     <FeatureArchedIcon index={i} />
 
                     {/* Title with protected arrow to prevent orphan wraps */}
                     <div className="flex-1 min-w-0 py-1">
-                      <h3 className="font-sans text-xs sm:text-[13.5px] lg:text-[14.5px] font-bold text-navy-950 leading-snug transition-colors group-hover:text-maroon-700">
+                      <h3 className="font-sans text-[11px] sm:text-xs lg:text-[12px] font-bold text-navy-950 leading-snug transition-colors group-hover:text-maroon-700">
                         {allExceptLast}{" "}
                         <span className="inline-block whitespace-nowrap">
                           {lastWord}
