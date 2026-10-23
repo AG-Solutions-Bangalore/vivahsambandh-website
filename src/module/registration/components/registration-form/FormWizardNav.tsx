@@ -21,6 +21,8 @@ interface FormWizardNavProps {
   isMobileVerifiedNow: boolean
   isMobileComplete: boolean
   mobile: string
+  /** Render bare (no card shell) so the nav can sit inside a section footer. */
+  embedded?: boolean
 }
 
 export default function FormWizardNav({
@@ -33,11 +35,12 @@ export default function FormWizardNav({
   isMobileVerifiedNow,
   isMobileComplete,
   mobile,
+  embedded = false,
 }: FormWizardNavProps) {
   const { t } = useTranslation()
 
   return (
-    <div className="mt-6 rounded-[1.5rem] border border-cream-300 bg-white p-5 sm:p-6">
+    <div className={cn(!embedded && 'mt-6 rounded-[1.5rem] border border-cream-300 bg-white p-5 sm:p-6')}>
       <div className="flex flex-col-reverse items-stretch gap-4 sm:flex-row sm:items-center sm:justify-between">
         {/* Back / hint */}
         {step > 0 ? (

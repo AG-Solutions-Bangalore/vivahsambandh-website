@@ -6,6 +6,7 @@
  */
 
 import { useTranslation } from 'react-i18next'
+import type { ReactNode } from 'react'
 import { Input } from '@/components/ui/input'
 import { DatePicker } from '@/components/ui/date-picker'
 import { TimePicker } from '@/components/ui/time-picker'
@@ -20,7 +21,12 @@ import FormSection from '../FormSection'
 import { REGISTRATION_STEP_IDS } from '../steps'
 import MobileNumberField from '../../MobileNumberField'
 
-export default function PersonalDetailsSection() {
+interface PersonalDetailsSectionProps {
+  /** Optional footer rendered inside the section sheet (wizard nav). */
+  footer?: ReactNode
+}
+
+export default function PersonalDetailsSection({ footer }: PersonalDetailsSectionProps) {
   const { t } = useTranslation()
   const {
     baseId,
@@ -146,6 +152,7 @@ export default function PersonalDetailsSection() {
         'registrationPage.form.part1Subtitle',
         'Basic identification, educational qualifications, background, and family records.',
       )}
+      footer={footer}
     >
       <div className="grid grid-cols-1 gap-x-4 gap-y-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
         {/* Full Name */}

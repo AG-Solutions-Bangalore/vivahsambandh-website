@@ -25,6 +25,8 @@ interface FormSectionProps {
   className?: string
   /** Extra classes for the body area. */
   bodyClassName?: string
+  /** Optional footer rendered inside the sheet, separated by a hairline rule. */
+  footer?: ReactNode
   children: ReactNode
 }
 
@@ -34,6 +36,7 @@ export default function FormSection({
   subtitle,
   className,
   bodyClassName,
+  footer,
   children,
 }: FormSectionProps) {
   return (
@@ -67,6 +70,12 @@ export default function FormSection({
       >
         {children}
       </div>
+
+      {footer && (
+        <div className="border-t border-cream-200 px-5 py-5 sm:px-8 sm:py-6 lg:px-10">
+          {footer}
+        </div>
+      )}
     </section>
   )
 }

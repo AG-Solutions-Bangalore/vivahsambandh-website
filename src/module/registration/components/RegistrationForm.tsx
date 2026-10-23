@@ -118,6 +118,21 @@ function RegistrationFormInner() {
     void handleSubmit(e)
   }
 
+  const renderWizardNav = (embedded = false) => (
+    <FormWizardNav
+      embedded={embedded}
+      step={currentStep}
+      isLastStep={isSubmitStep}
+      onBack={handleBack}
+      onNext={handleNext}
+      isSubmitting={isSubmitting}
+      isFormFullyFilled={isFormFullyFilled}
+      isMobileVerifiedNow={isMobileVerifiedNow}
+      isMobileComplete={isMobileComplete}
+      mobile={form.mobile}
+    />
+  )
+
   return (
     <TooltipProvider delay={150}>
       <div className="mx-auto max-w-5xl">
@@ -129,7 +144,7 @@ function RegistrationFormInner() {
 
         <form noValidate onSubmit={handleWizardSubmit}>
           <div key={currentStep} className="animate-step-in">
-            {currentStep === 0 && <PersonalDetailsSection />}
+            {currentStep === 0 && <PersonalDetailsSection footer={renderWizardNav(true)} />}
             {currentStep === 1 && (
               <div className="space-y-6">
                 <PartnerPreferencesSection />
@@ -141,19 +156,8 @@ function RegistrationFormInner() {
             {currentStep === 2 && <ThankYouSection />}
           </div>
 
-          {currentStep !== lastStepIndex && (
-            <FormWizardNav
-              step={currentStep}
-              isLastStep={isSubmitStep}
-              onBack={handleBack}
-              onNext={handleNext}
-              isSubmitting={isSubmitting}
-              isFormFullyFilled={isFormFullyFilled}
-              isMobileVerifiedNow={isMobileVerifiedNow}
-              isMobileComplete={isMobileComplete}
-              mobile={form.mobile}
-            />
-          )}
+          {/* Continue lives inside the Personal section; other steps keep the footer card */}
+          {isSubmitStep && renderWizardNav()}
         </form>
 
         {/* Terms Modal */}
