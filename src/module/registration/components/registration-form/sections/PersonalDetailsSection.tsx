@@ -303,7 +303,6 @@ export default function PersonalDetailsSection() {
             <Field
               id={`${baseId}-income`}
               label={t('registrationPage.form.incomeLabel', 'Annual Income (in Lakhs)')}
-              hint={t('registrationPage.form.incomeHint', 'Max 300')}
               error={fieldErrors.annual_income}
             >
               <Input
