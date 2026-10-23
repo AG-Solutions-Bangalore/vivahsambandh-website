@@ -771,8 +771,8 @@ export default function PersonalDetailsSection() {
           {t('registrationPage.form.locationHeading', 'Location & Contact Details')}
         </h3>
 
-        {/* Main Contact */}
-        <div className="grid grid-cols-1 gap-x-5 gap-y-6 sm:grid-cols-2">
+        {/* Main & Alternate Contacts — one row on desktop */}
+        <div className="grid grid-cols-1 gap-x-4 gap-y-6 sm:grid-cols-2 lg:grid-cols-4">
           <Field
             id={`${baseId}-contact-name`}
             label={t('registrationPage.form.contactNameLabel', 'Main Contact Person')}
@@ -804,10 +804,7 @@ export default function PersonalDetailsSection() {
             error={fieldErrors.mobile}
             inputClassName={inputCls('mobile')}
           />
-        </div>
 
-        {/* Alternate Contact */}
-        <div className="mt-6 grid grid-cols-1 gap-x-5 gap-y-6 sm:grid-cols-2">
           <Field
             id={`${baseId}-alt-name`}
             label={t('registrationPage.form.altContactNameLabel', 'Alternate Contact Person')}
