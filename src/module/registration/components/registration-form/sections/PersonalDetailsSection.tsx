@@ -69,7 +69,7 @@ export default function PersonalDetailsSection() {
         'Basic identification, educational qualifications, background, and family records.',
       )}
     >
-      <div className="grid grid-cols-1 gap-x-4 gap-y-6 sm:grid-cols-2 lg:grid-cols-5">
+      <div className="grid grid-cols-1 gap-x-4 gap-y-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
         {/* Full Name */}
         <Field id={`${baseId}-name`} label={t('registrationPage.form.nameLabel', 'Full Name')} required error={fieldErrors.name}>
           <Input
