@@ -191,7 +191,7 @@ export default function CategoriesPage() {
     <div className="space-y-6">
       <PanelPageHeader
         title="Categories"
-        description={panelDescription('/panel/categories')}
+        description={panelDescription('/crm/categories')}
         actions={
           <div className="flex items-center gap-2">
             <Button

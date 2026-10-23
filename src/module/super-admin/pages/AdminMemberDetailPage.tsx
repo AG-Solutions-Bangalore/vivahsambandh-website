@@ -66,8 +66,8 @@ export default function AdminMemberDetailPage({
   const { id } = useParams()
   const adminId = Number(id)
   const listPath = pending
-    ? '/panel/pending-admin-members'
-    : '/panel/admin-members'
+    ? '/crm/pending-admin-members'
+    : '/crm/admin-members'
 
   const { data: admin, isLoading, error, refetch } = useQuery({
     queryKey: [

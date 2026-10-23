@@ -89,7 +89,7 @@ export default function FeedbackPage() {
     <div className="space-y-6">
       <PanelPageHeader
         title="User Feedback & Support Reviews"
-        description={panelDescription("/panel/feedback")}
+        description={panelDescription("/crm/feedback")}
         actions={
           <Button
             type="button"

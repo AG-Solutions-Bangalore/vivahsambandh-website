@@ -27,7 +27,7 @@ export function SuperAdminSidebar({ isOpen, onClose }: SuperAdminSidebarProps) {
   const handleLogout = () => {
     logout()
     setShowLogoutConfirm(false)
-    navigate('/crm-login', { replace: true })
+    navigate('/crm', { replace: true })
   }
 
   return (
@@ -51,7 +51,7 @@ export function SuperAdminSidebar({ isOpen, onClose }: SuperAdminSidebarProps) {
         <div className="flex h-18 shrink-0 items-center justify-between border-b border-navy-800/80 px-6">
           <div className="flex min-w-0 items-center gap-3">
             {logoUrl ? (
-              <span className="flex h-11 max-w-40 shrink-0 items-center justify-center rounded-lg bg-white px-1.5 py-1 shadow-sm">
+              <span className="flex h-11 max-w-40 shrink-0 items-center bg-transparent justify-center rounded-lg p-1">
                 <CompanyLogo className="h-full w-auto max-w-full" />
               </span>
             ) : (
@@ -159,7 +159,7 @@ export function SuperAdminSidebar({ isOpen, onClose }: SuperAdminSidebarProps) {
       <ConfirmDialog
         isOpen={showLogoutConfirm}
         title="Sign Out from Super Admin"
-        description="Are you sure you want to end your Super Admin session? You will need to login again at /crm-login."
+        description="Are you sure you want to end your Super Admin session? You will need to login again at /crm."
         confirmText="Yes, Sign Out"
         cancelText="Stay Signed In"
         variant="danger"

@@ -89,7 +89,7 @@ export default function PendingMembersPage() {
     <div className="space-y-6">
       <PanelPageHeader
         title="Pending Member Profiles"
-        description={panelDescription('/panel/pending-members')}
+        description={panelDescription('/crm/pending-members')}
         chip={
           <span className="rounded-full border border-gold-300 bg-gold-50 px-2.5 py-0.5 text-xs font-bold text-gold-800">
             {pendingMembers.length} Awaiting Approval
@@ -219,7 +219,7 @@ export default function PendingMembersPage() {
                       type="button"
                       size="icon-xs"
                       variant="outline"
-                      onClick={() => navigate(`/panel/pending-members/${member.id}`)}
+                      onClick={() => navigate(`/crm/pending-members/${member.id}`)}
                       title="View full details"
                       aria-label="View full member details"
                       className="cursor-pointer rounded-full border-navy-200 text-navy-700 hover:bg-navy-50"

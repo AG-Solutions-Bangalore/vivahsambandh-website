@@ -69,7 +69,7 @@ export default function NewsletterPage() {
     <div className="space-y-6">
       <PanelPageHeader
         title="Newsletter Subscribers"
-        description={panelDescription('/panel/newsletter')}
+        description={panelDescription('/crm/newsletter')}
         chip={
           <span className="rounded-full border border-gold-300 bg-gold-50 px-2.5 py-0.5 text-xs font-bold text-gold-800">
             {meta.total} Subscribed

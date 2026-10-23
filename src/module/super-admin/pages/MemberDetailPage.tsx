@@ -33,7 +33,7 @@ export default function MemberDetailPage({ pending = false }: MemberDetailPagePr
   const navigate = useNavigate()
   const { id } = useParams()
   const memberId = Number(id)
-  const listPath = pending ? '/panel/pending-members' : '/panel/members'
+  const listPath = pending ? '/crm/pending-members' : '/crm/members'
 
   const { data: member, isLoading, error, refetch } = useQuery({
     queryKey: [

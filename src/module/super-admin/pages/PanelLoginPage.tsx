@@ -1,6 +1,6 @@
 /**
  * @file src/module/super-admin/pages/PanelLoginPage.tsx
- * Dedicated authentication page for Super Admin Panel at `/crm-login`.
+ * Dedicated authentication page for Super Admin Panel at `/crm`.
  * Features 10-digit mobile number login and mobile + email password recovery.
  */
 
@@ -65,7 +65,7 @@ export default function PanelLoginPage() {
     if (isAuthenticated) {
       const target =
         (location.state as { from?: { pathname?: string } })?.from?.pathname ||
-        "/panel/dashboard";
+        "/crm/dashboard";
       navigate(target, { replace: true });
     }
   }, [isAuthenticated, navigate, location]);
@@ -102,7 +102,7 @@ export default function PanelLoginPage() {
         toast.success("Welcome back to Super Admin Panel!");
         const target =
           (location.state as { from?: { pathname?: string } })?.from
-            ?.pathname || "/panel/dashboard";
+            ?.pathname || "/crm/dashboard";
         navigate(target, { replace: true });
       } else {
         setLoginErrors({ general: result.message });

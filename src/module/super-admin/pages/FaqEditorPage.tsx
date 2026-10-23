@@ -25,7 +25,7 @@ import type { FaqPayload } from '../types'
 
 const FORM_ID = 'faq-editor-form'
 
-const LIST_PATH = '/panel/faqs'
+const LIST_PATH = '/crm/faqs'
 
 export default function FaqEditorPage() {
   const { id } = useParams<{ id: string }>()

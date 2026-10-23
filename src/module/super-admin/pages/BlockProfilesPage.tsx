@@ -75,7 +75,7 @@ export default function BlockProfilesPage() {
     <div className="space-y-6">
       <PanelPageHeader
         title="Blocked Profiles Management"
-        description={panelDescription('/panel/block-profiles')}
+        description={panelDescription('/crm/block-profiles')}
         actions={
           <Button
             type="button"

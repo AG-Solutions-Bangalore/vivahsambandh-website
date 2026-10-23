@@ -235,7 +235,7 @@ export default function NotificationsPage() {
     <div className="space-y-6">
       <PanelPageHeader
         title="Notification Broadcasts"
-        description={panelDescription("/panel/notifications")}
+        description={panelDescription("/crm/notifications")}
         actions={
           <>
             <Button

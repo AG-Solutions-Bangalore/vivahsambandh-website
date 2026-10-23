@@ -121,7 +121,7 @@ export default function MembersPage() {
     <div className="space-y-6">
       <PanelPageHeader
         title="Matrimonial Members Directory"
-        description={panelDescription('/panel/members')}
+        description={panelDescription('/crm/members')}
         actions={
           <Button
             type="button"
@@ -277,7 +277,7 @@ export default function MembersPage() {
                       type="button"
                       size="icon-xs"
                       variant="outline"
-                      onClick={() => navigate(`/panel/members/${member.id}`)}
+                      onClick={() => navigate(`/crm/members/${member.id}`)}
                       title="View Full Profile Details"
                       aria-label="View full profile details"
                       className="cursor-pointer rounded-full border-navy-200 text-navy-700 hover:bg-navy-50"
