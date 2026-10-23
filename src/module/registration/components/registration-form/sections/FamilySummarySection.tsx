@@ -34,7 +34,6 @@ export default function FamilySummarySection() {
         <Field
           id={`${baseId}-summary`}
           label={t('registrationPage.form.summaryLabel', "Brief Summary of Parent's Occupation / Family History")}
-          required
           hint={`${500 - form.user_summary.length} ${t('registrationPage.form.charsLeft', 'chars left')}`}
           error={fieldErrors.user_summary}
         >
@@ -46,7 +45,7 @@ export default function FamilySummarySection() {
             value={form.user_summary}
             onChange={handleInputChange}
             onPaste={handlePasteCapture('user_summary')}
-            placeholder={t('registrationPage.form.summaryPlaceholder', "Provide a brief paragraph describing your family, parents' professions, and lifestyle values (min. 10 characters).")}
+            placeholder={t('registrationPage.form.summaryPlaceholder', "Provide a brief paragraph describing your family, parents' professions, and lifestyle values.")}
             className={inputCls('user_summary')}
             aria-invalid={Boolean(fieldErrors.user_summary)}
           />

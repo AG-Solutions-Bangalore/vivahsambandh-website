@@ -241,7 +241,7 @@ export function validateRegistrationForm(
   }
 
   // --- PART 3: Family Summary ---
-  const summaryCheck = validateSafeText(form.user_summary, 'Family Summary', true, 10, 500)
+  const summaryCheck = validateSafeText(form.user_summary, 'Family Summary', false, 10, 500)
   if (!summaryCheck.valid && summaryCheck.error) {
     addError('user_summary', `${baseId}-summary`, 'Family Summary', summaryCheck.error)
   }
@@ -326,7 +326,7 @@ export function isRegistrationFormComplete(
   if (!form.will_marry_manglik) return false
 
   // Summary, Photos & Terms
-  if (!validateSafeText(form.user_summary, 'Family Summary', true, 10, 500).valid) return false
+  if (!validateSafeText(form.user_summary, 'Family Summary', false, 10, 500).valid) return false
   if (!form.full_image || !form.face_image) return false
   if (!form.agree_terms) return false
 
