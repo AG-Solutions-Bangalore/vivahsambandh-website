@@ -602,8 +602,8 @@ export default function PersonalDetailsSection() {
           <Users className="size-4 shrink-0" aria-hidden="true" />
           {t('registrationPage.form.parentsSiblingsHeading', 'Family Details')}
         </h3>
-        {/* Parents Row */}
-        <div className="grid grid-cols-1 gap-x-5 gap-y-6 sm:grid-cols-2">
+        {/* Parents & siblings — one row on desktop */}
+        <div className="grid grid-cols-2 gap-x-4 gap-y-6 sm:grid-cols-3 lg:grid-cols-6">
           <Field id={`${baseId}-father`} label={t('registrationPage.form.fatherLabel', "Father's Name")} required error={fieldErrors.father_name}>
             <Input
               id={`${baseId}-father`}
@@ -633,10 +633,7 @@ export default function PersonalDetailsSection() {
               aria-invalid={Boolean(fieldErrors.mother_name)}
             />
           </Field>
-        </div>
 
-        {/* Siblings Row */}
-        <div className="mt-6 grid grid-cols-2 gap-x-4 gap-y-6 sm:grid-cols-4">
           <Field id={`${baseId}-bro-married`} label={t('registrationPage.form.broMarriedLabel', 'Brothers (Married)')} required error={fieldErrors.brother_married}>
             <FormSelect
               id={`${baseId}-bro-married`}
