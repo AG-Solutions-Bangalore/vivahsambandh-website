@@ -18,7 +18,7 @@ import {
 const inputCls = (hasError?: boolean) =>
   `w-full rounded-xl border ${
     hasError ? 'border-rose-400 bg-rose-50/10 text-white' : 'border-navy-100 bg-white text-navy-900'
-  } py-3 pl-11 pr-4 text-sm placeholder:text-ink-400 shadow-xs outline-none transition focus:border-gold-500 focus:ring-2 focus:ring-gold-500/30`
+  } py-2.5 pl-11 pr-4 text-sm placeholder:text-ink-400 shadow-xs outline-none transition focus:border-gold-500 focus:ring-2 focus:ring-gold-500/30`
 
 function FieldIcon({ d }: { d: string }) {
   return (
@@ -165,7 +165,7 @@ export default function MessageForm() {
 
   return (
     <Reveal variant="up" className="h-full">
-      <div className="relative h-full overflow-hidden rounded-[1.5rem] bg-navy-pattern p-6 sm:p-8 lg:p-10 shadow-lift">
+      <div className="relative h-full overflow-hidden rounded-[1.5rem] bg-navy-pattern p-5 sm:p-6 lg:p-8 shadow-lift">
         {/* Filigree corner */}
         <img
           src={img("/images/home/Ornate_Corner_Filigree_image.webp")}
@@ -185,11 +185,11 @@ export default function MessageForm() {
             ✦ {t('contactPage.formEyebrow')} ✦
             <span aria-hidden="true" className="h-px w-8 bg-gold-500/60" />
           </p>
-          <h2 className="font-display mt-3 text-2xl sm:text-3xl lg:text-4xl font-bold leading-[1.15]">
+          <h2 className="font-display mt-2.5 text-2xl sm:text-3xl font-bold leading-[1.15]">
             <span className="block text-white">{t('contactPage.formTitleA')}</span>
             <span className="block text-gold-400">{t('contactPage.formTitleB')}</span>
           </h2>
-          <p className="mt-3 max-w-md text-xs sm:text-sm leading-relaxed text-white/75 font-medium">
+          <p className="mt-2.5 max-w-md text-xs sm:text-sm leading-relaxed text-white/75 font-medium">
             {t('contactPage.formBody')}
           </p>
 
@@ -215,7 +215,7 @@ export default function MessageForm() {
               </button>
             </div>
           ) : (
-            <form noValidate onSubmit={onSubmit} className="mt-6 grid content-start gap-4 sm:grid-cols-3">
+            <form noValidate onSubmit={onSubmit} className="mt-5 grid content-start items-start gap-x-3 gap-y-3.5 sm:grid-cols-3">
               <Field label={`${t('contactPage.name')}`} required error={fieldErrors.name}>
                 <span aria-hidden="true" className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2">
                   <FieldIcon d="M12 12a3.5 3.5 0 100-7 3.5 3.5 0 000 7zM5 20c0-3 3-5 7-5s7 2 7 5" />
@@ -251,25 +251,23 @@ export default function MessageForm() {
                   aria-invalid={Boolean(fieldErrors.email)}
                 />
               </Field>
-              <div>
-                <Field label={t('contactPage.phone')} error={fieldErrors.phone}>
-                  <span aria-hidden="true" className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2">
-                    <FieldIcon d="M5 4h4l2 5-2.5 1.5a12 12 0 005 5L15 13l5 2v4a2 2 0 01-2 2A16 16 0 013 6a2 2 0 012-2z" />
-                  </span>
-                  <input
-                    type="tel"
-                    name="phone"
-                    maxLength={10}
-                    value={formData.phone}
-                    onChange={handleChange}
-                    onPaste={handlePasteCapture('phone')}
-                    autoComplete="tel"
-                    placeholder={t('contactPage.phone')}
-                    className={inputCls(Boolean(fieldErrors.phone))}
-                    aria-invalid={Boolean(fieldErrors.phone)}
-                  />
-                </Field>
-              </div>
+              <Field label={t('contactPage.phone')} error={fieldErrors.phone}>
+                <span aria-hidden="true" className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2">
+                  <FieldIcon d="M5 4h4l2 5-2.5 1.5a12 12 0 005 5L15 13l5 2v4a2 2 0 01-2 2A16 16 0 013 6a2 2 0 012-2z" />
+                </span>
+                <input
+                  type="tel"
+                  name="phone"
+                  maxLength={10}
+                  value={formData.phone}
+                  onChange={handleChange}
+                  onPaste={handlePasteCapture('phone')}
+                  autoComplete="tel"
+                  placeholder={t('contactPage.phone')}
+                  className={inputCls(Boolean(fieldErrors.phone))}
+                  aria-invalid={Boolean(fieldErrors.phone)}
+                />
+              </Field>
               <div className="sm:col-span-3">
                 <Field label={t('contactPage.message')} required error={fieldErrors.message}>
                   <span aria-hidden="true" className="pointer-events-none absolute left-4 top-4">
@@ -278,7 +276,7 @@ export default function MessageForm() {
                   <textarea
                     required
                     name="message"
-                    rows={4}
+                    rows={3}
                     maxLength={1000}
                     value={formData.message}
                     onChange={handleChange}
@@ -286,7 +284,7 @@ export default function MessageForm() {
                     placeholder={t('contactPage.message')}
                     className={`w-full resize-y rounded-xl border ${
                       fieldErrors.message ? 'border-rose-400 bg-rose-50/10 text-white' : 'border-navy-100 bg-white text-navy-900'
-                    } py-3 pl-11 pr-4 text-sm placeholder:text-ink-400 shadow-xs outline-none transition focus:border-gold-500 focus:ring-2 focus:ring-gold-500/30`}
+                    } py-2.5 pl-11 pr-4 text-sm placeholder:text-ink-400 shadow-xs outline-none transition focus:border-gold-500 focus:ring-2 focus:ring-gold-500/30`}
                     aria-invalid={Boolean(fieldErrors.message)}
                   />
                 </Field>
@@ -296,11 +294,11 @@ export default function MessageForm() {
                   <p className="font-semibold">{errorMsg}</p>
                 </div>
               )}
-              <div className="pt-1 sm:col-span-3">
+              <div className="pt-0.5 sm:col-span-3">
                 <button
                   type="submit"
                   disabled={enquiryMutation.isPending}
-                  className="group flex w-full items-center justify-center gap-2.5 rounded-full bg-gradient-to-r from-gold-400 via-gold-500 to-gold-300 px-7 py-3.5 text-sm font-bold text-zinc-800 shadow-gold transition hover:brightness-105 active:scale-[0.99] disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer"
+                  className="group flex w-full items-center justify-center gap-2.5 rounded-full bg-gradient-to-r from-gold-400 via-gold-500 to-gold-300 px-7 py-3 text-sm font-bold text-zinc-800 shadow-gold transition hover:brightness-105 active:scale-[0.99] disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer"
                 >
                   {enquiryMutation.isPending ? (
                     <span>{t('contactPage.submitting', 'Sending...')}</span>
