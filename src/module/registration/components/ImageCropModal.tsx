@@ -18,8 +18,10 @@ import {
   type ReactElement,
 } from 'react'
 import { useTranslation } from 'react-i18next'
+import { createPortal } from 'react-dom'
 import { ZoomIn, ZoomOut, RotateCcw, X, Check, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { lockPageScroll, unlockPageScroll } from '@/lib/scroll'
 import {
   clampOffset,
   computeCropGeometry,
@@ -99,12 +101,18 @@ export default function ImageCropModal({
     setLoadError(false)
   }
 
-  // Escape closes the dialog, Tab stays inside it.
+  // Escape closes the dialog, Tab stays inside it, page scroll is locked.
   useEffect(() => {
     if (!isOpen) {
       focusedRef.current = false
       return
     }
+
+    // Remember the upload trigger so focus returns to it on close.
+    const previouslyFocused =
+      document.activeElement instanceof HTMLElement ? document.activeElement : null
+
+    lockPageScroll()
 
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
@@ -137,7 +145,11 @@ export default function ImageCropModal({
       dialogRef.current?.focus()
     }
 
-    return () => document.removeEventListener('keydown', onKeyDown)
+    return () => {
+      document.removeEventListener('keydown', onKeyDown)
+      unlockPageScroll()
+      previouslyFocused?.focus({ preventScroll: true })
+    }
   }, [isOpen, onClose])
 
   const box = cropBoxSizeFor(aspect, BOX_LONG_EDGE)
@@ -252,19 +264,46 @@ export default function ImageCropModal({
     )
   }
 
-  if (!isOpen || !imageSrc) return null
+  if (!isOpen || !imageSrc || typeof document === 'undefined') return null
 
-  return (
+  const modalContent = (
     <div
       role="dialog"
       aria-modal="true"
       aria-labelledby="crop-modal-title"
-      className="fixed inset-0 z-50 flex items-center justify-center bg-navy-950/75 p-4 backdrop-blur-xs"
+      data-lenis-prevent
+      className="cropper-overlay"
+      style={{
+        position: 'fixed',
+        inset: 0,
+        width: '100vw',
+        height: '100dvh',
+        zIndex: 99999,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        background: 'rgba(15, 23, 42, 0.75)',
+        backdropFilter: 'blur(6px)',
+        WebkitBackdropFilter: 'blur(6px)',
+        overflow: 'hidden',
+        paddingTop: 'max(1rem, env(safe-area-inset-top))',
+        paddingRight: 'max(1rem, env(safe-area-inset-right))',
+        paddingBottom: 'max(1rem, env(safe-area-inset-bottom))',
+        paddingLeft: 'max(1rem, env(safe-area-inset-left))',
+      }}
+      onWheel={(e) => e.stopPropagation()}
     >
       <div
         ref={dialogRef}
         tabIndex={-1}
-        className="relative max-h-[92vh] w-full max-w-md overflow-y-auto rounded-3xl bg-white shadow-lift ring-1 ring-gold-500/25 outline-none"
+        className="cropper-modal bg-white shadow-lift ring-1 ring-gold-500/25 outline-none"
+        style={{
+          position: 'relative',
+          width: 'min(560px, calc(100vw - 32px))',
+          maxHeight: 'calc(100dvh - 32px)',
+          overflowY: 'auto',
+          borderRadius: '28px',
+        }}
       >
         {/* Header */}
         <div className="flex items-center justify-between border-b border-cream-200 bg-cream-50/80 px-6 py-4">
@@ -462,6 +501,8 @@ export default function ImageCropModal({
       </div>
     </div>
   )
+
+  return createPortal(modalContent, document.body)
 }
 
 /** File-name-safe slug from a (possibly translated) label. */
