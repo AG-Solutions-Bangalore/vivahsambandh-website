@@ -66,37 +66,37 @@ export default function PersonalDetailsSection({ footer }: PersonalDetailsSectio
         : 'border-cream-300 bg-cream-50/70 hover:bg-white hover:border-gold-500/60 focus-visible:border-gold-500 focus-visible:bg-white focus-visible:ring-gold-500/20',
     )
 
-  // Follow-up questions tied to prior marriage; on divorce these render below Community Preferences
-  const priorMarriageFields = (
-    <>
-      {/* Condition: Divorce Status */}
-      {isDivorced && (
-        <div className="animate-fade-in">
-          <Field
-            id={`${baseId}-divorce-status`}
-            label={t('registrationPage.form.divorceStatusLabel', 'Divorce Status')}
-            required
-            error={fieldErrors.divorce_status}
-          >
-            <FormSelect
-              id={`${baseId}-divorce-status`}
-              value={form.divorce_status ?? ''}
-              onValueChange={handleSelectChange('divorce_status')}
-              options={[
-                { value: 'Decree in process', label: t('registrationPage.form.decreeInProcess', 'Decree in process') },
-                { value: 'Decree granted less than 6 months back', label: t('registrationPage.form.decreeUnder6m', 'Decree granted less than 6 months back') },
-                { value: 'Decree granted less than 2 years back', label: t('registrationPage.form.decreeUnder2y', 'Decree granted less than 2 years back') },
-                { value: 'Decree granted less than 5 years back', label: t('registrationPage.form.decreeUnder5y', 'Decree granted less than 5 years back') },
-                { value: 'Decree granted more than 5 years back', label: t('registrationPage.form.decreeOver5y', 'Decree granted more than 5 years back') },
-              ]}
-              placeholder={t('registrationPage.form.divorceStatusPlaceholder', 'Select Divorce Status')}
-              error={Boolean(fieldErrors.divorce_status)}
-              aria-invalid={Boolean(fieldErrors.divorce_status)}
-            />
-          </Field>
-        </div>
-      )}
+  // Divorce follow-up stays beside the marital select
+  const divorceStatusField = (
+    <div className="animate-fade-in">
+      <Field
+        id={`${baseId}-divorce-status`}
+        label={t('registrationPage.form.divorceStatusLabel', 'Divorce Status')}
+        required
+        error={fieldErrors.divorce_status}
+      >
+        <FormSelect
+          id={`${baseId}-divorce-status`}
+          value={form.divorce_status ?? ''}
+          onValueChange={handleSelectChange('divorce_status')}
+          options={[
+            { value: 'Decree in process', label: t('registrationPage.form.decreeInProcess', 'Decree in process') },
+            { value: 'Decree granted less than 6 months back', label: t('registrationPage.form.decreeUnder6m', 'Decree granted less than 6 months back') },
+            { value: 'Decree granted less than 2 years back', label: t('registrationPage.form.decreeUnder2y', 'Decree granted less than 2 years back') },
+            { value: 'Decree granted less than 5 years back', label: t('registrationPage.form.decreeUnder5y', 'Decree granted less than 5 years back') },
+            { value: 'Decree granted more than 5 years back', label: t('registrationPage.form.decreeOver5y', 'Decree granted more than 5 years back') },
+          ]}
+          placeholder={t('registrationPage.form.divorceStatusPlaceholder', 'Select Divorce Status')}
+          error={Boolean(fieldErrors.divorce_status)}
+          aria-invalid={Boolean(fieldErrors.divorce_status)}
+        />
+      </Field>
+    </div>
+  )
 
+  // Children follow-ups render under Community Preferences
+  const childrenFields = (
+    <>
       {/* Condition: Children from prior marriage */}
       {hasPriorMarriage && (
         <div className="animate-fade-in">
@@ -513,65 +513,74 @@ export default function PersonalDetailsSection({ footer }: PersonalDetailsSectio
 
       {/* Community Preferences + marital history */}
       <div className="mt-6 grid grid-cols-1 gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(0,18rem)] lg:items-start">
-        {/* Community Preferences multi-select chips */}
-        <div
-          id={`${baseId}-comm-prefs`}
-          className="rounded-2xl border border-cream-300 bg-cream-50/70 p-4 sm:p-5"
-        >
-        <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
-          <span className="flex items-center gap-2 text-[13px] font-semibold leading-tight tracking-tight text-navy-900">
-            <Users className="size-4 shrink-0 text-ink-400" aria-hidden="true" />
-            {t('registrationPage.form.commPrefsLabel', 'Community Preferences (Select eligible communities)')}
-            <span className="text-maroon-600" aria-hidden="true">*</span>
-          </span>
-          {communityOptions.length > 0 && (
-            <button
-              type="button"
-              onClick={selectAllCommunities}
-              className="shrink-0 cursor-pointer rounded-full border border-gold-500/40 bg-white px-3 py-1 text-[11px] font-semibold text-gold-700 transition hover:border-gold-500 hover:bg-gold-50"
-            >
-              {communityOptions.every((c) => form.marry_in_community.includes(c.value))
-                ? t('registrationPage.form.deselectAll', 'Deselect All')
-                : t('registrationPage.form.selectAll', 'Select All Communities')}
-            </button>
-          )}
-        </div>
-        <div className="flex flex-wrap gap-2" role="group" aria-label="Community preferences">
-          {communityOptions.length === 0 ? (
-            <p className="text-xs text-navy-500 italic">{t('registrationPage.form.loadingCommunities', 'Loading communities...')}</p>
-          ) : (
-            communityOptions.map((comm) => {
-              const selected = form.marry_in_community.includes(comm.value)
-              return (
+        <div className="space-y-4">
+          {/* Community Preferences multi-select chips */}
+          <div
+            id={`${baseId}-comm-prefs`}
+            className="rounded-2xl border border-cream-300 bg-cream-50/70 p-4 sm:p-5"
+          >
+            <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+              <span className="flex items-center gap-2 text-[13px] font-semibold leading-tight tracking-tight text-navy-900">
+                <Users className="size-4 shrink-0 text-ink-400" aria-hidden="true" />
+                {t('registrationPage.form.commPrefsLabel', 'Community Preferences (Select eligible communities)')}
+                <span className="text-maroon-600" aria-hidden="true">*</span>
+              </span>
+              {communityOptions.length > 0 && (
                 <button
-                  key={comm.value}
                   type="button"
-                  aria-pressed={selected}
-                  onClick={() => toggleCommunityPreference(comm.value)}
-                  className={cn(
-                    'flex items-center gap-1.5 rounded-full border px-3.5 py-2 text-xs font-semibold transition outline-none active:scale-95 cursor-pointer',
-                    'focus-visible:ring-2 focus-visible:ring-gold-500/40',
-                    selected
-                      ? 'border-navy-900 bg-navy-900 text-white'
-                      : 'border-cream-300 bg-white text-navy-800 hover:border-gold-500/60 hover:bg-gold-50',
-                  )}
+                  onClick={selectAllCommunities}
+                  className="shrink-0 cursor-pointer rounded-full border border-gold-500/40 bg-white px-3 py-1 text-[11px] font-semibold text-gold-700 transition hover:border-gold-500 hover:bg-gold-50"
                 >
-                  {selected ? (
-                    <Check className="size-3.5 shrink-0" aria-hidden="true" />
-                  ) : (
-                    <Plus className="size-3.5 shrink-0" aria-hidden="true" />
-                  )}
-                  {comm.label}
+                  {communityOptions.every((c) => form.marry_in_community.includes(c.value))
+                    ? t('registrationPage.form.deselectAll', 'Deselect All')
+                    : t('registrationPage.form.selectAll', 'Select All Communities')}
                 </button>
-              )
-            })
+              )}
+            </div>
+            <div className="flex flex-wrap gap-2" role="group" aria-label="Community preferences">
+              {communityOptions.length === 0 ? (
+                <p className="text-xs text-navy-500 italic">{t('registrationPage.form.loadingCommunities', 'Loading communities...')}</p>
+              ) : (
+                communityOptions.map((comm) => {
+                  const selected = form.marry_in_community.includes(comm.value)
+                  return (
+                    <button
+                      key={comm.value}
+                      type="button"
+                      aria-pressed={selected}
+                      onClick={() => toggleCommunityPreference(comm.value)}
+                      className={cn(
+                        'flex items-center gap-1.5 rounded-full border px-3.5 py-2 text-xs font-semibold transition outline-none active:scale-95 cursor-pointer',
+                        'focus-visible:ring-2 focus-visible:ring-gold-500/40',
+                        selected
+                          ? 'border-navy-900 bg-navy-900 text-white'
+                          : 'border-cream-300 bg-white text-navy-800 hover:border-gold-500/60 hover:bg-gold-50',
+                      )}
+                    >
+                      {selected ? (
+                        <Check className="size-3.5 shrink-0" aria-hidden="true" />
+                      ) : (
+                        <Plus className="size-3.5 shrink-0" aria-hidden="true" />
+                      )}
+                      {comm.label}
+                    </button>
+                  )
+                })
+              )}
+            </div>
+            {fieldErrors.marry_in_community && (
+              <p role="alert" className="mt-2.5 flex items-start gap-1.5 text-xs font-semibold text-maroon-600">
+                {fieldErrors.marry_in_community}
+              </p>
+            )}
+          </div>
+
+          {/* Children follow-ups sit under Community Preferences */}
+          {hasPriorMarriage && (
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              {childrenFields}
+            </div>
           )}
-        </div>
-        {fieldErrors.marry_in_community && (
-          <p role="alert" className="mt-2.5 flex items-start gap-1.5 text-xs font-semibold text-maroon-600">
-            {fieldErrors.marry_in_community}
-          </p>
-        )}
         </div>
 
         {/* Marital History — sits beside Community Preferences */}
@@ -597,17 +606,10 @@ export default function PersonalDetailsSection({ footer }: PersonalDetailsSectio
             />
           </Field>
 
-          {/* Widowhood follow-ups stay beside the marital select; divorce follow-ups move below */}
-          {!isDivorced && priorMarriageFields}
+          {/* Divorce follow-up stays beside the marital select */}
+          {isDivorced && divorceStatusField}
         </div>
       </div>
-
-      {/* Divorce follow-ups — appear below Community Preferences */}
-      {isDivorced && (
-        <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {priorMarriageFields}
-        </div>
-      )}
 
       {/* Parents and Siblings row */}
       <div className="mt-6 border-t border-cream-200 pt-6">
@@ -616,7 +618,7 @@ export default function PersonalDetailsSection({ footer }: PersonalDetailsSectio
           {t('registrationPage.form.parentsSiblingsHeading', 'Family Details')}
         </h3>
         {/* Parents & siblings — one row on desktop */}
-        <div className="grid grid-cols-2 gap-x-4 gap-y-6 sm:grid-cols-3 lg:grid-cols-6">
+        <div className="grid grid-cols-2 gap-x-4 gap-y-6 sm:grid-cols-3 lg:grid-cols-[1.5fr_1.5fr_1fr_1fr_1fr_1fr] [&_label]:min-h-9">
           <Field id={`${baseId}-father`} label={t('registrationPage.form.fatherLabel', "Father's Name")} required error={fieldErrors.father_name}>
             <Input
               id={`${baseId}-father`}
