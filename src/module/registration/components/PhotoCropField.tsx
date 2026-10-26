@@ -205,7 +205,7 @@ export default function PhotoCropField({
         </p>
       )}
 
-      {/* Image Cropper Modal */}
+      {/* Image Cropper Modal — portalled directly to document.body */}
       <ImageCropModal
         key={isCropOpen ? 'crop-open' : 'crop-closed'}
         isOpen={isCropOpen}

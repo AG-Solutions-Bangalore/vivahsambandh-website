@@ -85,14 +85,39 @@ export function scrollToAnchor(hash: string): boolean {
   return true
 }
 
-/** Lock page scroll (e.g. video modal, mobile drawer open). */
+let scrollLockCount = 0
+/** Page position captured when the first lock is applied. */
+let lockedScrollY = 0
+
+/**
+ * Lock page scroll (e.g. video modal, mobile drawer, cropper open).
+ * Nested locks are reference-counted so the first opener owns the lock and
+ * the last closer releases it.
+ */
 export function lockPageScroll(): void {
+  if (typeof document === 'undefined') return
+  scrollLockCount++
+  if (scrollLockCount > 1) return
+
+  lockedScrollY = window.scrollY
   getLenis()?.stop()
   document.documentElement.classList.add('overflow-hidden')
+  document.body.classList.add('overflow-hidden')
 }
 
-/** Unlock page scroll. */
+/** Unlock page scroll and restore the position captured by the last lock. */
 export function unlockPageScroll(): void {
+  if (typeof document === 'undefined') return
+  scrollLockCount = Math.max(0, scrollLockCount - 1)
+  if (scrollLockCount > 0) return
+
   getLenis()?.start()
   document.documentElement.classList.remove('overflow-hidden')
+  document.body.classList.remove('overflow-hidden')
+
+  // overflow:hidden can drop the scroll offset on some mobile browsers.
+  if (window.scrollY !== lockedScrollY) {
+    window.scrollTo(0, lockedScrollY)
+  }
 }
+
