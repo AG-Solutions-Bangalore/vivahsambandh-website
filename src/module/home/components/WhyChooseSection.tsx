@@ -5,6 +5,7 @@ import Reveal, { RevealGroup } from "../../../components/motion/Reveal";
 import { pagePath } from "../../../constants/navigation";
 import type { AppLang } from "../../../i18n";
 import { img, imgSrcSet } from "../../../lib/image";
+import SectionBrandMark from "../../../components/SectionBrandMark";
 
 // Bespoke golden Mughal/Indian arched icons matching the design screenshot
 function renderFeatureIcon(index: number) {
@@ -183,12 +184,7 @@ export default function WhyChooseSection() {
           >
             {/* Eyebrow */}
             <div className="inline-flex items-center gap-2">
-              <span
-                className="text-gold-400 text-sm font-bold"
-                aria-hidden="true"
-              >
-                ✳
-              </span>
+              <SectionBrandMark />
               <span
                 data-eyebrow
                 className="text-[11px] sm:text-xs font-bold tracking-[0.2em] uppercase text-gold-400"

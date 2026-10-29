@@ -14,6 +14,7 @@ import { Bar } from '../../../components/skeletons/skeletonShapes'
 import { useFeaturedBlogsQuery, useFrontBlogsQuery } from '../hook/useBlogs'
 import type { BlogItem } from '../types'
 import BlogCard from './BlogCard'
+import SectionBrandMark from '../../../components/SectionBrandMark'
 
 import 'swiper/css'
 import 'swiper/css/navigation'
@@ -128,7 +129,7 @@ export default function BlogSection({
           eyebrow: 'From our blog',
           titleA: 'Latest',
           titleB: 'Updates & Stories.',
-          subtitle: 'Fresh articles, tips and community updates from VivahSambandh.',
+          subtitle: 'Fresh articles, tips and community updates from Vivah Sambandh.',
         }
 
   const bgCls =
@@ -143,7 +144,7 @@ export default function BlogSection({
       <div className="section-pad relative z-10">
         <Reveal variant="up" className="mx-auto max-w-2xl text-center">
           <div className="eyebrow mx-auto justify-center">
-            <span className="text-gold-500">✦</span>
+            <SectionBrandMark />
             <span>{eyebrow || t(`blogs.${variant}.eyebrow`, defaults.eyebrow)}</span>
           </div>
           <h2 className="font-display mt-4 text-3xl font-bold sm:text-4xl lg:whitespace-nowrap lg:text-5xl">

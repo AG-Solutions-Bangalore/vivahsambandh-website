@@ -4,7 +4,7 @@
  *
  * The shared `ui/select` primitive carries a neutral grey hairline and
  * generic square-ish popup, which reads as scaffolding rather than as part
- * of the VivahSambandh brand. This builds the same accessible base-ui
+ * of the Vivah Sambandh brand. This builds the same accessible base-ui
  * behaviour (keyboard, type-ahead, focus management) with the panel's own
  * surfaces: warm paper popup, gold hairline, brand radius and shadow.
  *

@@ -1,6 +1,6 @@
 /**
  * @file src/lib/api/apiClient.ts
- * Native HTTP client for VivahSambandh / CRM API endpoints.
+ * Native HTTP client for Vivah Sambandh / CRM API endpoints.
  * Provides GET JSON parsing and FormData POST multipart encoding.
  */
 

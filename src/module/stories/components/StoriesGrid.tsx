@@ -121,7 +121,7 @@ export default function StoriesGrid() {
                 <div className="mt-4 pt-3 border-t border-gold-500/15 flex items-center justify-between text-xs text-gold-700 font-bold">
                   <span className="flex items-center gap-1">
                     <span>♥</span>
-                    <span>{t('storiesPage.grid.tagTitle', 'VivahSambandh Community Matrimony')}</span>
+                    <span>{t('storiesPage.grid.tagTitle', 'Vivah Sambandh Community Matrimony')}</span>
                   </span>
                   <span className="text-navy-900 font-semibold">100% Verified</span>
                 </div>

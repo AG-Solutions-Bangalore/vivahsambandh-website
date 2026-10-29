@@ -7,8 +7,8 @@
  * `src/i18n/locales/*.json` — the canonical company values live here.
  */
 export const COMPANY = {
-  name: 'VivahSambandh',
-  legalName: 'VivahSambandh Matrimony Pvt. Ltd.',
+  name: 'Vivah Sambandh',
+  legalName: 'Vivah Sambandh Matrimony Pvt. Ltd.',
   brandTagline: {
     en: 'Community Matrimony',
     hi: 'समुदाय मैट्रिमोनी',
@@ -37,10 +37,10 @@ export const COMPANY = {
   },
 
   socials: {
-    facebook: 'https://facebook.com/vivahsambandh',
-    instagram: 'https://instagram.com/vivahsambandh',
+    facebook: 'https://www.facebook.com/profile.php?id=61595616586488/vivahsambandh',
+    instagram: 'https://www.instagram.com/vivahsambandh/?hl=en',
     youtube: 'https://youtube.com/@vivahsambandh',
-    linkedin: 'https://linkedin.com/company/vivahsambandh',
+    linkedin: 'https://www.linkedin.com/in/vivah-sambandh-a8b605447/',
   },
 
   apps: {

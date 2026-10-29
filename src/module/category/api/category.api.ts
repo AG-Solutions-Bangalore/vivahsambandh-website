@@ -1,6 +1,6 @@
 /**
  * @file src/module/category/api/category.api.ts
- * Category service for the VivahSambandh / CRM API.
+ * Category service for the Vivah Sambandh / CRM API.
  *
  * Endpoints:
  *   1. GET    /category              → list (pagination, search, status filter)

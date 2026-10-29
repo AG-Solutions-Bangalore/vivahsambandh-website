@@ -3,6 +3,7 @@ import { COMPANY } from "../../../constants/company";
 import type { AppFeature } from "../types";
 import Reveal, { RevealGroup } from "../../../components/motion/Reveal";
 import { img, imgSrcSet } from "../../../lib/image";
+import SectionBrandMark from "../../../components/SectionBrandMark";
 
 function AppFeatureIcon({ index }: { index: number }) {
   switch (index) {
@@ -106,7 +107,7 @@ export default function AppDownloadSection() {
           {/* Left Column: Heading, Copy & App Store Buttons */}
           <Reveal variant="left" className="lg:col-span-4">
             <div className="eyebrow">
-              <span className="text-gold-500">✦</span>
+              <SectionBrandMark />
               <span>{t("app.eyebrow")}</span>
             </div>
 

@@ -271,8 +271,8 @@ export default function HeroSection() {
             sizes="(max-width: 640px) 240px, (max-width: 1024px) 640px, 100vw"
             width={2172}
             height={724}
-            alt="VivahSambandh Indian wedding celebration banner"
-            title="VivahSambandh Indian wedding celebration banner"
+            alt="Vivah Sambandh Indian wedding celebration banner"
+            title="Vivah Sambandh Indian wedding celebration banner"
             data-hero="banner"
             fetchPriority="high"
             decoding="sync"
@@ -391,21 +391,21 @@ export default function HeroSection() {
               </div>
 
               {/* Trust Badges: Clean single horizontal row with distinct icons */}
-              <div data-hero="badges" className="mt-4">
-                <ul className="flex flex-wrap items-center gap-x-4 sm:gap-x-5 gap-y-2 text-[11px] sm:text-xs font-semibold text-navy-900">
-                  {TRUST_BADGES.map((b) => (
-                    <li
-                      key={b.key}
-                      className="inline-flex items-center gap-1.5"
-                    >
-                      <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full border border-gold-500/60 bg-gold-50/90 text-gold-700 shadow-2xs">
-                        {b.icon}
-                      </span>
-                      <span>{t(b.key)}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
+             <div data-hero="badges" className="mt-10 w-50px px-4 sm:px-8">
+  <ul className="flex flex-wrap items-center gap-x-6 sm:gap-x-7 gap-y-4 text-sm sm:text-base font-semibold text-navy-900">
+    {TRUST_BADGES.map((b) => (
+      <li
+        key={b.key}
+        className="inline-flex items-center gap-2"
+      >
+        <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-gold-500/60 bg-gold-50/90 text-gold-700 shadow-2xs">
+          {b.icon}
+        </span>
+        <span>{t(b.key)}</span>
+      </li>
+    ))}
+  </ul>
+</div>
             </div>
 
             {/* Right side placeholder to preserve space for couple in background banner */}

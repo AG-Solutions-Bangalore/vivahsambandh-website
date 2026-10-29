@@ -60,8 +60,8 @@ export default function ContactHero() {
             sizes="100vw"
             width={2172}
             height={724}
-            alt="VivahSambandh Indian wedding celebration banner"
-            title="VivahSambandh Indian wedding celebration banner"
+            alt="Vivah Sambandh Indian wedding celebration banner"
+            title="Vivah Sambandh Indian wedding celebration banner"
             data-hero="banner"
             fetchPriority="high"
             decoding="async"

@@ -1,6 +1,6 @@
 /**
  * @file src/module/registration/components/RegistrationForm.tsx
- * Complete VivahSambandh Registration Form — step-by-step wizard shell.
+ * Complete Vivah Sambandh Registration Form — step-by-step wizard shell.
  *
  * The three numbered parts are shown one at a time so the form never reads as
  * one endless wall of inputs:

@@ -1,9 +1,9 @@
 {
   "meta": {
-    "siteName": "VivahSambandh",
+    "siteName": "Vivah Sambandh",
     "tagline": "Community Matrimony",
-    "title": "VivahSambandh — Premium Community Matrimony | Tradition Meets New Beginnings",
-    "description": "VivahSambandh connects Agarwal, Jain, Khandelwal and Maheshwari families with shared values, traditions and aspirations to create meaningful and lasting relationships."
+    "title": "Vivah Sambandh — Premium Community Matrimony | Tradition Meets New Beginnings",
+    "description": "Vivah Sambandh connects Agarwal, Jain, Khandelwal and Maheshwari families with shared values, traditions and aspirations to create meaningful and lasting relationships."
   },
   "header": {
     "home": "Home",
@@ -14,7 +14,7 @@
     "blogs": "Blogs",
     "faq": "FAQ",
     "contact": "Contact Us",
-    "download": "Download",
+    "download": "Download App",
     "createProfile": "Create Profile",
     "language": "Language",
     "downloadApp": "Download App",
@@ -28,7 +28,7 @@
     "eyebrow": "A Premium Community Matrimony Platform",
     "titleA": "Tradition Meets",
     "titleB": "New Beginnings",
-    "subtitle": "VivahSambandh connects Agarwal, Jain, Khandelwal and Maheshwari families with shared values, traditions and aspirations to create meaningful and lasting relationships.",
+    "subtitle": "Vivah Sambandh connects Agarwal, Jain, Khandelwal and Maheshwari families with shared values, traditions and aspirations to create meaningful and lasting relationships.",
     "createProfile": "Create Your Profile",
     "findMatch": "Find Your Match",
     "verified": "Verified Profiles",
@@ -49,10 +49,10 @@
     "groomAccent": "Groom"
   },
   "about": {
-    "eyebrow": "About VivahSambandh",
+    "eyebrow": "About Vivah Sambandh",
     "titleA": "More Than",
     "titleB": "a Matrimonial Platform",
-    "body": "VivahSambandh is dedicated to bringing Agarwal, Jain, Khandelwal and Maheshwari families together through a trusted and modern platform. We respect our traditions, values and cultural heritage while embracing technology to make your search for a life partner simple, secure and meaningful.",
+    "body": "Vivah Sambandh is dedicated to bringing Agarwal, Jain, Khandelwal and Maheshwari families together through a trusted and modern platform. We respect our traditions, values and cultural heritage while embracing technology to make your search for a life partner simple, secure and meaningful.",
     "cta": "Know More About Us",
     "community": "Our Community",
     "members": "50K+ Happy Members"
@@ -61,8 +61,10 @@
     "eyebrow": "Browse by community",
     "title": "Find Matches by Community",
     "subtitle": "Explore verified matrimonial profiles across our communities.",
+    "sub": "Explore more with Register ",
     "register": "Register Free Bio-Data",
     "explore": "Explore Matches",
+    "exploreHint": "Register first to explore matches.",
     "clearFilter": "Show All",
     "empty": "Communities are unavailable right now. Please try again shortly.",
     "gotrasLabel": "Key Gotras / Traditions",
@@ -139,7 +141,7 @@
     ]
   },
   "why": {
-    "eyebrow": "Why choose VivahSambandh",
+    "eyebrow": "Why choose Vivah Sambandh",
     "title": "Designed for the Above Families",
     "subtitle": "A perfect blend of tradition, trust and technology to help you find a compatible life partner.",
     "cta": "Explore Features",
@@ -168,17 +170,17 @@
     "eyebrow": "Success stories",
     "titleA": "Real People.",
     "titleB": "Real Happiness.",
-    "subtitle": "Thousands of Agarwal, Jain, Khandelwal and Maheshwari families found their perfect match through VivahSambandh. Their stories inspire us to create more beautiful beginnings.",
+    "subtitle": "Thousands of Agarwal, Jain, Khandelwal and Maheshwari families found their perfect match through Vivah Sambandh. Their stories inspire us to create more beautiful beginnings.",
     "cta": "Read Success Stories",
     "verifiedClient": "Verified Client",
     "items": [
       {
-        "quote": "VivahSambandh made our journey simple and comfortable. We are grateful to find the perfect match within our community.",
+        "quote": "Vivah Sambandh made our journey simple and comfortable. We are grateful to find the perfect match within our community.",
         "name": "Rohan & Ananya",
         "city": "Delhi"
       },
       {
-        "quote": "The platform is genuine and trustworthy. We highly recommend VivahSambandh to all Agarwal, Jain, Khandelwal and Maheshwari families.",
+        "quote": "The platform is genuine and trustworthy. We highly recommend Vivah Sambandh to all Agarwal, Jain, Khandelwal and Maheshwari families.",
         "name": "Vikas & Riya",
         "city": "Bengaluru"
       },
@@ -190,12 +192,12 @@
     ]
   },
   "app": {
-    "eyebrow": "VivahSambandh App",
+    "eyebrow": "Vivah Sambandh App",
     "title": "Your Match, Always With You",
     "subtitle": "Connect with verified matches on iOS and Android",
     "getItOn": "GET IT ON",
     "downloadOn": "Download on the",
-    "body": "Download the VivahSambandh app and explore verified profiles, get instant notifications and stay connected with your potential life partner.",
+    "body": "Download the Vivah Sambandh app and explore verified profiles, get instant notifications and stay connected with your potential life partner.",
     "googlePlay": "Get it on Google Play",
     "appStore": "Download on the App Store",
     "verified": "100% Verified",
@@ -226,7 +228,7 @@
     ]
   },
   "downloadPage": {
-    "eyebrow": "VivahSambandh Mobile App",
+    "eyebrow": "Vivah Sambandh Mobile App",
     "titleA": "Your Perfect Match,",
     "titleB": "Always With You",
     "subtitle": "Download India's trusted community matrimony app. Search verified profiles, receive instant match notifications, and connect directly with prospective families on iOS and Android.",
@@ -248,7 +250,7 @@
       "secure": "Safe"
     },
     "featuresEyebrow": "Built for Modern Families Across Communities",
-    "featuresTitle": "Key Features of the VivahSambandh App",
+    "featuresTitle": "Key Features of the Vivah Sambandh App",
     "featuresSubtitle": "Experience effortless matchmaking engineered for tradition, strict privacy, and modern convenience.",
     "features": [
       {
@@ -304,7 +306,7 @@
       {
         "step": "01",
         "title": "Download the App",
-        "desc": "Get VivahSambandh from Google Play Store or Apple App Store for free."
+        "desc": "Get Vivah Sambandh from Google Play Store or Apple App Store for free."
       },
       {
         "step": "02",
@@ -325,13 +327,13 @@
   "faq": {
     "eyebrow": "Frequently asked",
     "title": "FAQ's",
-    "subtitle": "Quick answers to know more about VivahSambandh, verified profiles, membership plans, and matchmaking support.",
+    "subtitle": "Quick answers to know more about Vivah Sambandh, verified profiles, membership plans, and matchmaking support.",
     "cta": "View All FAQ",
     "defaultCategory": "General Information",
     "items": [
       {
-        "q": "What is VivahSambandh?",
-        "a": "VivahSambandh is a premium community matrimony platform for Agarwal, Jain, Khandelwal and Maheshwari families, blending tradition with modern matchmaking."
+        "q": "What is Vivah Sambandh?",
+        "a": "Vivah Sambandh is a premium community matrimony platform for Agarwal, Jain, Khandelwal and Maheshwari families, blending tradition with modern matchmaking."
       },
       {
         "q": "Is my information secure?",
@@ -363,14 +365,14 @@
       "eyebrow": "From our blog",
       "titleA": "Latest",
       "titleB": "Updates & Stories.",
-      "subtitle": "Fresh articles, tips and community updates from VivahSambandh."
+      "subtitle": "Fresh articles, tips and community updates from Vivah Sambandh."
     }
   },
   "blogsPage": {
     "eyebrow": "Our blog",
     "titleA": "All",
     "titleB": "Stories & Articles.",
-    "subtitle": "Browse every article, guide and community update from VivahSambandh.",
+    "subtitle": "Browse every article, guide and community update from Vivah Sambandh.",
     "retry": "Try again",
     "loadErrorTitle": "Could not load blogs",
     "loadErrorDesc": "Something went wrong while fetching articles. Please try again.",
@@ -391,7 +393,7 @@
       "eyebrow": "Privacy Policy",
       "title": "Your Privacy Matters",
       "updated": "Last updated: January 2026",
-      "intro": "VivahSambandh respects your privacy. This policy explains what information we collect, how we use it, and the choices you have.",
+      "intro": "Vivah Sambandh respects your privacy. This policy explains what information we collect, how we use it, and the choices you have.",
       "sections": [
         {
           "h": "Information We Collect",
@@ -419,7 +421,7 @@
       "eyebrow": "Terms & Conditions",
       "title": "Terms of Use",
       "updated": "Last updated: January 2026",
-      "intro": "By creating an account or using VivahSambandh, you agree to the following terms. Please read them carefully.",
+      "intro": "By creating an account or using Vivah Sambandh, you agree to the following terms. Please read them carefully.",
       "sections": [
         {
           "h": "Eligibility",
@@ -439,7 +441,7 @@
         },
         {
           "h": "Our Role",
-          "body": "VivahSambandh is a matchmaking platform that facilitates introductions between families. We verify profiles with care, but the final decision to proceed with any alliance rests entirely with you and your family."
+          "body": "Vivah Sambandh is a matchmaking platform that facilitates introductions between families. We verify profiles with care, but the final decision to proceed with any alliance rests entirely with you and your family."
         }
       ]
     },
@@ -447,7 +449,7 @@
       "eyebrow": "Community Guidelines",
       "title": "A Respectful Community",
       "updated": "Last updated: January 2026",
-      "intro": "These guidelines keep VivahSambandh safe, genuine and welcoming for every family.",
+      "intro": "These guidelines keep Vivah Sambandh safe, genuine and welcoming for every family.",
       "sections": [
         {
           "h": "Be Genuine",
@@ -532,7 +534,7 @@
     "adminRegister": "Admin Register",
     "adminLogin": "Admin Login",
     "sitemap": "Sitemap",
-    "rights": "© 2026 VivahSambandh. All rights reserved.",
+    "rights": "© 2026 Vivah Sambandh. All rights reserved.",
     "madeWith": "Traditions Connect Hearts"
   },
   "newsletter": {
@@ -561,7 +563,7 @@
     "storyEyebrow": "Our Story",
     "titleA": "More Than a",
     "titleB": "Matrimonial Platform",
-    "body": "VivahSambandh connects Agarwal, Jain, Khandelwal and Maheshwari families through shared values, traditions and modern technology. We are dedicated to creating meaningful and lasting relationships within the community.",
+    "body": "Vivah Sambandh connects Agarwal, Jain, Khandelwal and Maheshwari families through shared values, traditions and modern technology. We are dedicated to creating meaningful and lasting relationships within the community.",
     "missionTitle": "Our Mission",
     "missionBody": "To bring Agarwal, Jain, Khandelwal and Maheshwari families together by combining our rich traditions with modern technology, creating a trusted, simple and meaningful platform for lifelong companionship.",
     "visionTitle": "Our Vision",
@@ -584,7 +586,7 @@
         "desc": "Your privacy and security are our priority, with secure communication and complete data protection."
       }
     ],
-    "whyEyebrow": "Why VivahSambandh?",
+    "whyEyebrow": "Why Vivah Sambandh?",
     "whyTitleA": "Built for Our",
     "whyTitleB": "Families, by People Who Understand",
     "whyBody": "We understand the unique values, preferences and expectations of Agarwal, Jain, Khandelwal and Maheshwari families. Our platform is designed to make the search for a life partner simple, trustworthy and meaningful.",
@@ -627,7 +629,7 @@
     "ctaEyebrow": "Be a part of our story",
     "ctaTitleA": "Your Story",
     "ctaTitleB": "Begins Here",
-    "ctaBody": "Join thousands of Agarwal, Jain, Khandelwal and Maheshwari families who have found meaningful and lasting relationships on VivahSambandh.",
+    "ctaBody": "Join thousands of Agarwal, Jain, Khandelwal and Maheshwari families who have found meaningful and lasting relationships on Vivah Sambandh.",
     "ctaPrimary": "Create Your Profile",
     "ctaSecondary": "Find Your Match"
   },
@@ -690,7 +692,7 @@
     "ctaEyebrow": "Still Have Questions?",
     "ctaTitleA": "We're Here",
     "ctaTitleB": "for You",
-    "ctaBody": "Our support team is dedicated to ensuring you have the best experience on VivahSambandh.",
+    "ctaBody": "Our support team is dedicated to ensuring you have the best experience on Vivah Sambandh.",
     "ctaPrimary": "Create Your Profile",
     "ctaSecondary": "Search Profiles"
   },
@@ -705,7 +707,7 @@
     "heroEyebrow": "500+ Community Weddings Celebrated",
     "heroTitleA": "Real People.",
     "heroTitleB": "Real Happiness.",
-    "heroSubtitle": "Thousands of Agarwal, Jain, Khandelwal and Maheshwari families found their perfect match through VivahSambandh. Their heartwarming stories inspire us to create more beautiful beginnings.",
+    "heroSubtitle": "Thousands of Agarwal, Jain, Khandelwal and Maheshwari families found their perfect match through Vivah Sambandh. Their heartwarming stories inspire us to create more beautiful beginnings.",
     "badges": {
       "verified": "Family Verified",
       "gotras": "18 Gotras United",
@@ -740,15 +742,15 @@
       "gotras": "Bansal ✦ Mittal",
       "city": "Bengaluru, Karnataka",
       "couple": "Vikas & Riya",
-      "quote": "VivahSambandh made our journey simple, respectful and comfortable. Both families connected naturally, and knowing the profiles were strictly verified gave us immense peace of mind.",
+      "quote": "Vivah Sambandh made our journey simple, respectful and comfortable. Both families connected naturally, and knowing the profiles were strictly verified gave us immense peace of mind.",
       "story": "From initial profile discovery with compatible gotras to in-depth family meetings, the platform ensured mutual respect and full privacy every step of the way.",
       "tagTitle": "Community Matrimony Union",
-      "tagSub": "Verified VivahSambandh Couple"
+      "tagSub": "Verified Vivah Sambandh Couple"
     },
     "grid": {
       "eyebrow": "Real Couple Stories",
       "title": "Bonds of Trust, Love & Tradition",
-      "tagTitle": "VivahSambandh Community Matrimony",
+      "tagTitle": "Vivah Sambandh Community Matrimony",
       "filters": [
         {
           "id": "all",
@@ -784,7 +786,7 @@
           "city": "Delhi NCR",
           "weddingDate": "December 2025",
           "quote": "We found each other through family-first preferences. Our values, traditions, and priorities aligned seamlessly.",
-          "story": "Their parents initiated the connection on VivahSambandh. Within two months of respectful conversations and Kundali confirmation, the families met in Delhi to finalize the wedding.",
+          "story": "Their parents initiated the connection on Vivah Sambandh. Within two months of respectful conversations and Kundali confirmation, the families met in Delhi to finalize the wedding.",
           "image": "/images/home/romantic-indian-wedding-portrait.webp",
           "badge": "Engaged to Married in 4 Mo"
         },
@@ -831,7 +833,7 @@
           "gotras": "Dharan ✦ Kucchal",
           "city": "Bengaluru",
           "weddingDate": "October 2025",
-          "quote": "We found our life partner without stress or spam calls. VivahSambandh preserves the dignity of matchmaking.",
+          "quote": "We found our life partner without stress or spam calls. Vivah Sambandh preserves the dignity of matchmaking.",
           "story": "With clear communication channels and zero unsolicited calls, their elders felt respected and comfortable conducting matchmaking discussions.",
           "image": "/images/home/navy-and-gold-wedding-romance.webp",
           "badge": "Family Verified Match"
@@ -839,7 +841,7 @@
       ]
     },
     "cta": {
-      "eyebrow": "Did You Meet on VivahSambandh?",
+      "eyebrow": "Did You Meet on Vivah Sambandh?",
       "title": "Share Your Wedding Story With Us",
       "body": "Inspire thousands of Agarwal, Jain, Khandelwal and Maheshwari families searching for their ideal match. Share your wedding photographs and heartwarming journey with our community.",
       "submit": "Submit Your Story ✉",
@@ -1061,7 +1063,7 @@
       ]
     },
     "benefits": {
-      "eyebrow": "The VivahSambandh Advantage",
+      "eyebrow": "The Vivah Sambandh Advantage",
       "title": "Built With Respect for Community Traditions",
       "items": [
         {

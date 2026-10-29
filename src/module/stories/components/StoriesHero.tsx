@@ -79,8 +79,8 @@ export default function StoriesHero() {
             sizes="100vw"
             width={2172}
             height={724}
-            alt="VivahSambandh Wedding Celebration Stories"
-            title="VivahSambandh Wedding Celebration Stories"
+            alt="Vivah Sambandh Wedding Celebration Stories"
+            title="Vivah Sambandh Wedding Celebration Stories"
             data-hero="banner"
             fetchPriority="high"
             decoding="async"

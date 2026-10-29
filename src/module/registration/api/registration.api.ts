@@ -1,6 +1,6 @@
 /**
  * @file src/module/registration/api/registration.api.ts
- * API services for VivahSambandh Registration and CRM integrations.
+ * API services for Vivah Sambandh Registration and CRM integrations.
  */
 
 import { apiFetch, API_BASE_URL, API_SECRET_KEY } from '@/lib/api/apiClient'

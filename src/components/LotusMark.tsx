@@ -1,6 +1,6 @@
 /**
  * @file src/components/LotusMark.tsx
- * The VivahSambandh lotus mark — the shared brand glyph used by the public
+ * The   lotus mark — the shared brand glyph used by the public
  * header and the Super Admin panel so both surfaces read as one brand.
  */
 

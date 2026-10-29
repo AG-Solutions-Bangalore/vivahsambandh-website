@@ -1,6 +1,6 @@
 /**
  * @file src/lib/firebase.ts
- * Firebase initialization and Auth provider for VivahSambandh.
+ * Firebase initialization and Auth provider for Vivah Sambandh.
  * Configured for phone number OTP verification.
  */
 
