@@ -41,62 +41,6 @@ export default function AboutSection() {
                 />
 
               </div>
-
-              {/* Floating Community Member Counter Pill */}
-              <div className="absolute -bottom-3 left-2 sm:left-4 md:left-6 z-20 flex items-center gap-3 rounded-full border border-gold-500/35 bg-white/95 px-3.5 py-2 sm:px-4 sm:py-2.5 shadow-md backdrop-blur-xs">
-                {/* 4 Overlapping Avatar Bubbles */}
-                <div className="flex -space-x-2 overflow-hidden">
-                  <img
-                    src={img("/images/home/radiant-indian-bride-in-floral-glow-128.webp")}
-                    width={128}
-                    height={154}
-                    alt="Member"
-                    title="Member"
-                    loading="lazy"
-                    decoding="async"
-                    className="inline-block h-7 w-7 sm:h-8 sm:w-8 rounded-full border-2 border-white object-cover object-top"
-                  />
-                  <img
-                    src={img("/images/home/radiant-indian-groom-in-a-golden-wedding-setting-128.webp")}
-                    width={128}
-                    height={128}
-                    alt="Member"
-                    title="Member"
-                    loading="lazy"
-                    decoding="async"
-                    className="inline-block h-7 w-7 sm:h-8 sm:w-8 rounded-full border-2 border-white object-cover object-top"
-                  />
-                  <img
-                    src={img("/images/home/radiant-indian-wedding-portrait-128.webp")}
-                    width={128}
-                    height={70}
-                    alt="Member"
-                    title="Member"
-                    loading="lazy"
-                    decoding="async"
-                    className="inline-block h-7 w-7 sm:h-8 sm:w-8 rounded-full border-2 border-white object-cover"
-                  />
-                  <img
-                    src={img("/images/home/romantic-indian-wedding-portrait-128.webp")}
-                    width={128}
-                    height={74}
-                    alt="Member"
-                    title="Member"
-                    loading="lazy"
-                    decoding="async"
-                    className="inline-block h-7 w-7 sm:h-8 sm:w-8 rounded-full border-2 border-white object-cover"
-                  />
-                </div>
-
-                <div className="leading-tight">
-                  <p className="text-[10px] sm:text-[11px] font-semibold text-sky-700">
-                    {t('about.community')}
-                  </p>
-                  <p className="font-display text-xs sm:text-sm font-bold text-navy-950">
-                    {COMPANY.community.membersCount} {t('about.members').replace('50K+ ', '')}
-                  </p>
-                </div>
-              </div>
             </div>
           </Reveal>
 

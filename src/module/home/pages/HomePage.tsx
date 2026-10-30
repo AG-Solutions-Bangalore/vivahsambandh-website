@@ -182,13 +182,13 @@ export default function HomePage() {
         skeleton={<SkeletonSection spec={SECTION_SHAPES["app"]} />}
         tone="cream"
       />
-      {/* <DeferredSection
+      <DeferredSection
         id="stories"
         component={SuccessStoriesSection}
         minHeight={700}
         skeleton={<SkeletonSection spec={SECTION_SHAPES["stories"]} />}
         tone="paper"
-      /> */}
+      />
       <DeferredSection
         id="blogs-featured"
         component={FeaturedBlogsSection}
