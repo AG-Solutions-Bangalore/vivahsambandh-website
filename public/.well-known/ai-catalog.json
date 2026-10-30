@@ -1,13 +1,13 @@
 {
   "entries": [
     {
-      "description": "VivahSambandh website content map in English and Hindi for AI assistants and registries.",
-      "displayName": "VivahSambandh Website Content",
+      "description": "Vivah Sambandh website content map in English and Hindi for AI assistants and registries.",
+      "displayName": "Vivah Sambandh Website Content",
       "identifier": "urn:air:vivahsambandh:website:content",
       "representativeQueries": [
-        "What is VivahSambandh?",
-        "How does VivahSambandh matching work?",
-        "VivahSambandh contact and support details"
+        "What is Vivah Sambandh?",
+        "How does Vivah Sambandh matching work?",
+        "Vivah Sambandh contact and support details"
       ],
       "tags": ["matrimony", "community matrimony", "english", "hindi"],
       "type": "text/markdown; profile=\"urn:air:agent-skills\"",
@@ -15,7 +15,7 @@
     }
   ],
   "host": {
-    "displayName": "VivahSambandh",
+    "displayName": "Vivah Sambandh",
     "documentationUrl": "https://vivahsambandh.com/",
     "identifier": "did:web:vivahsambandh.com",
     "logoUrl": "https://vivahsambandh.com/images/common/Temple_Skyline_Divider_footer_image.webp"

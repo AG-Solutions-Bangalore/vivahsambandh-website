@@ -23,7 +23,7 @@ interface MemberExportSheetProps {
 
 export function MemberExportSheet({
   member,
-  companyName = 'VivahSambandh',
+  companyName = 'Vivah Sambandh',
   sheetRef,
 }: MemberExportSheetProps) {
   const [generatedOn] = useState(() => formatDate(new Date().toISOString()))

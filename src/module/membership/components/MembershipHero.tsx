@@ -79,8 +79,8 @@ export default function MembershipHero() {
             sizes="100vw"
             width={2172}
             height={724}
-            alt="VivahSambandh Membership Plans"
-            title="VivahSambandh Membership Plans"
+            alt="Vivah Sambandh Membership Plans"
+            title="Vivah Sambandh Membership Plans"
             data-hero="banner"
             fetchPriority="high"
             decoding="async"

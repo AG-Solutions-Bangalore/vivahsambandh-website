@@ -1,6 +1,6 @@
 /**
  * @file src/seo/sitemap/generator.ts
- * Generates dynamic, SEO-compliant XML sitemaps for VivahSambandh.
+ * Generates dynamic, SEO-compliant XML sitemaps for .
  *
  * At build time, queries `getSitemap` (https://vivahsambandh.com/crmapi/public/api/getSitemap)
  * to assemble full dynamic sitemaps including:

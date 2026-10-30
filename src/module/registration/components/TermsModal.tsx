@@ -1,6 +1,6 @@
 /**
  * @file src/module/registration/components/TermsModal.tsx
- * Modal displaying VivahSambandh terms and conditions.
+ * Modal displaying Vivah Sambandh terms and conditions.
  */
 
 import { useTranslation } from "react-i18next";
@@ -20,7 +20,7 @@ const termsList = [
   "If you have any queries or require assistance during the matchmaking process of your candidate, please feel free to contact any committee member by telephone or in person.",
   "It takes 24 to 48 hours to validate your profile, after which you will be able to access all verified matchmaking services.",
   "You are responsible for maintaining the confidentiality of any credentials or data provided during registration, and are solely responsible for activities under your profile.",
-  "VivahSambandh expressly disclaims any liability or responsibility whatsoever arising as a result of any listing or content posted on the platform.",
+  "Vivah Sambandh expressly disclaims any liability or responsibility whatsoever arising as a result of any listing or content posted on the platform.",
   "You agree and authorise the committee to share your verified bio-data with prospective matching families in good faith.",
 ];
 

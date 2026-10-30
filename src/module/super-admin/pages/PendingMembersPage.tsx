@@ -258,7 +258,7 @@ export default function PendingMembersPage() {
           }
           description={
             decisionTarget.nextStatus === 'Approved'
-              ? `This will publish and verify the profile of ${decisionTarget.memberName} on the VivahSambandh platform, making it discoverable by matching candidates.`
+              ? `This will publish and verify the profile of ${decisionTarget.memberName} on the Vivah Sambandh platform, making it discoverable by matching candidates.`
               : `Are you sure you want to mark this candidate profile as ${decisionTarget.nextStatus}?`
           }
           confirmText={

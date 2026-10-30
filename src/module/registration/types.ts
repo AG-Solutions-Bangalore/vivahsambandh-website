@@ -1,6 +1,6 @@
 /**
  * @file src/module/registration/types.ts
- * Type definitions for VivahSambandh Registration Form and CRM API.
+ * Type definitions for Vivah Sambandh Registration Form and CRM API.
  */
 
 export interface EducationItem {

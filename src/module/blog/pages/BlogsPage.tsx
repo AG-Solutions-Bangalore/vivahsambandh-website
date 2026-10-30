@@ -90,7 +90,7 @@ export default function BlogsPage() {
             <span className="text-gold-500">{t('blogsPage.titleB', 'Stories & Articles.')}</span>
           </h1>
           <p className="mt-3 text-sm leading-relaxed text-ink-600 sm:text-base">
-            {t('blogsPage.subtitle', 'Browse every article, guide and community update from VivahSambandh.')}
+            {t('blogsPage.subtitle', 'Browse every article, guide and community update from Vivah Sambandh.')}
           </p>
         </Reveal>
       </section>

@@ -1,6 +1,7 @@
 import { useTranslation } from "react-i18next";
 import Reveal from "../../../components/motion/Reveal";
 import { CITIES } from "../data/cities";
+import SectionBrandMark from "../../../components/SectionBrandMark";
 
 export default function CityMatchesSection() {
   const { t } = useTranslation();
@@ -23,12 +24,7 @@ export default function CityMatchesSection() {
             <div>
               {/* Eyebrow */}
               <div className="inline-flex items-center gap-2">
-                <span
-                  className="text-gold-600 text-sm font-bold"
-                  aria-hidden="true"
-                >
-                  ☸
-                </span>
+                <SectionBrandMark />
                 <span
                   data-eyebrow
                   className="text-[11px] sm:text-xs font-bold tracking-[0.2em] uppercase text-gold-700"

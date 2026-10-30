@@ -1,6 +1,6 @@
 /**
  * @file src/seo/seo.tsx
- * Global SEO host and Head metadata manager for VivahSambandh.
+ * Global SEO host and Head metadata manager for Vivah Sambandh.
  *
  * Mounted once in `main.tsx` inside `<HelmetProvider>` — no per-page hooks needed.
  * Route-aware: subscribes to the router pathname, so title, description,

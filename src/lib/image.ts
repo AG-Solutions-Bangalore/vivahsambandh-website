@@ -1,7 +1,7 @@
 import React from 'react'
 
 /**
- * Base URL for remote web images on VivahSambandh CRM/CDN server.
+ * Base URL for remote web images on Vivah Sambandh CRM/CDN server.
  */
 export const REMOTE_IMAGE_BASE =
   'https://vivahsambandh.com/crmapi/public/assets/images/web_images'

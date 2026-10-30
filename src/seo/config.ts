@@ -15,17 +15,17 @@ export const COMPANY_CONFIG = {
   },
 
   titles: {
-    en: "VivahSambandh — Premium Community Matrimony | Tradition Meets New Beginnings",
+    en: "Vivah Sambandh — Premium Community Matrimony | Tradition Meets New Beginnings",
     hi: "विवाहसंबंध — विश्वसनीय समुदाय मैट्रिमोनी | परंपरा से जुड़ें",
   },
 
   descriptions: {
-    en: "VivahSambandh is India’s trusted premium Community Matrimony platform connecting verified Agarwal, Jain, Khandelwal and Maheshwari families through shared traditions, Gotra compatibility, and values for lifelong relationships.",
+    en: "Vivah Sambandh is India’s trusted premium Community Matrimony platform connecting verified Agarwal, Jain, Khandelwal and Maheshwari families through shared traditions, Gotra compatibility, and values for lifelong relationships.",
     hi: "विवाहसंबंध अग्रवाल, जैन, खंडेलवाल और माहेश्वरी परिवारों के लिए एक विश्वसनीय समुदाय मैट्रिमोनी मंच है, जो साझा संस्कारों, मूल्यों और परंपराओं के साथ जीवनसाथी खोजने में आपकी सहायता करता है।",
   },
 
   keywords: {
-    en: "community matrimony, Agarwal matrimony, VivahSambandh, Agarwal shaadi, Agarwal brides, Agarwal grooms, Bansal gotra, Mittal gotra, Jindal gotra, Agarwal marriage bureau, premium matrimony India",
+    en: "community matrimony, Agarwal matrimony, Vivah Sambandh, Agarwal shaadi, Agarwal brides, Agarwal grooms, Bansal gotra, Mittal gotra, Jindal gotra, Agarwal marriage bureau, premium matrimony India",
     hi: "समुदाय मैट्रिमोनी, अग्रवाल मैट्रिमोनी, विवाहसंबंध, अग्रवाल शादी, अग्रवाल रिश्ते, बंसल गोत्र, मित्तल गोत्र, जिंदल गोत्र, अग्रवाल वैवाहिक मंच",
   },
 
@@ -58,7 +58,7 @@ export const COMPANY_CONFIG = {
   faqs: {
     en: [
       {
-        question: "Is my information secure on VivahSambandh?",
+        question: "Is my information secure on Vivah Sambandh?",
         answer:
           "Yes. We use strict verification, privacy controls and secure communication to protect every member and family.",
       },
@@ -68,7 +68,7 @@ export const COMPANY_CONFIG = {
           "Yes. Browse verified matches across all 18 Agarwal Gotras (Bansal, Mittal, Jindal, Singhal, etc.), cities, professions, and education.",
       },
       {
-        question: "Are profiles on VivahSambandh verified?",
+        question: "Are profiles on Vivah Sambandh verified?",
         answer:
           "Every profile passes strict screening plus optional official ID and family background verification before going live.",
       },
@@ -167,37 +167,37 @@ export const PAGE_SEO: Record<
 > = {
   home: {
     titles: {
-      en: "VivahSambandh — Premium Community Matrimony | Tradition Meets New Beginnings",
+      en: "Vivah Sambandh — Premium Community Matrimony | Tradition Meets New Beginnings",
       hi: "विवाहसंबंध — विश्वसनीय समुदाय मैट्रिमोनी | परंपरा से जुड़ें",
     },
     descriptions: {
-      en: "VivahSambandh is India’s trusted premium Community Matrimony platform connecting verified Agarwal, Jain, Khandelwal and Maheshwari families through shared traditions, Gotra compatibility, and values for lifelong relationships.",
+      en: "Vivah Sambandh is India’s trusted premium Community Matrimony platform connecting verified Agarwal, Jain, Khandelwal and Maheshwari families through shared traditions, Gotra compatibility, and values for lifelong relationships.",
       hi: "विवाहसंबंध अग्रवाल, जैन, खंडेलवाल और माहेश्वरी परिवारों के लिए एक विश्वसनीय समुदाय मैट्रिमोनी मंच है, जो साझा संस्कारों, मूल्यों और परंपराओं के साथ जीवनसाथी खोजने में आपकी सहायता करता है।",
     },
   },
   about: {
     titles: {
-      en: "About Us — VivahSambandh | Trusted Community Matrimony Platform",
+      en: "About Us — Vivah Sambandh | Trusted Community Matrimony Platform",
       hi: "हमारे बारे में — विवाहसंबंध | विश्वसनीय समुदाय मैट्रिमोनी मंच",
     },
     descriptions: {
-      en: "Learn about VivahSambandh — India’s trusted Community Matrimony platform built on tradition, strict verification and family values to help families find their perfect match.",
+      en: "Learn about Vivah Sambandh — India’s trusted Community Matrimony platform built on tradition, strict verification and family values to help families find their perfect match.",
       hi: "विवाहसंबंध के बारे में जानें — परंपरा, कड़े सत्यापन और पारिवारिक मूल्यों पर आधारित समुदाय मैट्रिमोनी मंच जो परिवारों को सही जीवनसाथी खोजने में मदद करता है।",
     },
   },
   stories: {
     titles: {
-      en: "Success Stories — VivahSambandh | Community Matrimony Weddings",
+      en: "Success Stories — Vivah Sambandh | Community Matrimony Weddings",
       hi: "सफलता की कहानियां — विवाहसंबंध | सफल सामुदायिक विवाह",
     },
     descriptions: {
-      en: "Read inspiring wedding stories of 500+ couples who found their life partner through VivahSambandh with shared values and family trust.",
+      en: "Read inspiring wedding stories of 500+ couples who found their life partner through Vivah Sambandh with shared values and family trust.",
       hi: "विवाहसंबंध के माध्यम से जुड़े 500+ दंपत्तियों की सुखद विवाह गाथाएं पढ़ें और अपनी शादी की कहानी साझा करें।",
     },
   },
   membership: {
     titles: {
-      en: "Membership Plans — VivahSambandh | Premium Community Matrimony",
+      en: "Membership Plans — Vivah Sambandh | Premium Community Matrimony",
       hi: "सदस्यता योजनाएं — विवाहसंबंध | पारदर्शी एवं भरोसेमंद प्लान",
     },
     descriptions: {
@@ -207,91 +207,91 @@ export const PAGE_SEO: Record<
   },
   contact: {
     titles: {
-      en: "Contact Us — VivahSambandh | Community Matrimony Support",
+      en: "Contact Us — Vivah Sambandh | Community Matrimony Support",
       hi: "संपर्क करें — विवाहसंबंध | समुदाय मैट्रिमोनी सहायता",
     },
     descriptions: {
-      en: "Have a question or need support? Contact the VivahSambandh team by phone, email or visit our office — we reply within 24 hours.",
+      en: "Have a question or need support? Contact the Vivah Sambandh team by phone, email or visit our office — we reply within 24 hours.",
       hi: "कोई प्रश्न है या सहायता चाहिए? फोन, ईमेल द्वारा विवाहसंबंध टीम से संपर्क करें या हमारे कार्यालय पधारें — हम 24 घंटों के भीतर उत्तर देते हैं।",
     },
   },
   blogs: {
     titles: {
-      en: "Blogs — VivahSambandh | Relationship Guides & Community Stories",
+      en: "Blogs — Vivah Sambandh | Relationship Guides & Community Stories",
       hi: "ब्लॉग — विवाहसंबंध | रिश्तों की जानकारियां और सामुदायिक कहानियां",
     },
     descriptions: {
-      en: "Browse every VivahSambandh article — relationship guidance, wedding tips and community matrimony updates.",
+      en: "Browse every Vivah Sambandh article — relationship guidance, wedding tips and community matrimony updates.",
       hi: "विवाहसंबंध के सभी लेख देखें — रिश्तों का मार्गदर्शन, शादी के टिप्स और सामुदायिक अपडेट।",
     },
   },
   privacy: {
     titles: {
-      en: "Privacy Policy — VivahSambandh | How We Protect Your Data",
+      en: "Privacy Policy — Vivah Sambandh | How We Protect Your Data",
       hi: "गोपनीयता नीति — विवाहसंबंध | आपका डेटा कैसे सुरक्षित है",
     },
     descriptions: {
-      en: "Read the VivahSambandh privacy policy — what information we collect, how we use it and the choices you have.",
+      en: "Read the Vivah Sambandh privacy policy — what information we collect, how we use it and the choices you have.",
       hi: "विवाहसंबंध गोपनीयता नीति पढ़ें — हम कौन सी जानकारी लेते हैं, उसका उपयोग कैसे होता है और आपके विकल्प।",
     },
   },
   terms: {
     titles: {
-      en: "Terms & Conditions — VivahSambandh | Terms of Use",
+      en: "Terms & Conditions — Vivah Sambandh | Terms of Use",
       hi: "नियम व शर्तें — विवाहसंबंध | उपयोग की शर्तें",
     },
     descriptions: {
-      en: "Read the VivahSambandh terms of use — eligibility, verification, acceptable use and membership terms.",
+      en: "Read the Vivah Sambandh terms of use — eligibility, verification, acceptable use and membership terms.",
       hi: "विवाहसंबंध उपयोग की शर्तें पढ़ें — पात्रता, सत्यापन, स्वीकार्य उपयोग व सदस्यता नियम।",
     },
   },
   guidelines: {
     titles: {
-      en: "Community Guidelines — VivahSambandh | A Respectful Community",
+      en: "Community Guidelines — Vivah Sambandh | A Respectful Community",
       hi: "समुदाय दिशानिर्देश — विवाहसंबंध | सम्मानजनक समुदाय",
     },
     descriptions: {
-      en: "VivahSambandh community guidelines — genuine profiles, respectful communication and staying safe.",
+      en: "Vivah Sambandh community guidelines — genuine profiles, respectful communication and staying safe.",
       hi: "विवाहसंबंध समुदाय दिशानिर्देश — वास्तविक प्रोफाइल, सम्मानजनक संवाद और सुरक्षा।",
     },
   },
   "help-center": {
     titles: {
-      en: "Help Center — VivahSambandh | Support & FAQs",
+      en: "Help Center — Vivah Sambandh | Support & FAQs",
       hi: "हेल्प सेंटर — विवाहसंबंध | सहायता व प्रश्न",
     },
     descriptions: {
-      en: "VivahSambandh help center — profile help, match search, membership, safety and how to reach our team.",
+      en: "Vivah Sambandh help center — profile help, match search, membership, safety and how to reach our team.",
       hi: "विवाहसंबंध हेल्प सेंटर — प्रोफाइल सहायता, रिश्ता खोज, सदस्यता, सुरक्षा व टीम से संपर्क।",
     },
   },
   registration: {
     titles: {
-      en: "Bio-Data Registration — VivahSambandh Community Matrimony | Register Your Profile",
+      en: "Bio-Data Registration — Vivah Sambandh Community Matrimony | Register Your Profile",
       hi: "विवाह संबंध पंजीकरण — बायोडाटा रजिस्टर करें | समुदाय मैट्रिमोनी",
     },
     descriptions: {
-      en: "Register your verified bio-data on VivahSambandh. Trusted community matrimony matchmaking for Agarwal, Jain, Khandelwal, and Maheshwari communities.",
+      en: "Register your verified bio-data on Vivah Sambandh. Trusted community matrimony matchmaking for Agarwal, Jain, Khandelwal, and Maheshwari communities.",
       hi: "विवाह संबंध में अपना सत्यापित बायोडाटा पंजीकृत करें। अग्रवाल, जैन, खंडेलवाल और माहेश्वरी समाज के लिए विश्वसनीय समुदाय मैट्रिमोनी मंच।",
     },
   },
   download: {
     titles: {
-      en: "Download VivahSambandh App — Premium Community Matrimony on Android & iOS",
+      en: "Download Vivah Sambandh App — Premium Community Matrimony on Android & iOS",
       hi: "विवाहसंबंध ऐप डाउनलोड करें — Android व iOS पर विश्वसनीय समुदाय मैट्रिमोनी",
     },
     descriptions: {
-      en: "Download the VivahSambandh mobile app for Android and iOS. Connect with verified matches, receive instant alerts, and find your life partner on the go.",
+      en: "Download the Vivah Sambandh mobile app for Android and iOS. Connect with verified matches, receive instant alerts, and find your life partner on the go.",
       hi: "Android और iOS के लिए विवाहसंबंध मोबाइल ऐप डाउनलोड करें। सत्यापित रिश्ते खोजें, तुरंत सूचनाएं पाएं और कहीं भी जीवनसाथी से जुड़ें।",
     },
   },
   "admin-register": {
     titles: {
-      en: "Admin Registration — VivahSambandh Community Matrimony Portal",
+      en: "Admin Registration — Vivah Sambandh Community Matrimony Portal",
       hi: "एडमिन पंजीकरण — विवाहसंबंध समुदाय मैट्रिमोनी पोर्टल",
     },
     descriptions: {
-      en: "Administrative registration portal for VivahSambandh community coordinators and verified managers.",
+      en: "Administrative registration portal for Vivah Sambandh community coordinators and verified managers.",
       hi: "विवाहसंबंध समुदाय समन्वयकों और प्रबंधकों के लिए प्रशासनिक पंजीकरण पोर्टल।",
     },
   },

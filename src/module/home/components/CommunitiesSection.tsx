@@ -7,6 +7,7 @@ import { pagePath } from "../../../constants/navigation";
 import type { AppLang } from "../../../i18n";
 import { img, imgSrcSet } from "../../../lib/image";
 import { useCommunitiesQuery } from "../hook/useHomeData";
+import SectionBrandMark from "../../../components/SectionBrandMark";
 
 interface CommunityInfo {
   id: string;
@@ -121,12 +122,7 @@ export default function CommunitiesSection() {
             <div>
               {/* Eyebrow */}
               <div className="inline-flex items-center gap-2">
-                <span
-                  className="text-gold-600 text-sm font-bold"
-                  aria-hidden="true"
-                >
-                  ☸
-                </span>
+                <SectionBrandMark />
                 <span
                   data-eyebrow
                   className="text-[11px] sm:text-xs font-bold tracking-[0.2em] uppercase text-gold-700"
@@ -324,6 +320,11 @@ export default function CommunitiesSection() {
                         →
                       </span>
                     </Link>
+                    <p className="mt-2 px-2 text-center text-[10px] leading-relaxed text-ink-500 sm:text-[11px]">
+                      {t("communities.exploreHint", {
+                        defaultValue: "Register first to explore matches.",
+                      })}
+                    </p>
                   </div>
                 </article>
               );

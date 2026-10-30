@@ -1,6 +1,6 @@
 /**
  * @file src/lib/api/queryClient.tsx
- * TanStack QueryProvider for VivahSambandh.
+ * TanStack QueryProvider for Vivah Sambandh.
  * Compatible with SSR/SSG prerender and client hydration.
  */
 

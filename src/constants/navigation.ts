@@ -29,12 +29,13 @@ export interface NavEntry {
 export const NAV_ENTRIES: readonly NavEntry[] = [
   { key: 'home', i18nKey: 'header.home', kind: 'home' },
   { key: 'about', i18nKey: 'header.about', kind: 'page', page: '/about' },
+  { key: 'download', i18nKey: 'header.download', kind: 'page', page: '/download' },
   // Temporarily hidden from navigation (routes still reachable directly).
   // { key: 'stories', i18nKey: 'header.successStories', kind: 'page', page: '/stories' },
   // { key: 'membership', i18nKey: 'header.membership', kind: 'page', page: '/membership' },
   { key: 'blogs', i18nKey: 'header.blogs', kind: 'page', page: '/blogs' },
   { key: 'contact', i18nKey: 'header.contact', kind: 'page', page: '/contact' },
-  { key: 'download', i18nKey: 'header.download', kind: 'page', page: '/download' },
+
 ]
 
 /** Every standalone page route (without lang prefix). Used by App + i18n. */

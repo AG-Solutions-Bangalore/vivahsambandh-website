@@ -1,6 +1,6 @@
 /**
  * @file src/module/registration/pages/RegistrationPage.tsx
- * Registration page for prospective brides and grooms on VivahSambandh.
+ * Registration page for prospective brides and grooms on Vivah Sambandh.
  *
  * SEO head (title, description, canonical, hreflang, OG, JSON-LD) is owned
  * globally by SeoHost + src/seo/config.ts ('registration' page key) —

@@ -65,17 +65,17 @@ export default function Footer() {
           <div>
             <div className="flex items-center gap-2.5">
               <CompanyLogo
-                className="h-10 w-auto"
-                fallbackClassName="h-8 w-8 text-gold-400"
+                className="h-13 w-auto"
+                fallbackClassName="h-13 w-13 text-gold-400"
               />
-              <div>
+              {/* <div>
                 <p className="font-display text-xl font-bold leading-none text-white">
                   {company.name}
                 </p>
                 <p className="mt-1 text-[10px] font-sans font-semibold uppercase tracking-[0.24em] text-gold-300">
                   {t("meta.tagline")}
                 </p>
-              </div>
+              </div> */}
             </div>
 
             <p className="mt-4 max-w-sm text-xs leading-relaxed text-white/70 sm:text-sm">

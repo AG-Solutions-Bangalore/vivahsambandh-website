@@ -1,6 +1,6 @@
 /**
  * @file src/components/ui/time-picker.tsx
- * Native HTML5 time picker styled to match the VivahSambandh luxury design system.
+ * Native HTML5 time picker styled to match the Vivah Sambandh luxury design system.
  * Features a gold clock icon, full 12-hour/24-hour bidirectionality, and native picker integration.
  */
 

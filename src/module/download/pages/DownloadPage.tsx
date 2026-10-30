@@ -10,7 +10,7 @@ import DownloadHero from '../components/DownloadHero'
 import DownloadSteps from '../components/DownloadSteps'
 
 /**
- * Dedicated VivahSambandh Mobile App Download Page.
+ * Dedicated Vivah Sambandh Mobile App Download Page.
  * Distinctive, luxury UI/UX engineered specifically for app discovery,
  * store downloads, feature highlights, real user reviews via live testimonial marquee API,
  * dynamic FAQ dial, and seamless bilingual support.

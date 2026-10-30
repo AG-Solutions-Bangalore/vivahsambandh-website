@@ -153,18 +153,19 @@ export default function HomePage() {
         skeleton={<SkeletonSection spec={SECTION_SHAPES["about"]} />}
         tone="cream"
       />
-      <DeferredSection
-        id="communities"
-        component={CommunitiesSection}
-        minHeight={340}
-        skeleton={<SkeletonSection spec={SECTION_SHAPES["communities"]} />}
-        tone="cream"
-      />
+      
       <DeferredSection
         id="search"
         component={CityMatchesSection}
         minHeight={480}
         skeleton={<SkeletonSection spec={SECTION_SHAPES["search"]} />}
+        tone="cream"
+      />
+      <DeferredSection
+        id="communities"
+        component={CommunitiesSection}
+        minHeight={340}
+        skeleton={<SkeletonSection spec={SECTION_SHAPES["communities"]} />}
         tone="cream"
       />
       <DeferredSection
@@ -175,12 +176,19 @@ export default function HomePage() {
         tone="navy"
       />
       <DeferredSection
+        id="app"
+        component={AppDownloadSection}
+        minHeight={900}
+        skeleton={<SkeletonSection spec={SECTION_SHAPES["app"]} />}
+        tone="cream"
+      />
+      {/* <DeferredSection
         id="stories"
         component={SuccessStoriesSection}
         minHeight={700}
         skeleton={<SkeletonSection spec={SECTION_SHAPES["stories"]} />}
         tone="paper"
-      />
+      /> */}
       <DeferredSection
         id="blogs-featured"
         component={FeaturedBlogsSection}
@@ -195,13 +203,7 @@ export default function HomePage() {
         skeleton={<SkeletonSection spec={SECTION_SHAPES["blogs-front"]} />}
         tone="paper"
       />
-      <DeferredSection
-        id="app"
-        component={AppDownloadSection}
-        minHeight={900}
-        skeleton={<SkeletonSection spec={SECTION_SHAPES["app"]} />}
-        tone="cream"
-      />
+      
       <DeferredSection
         id="faq"
         component={FaqSection}

@@ -277,7 +277,7 @@ export default function FaqSection({
               {subtitle ||
                 t(
                   "faq.subtitle",
-                  "Find answers to common questions about VivahSambandh.",
+                  "Find answers to common questions about Vivah Sambandh.",
                 )}
             </p>
           </div>

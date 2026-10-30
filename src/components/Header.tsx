@@ -109,26 +109,26 @@ export default function Header() {
       ref={headerRef}
       className="fixed inset-x-0 top-0 z-50 border-b border-gold-500/25 bg-cream-50/90 backdrop-blur will-change-transform"
     >
-      <div className="section-pad flex h-16 items-center justify-between gap-2 sm:gap-3">
+      <div className="section-pad flex h-16 items-center justify-between gap-4 sm:gap-3">
         {/* Brand Logo */}
         <Link
           to={brandHref}
           title={company.name}
-          className="flex min-w-0 items-center gap-2 transition hover:opacity-95"
+          className="flex min-w-0 items-center gap-4 transition hover:opacity-95"
         >
           {company.logoUrl && (
             <span className="flex shrink-0 items-center rounded-lg px-2 py-1.5">
-              <CompanyLogo className="h-6 w-auto sm:h-7" />
+              <CompanyLogo className="h-8 w-auto sm:h-9" />
             </span>
           )}
-          <span className="min-w-0 leading-none">
+          {/* <span className="min-w-0 leading-none">
             <span className="font-display block truncate text-base font-bold text-navy-900 sm:text-xl">
               {company.name}
             </span>
             <span className="block truncate text-[9px] font-semibold uppercase tracking-[0.24em] text-gold-700 sm:text-[10px]">
               {t("meta.tagline")}
             </span>
-          </span>
+          </span> */}
         </Link>
 
         {/* Desktop Navigation Links */}

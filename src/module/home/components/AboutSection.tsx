@@ -5,6 +5,7 @@ import { pagePath } from '../../../constants/navigation'
 import type { AppLang } from '../../../i18n'
 import Reveal from '../../../components/motion/Reveal'
 import { img, imgSrcSet } from '../../../lib/image'
+import SectionBrandMark from '../../../components/SectionBrandMark'
 
 export default function AboutSection() {
   const { t, i18n } = useTranslation()
@@ -103,11 +104,9 @@ export default function AboutSection() {
           {/* Right Column: Text Content Exactly Matching Design         */}
           {/* ========================================================== */}
           <Reveal variant="up" delay={0.12} className="lg:col-span-6">
-            {/* Eyebrow with gold wheel icon and ornate divider */}
+            {/* Eyebrow with brand logo and ornate divider */}
             <div className="inline-flex items-center gap-2">
-              <span className="text-gold-600 text-sm font-bold" aria-hidden="true">
-                ☸
-              </span>
+              <SectionBrandMark />
               <span data-eyebrow className="text-[11px] sm:text-xs font-bold tracking-[0.2em] uppercase text-gold-600">
                 {t('about.eyebrow')}
               </span>

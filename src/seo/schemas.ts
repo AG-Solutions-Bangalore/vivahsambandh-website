@@ -37,7 +37,7 @@ import {
 export { SITE_NAME, SITE_ORIGIN, SITE_OG_IMAGE, SITE_LOGO, getCanonicalUrl };
 
 /**
- * Builds the primary Organization Schema for VivahSambandh.
+ * Builds the primary Organization Schema for Vivah Sambandh.
  */
 export function organizationSchema(lang: SupportedLang = 'en'): Organization {
   return {

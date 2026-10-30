@@ -99,8 +99,8 @@ export default function DownloadHero() {
                   sizes="(max-width: 640px) 85vw, 24rem"
                   width={1426}
                   height={1103}
-                  alt="VivahSambandh App Screen Showcase"
-                  title="VivahSambandh App Screen Showcase"
+                  alt="Vivah Sambandh App Screen Showcase"
+                  title="Vivah Sambandh App Screen Showcase"
                   className="h-auto w-full object-contain rounded-[28px]"
                   loading="eager"
                   fetchPriority="high"
