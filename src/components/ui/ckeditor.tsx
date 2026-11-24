@@ -131,6 +131,24 @@ export function RichTextEditor({
   useEffect(() => {
     let cancelled = false
     let instance: CKEDITOR.editor | null = null
+    let readyTimer: ReturnType<typeof setTimeout> | null = null
+
+    // Listen for uncaught runtime errors from CKEditor scripts to fail fast
+    const handleWindowError = (event: ErrorEvent) => {
+      const src = event.filename || ''
+      if (src.includes('ckeditor')) {
+        console.warn('[CKEditor] Script error detected:', event.message)
+        if (!cancelled) setStatus('error')
+      }
+    }
+    window.addEventListener('error', handleWindowError)
+
+    // Fallback timer: if CKEditor doesn't finish initializing within 6s, enable raw HTML fallback
+    readyTimer = setTimeout(() => {
+      if (!cancelled) {
+        setStatus((prev) => (prev === 'loading' ? 'error' : prev))
+      }
+    }, 6000)
 
     loadCkeditor()
       .then(() => {
@@ -138,7 +156,10 @@ export function RichTextEditor({
 
         const ckeditor = window.CKEDITOR
         const textarea = textareaRef.current
-        if (!ckeditor || !textarea) return
+        if (!ckeditor || !textarea) {
+          if (!cancelled) setStatus('error')
+          return
+        }
 
         const editorConfig: EditorConfig = {
           language: 'en',
@@ -159,11 +180,18 @@ export function RichTextEditor({
           uiColor: '#fffbf2',
         }
 
-        instance = ckeditor.replace(textarea, editorConfig)
+        try {
+          instance = ckeditor.replace(textarea, editorConfig)
+        } catch (err) {
+          console.error('[CKEditor] replace() threw:', err)
+          if (!cancelled) setStatus('error')
+          return
+        }
 
         editorRef.current = instance
 
         instance.on('instanceReady', () => {
+          if (readyTimer) clearTimeout(readyTimer)
           if (cancelled) return
           instance?.setData(valueRef.current)
           setStatus('ready')
@@ -182,6 +210,8 @@ export function RichTextEditor({
 
     return () => {
       cancelled = true
+      if (readyTimer) clearTimeout(readyTimer)
+      window.removeEventListener('error', handleWindowError)
       editorRef.current = null
       instance?.destroy(true)
     }
@@ -212,7 +242,14 @@ export function RichTextEditor({
       <textarea
         ref={textareaRef}
         id={id}
-        defaultValue={value}
+        value={status === 'error' ? value : undefined}
+        defaultValue={status !== 'error' ? value : undefined}
+        onChange={(e) => {
+          if (status === 'error') {
+            valueRef.current = e.target.value
+            onChangeRef.current(e.target.value)
+          }
+        }}
         aria-label={ariaLabel}
         placeholder={placeholder}
         className="min-h-32 w-full rounded-xl border border-cream-300 bg-cream-50/70 px-3 py-2 text-xs leading-relaxed text-navy-900 focus-visible:border-gold-500 focus-visible:ring-2 focus-visible:ring-gold-500/40 focus-visible:outline-none"
