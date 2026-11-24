@@ -15,25 +15,28 @@ Options -Indexes
   # 1. Never serve sitemap.xml with a trailing slash (Prevents Google Search Console "Couldn't fetch" error)
   RewriteRule ^sitemap\.xml/$ /sitemap.xml [R=301,L,NC]
 
-  # Prefer Brotli when the client accepts it and a .br twin exists.
+  # 2. CKEditor probes optional plugin files under /ckeditor/ and treats any 2xx
+  # as "plugin loaded". Letting the SPA fallback answer those probes with
+  # index.html would register nothing and leave the editor toolbar empty.
+  # Furthermore, CKEditor dynamically loads scripts at runtime and must NEVER
+  # be rewritten to precompressed (.br/.gz) twins or index.html.
+  RewriteRule ^ckeditor/ - [L]
+
+  # Prefer Brotli when the client accepts it and a non-empty .br twin exists.
+  RewriteCond %{REQUEST_URI} !^/ckeditor/
   RewriteCond %{HTTP:Accept-Encoding} br
-  RewriteCond %{REQUEST_FILENAME}.br -f
+  RewriteCond %{REQUEST_FILENAME}.br -s
   RewriteRule ^(.+)$ $1.br [L]
 
-  # Fall back to Gzip.
+  # Fall back to Gzip when a non-empty .gz twin exists.
+  RewriteCond %{REQUEST_URI} !^/ckeditor/
   RewriteCond %{HTTP:Accept-Encoding} gzip
-  RewriteCond %{REQUEST_FILENAME}.gz -f
+  RewriteCond %{REQUEST_FILENAME}.gz -s
   RewriteRule ^(.+)$ $1.gz [L]
 
   # SPA Route Rewriting (redirect non-static URLs to index.html)
   RewriteBase /
   RewriteRule ^index\.html$ - [L]
-
-  # CKEditor probes optional plugin files under /ckeditor/ and treats any 2xx
-  # as "plugin loaded". Letting the SPA fallback answer those probes with
-  # index.html would register nothing and leave the editor toolbar empty, so
-  # the editor tree gets real 404s instead.
-  RewriteRule ^ckeditor/ - [L]
 
   RewriteCond %{REQUEST_FILENAME} !-f
   RewriteCond %{REQUEST_FILENAME} !-d

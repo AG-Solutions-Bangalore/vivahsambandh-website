@@ -156,6 +156,7 @@ function brotliStatic(threshold = 1024): Plugin {
     closeBundle() {
       const walk = (dir: string): void => {
         for (const entry of readdirSync(dir)) {
+          if (entry === 'ckeditor') continue;
           const full = join(dir, entry);
           if (statSync(full).isDirectory()) {
             walk(full);
@@ -379,6 +380,20 @@ function ckeditorAssets(): Plugin {
           const entry = join(source, 'plugin.js');
           if (existsSync(entry)) copyFile(entry, join(destination, `${plugin}.js`));
         }
+
+        // Purge any accidental compressed (.gz, .br) twins inside targetDir
+        const purgeCompressed = (dir: string): void => {
+          if (!existsSync(dir)) return;
+          for (const entry of readdirSync(dir, { withFileTypes: true })) {
+            const full = join(dir, entry.name);
+            if (entry.isDirectory()) {
+              purgeCompressed(full);
+            } else if (entry.name.endsWith('.gz') || entry.name.endsWith('.br')) {
+              rmSync(full, { force: true });
+            }
+          }
+        };
+        purgeCompressed(targetDir);
       } catch (err) {
         console.warn('[ckeditor-assets] could not stage the editor bundle:', err);
       }
@@ -479,10 +494,14 @@ export default defineConfig({
         '/hi/download',
       ],
     }),
-    compression({ algorithm: 'gzip', threshold: 1024 }),
+    ckeditorAssets(),
+    compression({
+      algorithm: 'gzip',
+      threshold: 1024,
+      filter: (file: string) => /\.(js|mjs|json|css|html)$/i.test(file) && !file.includes('ckeditor'),
+    }),
     deferNonCriticalPreloads(),
     brotliStatic(),
-    ckeditorAssets(),
     eventLoopCleanup(),
   ],
   resolve: {
