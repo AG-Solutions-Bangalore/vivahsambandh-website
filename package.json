@@ -5,8 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build && bun scripts/generateSitemap.ts",
-    "generate:sitemap": "bun scripts/generateSitemap.ts",
+    "build": "tsc -b && vite build",
     "lint": "oxlint",
     "preview": "vite preview",
     "lighthouse": "node scripts/lighthouse.mjs --form-factor=both",

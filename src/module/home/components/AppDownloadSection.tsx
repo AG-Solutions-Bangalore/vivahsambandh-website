@@ -150,12 +150,13 @@ export default function AppDownloadSection() {
                 </div>
               </a>
 
-              <a
-                href={company.apps.appStore}
-                target="_blank"
-                rel="noopener noreferrer"
-                title="App Store"
-                className="inline-flex items-center gap-3 rounded-xl border border-navy-900 bg-navy-900 px-4 py-2.5 text-white shadow-md transition hover:bg-navy-800"
+              {/* App Store (Disabled) */}
+              <button
+                type="button"
+                disabled
+                title="App Store (Disabled)"
+                aria-label="Download on the App Store (Disabled)"
+                className="inline-flex items-center gap-3 rounded-xl border border-navy-900 bg-navy-900 px-4 py-2.5 text-white shadow-md opacity-60 cursor-not-allowed select-none"
               >
                 <img
                   src={img("/images/common/app-store.webp")}
@@ -175,7 +176,7 @@ export default function AppDownloadSection() {
                     App Store
                   </span>
                 </div>
-              </a>
+              </button>
             </div>
           </Reveal>
 

@@ -39,7 +39,7 @@ export const COMPANY = {
 
   apps: {
     playStore: 'https://play.google.com/store/apps/details?id=com.vs.agsolution',
-    appStore: 'https://apps.apple.com/app/single-clik/id6741411619',
+    appStore: '',
   },
 
   copyrightYear: 2026,
