@@ -150,17 +150,16 @@ export default function DownloadNavDropdown({
                 </span>
               </a>
 
-              {/* Apple App Store Button */}
-              <a
-                href={company.apps.appStore}
-                target="_blank"
-                rel="noopener noreferrer"
-                title="App Store"
-                aria-label={t('app.appStore')}
-                className="group/btn flex items-center justify-between rounded-2xl border border-gold-500/30 bg-[#0A1629] p-3 text-white shadow-md transition-all duration-300 hover:border-gold-500 hover:bg-[#0E203C] hover:shadow-lg hover:-translate-y-0.5 active:scale-98"
+              {/* Apple App Store Button - Disabled */}
+              <button
+                type="button"
+                disabled
+                title="App Store (Disabled)"
+                aria-label={`${t('app.appStore')} (${t('common.disabled', 'Disabled')})`}
+                className="w-full flex items-center justify-between rounded-2xl border border-gold-500/20 bg-[#0A1629] p-3 text-white shadow-md opacity-60 cursor-not-allowed select-none"
               >
                 <div className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white/10 p-2 border border-white/10 group-hover/btn:bg-white/15 transition-colors">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white/10 p-2 border border-white/10">
                     <img
                       src={img('/images/common/app-store.webp')}
                       width={48}
@@ -171,7 +170,7 @@ export default function DownloadNavDropdown({
                     />
                   </div>
                   <div className="text-left leading-tight">
-                    <span className="block text-[9.5px] uppercase tracking-wider text-gold-300/90 font-semibold">
+                    <span className="block text-[9.5px] uppercase tracking-wider text-gold-300/80 font-semibold">
                       {t('app.downloadOn')}
                     </span>
                     <span className="block text-sm font-bold text-white tracking-wide mt-0.5">
@@ -180,12 +179,12 @@ export default function DownloadNavDropdown({
                   </div>
                 </div>
                 <span
-                  className="mr-1 text-gold-400 font-bold transition-transform duration-300 group-hover/btn:translate-x-1"
+                  className="mr-1 text-gold-400/60 font-bold"
                   aria-hidden="true"
                 >
-                  →
+                  ✕
                 </span>
-              </a>
+              </button>
             </div>
 
             {/* Trust Points */}

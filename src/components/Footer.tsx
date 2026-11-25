@@ -192,23 +192,13 @@ export default function Footer() {
             <ul className="mt-3.5 space-y-2 text-xs text-white/75 sm:text-sm">
               {support.map((l) => (
                 <li key={l.label}>
-                  {l.href === "/sitemap.xml" ? (
-                    <a
-                      href={l.href}
-                      title={l.label}
-                      className="transition hover:text-gold-300"
-                    >
-                      {l.label}
-                    </a>
-                  ) : (
-                    <Link
-                      to={l.href}
-                      title={l.label}
-                      className="transition hover:text-gold-300"
-                    >
-                      {l.label}
-                    </Link>
-                  )}
+                  <Link
+                    to={l.href}
+                    title={l.label}
+                    className="transition hover:text-gold-300"
+                  >
+                    {l.label}
+                  </Link>
                 </li>
               ))}
             </ul>

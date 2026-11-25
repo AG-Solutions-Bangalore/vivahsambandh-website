@@ -12,10 +12,7 @@ Options -Indexes
 <IfModule mod_rewrite.c>
   RewriteEngine On
 
-  # 1. Never serve sitemap.xml with a trailing slash (Prevents Google Search Console "Couldn't fetch" error)
-  RewriteRule ^sitemap\.xml/$ /sitemap.xml [R=301,L,NC]
-
-  # 2. CKEditor probes optional plugin files under /ckeditor/ and treats any 2xx
+  # 1. CKEditor probes optional plugin files under /ckeditor/ and treats any 2xx
   # as "plugin loaded". Letting the SPA fallback answer those probes with
   # index.html would register nothing and leave the editor toolbar empty.
   # Furthermore, CKEditor dynamically loads scripts at runtime and must NEVER

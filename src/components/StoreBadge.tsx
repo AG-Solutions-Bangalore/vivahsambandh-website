@@ -34,9 +34,40 @@ export default function StoreBadge({ store, className = '' }: StoreBadgeProps) {
   const { t } = useTranslation()
   const company = useCompanyDetails()
   const { captionKey, name, labelKey, image, alt } = STORES[store]
+  const isApple = store === 'apple'
+  const isAvailable = store === 'play' ? Boolean(company.apps.playStore) : false
   const href = store === 'play'
     ? (company.apps.playStore || 'https://play.google.com/store/apps/details?id=com.vs.agsolution')
-    : company.apps.appStore
+    : '#'
+
+  if (isApple || !isAvailable) {
+    return (
+      <button
+        type="button"
+        disabled
+        aria-label={`${t(labelKey)} (${t('common.disabled', 'Disabled')})`}
+        title={`${name} (${t('common.disabled', 'Disabled')})`}
+        className={`inline-flex items-center gap-3 rounded-xl border border-navy-900 bg-navy-900 px-4 py-2.5 text-white shadow-md opacity-60 cursor-not-allowed select-none ${className}`}
+      >
+        <img
+          src={image}
+          width={48}
+          height={48}
+          alt={t(labelKey, { defaultValue: alt })}
+          title={name}
+          aria-hidden="true"
+          className="h-6 w-6 object-contain shrink-0"
+          loading="lazy"
+        />
+        <span className="text-left leading-none">
+          <span className="block text-[9px] uppercase tracking-wider text-gold-300/80 font-semibold">
+            {t(captionKey)}
+          </span>
+          <span className="block text-xs font-bold text-white sm:text-sm mt-0.5 tracking-wide">{name}</span>
+        </span>
+      </button>
+    )
+  }
 
   return (
     <a

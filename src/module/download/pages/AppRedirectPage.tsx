@@ -12,30 +12,30 @@ import { useEffect } from 'react'
 import { useCompanyDetails } from '@/module/company'
 import { Loader2 } from 'lucide-react'
 
-function detectIsAppleDevice(): boolean {
-  if (typeof window === 'undefined' || typeof navigator === 'undefined') {
-    return false
-  }
+// function detectIsAppleDevice(): boolean {
+//   if (typeof window === 'undefined' || typeof navigator === 'undefined') {
+//     return false
+//   }
 
-  const userAgent = navigator.userAgent || navigator.vendor || (window as unknown as { opera?: string }).opera || ''
+//   const userAgent = navigator.userAgent || navigator.vendor || (window as unknown as { opera?: string }).opera || ''
 
-  // 1. Explicit iOS checks
-  if (/iPad|iPhone|iPod/.test(userAgent) && !(window as unknown as { MSStream?: unknown }).MSStream) {
-    return true
-  }
+//   // 1. Explicit iOS checks
+//   if (/iPad|iPhone|iPod/.test(userAgent) && !(window as unknown as { MSStream?: unknown }).MSStream) {
+//     return true
+//   }
 
-  // 2. Modern iPadOS reports as Macintosh with maxTouchPoints
-  if (/Macintosh/.test(userAgent) && navigator.maxTouchPoints && navigator.maxTouchPoints > 1) {
-    return true
-  }
+//   // 2. Modern iPadOS reports as Macintosh with maxTouchPoints
+//   if (/Macintosh/.test(userAgent) && navigator.maxTouchPoints && navigator.maxTouchPoints > 1) {
+//     return true
+//   }
 
-  // 3. macOS
-  if (/Mac OS X|Macintosh|MacIntel|MacPPC|Mac68K/.test(userAgent)) {
-    return true
-  }
+//   // 3. macOS
+//   if (/Mac OS X|Macintosh|MacIntel|MacPPC|Mac68K/.test(userAgent)) {
+//     return true
+//   }
 
-  return false
-}
+//   return false
+// }
 
 export default function AppRedirectPage() {
   const { apps, isPending } = useCompanyDetails()
@@ -44,8 +44,8 @@ export default function AppRedirectPage() {
     // Only redirect once company details have resolved (or fallback loaded)
     if (isPending) return
 
-    const isApple = detectIsAppleDevice()
-    const targetUrl = isApple ? apps.appStore : apps.playStore
+    // Always redirect to Google Play Store
+    const targetUrl = apps.playStore || 'https://play.google.com/store/apps/details?id=com.vs.agsolution'
 
     if (targetUrl) {
       // Direct replace so Back button doesn't trap the user in the redirect loop
@@ -53,9 +53,8 @@ export default function AppRedirectPage() {
     }
   }, [apps, isPending])
 
-  const isApple = typeof window !== 'undefined' ? detectIsAppleDevice() : false
-  const targetUrl = isApple ? apps.appStore : apps.playStore
-  const storeName = isApple ? 'App Store' : 'Google Play Store'
+  const targetUrl = apps.playStore || 'https://play.google.com/store/apps/details?id=com.vs.agsolution'
+  const storeName = 'Google Play Store'
 
   return (
     <div className="flex min-h-[60vh] flex-col items-center justify-center px-4 py-16 text-center">

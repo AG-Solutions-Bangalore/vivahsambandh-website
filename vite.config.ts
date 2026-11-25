@@ -33,11 +33,6 @@ import { defineConfig, type Plugin } from 'vite';
 import tailwindcss from '@tailwindcss/vite';
 import * as compressionNs from 'vite-plugin-compression';
 import { vitePrerenderPlugin } from 'vite-prerender-plugin';
-import {
-  generateAndSaveSitemap,
-  fetchSitemapData,
-  buildSitemapXml,
-} from './src/seo/sitemap/index.ts';
 
 const compression =
   (compressionNs as unknown as { default: typeof import('vite-plugin-compression').default }).default ??
@@ -401,57 +396,9 @@ function ckeditorAssets(): Plugin {
   };
 }
 
-/**
- * Vite plugin that calls the getSitemap API at build time and generates dynamic sitemap.xml.
- */
-function dynamicSitemapPlugin(): Plugin {
-  return {
-    name: 'dynamic-sitemap',
-    async buildStart() {
-      try {
-        const rootDir = process.cwd();
-        const { count, blogCount } = await generateAndSaveSitemap({ rootDir });
-        console.log(
-          `[sitemap] Generated dynamic sitemap at build time with ${count} URLs (${blogCount} active blogs).`,
-        );
-      } catch (err) {
-        console.warn('[sitemap] Failed to generate dynamic sitemap at buildStart:', err);
-      }
-    },
-    async closeBundle() {
-      try {
-        const rootDir = process.cwd();
-        const publicSitemap = path.resolve(rootDir, 'public/sitemap.xml');
-        const distSitemap = path.resolve(rootDir, 'dist/sitemap.xml');
-        if (existsSync(publicSitemap) && existsSync(path.resolve(rootDir, 'dist'))) {
-          copyFileSync(publicSitemap, distSitemap);
-        }
-      } catch (err) {
-        console.warn('[sitemap] Failed to copy sitemap to dist during closeBundle:', err);
-      }
-    },
-    configureServer(server) {
-      server.middlewares.use('/sitemap.xml', async (_req, res) => {
-        try {
-          const apiData = await fetchSitemapData();
-          const xml = buildSitemapXml(apiData);
-          res.setHeader('Content-Type', 'application/xml; charset=utf-8');
-          res.setHeader('Cache-Control', 'no-cache');
-          res.end(xml);
-        } catch {
-          const fallback = readFileSync(path.resolve(process.cwd(), 'public/sitemap.xml'), 'utf8');
-          res.setHeader('Content-Type', 'application/xml; charset=utf-8');
-          res.end(fallback);
-        }
-      });
-    },
-  };
-}
-
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [
-    dynamicSitemapPlugin(),
     react(),
     tailwindcss(),
     babel({ presets: [reactCompilerPreset()] }),

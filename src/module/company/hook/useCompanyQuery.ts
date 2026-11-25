@@ -49,7 +49,7 @@ export function useCompanyDetails(lang?: string) {
 
   const apps = {
     playStore: live?.company_play_store?.trim() || COMPANY.apps.playStore,
-    appStore: live?.company_app_store?.trim() || COMPANY.apps.appStore,
+    appStore: '',
   }
 
   return {
